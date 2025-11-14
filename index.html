@@ -59,6 +59,7 @@
     .service-img {height:230px; object-fit:cover; width:100%; border-bottom:3px solid var(--red);}
     .service-body {padding:30px; text-align:center;}
     .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--red); font-family:'Playfair Display',serif;}
+    .service-body .btn {font-size:1rem; padding:12px 28px; margin-top:15px;}
     
     /* License Badge */
     .license {text-align:center; background:var(--wood); color:white; padding:24px; border-radius:14px; margin:45px 0; font-weight:600; box-shadow:0 8px 20px rgba(93,64,55,0.2);}
@@ -79,9 +80,13 @@
     .cta h2 {color:var(--red); font-size:3rem;}
     .cta .btn {background:var(--red); padding:18px 44px; font-size:1.2rem;}
     
-    /* Footer */
-    footer {background:var(--wood); color:white; text-align:center; padding:55px 20px; font-size:0.98rem;}
-    footer a {color:var(--red); text-decoration:none; font-weight:600;}
+    /* Quote Form */
+    .quote-form {max-width:800px; margin:0 auto 80px; padding:40px; background:white; border:4px solid var(--rust); border-radius:14px; box-shadow:0 18px 40px rgba(139,69,19,0.12);}
+    .quote-form h2 {margin-bottom:30px;}
+    .quote-form label {display:block; margin:10px 0 5px; font-weight:600;}
+    .quote-form input, .quote-form textarea {width:100%; padding:12px; border:2px solid var(--rust); border-radius:8px; font-family:'Inter',sans-serif;}
+    .quote-form button {margin-top:25px; background:var(--red); color:white; padding:16px 40px; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:0.3s;}
+    .quote-form button:hover {background:#a10e1a;}
     
     @media (max-width:768px) {
       .hero h1 {font-size:3.2rem;}
@@ -89,6 +94,7 @@
       .nav-links {display:none;}
       .btn {padding:14px 30px; font-size:1rem;}
       .service-img {height:200px;}
+      .quote-form {padding:30px 20px;}
     }
   </style>
 </head>
@@ -135,6 +141,7 @@
           <div class="service-body">
             <h3>ADA Showers & Baths</h3>
             <p>60x34 low-profile, Onyx walls, Delta fixtures. Full ATP compliance.</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'ADA Showers & Baths';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -142,6 +149,7 @@
           <div class="service-body">
             <h3>Grab Bars & Rails</h3>
             <p>500+ lb rated. Stud-mounted. Lifetime warranty.</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Grab Bars & Rails';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -149,6 +157,7 @@
           <div class="service-body">
             <h3>Safe Flooring</h3>
             <p>Warm oak LVP, non-slip, waterproof. Kitchens, baths, basements.</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Safe Flooring';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -156,6 +165,7 @@
           <div class="service-body">
             <h3>Bathroom & Kitchen Remodels</h3>
             <p>Full tear-out, tile, cabinets, lighting. Turnkey.</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Bathroom & Kitchen Remodels';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -163,6 +173,7 @@
           <div class="service-body">
             <h3>Accessibility Upgrades</h3>
             <p>Ramps, widened doors, zero-entry. ATP-approved.</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Accessibility Upgrades';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -170,6 +181,7 @@
           <div class="service-body">
             <h3>General Contracting</h3>
             <p>Decks, siding, drywall, painting. All home repairs.</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'General Contracting';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
       </div>
@@ -219,6 +231,29 @@
         <a href="sms:+14054106402?body=Hi Justin! Quote for [project]." class="btn">Text Now</a>
         <a href="mailto:wattssafetyinstalls@gmail.com" class="btn">Email</a>
       </div>
+    </section>
+
+    <!-- Quote Form -->
+    <section id="quote-form" class="quote-form">
+      <h2>Request a Quote</h2>
+      <form action="https://formspree.io/f/mjkjgrlb" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="scope">Scope of Work:</label>
+        <input type="text" id="scope" name="scope" required>
+        
+        <label for="budget">Project Budget (if available):</label>
+        <input type="text" id="budget" name="budget">
+        
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" rows="4"></textarea>
+        
+        <button type="submit">Send Quote Request</button>
+      </form>
     </section>
 
   </div>

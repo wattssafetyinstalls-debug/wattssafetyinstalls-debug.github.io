@@ -344,6 +344,25 @@
       margin-top: 10px;
     }
     
+    /* Contract Cards - Special Styling */
+    .contract-card {
+      border: 2px solid var(--accent);
+      position: relative;
+    }
+    
+    .contract-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--accent);
+      color: var(--primary);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      z-index: 2;
+    }
+    
     /* License Badge */
     .license {
       text-align: center;
@@ -372,6 +391,42 @@
       color: var(--accent);
       font-size: 1.3rem;
       font-weight: 700;
+    }
+    
+    /* Promo Banner */
+    .promo-banner {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: var(--primary);
+      text-align: center;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 40px 0;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .promo-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a3a5f' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .promo-banner h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    
+    .promo-banner p {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      position: relative;
     }
     
     /* Trust Badges */
@@ -672,6 +727,7 @@
       </div>
       <div class="nav-links">
         <a href="#services">Services</a>
+        <a href="#contracts">Contracts</a>
         <a href="#google">Reviews</a>
         <a href="#contact">Contact</a>
       </div>
@@ -699,6 +755,13 @@
       License #<span>54690-25</span> • ATP Partnership • Active & Verified
     </div>
 
+    <!-- Promo Banner -->
+    <div class="promo-banner">
+      <h3>🎉 SPECIAL LIMITED TIME OFFERS 🎉</h3>
+      <p><strong>10% OFF</strong> your first 5 contracts when you mention promo code: <strong>WINTER10</strong></p>
+      <p><strong>5% REMODEL DISCOUNT</strong> for every new customer referral that results in a paid contract!</p>
+    </div>
+
     <!-- Services -->
     <section id="services">
       <h2>OUR FULL SERVICES</h2>
@@ -708,7 +771,7 @@
           <div class="service-body">
             <h3>ADA Showers & Baths</h3>
             <p>60x34 low-profile, Onyx walls, Delta fixtures. Full ATP compliance for accessibility.</p>
-            <a href="#quote-form" onclick="document.getElementById('scope').value = 'ADA Showers & Baths';" class="btn btn-alt">Get Quote</a>
+            <a href="#quote-form" onclick="setServiceType('ADA Showers & Baths')" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -716,7 +779,7 @@
           <div class="service-body">
             <h3>Grab Bars & Rails</h3>
             <p>500+ lb rated. Stud-mounted. Lifetime warranty on all installations.</p>
-            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Grab Bars & Rails';" class="btn btn-alt">Get Quote</a>
+            <a href="#quote-form" onclick="setServiceType('Grab Bars & Rails')" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -724,7 +787,7 @@
           <div class="service-body">
             <h3>Safe Flooring</h3>
             <p>Warm oak LVP, non-slip, waterproof. Kitchens, baths, basements.</p>
-            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Safe Flooring';" class="btn btn-alt">Get Quote</a>
+            <a href="#quote-form" onclick="setServiceType('Safe Flooring')" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -732,7 +795,7 @@
           <div class="service-body">
             <h3>Bathroom & Kitchen Remodels</h3>
             <p>Full tear-out, tile, cabinets, lighting. Turnkey solutions for your home.</p>
-            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Bathroom & Kitchen Remodels';" class="btn btn-alt">Get Quote</a>
+            <a href="#quote-form" onclick="setServiceType('Bathroom & Kitchen Remodels')" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -740,7 +803,7 @@
           <div class="service-body">
             <h3>Accessibility Upgrades</h3>
             <p>Ramps, widened doors, zero-entry. ATP-approved modifications.</p>
-            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Accessibility Upgrades';" class="btn btn-alt">Get Quote</a>
+            <a href="#quote-form" onclick="setServiceType('Accessibility Upgrades')" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
         <div class="service-card">
@@ -748,7 +811,34 @@
           <div class="service-body">
             <h3>General Contracting</h3>
             <p>Decks, siding, drywall, painting. All home repairs and improvements.</p>
-            <a href="#quote-form" onclick="document.getElementById('scope').value = 'General Contracting';" class="btn btn-alt">Get Quote</a>
+            <a href="#quote-form" onclick="setServiceType('General Contracting')" class="btn btn-alt">Get Quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contract Services -->
+    <section id="contracts">
+      <h2>ANNUAL CONTRACT SERVICES</h2>
+      <div class="services">
+        <div class="service-card contract-card">
+          <div class="contract-badge">2025 CONTRACT</div>
+          <img src="https://images.unsplash.com/photo-1571354199921-0f014c1e0c65?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Winter snow removal and salting services" class="service-img">
+          <div class="service-body">
+            <h3>Winter 2025: Snow Removal & Salting</h3>
+            <p>Residential snow plowing, driveway clearing, and ice management. Priority service for contract customers.</p>
+            <p><strong>Early Signing Bonus:</strong> 10% off first 5 contracts with promo code</p>
+            <a href="#quote-form" onclick="setServiceType('Winter 2025 Snow Removal Contract')" class="btn">Get Contract Quote</a>
+          </div>
+        </div>
+        <div class="service-card contract-card">
+          <div class="contract-badge">2026 CONTRACT</div>
+          <img src="https://images.unsplash.com/photo-1544984243-ec57ea16fe25?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lawn care and landscaping services" class="service-img">
+          <div class="service-body">
+            <h3>2026: Lawn Care & Landscaping</h3>
+            <p>Complete residential lawn maintenance, mowing, trimming, landscaping, and seasonal cleanups.</p>
+            <p><strong>Early Bird Special:</strong> Lock in 2025 pricing when you sign now</p>
+            <a href="#quote-form" onclick="setServiceType('2026 Lawn Care & Landscaping Contract')" class="btn">Get Contract Quote</a>
           </div>
         </div>
       </div>
@@ -801,6 +891,9 @@
     <!-- Quote Form -->
     <section id="quote-form" class="quote-form">
       <h2>Request a Quote</h2>
+      <p style="text-align: center; margin-bottom: 20px; color: var(--accent); font-weight: 600;">
+        Mention promo code <strong>WINTER10</strong> for 10% off your first 5 contracts!
+      </p>
       <form action="https://formspree.io/f/mjkjgrlb" method="POST">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
@@ -814,8 +907,8 @@
         <label for="location">Location (City):</label>
         <input type="text" id="location" name="location" placeholder="Norfolk, Omaha, Lincoln, etc.">
         
-        <label for="scope">Scope of Work:</label>
-        <select id="scope" name="scope" required>
+        <label for="service-type">Service Type:</label>
+        <select id="service-type" name="service-type" required>
           <option value="" disabled selected>Select a service</option>
           <option value="ADA Showers & Baths">ADA Showers & Baths</option>
           <option value="Grab Bars & Rails">Grab Bars & Rails</option>
@@ -823,13 +916,21 @@
           <option value="Bathroom & Kitchen Remodels">Bathroom & Kitchen Remodels</option>
           <option value="Accessibility Upgrades">Accessibility Upgrades</option>
           <option value="General Contracting">General Contracting</option>
+          <option value="Winter 2025 Snow Removal Contract">Winter 2025 Snow Removal Contract</option>
+          <option value="2026 Lawn Care & Landscaping Contract">2026 Lawn Care & Landscaping Contract</option>
           <option value="Other">Other</option>
         </select>
+        
+        <label for="promo-code">Promo Code (if applicable):</label>
+        <input type="text" id="promo-code" name="promo-code" placeholder="WINTER10, Referral, etc.">
+        
+        <label for="referral">Referred By (if applicable):</label>
+        <input type="text" id="referral" name="referral" placeholder="Customer name who referred you">
         
         <label for="budget">Project Budget (if available):</label>
         <input type="text" id="budget" name="budget">
         
-        <label for="message">Message:</label>
+        <label for="message">Project Details:</label>
         <textarea id="message" name="message" rows="4" placeholder="Tell us about your project..."></textarea>
         
         <button type="submit">Send Quote Request</button>
@@ -843,6 +944,14 @@
     <p><a href="https://WattsAtpContractor.com">WattsAtpContractor.com</a> • (405) 410-6402 • wattssafetyinstalls@gmail.com</p>
     <p>© 2025 All Rights Reserved | Serving Norfolk, Omaha, Lincoln and surrounding Nebraska areas</p>
   </footer>
+
+  <script>
+    function setServiceType(service) {
+      document.getElementById('service-type').value = service;
+      // Smooth scroll to the form
+      document.getElementById('quote-form').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
 
 </body>
 </html>

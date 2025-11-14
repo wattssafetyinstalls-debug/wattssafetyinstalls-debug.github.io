@@ -7,84 +7,79 @@
   <meta name="description" content="Nebraska's Trusted ATP Contractor. Grab Bars, ADA Showers, Safe Flooring. Call/Text (405) 410-6402.">
   
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --red: #c1121f;
-      --walnut: #4A2C2A;
-      --off-white: #F8F9FA;
-      --steel: #2c3e50;
+      --silver: #BDC3C7;
+      --dark-silver: #2C3E50;
+      --white: #FFFFFF;
     }
     * {margin:0; padding:0; box-sizing:border-box;}
-    body {font-family:'Inter',sans-serif; background:var(--off-white); color:var(--steel); line-height:1.7;}
+    body {font-family:'Inter',sans-serif; background:var(--white); color:var(--dark-silver); line-height:1.6;}
     
-    /* Hero - Rustic Wood */
+    /* Hero - Skyscraper Glass */
     .hero {
-      background:linear-gradient(rgba(74,44,42,0.92), rgba(74,44,42,0.88)), url('https://images.unsplash.com/photo-1505843513577-22bb7d21e455?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
-      color:white; text-align:center; padding:160px 20px;
+      background:linear-gradient(rgba(189,195,199,0.8), rgba(189,195,199,0.7)), url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
+      color:var(--dark-silver); text-align:center; padding:160px 20px;
       position:relative;
     }
-    .hero::before {
-      content:''; position:absolute; top:0; left:0; right:0; bottom:0;
-      background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234A2C2A"/><path d="M0,20 Q25,15 50,20 T100,20 L100,100 L0,100 Z" fill="%235A3C3A"/></svg>') repeat;
-      opacity:0.2;
-    }
-    .hero h1 {font-family:'Playfair Display',serif; font-size:4.8rem; color:var(--red); text-shadow:3px 3px 8px rgba(0,0,0,0.6);}
+    .hero h1 {font-size:4.8rem; color:var(--red); text-shadow:2px 2px 6px rgba(0,0,0,0.4); font-weight:700;}
     .hero p {font-size:1.35rem; max-width:900px; margin:18px auto; font-weight:300;}
-    .btn {display:inline-block; background:var(--red); color:white; padding:16px 40px; border-radius:8px; font-weight:700; text-decoration:none; margin:12px; transition:0.3s; font-size:1.15rem; box-shadow:0 6px 15px rgba(193,18,31,0.3);}
-    .btn:hover {background:#a10e1a; transform:translateY(-3px);}
-    .btn-alt {background:var(--walnut); color:white;}
-    .btn-alt:hover {background:#3A1F1D;}
+    .btn {display:inline-block; background:var(--red); color:var(--white); padding:16px 40px; border-radius:4px; font-weight:700; text-decoration:none; margin:12px; transition:0.3s; font-size:1.15rem; box-shadow:0 4px 12px rgba(193,18,31,0.25);}
+    .btn:hover {background:#a10e1a; transform:translateY(-2px); box-shadow:0 6px 18px rgba(193,18,31,0.35);}
+    .btn-alt {background:var(--dark-silver); color:var(--white);}
+    .btn-alt:hover {background:#233140;}
     
     /* Navbar */
-    nav {background:var(--walnut); color:white; position:sticky; top:0; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+    nav {background:var(--dark-silver); color:var(--white); position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
     .nav-container {max-width:1300px; margin:auto; padding:0 20px; display:flex; justify-content:space-between; align-items:center; height:85px;}
-    .logo {font-family:'Playfair Display',serif; font-size:2.1rem; color:var(--red); letter-spacing:1px;}
-    .nav-links a {margin-left:32px; color:white; text-decoration:none; font-weight:600; font-size:1.05rem;}
+    .logo {font-size:2.1rem; color:var(--red); font-weight:700; letter-spacing:0.5px;}
+    .nav-links a {margin-left:32px; color:var(--white); text-decoration:none; font-weight:500; font-size:1.05rem;}
     .nav-links a:hover {color:var(--red);}
     
     /* Container */
     .container {max-width:1300px; margin:70px auto; padding:0 20px;}
-    h2 {font-family:'Playfair Display',serif; font-size:3.2rem; text-align:center; margin-bottom:45px; color:var(--walnut);}
+    h2 {font-size:3.2rem; text-align:center; margin-bottom:45px; color:var(--dark-silver); font-weight:700;}
     .highlight {color:var(--red);}
     
     /* Services Grid */
     .services {display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:32px;}
     .service-card {
-      background:white; border:4px solid var(--walnut); border-radius:14px; overflow:hidden; box-shadow:0 18px 40px rgba(74,44,42,0.1); transition:0.4s;
+      background:var(--white); border:2px solid var(--silver); border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(189,195,199,0.15); transition:0.3s;
     }
-    .service-card:hover {transform:translateY(-14px); box-shadow:0 28px 55px rgba(193,18,31,0.18);}
-    .service-img {height:230px; object-fit:cover; width:100%; border-bottom:3px solid var(--red);}
+    .service-card:hover {transform:translateY(-8px); box-shadow:0 12px 30px rgba(193,18,31,0.15);}
+    .service-img {height:230px; object-fit:cover; width:100%;}
     .service-body {padding:30px; text-align:center;}
-    .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--red); font-family:'Playfair Display',serif;}
+    .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--red); font-weight:700;}
     .service-body .btn {font-size:1rem; padding:12px 28px; margin-top:15px;}
     
     /* License Badge */
-    .license {text-align:center; background:var(--walnut); color:white; padding:24px; border-radius:14px; margin:45px 0; font-weight:600; box-shadow:0 8px 20px rgba(74,44,42,0.18);}
-    .license span {color:var(--red); font-size:1.4rem; font-family:'Playfair Display',serif;}
+    .license {text-align:center; background:var(--dark-silver); color:var(--white); padding:24px; border-radius:8px; margin:45px 0; font-weight:600; box-shadow:0 4px 12px rgba(44,62,80,0.15);}
+    .license span {color:var(--red); font-size:1.4rem;}
     
     /* Trust Badges */
-    .trust {text-align:center; margin:70px 0; padding:45px; background:var(--off-white); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.06);}
+    .trust {text-align:center; margin:70px 0; padding:45px; background:var(--white); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.05);}
     .badges {display:flex; justify-content:center; gap:50px; flex-wrap:wrap; margin-top:25px;}
     .badge {text-align:center;}
-    .badge svg {width:68px; height:68px; fill:var(--red); filter:drop-shadow(0 4px 8px rgba(193,18,31,0.3));}
+    .badge svg {width:68px; height:68px; fill:var(--red); filter:drop-shadow(0 4px 8px rgba(193,18,31,0.25));}
     
     /* Google Embed */
     .google-embed {margin:70px 0; text-align:center;}
-    .google-embed iframe {width:100%; max-width:850px; height:520px; border:4px solid var(--walnut); border-radius:16px; box-shadow:0 12px 35px rgba(0,0,0,0.12);}
+    .google-embed iframe {width:100%; max-width:850px; height:520px; border:2px solid var(--silver); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.1);}
     
     /* CTA */
-    .cta {background:var(--walnut); color:white; text-align:center; padding:110px 20px; margin:70px 0; border-top:6px solid var(--red);}
+    .cta {background:var(--dark-silver); color:var(--white); text-align:center; padding:110px 20px; margin:70px 0; border-top:4px solid var(--red);}
     .cta h2 {color:var(--red); font-size:3rem;}
     .cta .btn {background:var(--red); padding:18px 44px; font-size:1.2rem;}
     
     /* Quote Form */
-    .quote-form {max-width:800px; margin:0 auto 80px; padding:40px; background:white; border:4px solid var(--walnut); border-radius:14px; box-shadow:0 18px 40px rgba(74,44,42,0.1);}
+    .quote-form {max-width:800px; margin:0 auto 80px; padding:40px; background:var(--white); border:2px solid var(--silver); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.05);}
     .quote-form h2 {margin-bottom:30px;}
     .quote-form label {display:block; margin:10px 0 5px; font-weight:600;}
-    .quote-form input, .quote-form textarea {width:100%; padding:12px; border:2px solid var(--walnut); border-radius:8px; font-family:'Inter',sans-serif;}
-    .quote-form button {margin-top:25px; background:var(--red); color:white; padding:16px 40px; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:0.3s;}
+    .quote-form input, .quote-form textarea {width:100%; padding:12px; border:2px solid var(--silver); border-radius:4px; font-family:'Inter',sans-serif;}
+    .quote-form button {margin-top:25px; background:var(--red); color:var(--white); padding:16px 40px; border:none; border-radius:4px; font-weight:700; cursor:pointer; transition:0.3s;}
     .quote-form button:hover {background:#a10e1a;}
     
     @media (max-width:768px) {

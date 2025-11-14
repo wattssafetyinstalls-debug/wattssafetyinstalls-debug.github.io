@@ -907,8 +907,8 @@
         <label for="location">Location (City):</label>
         <input type="text" id="location" name="location" placeholder="Norfolk, Omaha, Lincoln, etc.">
         
-        <label for="service-type">Service Type:</label>
-        <select id="service-type" name="service-type" required>
+        <label for="service">Service Type:</label>
+        <select id="service" name="service" required>
           <option value="" disabled selected>Select a service</option>
           <option value="ADA Showers & Baths">ADA Showers & Baths</option>
           <option value="Grab Bars & Rails">Grab Bars & Rails</option>
@@ -921,8 +921,8 @@
           <option value="Other">Other</option>
         </select>
         
-        <label for="promo-code">Promo Code (if applicable):</label>
-        <input type="text" id="promo-code" name="promo-code" placeholder="WINTER10, Referral, etc.">
+        <label for="promo">Promo Code (if applicable):</label>
+        <input type="text" id="promo" name="promo" placeholder="WINTER10, Referral, etc.">
         
         <label for="referral">Referred By (if applicable):</label>
         <input type="text" id="referral" name="referral" placeholder="Customer name who referred you">
@@ -947,7 +947,7 @@
 
   <script>
     function setServiceType(service) {
-      document.getElementById('service-type').value = service;
+      document.getElementById('service').value = service;
       // Smooth scroll to the form
       document.getElementById('quote-form').scrollIntoView({ behavior: 'smooth' });
     }

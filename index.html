@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Watts Safety Installs | ATP Contractor #54690-25 | Norfolk, NE</title>
-  <meta name="description" content="Nebraska's Trusted ATP Contractor. Grab Bars, ADA Showers, Safe Flooring. Call/Text (405) 410-6402.">
+  <meta name="description" content="Nebraska's Trusted ATP Contractor. Grab Bars, ADA Showers, Safe Flooring, Lawn Care, Snow Removal. Call/Text (405) 410-6402.">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
   <!-- Google Analytics - All G-Tags Integrated -->
@@ -84,10 +84,11 @@
       background:var(--white); border:2px solid var(--silver); border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(189,195,199,0.15); transition:0.3s;
     }
     .service-card:hover {transform:translateY(-8px); box-shadow:0 12px 30px rgba(193,18,31,0.15);}
-    .service-img {height:230px; object-fit:cover; width:100%;}
+    .service-img {height:230px; width:100%; display:block;}
     .service-body {padding:30px; text-align:center;}
     .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--red); font-weight:700;}
     .service-body .btn {font-size:1rem; padding:12px 28px; margin-top:15px;}
+    .promo {color:#a10e1a; font-weight:600; margin-top:10px;}
     .license {text-align:center; background:var(--dark-silver); color:var(--white); padding:24px; border-radius:8px; margin:45px 0; font-weight:600; box-shadow:0 4px 12px rgba(44,62,80,0.15);}
     .license span {color:var(--red); font-size:1.4rem;}
     .trust {text-align:center; margin:70px 0; padding:45px; background:var(--white); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.05);}
@@ -135,7 +136,7 @@
   </nav>
   <section class="hero">
     <h1>WATTS SAFETY INSTALLS</h1>
-    <p>Nebraska's <strong>ATP-Certified</strong> Contractor for Safe, Accessible Homes</p>
+    <p>Nebraska's <strong>ATP-Certified</strong> Contractor for Safe Homes & Outdoor Care</p>
     <p><strong>License #<span class="highlight">54690-25</span></strong> • Fully Insured • Family Owned</p>
     <div>
       <a href="tel:+14054106402" class="btn contact-link" data-type="call">Call Now</a>
@@ -160,7 +161,10 @@
           </div>
         </div>
         <div class="service-card">
-          <img src="https://homemobilitypros.com/wp-content/uploads/2023/08/Bathroom-Grab-Bars.png" alt="Grab Bars" class="service-img">
+          <svg class="service-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2v20M4 10h16M4 14h16" stroke="#c1121f" stroke-width="2"/>
+            <rect x="2" y="8" width="20" height="8" rx="2" fill="#BDC3C7"/>
+          </svg>
           <div class="service-body">
             <h3>Grab Bars & Rails</h3>
             <p>500+ lb rated. Stud-mounted. Lifetime warranty.</p>
@@ -197,6 +201,31 @@
             <h3>General Contracting</h3>
             <p>Decks, siding, drywall, painting. All home repairs.</p>
             <a href="#quote-form" onclick="document.getElementById('scope').value = 'General Contracting';" class="btn btn-alt">Get Quote</a>
+          </div>
+        </div>
+        <div class="service-card">
+          <svg class="service-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 21h18M12 3v18M6 12h12" stroke="#c1121f" stroke-width="2"/>
+            <rect x="4" y="10" width="16" height="4" rx="2" fill="#BDC3C7"/>
+          </svg>
+          <div class="service-body">
+            <h3>Lawn Care</h3>
+            <p>Mowing, trimming, fertilization for Nebraska yards.</p>
+            <p class="promo">Use code <strong>LAWN2026</strong> for 15% off 2026 contracts!</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Lawn Care'; document.getElementById('message').value = 'Interested in LAWN2026 promo';" class="btn btn-alt">Get Quote</a>
+          </div>
+        </div>
+        <div class="service-card">
+          <svg class="service-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 21h12M12 3v18" stroke="#c1121f" stroke-width="2"/>
+            <path d="M4 12h16" stroke="#BDC3C7" stroke-width="2"/>
+            <circle cx="12" cy="12" r="3" fill="#c1121f"/>
+          </svg>
+          <div class="service-body">
+            <h3>Snow Removal</h3>
+            <p>Plowing, shoveling, salting for safe winter access.</p>
+            <p class="promo">10% off first 3 removals for 2025 sign-ups!</p>
+            <a href="#quote-form" onclick="document.getElementById('scope').value = 'Snow Removal'; document.getElementById('message').value = 'Interested in 2025 snow removal promo';" class="btn btn-alt">Get Quote</a>
           </div>
         </div>
       </div>
@@ -243,7 +272,7 @@
     </section>
     <section id="quote-form" class="quote-form">
       <h2>Request a Quote</h2>
-      <form action="https://formspree.io/f/mjkjgrlb" method="POST">
+      <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
         <label for="email">Email:</label>

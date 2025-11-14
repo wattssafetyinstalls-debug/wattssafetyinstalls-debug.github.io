@@ -84,7 +84,7 @@
       background:var(--white); border:2px solid var(--silver); border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(189,195,199,0.15); transition:0.3s;
     }
     .service-card:hover {transform:translateY(-8px); box-shadow:0 12px 30px rgba(193,18,31,0.15);}
-    .service-img {height:230px; width:100%; display:block;}
+    .service-img {height:230px; object-fit:cover; width:100%;}
     .service-body {padding:30px; text-align:center;}
     .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--red); font-weight:700;}
     .service-body .btn {font-size:1rem; padding:12px 28px; margin-top:15px;}
@@ -161,10 +161,7 @@
           </div>
         </div>
         <div class="service-card">
-          <svg class="service-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2v20M4 10h16M4 14h16" stroke="#c1121f" stroke-width="2"/>
-            <rect x="2" y="8" width="20" height="8" rx="2" fill="#BDC3C7"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1600585152915-18c7e4d79a82?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Grab Bars" class="service-img">
           <div class="service-body">
             <h3>Grab Bars & Rails</h3>
             <p>500+ lb rated. Stud-mounted. Lifetime warranty.</p>
@@ -204,10 +201,7 @@
           </div>
         </div>
         <div class="service-card">
-          <svg class="service-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 21h18M12 3v18M6 12h12" stroke="#c1121f" stroke-width="2"/>
-            <rect x="4" y="10" width="16" height="4" rx="2" fill="#BDC3C7"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1597077363609-5b969ebb4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lawn Care" class="service-img">
           <div class="service-body">
             <h3>Lawn Care</h3>
             <p>Mowing, trimming, fertilization for Nebraska yards.</p>
@@ -216,11 +210,7 @@
           </div>
         </div>
         <div class="service-card">
-          <svg class="service-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 21h12M12 3v18" stroke="#c1121f" stroke-width="2"/>
-            <path d="M4 12h16" stroke="#BDC3C7" stroke-width="2"/>
-            <circle cx="12" cy="12" r="3" fill="#c1121f"/>
-          </svg>
+          <img src="https://images.unsplash.com/photo-1518736281756-40669b5319cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Snow Removal" class="service-img">
           <div class="service-body">
             <h3>Snow Removal</h3>
             <p>Plowing, shoveling, salting for safe winter access.</p>

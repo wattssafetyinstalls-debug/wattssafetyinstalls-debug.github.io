@@ -53,18 +53,17 @@
   })(window,document,'script','dataLayer','GTM-T6VHW7');</script>
   <style>
     :root {
-      --teal: #00C4B4;
+      --red: #c1121f;
       --silver: #BDC3C7;
-      --charcoal: #1A202C;
-      --cream: #F7FAF0;
+      --dark-silver: #2C3E50;
+      --white: #FFFFFF;
     }
     * {margin:0; padding:0; box-sizing:border-box;}
-    body {font-family:'Inter',sans-serif; background:var(--cream); color:var(--charcoal); line-height:1.6;}
+    body {font-family:'Inter',sans-serif; background:var(--white); color:var(--dark-silver); line-height:1.6;}
     .hero {
-      background:linear-gradient(rgba(189,195,199,0.7), rgba(189,195,199,0.7)), url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover, url('https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
-      background-blend-mode: overlay;
-      color:var(--charcoal); text-align:center; padding:160px 20px;
-      position:relative;
+      background: linear-gradient(rgba(189,195,199,0.9), rgba(189,195,199,0.9)), url('https://images.unsplash.com/photo-1566073775625-4c1e73f480e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
+      color: var(--white); text-align: center; padding: 160px 20px;
+      position: relative;
     }
     .hero::before {
       content: '';
@@ -73,77 +72,74 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
-      opacity: 0.10;
+      background: url('https://images.unsplash.com/photo-1566073775625-4c1e73f480e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
+      opacity: 0.05; /* Increased transparency */
       z-index: 0;
     }
     .hero > * {
       position: relative;
       z-index: 1;
     }
-    .hero h1 {font-size:4.8rem; color:var(--teal); text-shadow:2px 2px 6px rgba(0,0,0,0.4); font-weight:700; text-align:center;}
-    .hero p {font-size:1.35rem; max-width:900px; margin:18px auto; font-weight:300; text-align:center;}
-    .btn {display:inline-block; background:var(--teal); color:var(--cream); padding:16px 40px; border-radius:4px; font-weight:700; text-decoration:none; margin:12px; transition:0.3s; font-size:1.15rem; box-shadow:0 4px 12px rgba(0,196,180,0.25); text-align:center;}
-    .btn:hover {background:#00a89a; transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,196,180,0.35);}
-    .btn-alt {background:var(--charcoal); color:var(--cream);}
-    .btn-alt:hover {background:#141822;}
-    nav {background:var(--charcoal); color:var(--cream); position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.1); text-align:center;}
-    .nav-container {max-width:1300px; margin:auto; padding:0 20px; display:flex; justify-content:space-between; align-items:center; height:85px;}
-    .logo {font-size:2.1rem; color:var(--teal); font-weight:700; letter-spacing:0.5px; text-align:center;}
-    .nav-links a {margin-left:32px; color:var(--cream); text-decoration:none; font-weight:500; font-size:1.05rem;}
-    .nav-links a:hover {color:var(--teal);}
-    .container {max-width:1300px; margin:70px auto; padding:0 20px;}
-    h2 {font-size:3.2rem; text-align:center; margin-bottom:45px; color:var(--charcoal); font-weight:700;}
-    .highlight {color:var(--teal);}
-    .services {display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:32px;}
+    .hero h1 {font-size: 4.8rem; color: var(--red); text-shadow: 2px 2px 6px rgba(0,0,0,0.6); font-weight: 700;}
+    .hero p {font-size: 1.35rem; max-width: 900px; margin: 18px auto; font-weight: 300; color: var(--white); text-shadow: 1px 1px 3px rgba(0,0,0,0.5);}
+    .hero .license-info {font-size: 1.2rem; color: var(--white); text-shadow: 1px 1px 3px rgba(0,0,0,0.5);}
+    .btn {display: inline-block; background: var(--red); color: var(--white); padding: 16px 40px; border-radius: 4px; font-weight: 700; text-decoration: none; margin: 12px; transition: 0.3s; font-size: 1.15rem; box-shadow: 0 4px 12px rgba(193,18,31,0.25);}
+    .btn:hover {background: #a10e1a; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(193,18,31,0.35);}
+    .btn-alt {background: var(--dark-silver); color: var(--white);}
+    .btn-alt:hover {background: #233140;}
+    nav {background: var(--dark-silver); color: var(--white); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+    .nav-container {max-width: 1300px; margin: auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 85px;}
+    .logo {font-size: 2.1rem; color: var(--red); font-weight: 700; letter-spacing: 0.5px;}
+    .nav-links a {margin-left: 32px; color: var(--white); text-decoration: none; font-weight: 500; font-size: 1.05rem;}
+    .nav-links a:hover {color: var(--red);}
+    .container {max-width: 1300px; margin: 70px auto; padding: 0 20px;}
+    h2 {font-size: 3.2rem; text-align: center; margin-bottom: 45px; color: var(--dark-silver); font-weight: 700;}
+    .highlight {color: var(--red);}
+    .services {display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px;}
     .service-card {
-      background:var(--cream); border:2px solid var(--silver); border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(189,195,199,0.15); transition:0.3s;
+      background: var(--white); border: 2px solid var(--silver); border-radius: 8px; overflow: hidden; box-shadow: 0 8px 20px rgba(189,195,199,0.15); transition: 0.3s;
     }
-    .service-card:hover {transform:translateY(-8px); box-shadow:0 12px 30px rgba(0,196,180,0.15);}
-    .service-img {height:230px; object-fit:cover; width:100;}
-    .service-body {padding:30px; text-align:center;}
-    .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--teal); font-weight:700; text-align:center;}
-    .service-body p {text-align:center;}
-    .service-body .btn {font-size:1rem; padding:12px 28px; margin-top:15px;}
-    .promo {color:#00a89a; font-weight:600; margin-top:10px; text-align:center;}
-    .license {text-align:center; background:var(--charcoal); color:var(--cream); padding:24px; border-radius:8px; margin:45px 0; font-weight:600; box-shadow:0 4px 12px rgba(26,32,44,0.15);}
-    .license span {color:var(--teal); font-size:1.4rem;}
-    .trust {text-align:center; margin:70px 0; padding:45px; background:var(--cream); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.05);}
-    .badges {display:flex; justify-content:center; gap:50px; flex-wrap:wrap; margin-top:25px;}
-    .badge {text-align:center;}
-    .badge svg {width:68px; height:68px; fill:var(--teal); filter:drop-shadow(0 4px 8px rgba(0,196,180,0.25));}
-    .badge p {text-align:center;}
-    .google-embed {margin:70px 0; text-align:center;}
-    .google-embed iframe {width:100%; max-width:850px; height:520px; border:2px solid var(--silver); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.1);}
-    .google-embed h2 {text-align:center;}
-    .cta {background:var(--charcoal); color:var(--cream); text-align:center; padding:110px 20px; margin:70px 0; border-top:4px solid var(--teal);}
-    .cta h2 {color:var(--teal); font-size:3rem; text-align:center;}
-    .cta p {text-align:center;}
-    .cta .btn {background:var(--teal); padding:18px 44px; font-size:1.2rem;}
-    .quote-form {max-width:800px; margin:0 auto 80px; padding:40px; background:var(--cream); border:2px solid var(--silver); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.05);}
-    .quote-form h2 {margin-bottom:30px; text-align:center;}
-    .quote-form label {display:block; margin:10px 0 5px; font-weight:600; text-align:center;}
-    .quote-form input, .quote-form textarea {width:100%; padding:12px; border:2px solid var(--silver); border-radius:4px; font-family:'Inter',sans-serif;}
-    .quote-form button {margin-top:25px; background:var(--teal); color:var(--cream); padding:16px 40px; border:none; border-radius:4px; font-weight:700; cursor:pointer; transition:0.3s;}
-    .quote-form button:hover {background:#00a89a;}
-    .contact-modal {display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200; justify-content:center; align-items:center;}
-    .modal-content {background:var(--cream); padding:30px; border-radius:8px; text-align:center; max-width:400px; width:90%; box-shadow:0 8px 20px rgba(0,0,0,0.2);}
-    .modal-content h3 {color:var(--teal); font-size:1.8rem; margin-bottom:15px; text-align:center;}
-    .modal-content p {font-size:1.1rem; margin-bottom:20px; text-align:center;}
-    .modal-content button {background:var(--teal); color:var(--cream); padding:12px 30px; border:none; border-radius:4px; cursor:pointer; font-weight:700;}
-    .modal-content button:hover {background:#00a89a;}
-    .modal-content a {color:var(--teal); text-decoration:underline; font-weight:500;}
-    footer {text-align:center; padding:20px; background:var(--charcoal); color:var(--cream);}
-    footer p {text-align:center;}
-    footer a {color:var(--teal); text-decoration:underline;}
-    #datetime {color:var(--cream); font-size:0.9rem; margin-top:10px;}
-    @media (max-width:768px) {
-      .hero h1 {font-size:3.2rem;}
-      .hero {padding:120px 15px;}
-      .nav-links {display:none;}
-      .btn {padding:14px 30px; font-size:1rem;}
-      .service-img {height:200px;}
-      .quote-form {padding:30px 20px;}
+    .service-card:hover {transform: translateY(-8px); box-shadow: 0 12px 30px rgba(193,18,31,0.15);}
+    .service-img {height: 230px; object-fit: cover; width: 100%;}
+    .service-body {padding: 30px; text-align: center;}
+    .service-body h3 {font-size: 1.55rem; margin-bottom: 14px; color: var(--red); font-weight: 700;}
+    .service-body .btn {font-size: 1rem; padding: 12px 28px; margin-top: 15px;}
+    .promo {color: #a10e1a; font-weight: 600; margin-top: 10px;}
+    .license {text-align: center; background: var(--dark-silver); color: var(--white); padding: 24px; border-radius: 8px; margin: 45px 0; font-weight: 600; box-shadow: 0 4px 12px rgba(44,62,80,0.15);}
+    .license span {color: var(--red); font-size: 1.4rem;}
+    .trust {text-align: center; margin: 70px 0; padding: 45px; background: var(--white); border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+    .badges {display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; margin-top: 25px;}
+    .badge {text-align: center;}
+    .badge svg {width: 68px; height: 68px; fill: var(--red); filter: drop-shadow(0 4px 8px rgba(193,18,31,0.25));}
+    .google-embed {margin: 70px 0; text-align: center;}
+    .google-embed iframe {width: 100%; max-width: 850px; height: 520px; border: 2px solid var(--silver); border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);}
+    .cta {background: var(--dark-silver); color: var(--white); text-align: center; padding: 110px 20px; margin: 70px 0; border-top: 4px solid var(--red);}
+    .cta h2 {color: var(--red); font-size: 3rem;}
+    .cta .btn {background: var(--red); padding: 18px 44px; font-size: 1.2rem;}
+    .quote-form {max-width: 800px; margin: 0 auto 80px; padding: 40px; background: var(--white); border: 2px solid var(--silver); border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+    .quote-form h2 {margin-bottom: 30px;}
+    .quote-form label {display: block; margin: 10px 0 5px; font-weight: 600;}
+    .quote-form input, .quote-form textarea {width: 100%; padding: 12px; border: 2px solid var(--silver); border-radius: 4px; font-family: 'Inter', sans-serif;}
+    .quote-form button {margin-top: 25px; background: var(--red); color: var(--white); padding: 16px 40px; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.3s;}
+    .quote-form button:hover {background: #a10e1a;}
+    .contact-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center;}
+    .modal-content {background: var(--white); padding: 30px; border-radius: 8px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 8px 20px rgba(0,0,0,0.2);}
+    .modal-content h3 {color: var(--red); font-size: 1.8rem; margin-bottom: 15px;}
+    .modal-content p {font-size: 1.1rem; margin-bottom: 20px;}
+    .modal-content button {background: var(--red); color: var(--white); padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-weight: 700;}
+    .modal-content button:hover {background: #a10e1a;}
+    .modal-content a {color: var(--red); text-decoration: underline; font-weight: 500;}
+    footer {text-align: center; padding: 20px; background: var(--dark-silver); color: var(--white);}
+    footer p {text-align: center;}
+    footer a {color: var(--red); text-decoration: underline;}
+    #datetime {color: var(--white); font-size: 0.9rem; margin-top: 10px;}
+    @media (max-width: 768px) {
+      .hero h1 {font-size: 3.2rem;}
+      .hero {padding: 120px 15px;}
+      .nav-links {display: none;}
+      .btn {padding: 14px 30px; font-size: 1rem;}
+      .service-img {height: 200px;}
+      .quote-form {padding: 30px 20px;}
     }
   </style>
 </head>
@@ -161,7 +157,7 @@
   <section class="hero">
     <h1>WATTS SAFETY INSTALLS</h1>
     <p>Nebraska's <strong>ATP-Certified</strong> Contractor for Safe Homes & Outdoor Care</p>
-    <p><strong>License #<span class="highlight">54690-25</span></strong> • Fully Insured • Family Owned</p>
+    <p class="license-info"><strong>License #<span class="highlight">54690-25</span></strong> • Fully Insured • Family Owned</p>
     <div>
       <a href="tel:+14054106402" class="btn contact-link" data-type="call">Call Now</a>
       <a href="sms:+14054106402?body=Hi Justin! Need a quote for [project]." class="btn btn-alt contact-link" data-type="text">Text Me</a>
@@ -249,23 +245,23 @@
       <p>Licensed • Insured • Local</p>
       <div class="badges">
         <div class="badge">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00C4B4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#c1121f">
             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-            <path d="M9 12l2 2 4-4" fill="none" stroke="#F7FAF0" stroke-width="2"/>
+            <path d="M9 12l2 2 4-4" fill="none" stroke="white" stroke-width="2"/>
           </svg>
           <p>Licensed GC</p>
         </div>
         <div class="badge">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00C4B4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#c1121f">
             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-            <path d="M9 12l2 2 4-4" fill="none" stroke="#F7FAF0" stroke-width="2"/>
+            <path d="M9 12l2 2 4-4" fill="none" stroke="white" stroke-width="2"/>
           </svg>
           <p>Fully Insured</p>
         </div>
         <div class="badge">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00C4B4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#c1121f">
             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-            <path d="M9 12l2 2 4-4" fill="none" stroke="#F7FAF0" stroke-width="2"/>
+            <path d="M9 12l2 2 4-4" fill="none" stroke="white" stroke-width="2"/>
           </svg>
           <p>Family Owned</p>
         </div>

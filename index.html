@@ -768,10 +768,10 @@
     <p>Nebraska's <strong class="hero-highlight">ATP-Certified</strong> Contractor for Safe, Accessible Homes</p>
     <p><strong>License #<span class="hero-highlight">54690-25</span></strong> • Fully Insured • Family Owned</p>
     <p>Local contractor serving <strong>Norfolk, Omaha, Lincoln</strong> and surrounding areas</p>
-    <div>
-      <a href="tel:+14054106402" class="btn">Call Now</a>
-      <a href="sms:+14054106402?body=Hi Justin! Need a quote for [project]." class="btn btn-alt">Text Me</a>
-      <a href="mailto:wattssafetyinstalls@gmail.com" class="btn">Email</a>
+        <div>
+      <a href="#" onclick="makeCall(405-410-6402)" class="btn">Call Now</a>
+      <a href="#" onclick="sendText(405-410-6402)" class="btn btn-alt">Text Me</a>
+      <a href="#" onclick="sendEmail(WattsSafetyInstalls@gmail.com)" class="btn">Email</a>
     </div>
   </section>
 
@@ -906,7 +906,7 @@
       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d46190.43296940472!2d-97.42694918006448!3d42.03284594238942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8792e3d0f4e5b6a7%3A0x5d8f4a4c4e5b6a7!2sNorfolk%2C%20NE!5e0!3m2!1sen!2sus!4v1648755787649!5m2!1sen!2sus" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </section>
 
-    <!-- CTA -->
+        <!-- CTA -->
     <section class="cta" id="contact">
       <h2>GET YOUR FREE QUOTE</h2>
       <p>Serving <strong>all of Nebraska</strong> — from Norfolk to Omaha, Lincoln, and surrounding areas</p>
@@ -951,8 +951,20 @@
   <script>
     function setServiceType(service) {
       document.getElementById('service').value = service;
-      // Smooth scroll to the form
       document.getElementById('quote-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ADD THESE NEW FUNCTIONS HERE:
+    function makeCall() {
+      window.location.href = 'tel:4054106402';
+    }
+
+    function sendText() {
+      window.location.href = 'sms:4054106402?body=Hi Justin! I need a quote for a project.';
+    }
+
+    function sendEmail() {
+      window.location.href = 'mailto:wattssafetyinstalls@gmail.com';
     }
   </script>
 

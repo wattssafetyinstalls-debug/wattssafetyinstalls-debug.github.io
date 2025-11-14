@@ -61,9 +61,25 @@
     * {margin:0; padding:0; box-sizing:border-box;}
     body {font-family:'Inter',sans-serif; background:var(--cream); color:var(--charcoal); line-height:1.6;}
     .hero {
-      background:linear-gradient(rgba(189,195,199,0.8), rgba(189,195,199,0.7)), url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
+      background:linear-gradient(rgba(189,195,199,0.7), rgba(189,195,199,0.7)), url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover, url('https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
+      background-blend-mode: overlay;
       color:var(--charcoal); text-align:center; padding:160px 20px;
       position:relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
+      opacity: 0.15;
+      z-index: 0;
+    }
+    .hero > * {
+      position: relative;
+      z-index: 1;
     }
     .hero h1 {font-size:4.8rem; color:var(--teal); text-shadow:2px 2px 6px rgba(0,0,0,0.4); font-weight:700; text-align:center;}
     .hero p {font-size:1.35rem; max-width:900px; margin:18px auto; font-weight:300; text-align:center;}
@@ -84,7 +100,7 @@
       background:var(--cream); border:2px solid var(--silver); border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(189,195,199,0.15); transition:0.3s;
     }
     .service-card:hover {transform:translateY(-8px); box-shadow:0 12px 30px rgba(0,196,180,0.15);}
-    .service-img {height:230px; object-fit:cover; width:100%;}
+    .service-img {height:230px; object-fit:cover; width:100;}
     .service-body {padding:30px; text-align:center;}
     .service-body h3 {font-size:1.55rem; margin-bottom:14px; color:var(--teal); font-weight:700; text-align:center;}
     .service-body p {text-align:center;}
@@ -120,6 +136,7 @@
     footer {text-align:center; padding:20px; background:var(--charcoal); color:var(--cream);}
     footer p {text-align:center;}
     footer a {color:var(--teal); text-decoration:underline;}
+    #datetime {color:var(--cream); font-size:0.9rem; margin-top:10px;}
     @media (max-width:768px) {
       .hero h1 {font-size:3.2rem;}
       .hero {padding:120px 15px;}
@@ -168,7 +185,7 @@
           </div>
         </div>
         <div class="service-card">
-          <img src="https://images.unsplash.com/photo-1600585152915-18c7e4d79a82?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Grab Bars" class="service-img">
+          <img src="https://images.unsplash.com/photo-1600585152915-18c7e4d79a82?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Grab Bars" class="service-img" onerror="this.src='https://via.placeholder.com/600x230?text=Grab+Bars';">
           <div class="service-body">
             <h3>Grab Bars & Rails</h3>
             <p>500+ lb rated. Stud-mounted. Lifetime warranty.</p>
@@ -208,7 +225,7 @@
           </div>
         </div>
         <div class="service-card">
-          <img src="https://images.unsplash.com/photo-1597077363609-5b969ebb4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lawn Care" class="service-img">
+          <img src="https://images.unsplash.com/photo-1597077363609-5b969ebb4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lawn Care" class="service-img" onerror="this.src='https://via.placeholder.com/600x230?text=Lawn+Care';">
           <div class="service-body">
             <h3>Lawn Care</h3>
             <p>Mowing, trimming, fertilization for Nebraska yards.</p>
@@ -217,7 +234,7 @@
           </div>
         </div>
         <div class="service-card">
-          <img src="https://images.unsplash.com/photo-1518736281756-40669b5319cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Snow Removal" class="service-img">
+          <img src="https://images.unsplash.com/photo-1518736281756-40669b5319cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Snow Removal" class="service-img" onerror="this.src='https://via.placeholder.com/600x230?text=Snow+Removal';">
           <div class="service-body">
             <h3>Snow Removal</h3>
             <p>Plowing, shoveling, salting for safe winter access.</p>
@@ -288,6 +305,7 @@
     <p><strong>Watts Safety Installs</strong> | License #54690-25 | Near the 500 Block of Omaha Ave, Norfolk, Nebraska</p>
     <p><a href="https://WattsAtpContractor.com">WattsAtpContractor.com</a> • <a href="tel:+14054106402" class="contact-link" data-type="call">(405) 410-6402</a> • <a href="mailto:wattssafetyinstalls@gmail.com" class="contact-link" data-type="email">wattssafetyinstalls@gmail.com</a></p>
     <p>© 2025 All Rights Reserved</p>
+    <div id="datetime"></div>
   </footer>
   <div class="contact-modal" id="contactModal">
     <div class="modal-content">
@@ -346,6 +364,11 @@
     function hasEmailClient() {
       return !!navigator.userAgent.match(/Thunderbird|Outlook|Apple Mail/i) || window.innerWidth > 768;
     }
+    function updateDateTime() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' };
+      document.getElementById('datetime').textContent = now.toLocaleString('en-US', options) + ' CST';
+    }
     document.addEventListener('DOMContentLoaded', function() {
       const contactLinks = document.querySelectorAll('.contact-link');
       contactLinks.forEach(link => {
@@ -353,9 +376,8 @@
           const type = this.getAttribute('data-type');
           const isMobileDevice = isMobile();
           let conversionLabel = '';
-          // Replace these with your actual Google Ads conversion labels from ads.google.com
           if (type === 'call') {
-            conversionLabel = 'your_call_conversion_label'; // e.g., 'abc123'
+            conversionLabel = 'your_call_conversion_label';
           } else if (type === 'text') {
             conversionLabel = 'your_text_conversion_label';
           } else if (type === 'email') {
@@ -396,6 +418,19 @@
         if (e.key === 'Escape') {
           closeModal();
         }
+      });
+      // Update date/time initially and every minute
+      updateDateTime();
+      setInterval(updateDateTime, 60000);
+    });
+    // Image load fallback script
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('.service-img');
+      images.forEach(img => {
+        img.onerror = function() {
+          const altText = this.alt.replace(/\s+/g, '+');
+          this.src = `https://via.placeholder.com/600x230?text=${altText}`;
+        };
       });
     });
   </script>

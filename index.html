@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico"> <!-- Replace with your favicon path -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <!-- Google Analytics - All G-Tags Integrated -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BXXKZJZTZ"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8TF95LBYRV"></script>
@@ -62,6 +62,21 @@
     }
     * {margin:0; padding:0; box-sizing:border-box;}
     body {font-family:'Inter',sans-serif; background:var(--cream); color:var(--charcoal); line-height:1.6;}
+    
+    /* === NEW: PROFESSIONAL BUILDING HEADER === */
+    .building-header {
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      background: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.1)), 
+                  url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=90') center/cover no-repeat;
+      border-bottom: 6px solid var(--teal);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    @media (max-width: 768px) {
+      .building-header {height: 180px;}
+    }
+
     .hero {
       background:linear-gradient(rgba(189,195,199,0.9), rgba(189,195,199,0.9)), url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover, url('https://images.unsplash.com/photo-1566073775625-4c1e73f480e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
       background-blend-mode: overlay;
@@ -76,7 +91,7 @@
       width: 100%;
       height: 100%;
       background: url('https://images.unsplash.com/photo-1566073775625-4c1e73f480e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/100% no-repeat;
-      opacity: 0.05; /* More see-through */
+      opacity: 0.05;
       z-index: 0;
     }
     .hero > * {
@@ -147,6 +162,7 @@
   </style>
 </head>
 <body>
+  <!-- NAVBAR -->
   <nav>
     <div class="nav-container">
       <div class="logo">WATTS SAFETY INSTALLS</div>
@@ -157,6 +173,11 @@
       </div>
     </div>
   </nav>
+
+  <!-- NEW: PROFESSIONAL BUILDING HEADER -->
+  <div class="building-header"></div>
+
+  <!-- HERO -->
   <section class="hero">
     <h1>WATTS SAFETY INSTALLS</h1>
     <p>Nebraska's <strong>ATP-Certified</strong> Contractor for Safe Homes & Outdoor Care</p>
@@ -167,14 +188,18 @@
       <a href="mailto:wattssafetyinstalls@gmail.com" class="btn contact-link" data-type="email">Email</a>
     </div>
   </section>
+
   <div class="container">
     <div class="license">
       <strong>Nebraska State Registered Contractor</strong><br>
       License #<span>54690-25</span> • ATP Partnership • Active & Verified
     </div>
+
+    <!-- SERVICES -->
     <section id="services">
       <h2>OUR FULL SERVICES</h2>
       <div class="services">
+        <!-- [All 8 service cards exactly as you provided — unchanged] -->
         <div class="service-card">
           <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ADA Shower" class="service-img">
           <div class="service-body">
@@ -243,6 +268,8 @@
         </div>
       </div>
     </section>
+
+    <!-- [Rest of your content — unchanged] -->
     <div class="trust">
       <h2>BUILT ON NEBRASKA VALUES</h2>
       <p>Licensed • Insured • Local</p>
@@ -270,10 +297,12 @@
         </div>
       </div>
     </div>
+
     <section id="google" class="google-embed">
       <h2>REAL CLIENTS, REAL RESULTS</h2>
       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.987654321!2d-97.418!3d42.032!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDAxJzU0LjAiTiA5N8KwMjUnMDUuMCJX!5e0!3m2!1sen!2sus!4v1731500000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
     </section>
+
     <section class="cta" id="contact">
       <h2>GET YOUR FREE QUOTE</h2>
       <p>Serving <strong>all of Nebraska</strong> — from Norfolk to Omaha</p>
@@ -283,6 +312,7 @@
         <a href="mailto:wattssafetyinstalls@gmail.com" class="btn contact-link" data-type="email">Email</a>
       </div>
     </section>
+
     <section id="quote-form" class="quote-form">
       <h2>Request a Quote</h2>
       <form action="https://formspree.io/f/mjkjgrlb" method="POST">
@@ -300,12 +330,14 @@
       </form>
     </section>
   </div>
+
   <footer>
     <p><strong>Watts Safety Installs</strong> | License #54690-25 | Near the 500 Block of Omaha Ave, Norfolk, Nebraska</p>
     <p><a href="https://WattsAtpContractor.com">WattsAtpContractor.com</a> • <a href="tel:+14054106402" class="contact-link" data-type="call">(405) 410-6402</a> • <a href="mailto:wattssafetyinstalls@gmail.com" class="contact-link" data-type="email">wattssafetyinstalls@gmail.com</a></p>
     <p>© 2025 All Rights Reserved</p>
     <div id="datetime"></div>
   </footer>
+
   <div class="contact-modal" id="contactModal">
     <div class="modal-content">
       <h3 id="modalTitle"></h3>
@@ -313,6 +345,8 @@
       <button onclick="closeModal()">Close</button>
     </div>
   </div>
+
+  <!-- [All your scripts — unchanged] -->
   <script>
     function trackContactEvent(action, label, conversionLabel = '') {
       const gtagIds = [
@@ -418,11 +452,9 @@
           closeModal();
         }
       });
-      // Update date/time initially and every minute
       updateDateTime();
       setInterval(updateDateTime, 60000);
     });
-    // Image load fallback script
     document.addEventListener('DOMContentLoaded', function() {
       const images = document.querySelectorAll('.service-img');
       images.forEach(img => {

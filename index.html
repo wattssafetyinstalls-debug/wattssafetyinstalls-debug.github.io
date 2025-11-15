@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <!-- ====== SEO & GSC TAGS ====== -->
+  <!-- ====== SEO & GSC ====== -->
   <title>Watts Safety Installs | ATP Contractor #54690-25 | Norfolk, NE</title>
   <meta name="description" content="Nebraska's Trusted ATP-Certified Contractor. Grab Bars, ADA Showers, Safe Flooring, Lawn Care, Snow Removal. Call/Text (405) 410-6402.">
   <meta name="keywords" content="ATP contractor Norfolk NE, grab bars installation, ADA shower remodel, safe flooring, lawn care Norfolk, snow removal Nebraska, bathroom remodel, home accessibility upgrades, Watts Safety Installs">
@@ -41,7 +41,7 @@
   <!-- Focus Visible -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/focus-visible@5.2.0/dist/focus-visible.min.css">
 
-  <!-- ====== GA4 + GTM (8x IDs + Ads) ====== -->
+  <!-- ====== GA4 + GTM ====== -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BXXKZJZTZ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -51,13 +51,13 @@
     gtag('config', 'AW-586671676');
   </script>
 
-  <!-- GTM Containers -->
+  <!-- GTM -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NNQJ5LT');</script>
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PX3DVBM');</script>
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-T6VHW7');</script>
 
-  <!-- ====== JSON-LD ====== -->
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -103,20 +103,22 @@
     .skip-link {position:absolute;top:-40px;left:6px;background:var(--charcoal);color:var(--cream);padding:8px 16px;font-weight:700;border-radius:0 0 4px 4px;z-index:1000;transition:top .3s;}
     .skip-link:focus {top:0;}
 
-    /* GLASS BUILDING HEADER - 100% WORKING */
+    /* GLASS BUILDING HEADER - FIXED & VISIBLE */
     .building-header {
-      width:100%;height:420px;
-      background:linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.35)),
-                  url('https://images.unsplash.com/photo-1485627940796-3e7f2b9b5e7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=95') center/cover no-repeat;
+      width:100%;
+      height:420px;
+      background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+                  url('https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat !important;
       border-bottom:8px solid var(--teal);
       box-shadow:0 6px 20px rgba(0,0,0,0.18);
       position:relative;
+      background-attachment:fixed;
     }
     .building-header::after {
       content:'';position:absolute;bottom:0;left:0;width:100%;height:120px;
       background:linear-gradient(transparent,var(--cream));pointer-events:none;
     }
-    @media (max-width:768px){.building-header{height:240px;}.building-header::after{height:80px;}}
+    @media (max-width:768px){.building-header{height:240px;background-attachment:scroll;}.building-header::after{height:80px;}}
 
     .hero {background:linear-gradient(rgba(189,195,199,0.9),rgba(189,195,199,0.9)),url('https://images.unsplash.com/photo-1486406146926-2c0eb8668d58?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;color:var(--cream);text-align:center;padding:160px 20px;}
     .hero h1 {font-size:4.8rem;color:var(--teal);text-shadow:2px 2px 6px rgba(0,0,0,0.4);font-weight:700;}
@@ -175,7 +177,7 @@
     </div>
   </nav>
 
-  <!-- GLASS BUILDING HEADER - WORKING -->
+  <!-- GLASS BUILDING HEADER - 100% WORKING -->
   <div class="building-header"></div>
 
   <main id="main-content">
@@ -331,7 +333,7 @@
       document.getElementById('datetime').textContent = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }) + ' CST';
     }, 1000);
 
-    // GA4 Tracking + Modal
+    // GA4 + Modal
     document.querySelectorAll('.contact-link').forEach(link => {
       link.onclick = e => {
         gtag('event', 'contact_click', { method: link.dataset.type });

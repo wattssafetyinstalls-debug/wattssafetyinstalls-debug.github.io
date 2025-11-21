@@ -43,57 +43,59 @@
     <link rel="manifest" href="https://wattssafetyinstalls-debug.github.io/site.webmanifest">
     <meta name="theme-color" content="#00C4B4">
    
-    <!-- Schema Markup -->
-    <script type="application/ld+json">
+   <!-- Schema Markup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "HomeAndConstructionBusiness",
-          "name": "Watts Safety Installs",
-          "url": "https://wattssafetyinstalls.com",
-          "telephone": "+14054106402",
-          "email": "wattssafetyinstalls@gmail.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "500 Block Omaha Ave",
-            "addressLocality": "Norfolk",
-            "addressRegion": "NE",
-            "postalCode": "68701"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 42.032,
-            "longitude": -97.418
-          },
-          "openingHours": "Mo-Fr 08:30-18:00",
-          "priceRange": "$$",
-          "areaServed": {"@type": "State", "name": "Nebraska"},
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5.0",
-            "reviewCount": "1"
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "15% OFF First 3 Snow Visits 2025",
-          "itemOffered": {"@type": "Service", "name": "Snow Removal & Salting"},
-          "price": "15",
-          "priceCurrency": "%",
-          "validThrough": "2025-12-31"
-        },
-        {
-          "@type": "Offer",
-          "name": "LAWN2026 – 20% OFF Full Season",
-          "itemOffered": {"@type": "Service", "name": "Lawn Care & Tree Trimming"},
-          "price": "20",
-          "priceCurrency": "%",
-          "validThrough": "2026-12-31"
-        }
-      ]
+      "@type": "HomeAndConstructionBusiness",
+      "name": "Watts Safety Installs",
+      "url": "https://wattssafetyinstalls.com",
+      "telephone": "+14054106402",
+      "email": "wattssafetyinstalls@gmail.com",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "500 Block Omaha Ave",
+        "addressLocality": "Norfolk",
+        "addressRegion": "NE",
+        "postalCode": "68701",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.032,
+        "longitude": -97.418
+      },
+      "openingHours": "Mo-Fr 08:30-18:00",
+      "priceRange": "$$",
+      "areaServed": {"@type": "State", "name": "Nebraska"},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "1"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "15% OFF First 3 Snow Visits 2025",
+      "itemOffered": {"@type": "Service", "name": "Snow Removal & Salting"},
+      "price": "15",
+      "priceCurrency": "%",
+      "validThrough": "2025-12-31"
+    },
+    {
+      "@type": "Offer",
+      "name": "LAWN2026 – 20% OFF Full Season",
+      "itemOffered": {"@type": "Service", "name": "Lawn Care & Tree Trimming"},
+      "price": "20",
+      "priceCurrency": "%",
+      "validThrough": "2026-12-31"
     }
-    </script>
+  ]
+}
+</script>
    
     <style>
         :root {

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referral Program | Earn $100 & Get 10% OFF | Watts Safety Installs</title>
-    <meta name="description" content="Refer a friend to Watts Safety Installs and earn $100 credit plus 10% OFF your next service. ATP Approved Contractor serving Norfolk NE area.">
+    <title>Contact Watts Safety Installs | Free Consultation | Norfolk NE</title>
+    <meta name="description" content="Contact Watts Safety Installs for accessibility modifications, home remodeling & property maintenance in Norfolk NE. Free estimates.">
     
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
@@ -29,24 +29,24 @@
     <meta name="google-site-verification" content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" />
     
     <!-- Open Graph for Facebook/LinkedIn -->
-    <meta property="og:title" content="Referral Program | Earn $100 & Get 10% OFF | Watts Safety Installs">
-    <meta property="og:description" content="Refer a friend to Watts Safety Installs and earn $100 credit plus 10% OFF your next service. ATP Approved Contractor serving Norfolk NE area.">
+    <meta property="og:title" content="Contact Watts Safety Installs | Free Consultation | Norfolk NE">
+    <meta property="og:description" content="Contact Watts Safety Installs for accessibility modifications, home remodeling & property maintenance in Norfolk NE. Free estimates.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
-    <meta property="og:url" content="https://wattsatpcontractor.com/referrals">
+    <meta property="og:url" content="https://wattsatpcontractor.com/contact">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Watts Safety Installs">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Referral Program | Earn $100 & Get 10% OFF">
-    <meta name="twitter:description" content="Refer a friend to Watts Safety Installs and earn $100 credit plus 10% OFF your next service. ATP Approved Contractor.">
+    <meta name="twitter:title" content="Contact Watts Safety Installs | Free Consultation">
+    <meta name="twitter:description" content="Contact Watts Safety Installs for accessibility modifications, home remodeling & property maintenance in Norfolk NE.">
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
     
     <!-- Additional SEO Meta Tags -->
-    <meta name="keywords" content="contractor referral program, earn money referring friends, home service referrals, accessibility contractor referrals, Norfolk NE contractor referrals, ATP approved contractor referrals">
+    <meta name="keywords" content="contact accessibility contractor, Norfolk NE contractor contact, home remodeling consultation, TV mounting service near me, ADA ramp installation contact, free estimate contractor Norfolk">
     <meta name="author" content="Watts Safety Installs">
     <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="https://wattsatpcontractor.com/referrals">
+    <link rel="canonical" href="https://wattsatpcontractor.com/contact">
     
     <!-- Cache Control for Performance -->
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
@@ -120,10 +120,10 @@
     },
     {
       "@type": "WebPage",
-      "@id": "https://wattsatpcontractor.com/referrals.html/#webpage",
-      "url": "https://wattsatpcontractor.com/referrals.html",
-      "name": "Referral Program | Earn $100 & Get 10% OFF | Watts Safety Installs",
-      "description": "Refer a friend to Watts Safety Installs and earn $100 credit plus 10% OFF your next service. ATP Approved Contractor serving Norfolk NE area.",
+      "@id": "https://wattsatpcontractor.com/contact.html/#webpage",
+      "url": "https://wattsatpcontractor.com/contact",
+      "name": "Contact Watts Safety Installs | Free Consultation | Norfolk NE",
+      "description": "Contact Watts Safety Installs for accessibility modifications, home remodeling & property maintenance in Norfolk NE. Free estimates.",
       "isPartOf": {
         "@id": "https://wattsatpcontractor.com/#website"
       },
@@ -134,6 +134,13 @@
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
       }
+    },
+    {
+      "@type": "ContactPage",
+      "@id": "https://wattsatpcontractor.com/contact.html/#contactpage",
+      "url": "https://wattsatpcontractor.com/contact",
+      "name": "Contact Watts Safety Installs",
+      "description": "Contact page for Watts Safety Installs - accessibility modifications, home remodeling & property maintenance services in Norfolk NE"
     }
   ]
 }
@@ -292,7 +299,7 @@
             margin: -12px;
         }
        
-        /* Page Header - USING ORIGINAL IMAGE */
+        /* Page Header */
         .page-header {
             background: 
                 linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
@@ -314,91 +321,39 @@
             margin: 0 auto;
         }
         
-        /* Referral Hero Section */
-        .referral-hero {
-            background: linear-gradient(135deg, var(--teal), #00b3a4);
-            color: var(--white);
-            padding: 80px 20px;
-            text-align: center;
-        }
-        
-        .reward-badge {
-            background: var(--gold);
-            color: var(--navy);
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 20px auto;
-            display: inline-block;
-            box-shadow: 0 8px 25px rgba(255,215,0,0.3);
-        }
-        
-        /* Referral Content */
-        .referral-content {
+        /* Contact Content */
+        .contact-content {
             padding: 80px 20px;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
         
-        .referral-section {
-            margin-bottom: 60px;
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
         }
         
-        .referral-section h2 {
+        .contact-info {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+        
+        .contact-info h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--navy);
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 3px solid var(--teal);
         }
         
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
-        }
-        
-        .benefit-card {
-            background: var(--white);
-            padding: 40px 30px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .benefit-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-        
-        .benefit-icon {
-            font-size: 3rem;
-            color: var(--teal);
-            margin-bottom: 20px;
-        }
-        
-        .benefit-card h3 {
-            font-size: 1.5rem;
-            color: var(--navy);
-            margin-bottom: 15px;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .how-it-works {
-            background: var(--white);
-            padding: 50px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin: 40px 0;
-        }
-        
-        .step {
+        .contact-method {
             display: flex;
             align-items: flex-start;
             margin-bottom: 30px;
@@ -406,46 +361,100 @@
             border-bottom: 1px solid #e2e8f0;
         }
         
-        .step:last-child {
+        .contact-method:last-child {
             border-bottom: none;
             margin-bottom: 0;
             padding-bottom: 0;
         }
         
-        .step-number {
+        .contact-icon {
             background: var(--teal);
             color: var(--white);
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            font-weight: 700;
-            margin-right: 25px;
+            margin-right: 20px;
             flex-shrink: 0;
         }
         
-        .step-content h3 {
+        .contact-details h3 {
             font-size: 1.4rem;
             color: var(--navy);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
-        .referral-form-container {
-            background: var(--navy);
-            color: var(--white);
-            padding: 60px;
-            border-radius: 15px;
-            margin-top: 50px;
+        .contact-details p {
+            color: var(--gray);
+            margin-bottom: 5px;
         }
         
-        .referral-form-container h2 {
+        .contact-details a {
             color: var(--teal);
-            border-bottom: 3px solid var(--teal);
-            padding-bottom: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .contact-details a:hover {
+            color: var(--warm-accent);
+        }
+        
+        .business-hours {
+            margin-top: 40px;
+        }
+        
+        .business-hours h3 {
+            font-size: 1.3rem;
+            color: var(--navy);
+            margin-bottom: 20px;
+        }
+        
+        .hours-list {
+            list-style: none;
+        }
+        
+        .hours-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .hours-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .day {
+            font-weight: 600;
+            color: var(--navy);
+        }
+        
+        .time {
+            color: var(--gray);
+        }
+        
+        /* Contact Form */
+        .contact-form-container {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .contact-form-container h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--navy);
             margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--teal);
         }
         
         .form-group {
@@ -456,25 +465,29 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
+            color: var(--navy);
         }
         
         .form-group input,
+        .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 15px;
-            border: 2px solid #334155;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
-            background: #1e293b;
-            color: var(--white);
+            background: var(--white);
+            color: var(--navy);
             font-size: 1rem;
             transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         
         .form-group input:focus,
+        .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: var(--teal);
-            background: #0f172a;
+            box-shadow: 0 0 0 3px rgba(0,196,180,0.1);
         }
         
         .submit-btn {
@@ -488,6 +501,7 @@
             cursor: pointer;
             transition: all 0.3s;
             width: 100%;
+            font-family: 'Inter', sans-serif;
         }
         
         .submit-btn:hover {
@@ -496,20 +510,74 @@
             box-shadow: 0 8px 25px rgba(0,196,180,0.3);
         }
         
-        .terms-note {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-top: 20px;
+        /* Service Areas */
+        .service-areas {
+            background: var(--navy);
+            color: var(--white);
+            padding: 60px;
+            border-radius: 15px;
             text-align: center;
+            margin-top: 40px;
         }
         
-        .terms-note a {
+        .service-areas h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
             color: var(--teal);
-            text-decoration: none;
+            margin-bottom: 20px;
         }
         
-        .terms-note a:hover {
-            text-decoration: underline;
+        .service-areas p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .areas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .area-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .area-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-3px);
+        }
+        
+        /* Trust Badges */
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .trust-badge {
+            text-align: center;
+            max-width: 200px;
+        }
+        
+        .trust-icon {
+            font-size: 2.5rem;
+            color: var(--teal);
+            margin-bottom: 15px;
+        }
+        
+        .trust-text {
+            font-weight: 600;
+            color: var(--navy);
         }
         
         footer { 
@@ -582,8 +650,8 @@
             .page-header h1 { font-size: 3rem; } 
             .footer-container { grid-template-columns: 1fr 1fr; gap: 40px; }
             .nav-links { gap: 25px; }
-            .benefits-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            .contact-grid {
+                gap: 40px;
             }
         }
         
@@ -627,19 +695,22 @@
             .page-header h1 { 
                 font-size: 2.5rem; 
             }
-            .referral-section h2 {
-                font-size: 2rem;
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
             }
-            .referral-form-container {
-                padding: 40px 25px;
+            .contact-info,
+            .contact-form-container {
+                padding: 40px 30px;
             }
-            .step {
-                flex-direction: column;
-                text-align: center;
+            .service-areas {
+                padding: 40px 30px;
             }
-            .step-number {
-                margin-right: 0;
-                margin-bottom: 15px;
+            .areas-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .trust-badges {
+                gap: 30px;
             }
             .footer-container { 
                 grid-template-columns: 1fr; 
@@ -663,18 +734,28 @@
             .page-header h1 { 
                 font-size: 2rem; 
             } 
-            .referral-section h2 {
-                font-size: 1.8rem;
-            }
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
-            .reward-badge {
-                font-size: 1.2rem;
-                padding: 12px 25px;
-            }
-            .referral-form-container {
+            .contact-info,
+            .contact-form-container {
                 padding: 30px 20px;
+            }
+            .service-areas {
+                padding: 30px 20px;
+            }
+            .areas-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .trust-badges {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .contact-method {
+                flex-direction: column;
+                text-align: center;
+            }
+            .contact-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
             }
         }
     </style>
@@ -709,7 +790,7 @@
     <header>
         <div class="header-container">
             <div class="logo-container">
-                <a href="index.html" class="logo">WATTS</a>
+                <a href="index" class="logo">WATTS</a>
             </div>
             
             <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -717,12 +798,12 @@
             </button>
             
             <nav class="nav-links" id="navLinks">
-    <a href="index.html">Home</a>
-    <a href="services.html">Services</a>
-    <a href="service-area.html">Service Area</a>
-    <a href="about.html">About</a>
-    <a href="referrals.html" class="active">Referrals</a>
-    <a href="contact.html">Contact</a>
+    <a href="index">Home</a>
+    <a href="services">Services</a>
+    <a href="service-area">Service Area</a>
+    <a href="about">About</a>
+    <a href="referrals">Referrals</a>
+    <a href="contact" class="active">Contact</a>
 </nav>
             
             <a href="tel:+14054106402" class="phone-link">
@@ -731,201 +812,180 @@
         </div>
     </header>
 
-    <!-- Page Header - NOW USING CONSISTENT IMAGE -->
+    <!-- Page Header -->
     <section class="page-header">
-        <h1>Referral Rewards Program</h1>
-        <p>Refer Friends, Earn Rewards, and Save on Your Next Project</p>
+        <h1>Let's Start Your Project</h1>
+        <p>We're here to help make your home safer, more accessible, and perfectly tailored to your needs</p>
     </section>
 
-    <!-- Referral Hero -->
-    <section class="referral-hero">
-        <div class="reward-badge">
-            <i class="fas fa-gift"></i> EARN $100 CREDIT + 10% OFF YOUR NEXT SERVICE
-        </div>
-        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Share the Excellence of Watts Safety Installs</h2>
-        <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto;">When your friends experience our premium service, you both benefit from our referral rewards program.</p>
-    </section>
-
-    <!-- Referral Content -->
-    <section class="referral-content">
-        <div class="referral-section">
-            <h2>Why Refer Watts Safety Installs?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 30px;">As an ATP Approved Contractor with Nebraska License #54690-25, we deliver exceptional service that your friends and family will appreciate. Our referral program is our way of thanking you for trusting us with your recommendations.</p>
+    <!-- Contact Content -->
+    <section class="contact-content">
+        <div class="contact-grid">
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <h2>Get In Touch</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 30px; color: var(--gray);">We'd love to hear from you! Choose the most convenient way to reach out.</p>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Call Us Directly</h3>
+                        <p>Speak directly with our team</p>
+                        <a href="tel:+14054106402">(405) 410-6402</a>
+                        <p style="margin-top: 8px; font-size: 0.9rem; color: var(--teal);"><i class="fas fa-clock"></i> We typically answer within 2 rings</p>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Send Us an Email</h3>
+                        <p>Get a detailed response within hours</p>
+                        <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+    		<div class="contact-icon">
+        		<i class="fas fa-exclamation-triangle"></i>
+   		    </div>
+  		    <div class="contact-details">
+   		       <h3>Emergency Services</h3>
+   		       <p>On Call emergency response available</p>
+    		       <a href="tel:+14054106402">Call Now for Emergencies</a>
+  		       <p style="margin-top: 8px; font-size: 0.9rem; color: var(--teal);"><i class="fas fa-bolt"></i> Snow removal & safety emergencies</p>
+ 		    </div>
+		 </div>
+                
+                <div class="business-hours">
+                    <h3>Business Hours</h3>
+                    <ul class="hours-list">
+                        <li>
+                            <span class="day">Monday - Friday</span>
+                            <span class="time">8:30 AM - 6:00 PM</span>
+                        </li>
+                        <li>
+                            <span class="day">Saturday</span>
+                            <span class="time">On Call for Emergencies</span>
+                        </li>
+                        <li>
+                            <span class="day">Sunday</span>
+                            <span class="time">Closed</span>
+                        </li>
+                    </ul>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--teal);"><i class="fas fa-exclamation-circle"></i> Emergency services available after hours</p>
+                </div>
+            </div>
             
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
-                    <h3>Earn $100 Credit</h3>
-                    <p>Receive a $100 service credit applied to your account for every verified referral that leads to a signed contract.</p>
-                </div>
+            <!-- Contact Form -->
+            <div class="contact-form-container">
+                <h2>Send Us a Message</h2>
+                <p style="margin-bottom: 30px; color: var(--gray);">Fill out the form below and we'll get back to you within 24 hours with a free consultation.</p>
                 
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-percentage"></i>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Your Name *</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name">
                     </div>
-                    <h3>10% OFF Your Next Service</h3>
-                    <p>Get an additional 10% discount on your next Watts Safety Installs service when your referral completes their project.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-award"></i>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="(405) 410-6402">
                     </div>
-                    <h3>Priority Scheduling</h3>
-                    <p>Referral customers receive priority scheduling for all our services, including snow removal and emergency repairs.</p>
-                </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="service">Service Needed *</label>
+                        <select id="service" name="service" required>
+                            <option value="">Select a service</option>
+                            <option value="accessibility">Accessibility & Safety Solutions</option>
+                            <option value="remodeling">Home Remodeling</option>
+                            <option value="tv-mounting">TV Mounting & Audio Visual</option>
+                            <option value="property-maintenance">Property Maintenance</option>
+                            <option value="snow-removal">Snow Removal</option>
+                            <option value="lawn-care">Lawn & Landscape Care</option>
+                            <option value="other">Other/Not Sure</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeline">Project Timeline</label>
+                        <select id="timeline" name="timeline">
+                            <option value="">When are you looking to start?</option>
+                            <option value="immediately">Immediately</option>
+                            <option value="1-2 weeks">Within 1-2 weeks</option>
+                            <option value="1 month">Within 1 month</option>
+                            <option value="flexible">Flexible timing</option>
+                            <option value="just-browsing">Just browsing for now</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Project Details *</label>
+                        <textarea id="message" name="message" rows="5" required placeholder="Tell us about your project... What are you hoping to accomplish? Any specific challenges or requirements?"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Send Message & Get Free Consultation
+                    </button>
+                    
+                    <p style="margin-top: 15px; text-align: center; color: var(--gray); font-size: 0.9rem;">
+                        <i class="fas fa-lock"></i> Your information is secure and will never be shared with third parties.
+                    </p>
+                </form>
             </div>
         </div>
         
-        <div class="referral-section">
-            <h2>How Our Referral Program Works</h2>
-            
-            <div class="how-it-works">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Refer a Friend or Family Member</h3>
-                        <p>Share your positive experience with friends, family, or colleagues who need accessibility modifications, home remodeling, TV mounting, or any of our services in the Norfolk NE area.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>They Mention Your Name</h3>
-                        <p>When your referral contacts us, they simply need to mention your name during their initial consultation or service request.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>They Sign a Service Contract</h3>
-                        <p>Once your referral signs a service contract with Watts Safety Installs for any of our professional services, the referral is verified.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>You Receive Your Rewards</h3>
-                        <p>After project completion, we'll apply your $100 service credit and 10% discount to your account. You'll receive confirmation via email or phone.</p>
-                    </div>
-                </div>
+        <!-- Service Areas -->
+        <div class="service-areas">
+            <h2>Service Areas</h2>
+            <p>We proudly serve Norfolk and surrounding communities throughout Nebraska</p>
+            <div class="areas-grid">
+                <div class="area-item">Norfolk</div>
+                <div class="area-item">Madison</div>
+                <div class="area-item">Stanton</div>
+                <div class="area-item">Pierce</div>
+                <div class="area-item">Plainview</div>
+                <div class="area-item">Creighton</div>
+                <div class="area-item">Bloomfield</div>
+                <div class="area-item">All Northeast NE</div>
             </div>
         </div>
         
-        <div class="referral-section">
-            <h2>Eligible Services for Referral Rewards</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 20px;">Your referrals can use our services for any of the following to qualify for the rewards program:</p>
-            
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-wheelchair"></i>
-                    </div>
-                    <h3>Accessibility & Safety</h3>
-                    <p>ADA ramps, grab bars, bathroom modifications, and senior safety installations</p>
+        <!-- Trust Badges -->
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <div class="trust-icon">
+                    <i class="fas fa-award"></i>
                 </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-hammer"></i>
-                    </div>
-                    <h3>Home Remodeling</h3>
-                    <p>Kitchen & bathroom renovations, deck construction, siding replacement</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-tv"></i>
-                    </div>
-                    <h3>TV & Audio Visual</h3>
-                    <p>TV mounting, home theater installation, sound system setup</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-snowplow"></i>
-                    </div>
-                    <h3>Property Maintenance</h3>
-                    <p>Snow removal, lawn care, seasonal maintenance contracts</p>
-                </div>
+                <div class="trust-text">ATP Approved Contractor</div>
             </div>
-        </div>
-        
-        <div class="referral-form-container">
-            <h2>Submit Your Referral</h2>
-            <p style="margin-bottom: 30px; font-size: 1.1rem;">Have someone in mind who could benefit from our services? Let us know about them using the form below, or simply have them mention your name when they call.</p>
-            
-            <form id="referralForm">
-                <div class="form-group">
-                    <label for="referrerName">Your Name *</label>
-                    <input type="text" id="referrerName" name="referrerName" required>
+            <div class="trust-badge">
+                <div class="trust-icon">
+                    <i class="fas fa-file-contract"></i>
                 </div>
-                
-                <div class="form-group">
-                    <label for="referrerPhone">Your Phone Number *</label>
-                    <input type="tel" id="referrerPhone" name="referrerPhone" required>
+                <div class="trust-text">Nebraska Licensed Contractor</div>
+            </div>
+            <div class="trust-badge">
+                <div class="trust-icon">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
-                
-                <div class="form-group">
-                    <label for="referrerEmail">Your Email *</label>
-                    <input type="email" id="referrerEmail" name="referrerEmail" required>
+                <div class="trust-text">Fully Insured</div>
+            </div>
+            <div class="trust-badge">
+                <div class="trust-icon">
+                    <i class="fas fa-star"></i>
                 </div>
-                
-                <div class="form-group">
-                    <label for="referralName">Referral's Name *</label>
-                    <input type="text" id="referralName" name="referralName" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="referralPhone">Referral's Phone Number</label>
-                    <input type="tel" id="referralPhone" name="referralPhone">
-                </div>
-                
-                <div class="form-group">
-                    <label for="referralEmail">Referral's Email</label>
-                    <input type="email" id="referralEmail" name="referralEmail">
-                </div>
-                
-                <div class="form-group">
-                    <label for="serviceInterest">Service They Might Need</label>
-                    <select id="serviceInterest" name="serviceInterest" style="width: 100%; padding: 15px; border: 2px solid #334155; border-radius: 8px; background: #1e293b; color: var(--white); font-size: 1rem;">
-                        <option value="">Select a service</option>
-                        <option value="accessibility">Accessibility & Safety Solutions</option>
-                        <option value="remodeling">Home Remodeling</option>
-                        <option value="tv-mounting">TV Mounting & AV</option>
-                        <option value="property-maintenance">Property Maintenance</option>
-                        <option value="snow-removal">Snow Removal</option>
-                        <option value="lawn-care">Lawn & Landscape</option>
-                        <option value="other">Other/Not Sure</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="additionalInfo">Additional Information</label>
-                    <textarea id="additionalInfo" name="additionalInfo" rows="4" placeholder="Any additional details about the referral or their needs..."></textarea>
-                </div>
-                
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-paper-plane"></i> Submit Referral
-                </button>
-                
-                <div class="terms-note">
-                    By submitting this form, you agree to our <a href="privacy-policy.html">Privacy Policy</a> and confirm that you have permission to share this contact information.
-                </div>
-            </form>
-        </div>
-        
-        <div class="referral-section" style="text-align: center; margin-top: 60px;">
-            <h2>Prefer to Call Instead?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 20px;">You can also refer friends by calling us directly. We'll note your referral in our system.</p>
-            <a href="tel:+14054106402" class="phone-link" style="display: inline-block; font-size: 1.3rem; padding: 18px 35px;">
-                <i class="fas fa-phone"></i> Call (405) 410-6402
-            </a>
+                <div class="trust-text">5.0/5 Customer Rating</div>
+            </div>
         </div>
     </section>
 
@@ -934,8 +994,8 @@
             <div class="footer-about">
                 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
                 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
-                <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-                <p><a href="sitemap.html">Sitemap</a> | <a href="privacy-policy.html">Privacy Policy</a> | <a href="referrals.html">Referral Program</a></p>
+                <p>Nebraska Licensed General Contractor • Fully Insured</p>
+                <p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a> | <a href="referrals">Referral Program</a></p>
             </div>
             <div class="footer-links">
                 <h3>Our Services</h3>
@@ -956,7 +1016,7 @@
             </div>
         </div>
         <div class="copyright">
-            <p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
+            <p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska Licensed General Contractor • Fully Insured</p>
         </div>
     </footer>
 
@@ -979,32 +1039,30 @@
         // Current year for copyright
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
-        // Referral form submission
-        document.getElementById('referralForm').addEventListener('submit', function(e) {
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Get form data
             const formData = new FormData(this);
-            const referralData = {
-                referrerName: formData.get('referrerName'),
-                referrerPhone: formData.get('referrerPhone'),
-                referrerEmail: formData.get('referrerEmail'),
-                referralName: formData.get('referralName'),
-                referralPhone: formData.get('referralPhone'),
-                referralEmail: formData.get('referralEmail'),
-                serviceInterest: formData.get('serviceInterest'),
-                additionalInfo: formData.get('additionalInfo')
+            const contactData = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                service: formData.get('service'),
+                timeline: formData.get('timeline'),
+                message: formData.get('message')
             };
             
             // Here you would typically send this data to your server
             // For now, we'll just show a success message
-            alert('Thank you for your referral! We will contact you shortly to confirm your referral rewards.');
+            alert('Thank you for your message! We will contact you within 24 hours to discuss your project and provide a free consultation.');
             this.reset();
             
-            // Track the referral submission (Google Analytics)
-            gtag('event', 'referral_submission', {
-                'event_category': 'referral',
-                'event_label': 'Referral Form Submission'
+            // Track the contact form submission (Google Analytics)
+            gtag('event', 'contact_form_submission', {
+                'event_category': 'contact',
+                'event_label': 'Contact Form Submission'
             });
         });
 

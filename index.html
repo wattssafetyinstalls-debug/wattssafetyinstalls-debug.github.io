@@ -168,7 +168,7 @@
             min-height: 100vh;
         }
        
-        /* Professional Navigation */
+        /* Professional Navigation - IMPROVED MOBILE */
         header { 
             background: var(--navy); 
             padding: 0; 
@@ -248,14 +248,16 @@
             background: #00b3a4;
         }
 
-        /* Mobile Menu Button */
+        /* IMPROVED Mobile Menu Button - LARGER & BETTER SPACING */
         .mobile-menu-btn {
             display: none;
             background: none;
             border: none;
             color: var(--white);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
+            padding: 12px;
+            margin: -12px;
         }
        
         .hero {
@@ -680,7 +682,7 @@
             font-size: 1rem;
         }
 
-        /* Responsive Design */
+        /* IMPROVED Responsive Design - BETTER MOBILE NAVIGATION */
         @media (max-width: 1024px) { 
             .hero h1 { font-size: 3.5rem; } 
             .about-container { grid-template-columns: 1fr; gap: 50px; } 
@@ -705,8 +707,8 @@
                 width: 100%;
                 background: var(--navy);
                 flex-direction: column;
-                padding: 20px;
-                gap: 15px;
+                padding: 30px 20px; /* Increased padding for better spacing */
+                gap: 20px; /* Increased gap between menu items */
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
             .nav-links.active {
@@ -748,6 +750,19 @@
             .trust-item { 
                 flex: 0 0 45%; 
             }
+            /* Improved mobile navigation buttons */
+            .nav-links a {
+                padding: 15px 0; /* Larger touch targets */
+                font-size: 1.2rem; /* Larger font for mobile */
+                text-align: center;
+                width: 100%;
+                display: block;
+            }
+            .phone-link {
+                font-size: 1.1rem;
+                padding: 15px 25px; /* Larger button for mobile */
+                margin-top: 10px;
+            }
         }
         
         @media (max-width: 480px) { 
@@ -769,6 +784,19 @@
             .cta-button {
                 padding: 18px 40px;
                 font-size: 1.2rem;
+            }
+            /* Further improved mobile navigation */
+            .nav-links {
+                padding: 25px 15px;
+                gap: 15px;
+            }
+            .nav-links a {
+                font-size: 1.1rem;
+                padding: 12px 0;
+            }
+            .mobile-menu-btn {
+                font-size: 1.6rem;
+                padding: 10px;
             }
         }
     </style>
@@ -815,6 +843,7 @@
                 <a href="services.html">Services</a>
                 <a href="service-area.html">Service Area</a>
                 <a href="about.html">About</a>
+                <a href="referrals.html">Referrals</a>
                 <a href="contact.html">Contact</a>
             </div>
             
@@ -956,7 +985,7 @@
                     <div class="feature"><div class="feature-icon">✓</div><div>Free Estimates & Consultations</div></div>
                     <div class="feature"><div class="feature-icon">✓</div><div>Licensed & Insured</div></div>
                     <div class="feature"><div class="feature-icon">✓</div><div>Senior & Veteran Discounts</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>Emergency Services Available</div></div>
+                    <div class="feature"><div class="feature-icon">✓</div><div>On Call Emergency Response</div></div>
                 </div>
             </div>
             <div class="map-container">
@@ -978,7 +1007,7 @@
                 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
                 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
                 <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-                <p><a href="sitemap.html">Sitemap</a> | <a href="privacy-policy.html">Privacy Policy</a></p>
+                <p><a href="sitemap.html">Sitemap</a> | <a href="privacy-policy.html">Privacy Policy</a> | <a href="referrals.html">Referral Program</a></p>
             </div>
             <div class="footer-links">
                 <h3>Our Services</h3>

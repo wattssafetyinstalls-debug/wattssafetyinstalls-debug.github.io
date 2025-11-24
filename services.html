@@ -59,150 +59,105 @@
     
     <!-- Structured Data / Schema Markup -->
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "HomeAndConstructionBusiness",
+      "@id": "https://wattssafetyinstalls.com/#organization",
+      "name": "Watts Safety Installs",
+      "url": "https://wattssafetyinstalls.com",
+      "telephone": "+14054106402",
+      "email": "wattssafetyinstalls@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "500 Block Omaha Ave",
+        "addressLocality": "Norfolk",
+        "addressRegion": "NE",
+        "postalCode": "68701",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.032,
+        "longitude": -97.418
+      },
+      "openingHours": "Mo-Fr 08:30-18:00",
+      "priceRange": "$$",
+      "areaServed": "Nebraska",
+      "description": "ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services in Norfolk NE.",
+      "knowsAbout": [
+        "Accessibility Modifications", 
+        "ADA Compliance", 
+        "Home Safety", 
+        "Snow Removal", 
+        "Lawn Care", 
+        "TV Mounting", 
+        "Audio Visual Installation"
+      ],
+      "makesOffer": [
         {
-          "@type": "WebPage",
-          "@id": "https://wattssafetyinstalls.com/services.html#webpage",
-          "url": "https://wattssafetyinstalls.com/services.html",
-          "name": "Professional Contractor Services Near Me | Watts Safety Installs | Norfolk NE",
-          "description": "Professional contractor services near me: ADA accessibility, home remodeling, concrete work, cabinet installation, snow removal & lawn care in Norfolk NE.",
-          "isPartOf": {
-            "@id": "https://wattssafetyinstalls.com/#website"
-          },
-          "about": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Accessibility & Safety Solutions"
           }
         },
         {
-          "@type": "Service",
-          "name": "Accessibility & Safety Solutions",
-          "description": "ADA-compliant showers, commercial-grade grab bars, non-slip flooring, custom accessibility ramps, and senior safety modifications.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska",
-          "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Accessibility Services",
-            "itemListElement": [
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "ADA-Compliant Showers"
-                }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Grab Bar Installation"
-                }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Wheelchair Ramp Installation"
-                }
-              }
-            ]
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Remodeling"
           }
         },
         {
-          "@type": "Service",
-          "name": "Home Remodeling & Improvements",
-          "description": "Kitchen and bathroom renovations, deck construction, siding replacement, complete home remodeling, and basement finishing.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
-        },
-        {
-          "@type": "Service",
-          "name": "Property Maintenance & Snow Removal",
-          "description": "Routine property maintenance, emergency repairs, snow removal, de-icing, and seasonal property preparation.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
-        },
-        {
-          "@type": "Service",
-          "name": "Lawn & Landscape Care",
-          "description": "Regular lawn maintenance, fertilization, weed control, landscape design, installation, and seasonal clean-up services.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Property Maintenance"
+          }
         },
         {
           "@type": "Offer",
-          "name": "15% OFF First 3 Snow Visits 2025",
-          "description": "Get 15% off your first three snow removal visits for the 2025 season.",
           "itemOffered": {
             "@type": "Service",
-            "name": "Snow Removal & Salting"
-          },
-          "price": "15",
-          "priceCurrency": "%",
-          "validThrough": "2025-12-31",
-          "areaServed": "Nebraska"
+            "name": "Lawn & Landscape Care"
+          }
         },
         {
           "@type": "Offer",
-          "name": "LAWN2026 – 20% OFF Full Season",
-          "description": "Receive 20% off full season lawn care services with promo code LAWN2026.",
           "itemOffered": {
             "@type": "Service",
-            "name": "Lawn Care & Tree Trimming"
-          },
-          "price": "20",
-          "priceCurrency": "%",
-          "validThrough": "2026-12-31",
-          "areaServed": "Nebraska"
+            "name": "TV Mounting Services"
+          }
         },
         {
-          "@type": "Service",
-          "name": "Concrete Installation & Repair",
-          "description": "Professional concrete pouring, finishing, repair, and restoration services for driveways, walkways, and patios.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
-        },
-        {
-          "@type": "Service",
-          "name": "Cabinet Installation & Refacing",
-          "description": "Custom cabinet installation, refacing, and remodeling for kitchens and bathrooms.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
-        },
-        {
-          "@type": "Service",
-          "name": "Floor Refinishing & Installation",
-          "description": "Professional floor sanding, refinishing, and installation services for hardwood, laminate, and tile floors.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
-        },
-        {
-          "@type": "Service",
-          "name": "Onyx Countertop Installation",
-          "description": "Professional installation of beautiful and durable Onyx countertops and surfaces.",
-          "provider": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "areaServed": "Nebraska"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Audio Visual Installation"
+          }
         }
-      ]
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "1"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://wattssafetyinstalls.com/#website",
+      "url": "https://wattssafetyinstalls.com",
+      "name": "Watts Safety Installs",
+      "description": "ATP Approved Contractor for ADA ramps, grab bars, wheelchair access, TV mounting & audio visual services in Norfolk NE",
+      "publisher": {
+        "@id": "https://wattssafetyinstalls.com/#organization"
+      }
     }
-    </script>
+  ]
+}
+</script>
    
     <style>
         :root {

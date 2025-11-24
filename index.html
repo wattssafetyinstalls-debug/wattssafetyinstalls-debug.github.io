@@ -59,82 +59,105 @@
     
     <!-- Structured Data / Schema Markup -->
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "HomeAndConstructionBusiness",
+      "@id": "https://wattssafetyinstalls.com/#organization",
+      "name": "Watts Safety Installs",
+      "url": "https://wattssafetyinstalls.com",
+      "telephone": "+14054106402",
+      "email": "wattssafetyinstalls@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "500 Block Omaha Ave",
+        "addressLocality": "Norfolk",
+        "addressRegion": "NE",
+        "postalCode": "68701",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.032,
+        "longitude": -97.418
+      },
+      "openingHours": "Mo-Fr 08:30-18:00",
+      "priceRange": "$$",
+      "areaServed": "Nebraska",
+      "description": "ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services in Norfolk NE.",
+      "knowsAbout": [
+        "Accessibility Modifications", 
+        "ADA Compliance", 
+        "Home Safety", 
+        "Snow Removal", 
+        "Lawn Care", 
+        "TV Mounting", 
+        "Audio Visual Installation"
+      ],
+      "makesOffer": [
         {
-          "@type": "HomeAndConstructionBusiness",
-          "@id": "https://wattssafetyinstalls.com/#organization",
-          "name": "Watts Safety Installs",
-          "url": "https://wattssafetyinstalls.com",
-          "telephone": "+14054106402",
-          "email": "wattssafetyinstalls@gmail.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "500 Block Omaha Ave",
-            "addressLocality": "Norfolk",
-            "addressRegion": "NE",
-            "postalCode": "68701",
-            "addressCountry": "US"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 42.032,
-            "longitude": -97.418
-          },
-          "openingHours": "Mo-Fr 08:30-18:00",
-          "priceRange": "$$",
-          "areaServed": {"@type": "State", "name": "Nebraska"},
-          "description": "ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE.",
-          "knowsAbout": ["Accessibility Modifications", "ADA Compliance", "Home Safety", "Snow Removal", "Lawn Care", "TV Mounting", "Audio Visual Installation"],
-          "serviceType": ["Accessibility & Safety Solutions", "Home Remodeling", "Property Maintenance", "Lawn & Landscape Care", "TV Mounting Services", "Audio Visual Installation"],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5.0",
-            "reviewCount": "1"
-          },
-          "sameAs": []
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Accessibility & Safety Solutions"
+          }
         },
         {
-          "@type": "WebSite",
-          "@id": "https://wattssafetyinstalls.com/#website",
-          "url": "https://wattssafetyinstalls.com",
-          "name": "Watts Safety Installs",
-          "description": "ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, TV mounting & audio visual services in Norfolk NE",
-          "publisher": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "potentialAction": [
-            {
-              "@type": "SearchAction",
-              "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://wattssafetyinstalls.com/?s={search_term_string}"
-              },
-              "query-input": "required name=search_term_string"
-            }
-          ]
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Remodeling"
+          }
         },
         {
-          "@type": "WebPage",
-          "@id": "https://wattssafetyinstalls.com/#webpage",
-          "url": "https://wattssafetyinstalls.com",
-          "name": "Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE",
-          "description": "ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE.",
-          "isPartOf": {
-            "@id": "https://wattssafetyinstalls.com/#website"
-          },
-          "about": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
-          },
-          "primaryImageOfPage": {
-            "@type": "ImageObject",
-            "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Property Maintenance"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Lawn & Landscape Care"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "TV Mounting Services"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Audio Visual Installation"
           }
         }
-      ]
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "1"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://wattssafetyinstalls.com/#website",
+      "url": "https://wattssafetyinstalls.com",
+      "name": "Watts Safety Installs",
+      "description": "ATP Approved Contractor for ADA ramps, grab bars, wheelchair access, TV mounting & audio visual services in Norfolk NE",
+      "publisher": {
+        "@id": "https://wattssafetyinstalls.com/#organization"
+      }
     }
-    </script>
+  ]
+}
+</script>
    
     <style>
         :root {

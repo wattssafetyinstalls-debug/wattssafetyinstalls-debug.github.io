@@ -59,65 +59,85 @@
     
     <!-- Structured Data / Schema Markup -->
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "HomeAndConstructionBusiness",
+      "@id": "https://wattssafetyinstalls.com/#organization",
+      "name": "Watts Safety Installs",
+      "url": "https://wattssafetyinstalls.com",
+      "telephone": "+14054106402",
+      "email": "wattssafetyinstalls@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "500 Block Omaha Ave",
+        "addressLocality": "Norfolk",
+        "addressRegion": "NE",
+        "postalCode": "68701",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.032,
+        "longitude": -97.418
+      },
+      "areaServed": "Nebraska",
+      "openingHours": "Mo-Fr 08:30-18:00",
+      "priceRange": "$$",
+      "description": "ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal & lawn care in Norfolk NE and surrounding areas.",
+      "knowsAbout": ["Accessibility Modifications", "ADA Compliance", "Home Safety", "Snow Removal", "Lawn Care"],
+      "makesOffer": [
         {
-          "@type": "HomeAndConstructionBusiness",
-          "@id": "https://wattssafetyinstalls.com/#organization",
-          "name": "Watts Safety Installs",
-          "url": "https://wattssafetyinstalls.com",
-          "telephone": "+14054106402",
-          "email": "wattssafetyinstalls@gmail.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "500 Block Omaha Ave",
-            "addressLocality": "Norfolk",
-            "addressRegion": "NE",
-            "postalCode": "68701",
-            "addressCountry": "US"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 42.032,
-            "longitude": -97.418
-          },
-          "openingHours": "Mo-Fr 08:30-18:00",
-          "priceRange": "$$",
-          "areaServed": {"@type": "State", "name": "Nebraska"},
-          "description": "ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE.",
-          "knowsAbout": ["Accessibility Modifications", "ADA Compliance", "Home Safety", "Snow Removal", "Lawn Care", "TV Mounting", "Audio Visual Installation"],
-          "serviceType": ["Accessibility & Safety Solutions", "Home Remodeling", "Property Maintenance", "Lawn & Landscape Care", "TV Mounting Services", "Audio Visual Installation"],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5.0",
-            "reviewCount": "1"
-          },
-          "sameAs": []
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://wattssafetyinstalls.com/contact.html#webpage",
-          "url": "https://wattssafetyinstalls.com/contact.html",
-          "name": "Contact Watts Safety Installs | Free Consultation | Norfolk NE",
-          "description": "Contact Watts Safety Installs for accessibility modifications, home remodeling, TV mounting & property maintenance in Norfolk NE. Free estimates & consultations.",
-          "isPartOf": {
-            "@id": "https://wattssafetyinstalls.com/#website"
-          },
-          "about": {
-            "@id": "https://wattssafetyinstalls.com/#organization"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Accessibility & Safety Solutions"
           }
         },
         {
-          "@type": "ContactPoint",
-          "telephone": "+1-405-410-6402",
-          "contactType": "customer service",
-          "areaServed": "US",
-          "availableLanguage": "English"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Remodeling"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Property Maintenance"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Lawn & Landscape Care"
+          }
         }
       ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://wattssafetyinstalls.com/service-area.html/#webpage",
+      "url": "https://wattssafetyinstalls.com/service-area.html",
+      "name": "Service Area | Watts Safety Installs | Norfolk NE & Surrounding Areas",
+      "description": "Watts Safety Installs serves Norfolk NE and surrounding areas. Check our service area for accessibility solutions, ADA ramps, grab bars, snow removal & lawn care.",
+      "isPartOf": {
+        "@id": "https://wattssafetyinstalls.com/#website"
+      },
+      "about": {
+        "@id": "https://wattssafetyinstalls.com/#organization"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+      }
     }
-    </script>
+  ]
+}
+</script>
    
     <style>
         :root {

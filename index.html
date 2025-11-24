@@ -149,6 +149,9 @@
             --warm-dark: #E07C10;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --teal-glow: 0 15px 40px rgba(0, 196, 180, 0.15);
+            --navy-glow: 0 15px 40px rgba(10, 29, 55, 0.12);
+            --gold-glow: 0 15px 40px rgba(255, 215, 0, 0.1);
         }
        
         * { 
@@ -168,7 +171,7 @@
             min-height: 100vh;
         }
        
-        /* Professional Navigation - IMPROVED MOBILE */
+        /* Professional Navigation */
         header { 
             background: var(--navy); 
             padding: 0; 
@@ -230,42 +233,48 @@
         .nav-links a:hover::after {
             width: 100%;
         }
+        .nav-links a.active {
+            color: var(--teal);
+        }
+        .nav-links a.active::after {
+            width: 100%;
+        }
         .phone-link { 
-    background: var(--teal); 
-    color: var(--white); 
-    padding: 10px 20px; 
-    border-radius: 50px; 
-    font-weight: 700; 
-    text-decoration: none; 
-    transition: all 0.3s; 
-    white-space: nowrap;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(0,196,180,0.3);
-}
-
-/* Mobile-specific phone button styles */
-@media (max-width: 768px) {
-    .phone-link {
-        padding: 8px 16px;
-        font-size: 0.9rem;
-        margin-left: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .phone-link {
-        padding: 6px 12px;
-        font-size: 0.85rem;
-        margin-left: 8px;
-    }
-}
+            background: var(--teal); 
+            color: var(--white); 
+            padding: 12px 25px; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            text-decoration: none; 
+            transition: all 0.3s; 
+            white-space: nowrap;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+        }
         .phone-link:hover { 
             transform: translateY(-2px); 
             box-shadow: 0 6px 20px rgba(0,196,180,0.4);
             background: #00b3a4;
         }
 
-        /* IMPROVED Mobile Menu Button - LARGER & BETTER SPACING */
+        /* MOBILE OPTIMIZATION - Phone Button */
+        @media (max-width: 768px) {
+            .phone-link {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                margin-left: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phone-link {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+                margin-left: 8px;
+            }
+        }
+
+        /* Improved Mobile Menu Button */
         .mobile-menu-btn {
             display: none;
             background: none;
@@ -420,13 +429,13 @@
             line-height: 1.6;
         }
 
-        /* WIDER SERVICE TILES FOR DESKTOP */
+        /* REFINED Service Cards - More Professional Design */
         .services-grid { 
             max-width: 1400px; 
             margin: 0 auto;
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
-            gap: 50px; 
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); 
+            gap: 40px; 
             position: relative;
             z-index: 1;
             justify-items: center;
@@ -438,53 +447,114 @@
             background: var(--white); 
             border-radius: 20px; 
             overflow: hidden; 
-            box-shadow: var(--shadow); 
-            transition: all 0.4s; 
+            box-shadow: var(--shadow), 0 5px 20px rgba(10, 29, 55, 0.08);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             display: flex;
             flex-direction: column;
             height: 100%;
             position: relative;
             width: 100%;
-            max-width: 500px;
-            border: 1px solid rgba(0,0,0,0.05);
+            max-width: 480px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            isolation: isolate;
         }
         
-        /* For larger desktop screens - make tiles even wider */
-        @media (min-width: 1200px) {
-            .services-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 60px;
-            }
-            
-            .service-card {
-                max-width: 550px;
-            }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--teal), var(--navy));
+            z-index: 2;
         }
         
-        .service-card:hover { 
-            transform: translateY(-10px); 
-            box-shadow: var(--shadow-hover); 
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, rgba(0, 196, 180, 0.1), rgba(10, 29, 55, 0.05));
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: var(--teal-glow), 0 25px 60px rgba(10, 29, 55, 0.15);
+        }
+        
+        .service-card:hover::after {
+            opacity: 1;
+            transform: translateY(5px);
+        }
+        
+        /* Individual Card Color Variations */
+        .service-card:nth-child(1):hover { /* Accessibility & Safety */
+            box-shadow: var(--teal-glow), 0 25px 60px rgba(0, 196, 180, 0.2);
+        }
+        
+        .service-card:nth-child(2):hover { /* Home Remodeling */
+            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
+        }
+        
+        .service-card:nth-child(3):hover { /* TV Mounting */
+            box-shadow: 0 15px 40px rgba(100, 116, 139, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
+        }
+        
+        .service-card:nth-child(4):hover { /* Property Maintenance */
+            box-shadow: var(--gold-glow), 0 25px 60px rgba(10, 29, 55, 0.15);
+        }
+        
+        .service-card:nth-child(5):hover { /* Lawn & Landscape */
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
         }
         
         .service-image { 
             width: 100%; 
-            height: 260px; 
+            height: 240px; 
             object-fit: cover; 
+            transition: transform 0.5s ease;
+        }
+        
+        .service-card:hover .service-image {
+            transform: scale(1.05);
         }
         
         .service-content { 
-            padding: 35px; 
+            padding: 35px 30px 30px; 
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            position: relative;
+            background: linear-gradient(to bottom, var(--white) 0%, #fafafa 100%);
         }
         
         .service-title { 
-            font-size: 1.8rem; 
+            font-size: 1.7rem; 
             color: var(--navy); 
-            margin-bottom: 20px; 
+            margin-bottom: 18px; 
             font-family: 'Playfair Display', serif;
             text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .service-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--teal), var(--warm-accent));
+            border-radius: 2px;
         }
         
         .service-description { 
@@ -493,35 +563,58 @@
             flex-grow: 1;
             line-height: 1.7;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            padding: 0 5px;
         }
         
         .service-features {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            background: rgba(248, 250, 252, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0, 196, 180, 0.1);
         }
         
         .service-feature {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
-            font-size: 1.05rem;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 196, 180, 0.05);
+        }
+        
+        .service-feature:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
         }
         
         .service-feature i {
             color: var(--teal);
-            margin-right: 15px;
-            font-size: 1.1rem;
+            margin-right: 12px;
+            font-size: 1.05rem;
+            background: rgba(0, 196, 180, 0.1);
+            padding: 6px;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
         
         .service-badge { 
-            background: var(--gold); 
+            background: linear-gradient(135deg, var(--gold), var(--warm-accent));
             color: var(--navy); 
-            padding: 8px 18px; 
+            padding: 8px 16px; 
             border-radius: 20px; 
-            font-size: 0.9rem; 
+            font-size: 0.85rem; 
             font-weight: 700; 
             display: inline-block; 
             margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
         
         .service-cta {
@@ -529,22 +622,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 196, 180, 0.1);
         }
         
         .service-cta a {
-            background: var(--teal);
+            background: linear-gradient(135deg, var(--teal), #00a396);
             color: white;
             padding: 14px 28px;
-            border-radius: 10px;
+            border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
-            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-size: 1.05rem;
+            box-shadow: 0 5px 20px rgba(0, 196, 180, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .service-cta a:hover {
-            background: var(--navy);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, var(--navy), #09182e);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(10, 29, 55, 0.4);
         }
         
         /* About Section */
@@ -699,13 +797,13 @@
             font-size: 1rem;
         }
 
-        /* IMPROVED Responsive Design - BETTER MOBILE NAVIGATION */
+        /* Responsive Design */
         @media (max-width: 1024px) { 
             .hero h1 { font-size: 3.5rem; } 
             .about-container { grid-template-columns: 1fr; gap: 50px; } 
             .services-grid { 
-                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-                gap: 40px;
+                grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+                gap: 35px;
             }
             .footer-container { grid-template-columns: 1fr 1fr; gap: 40px; }
             .nav-links { gap: 25px; }
@@ -731,6 +829,16 @@
             .nav-links.active {
                 display: flex;
             }
+            
+            /* Improved mobile navigation buttons */
+            .nav-links a {
+                padding: 15px 0; /* Larger touch targets */
+                font-size: 1.2rem; /* Larger font for mobile */
+                text-align: center;
+                width: 100%;
+                display: block;
+            }
+            
             .mobile-menu-btn {
                 display: block;
             }
@@ -749,7 +857,7 @@
             }
             .services-grid { 
                 grid-template-columns: 1fr; 
-                gap: 40px;
+                gap: 35px;
             }
             .service-card {
                 max-width: 100%;
@@ -767,24 +875,22 @@
             .trust-item { 
                 flex: 0 0 45%; 
             }
-            /* Improved mobile navigation buttons */
-            .nav-links a {
-                padding: 15px 0; /* Larger touch targets */
-                font-size: 1.2rem; /* Larger font for mobile */
-                text-align: center;
-                width: 100%;
-                display: block;
-            }
-            .phone-link {
-    font-size: 0.9rem;
-    padding: 8px 16px;
-    margin-top: 5px;
-    width: auto;
-    display: inline-block;
-}
         }
         
         @media (max-width: 480px) { 
+            .nav-links {
+                padding: 25px 15px;
+                gap: 15px;
+            }
+            .nav-links a {
+                font-size: 1.1rem;
+                padding: 12px 0;
+            }
+            .mobile-menu-btn {
+                font-size: 1.6rem;
+                padding: 10px;
+            }
+            
             .hero h1 { 
                 font-size: 2.3rem; 
             } 
@@ -804,24 +910,7 @@
                 padding: 18px 40px;
                 font-size: 1.2rem;
             }
-            /* Further improved mobile navigation */
-            .nav-links {
-                padding: 25px 15px;
-                gap: 15px;
-            }
-            .nav-links a {
-                font-size: 1.1rem;
-                padding: 12px 0;
-            }
-            .mobile-menu-btn {
-                font-size: 1.6rem;
-                padding: 10px;
-            }
-        .phone-link {
-    font-size: 0.85rem;
-    padding: 6px 12px;
-}
-}
+        }
     </style>
 </head>
 <body>
@@ -862,13 +951,13 @@
             </button>
             
             <nav class="nav-links" id="navLinks">
-    <a href="index.html" class="active">Home</a>
-    <a href="services.html">Services</a>
-    <a href="service-area.html">Service Area</a>
-    <a href="about.html">About</a>
-    <a href="referrals.html">Referrals</a>
-    <a href="contact.html">Contact</a>
-</nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="services.html">Services</a>
+                <a href="service-area.html">Service Area</a>
+                <a href="about.html">About</a>
+                <a href="referrals.html">Referrals</a>
+                <a href="contact.html">Contact</a>
+            </nav>
             
             <a href="tel:+14054106402" class="phone-link">
                 <i class="fas fa-phone"></i> (405) 410-6402
@@ -948,7 +1037,7 @@
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Soundbar & speaker setup</div>
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Cable management & concealment</div>
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Smart home audio integration</div>
-			<div class="service-feature"><i class="fas fa-check-circle"></i> Projector Mounting & Screen Installations</div>
+                        <div class="service-feature"><i class="fas fa-check-circle"></i> Projector Mounting & Screen Installations</div>
                     </div>
                     <div class="service-cta">
                         <a href="contact.html">Get Free Quote</a>

@@ -231,17 +231,34 @@
             width: 100%;
         }
         .phone-link { 
-            background: var(--teal); 
-            color: var(--white); 
-            padding: 12px 25px; 
-            border-radius: 50px; 
-            font-weight: 700; 
-            text-decoration: none; 
-            transition: all 0.3s; 
-            white-space: nowrap;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
-        }
+    background: var(--teal); 
+    color: var(--white); 
+    padding: 10px 20px; 
+    border-radius: 50px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    transition: all 0.3s; 
+    white-space: nowrap;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+}
+
+/* Mobile-specific phone button styles */
+@media (max-width: 768px) {
+    .phone-link {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        margin-left: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .phone-link {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        margin-left: 8px;
+    }
+}
         .phone-link:hover { 
             transform: translateY(-2px); 
             box-shadow: 0 6px 20px rgba(0,196,180,0.4);
@@ -759,10 +776,12 @@
                 display: block;
             }
             .phone-link {
-                font-size: 1.1rem;
-                padding: 15px 25px; /* Larger button for mobile */
-                margin-top: 10px;
-            }
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    margin-top: 5px;
+    width: auto;
+    display: inline-block;
+}
         }
         
         @media (max-width: 480px) { 
@@ -798,7 +817,11 @@
                 font-size: 1.6rem;
                 padding: 10px;
             }
-        }
+        .phone-link {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+}
+}
     </style>
 </head>
 <body>

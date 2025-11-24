@@ -888,7 +888,7 @@
     <header>
         <div class="header-container">
             <div class="logo-container">
-                <a href="index.html" class="logo">WATTS</a>
+                <a href="index" class="logo">WATTS</a>
             </div>
             
             <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -896,12 +896,12 @@
             </button>
             
             <nav class="nav-links" id="navLinks">
-    <a href="index.html">Home</a>
-    <a href="services.html" class="active">Services</a>
-    <a href="service-area.html">Service Area</a>
-    <a href="about.html">About</a>
-    <a href="referrals.html">Referrals</a>
-    <a href="contact.html">Contact</a>
+    <a href="index">Home</a>
+    <a href="services" class="active">Services</a>
+    <a href="service-area">Service Area</a>
+    <a href="about">About</a>
+    <a href="referrals">Referrals</a>
+    <a href="contact">Contact</a>
 </nav>
             
             <a href="tel:+14054106402" class="phone-link">
@@ -914,7 +914,7 @@
     <nav class="breadcrumb">
         <div class="breadcrumb-container">
             <ol class="breadcrumb-list">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="index">Home</a></li>
                 <li class="breadcrumb-item active">Services</li>
             </ol>
         </div>
@@ -950,7 +950,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> Bathroom accessibility remodeling</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Get Free Assessment</a>
+                            <a href="contact">Get Free Assessment</a>
                         </div>
                     </div>
                 </div>
@@ -969,7 +969,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> Basement finishing & remodeling</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Start Your Project</a>
+                            <a href="contact">Start Your Project</a>
                         </div>
                     </div>
                 </div>
@@ -989,7 +989,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> Concrete repair & restoration</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Get Floor Quote</a>
+                            <a href="contact">Get Floor Quote</a>
                         </div>
                     </div>
                 </div>
@@ -1009,7 +1009,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> Countertop repair & replacement</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Design Consultation</a>
+                            <a href="contact">Design Consultation</a>
                         </div>
                     </div>
                 </div>
@@ -1029,7 +1029,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> On Call emergency response</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Schedule Service</a>
+                            <a href="contact">Schedule Service</a>
                             <span class="service-badge">15% OFF Snow Removal</span>
                         </div>
                     </div>
@@ -1049,7 +1049,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> Garden bed maintenance</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Get Lawn Quote</a>
+                            <a href="contact">Get Lawn Quote</a>
                             <span class="service-badge">LAWN2026 - 20% OFF</span>
                         </div>
                     </div>
@@ -1071,7 +1071,7 @@
                             <div class="service-feature"><i class="fas fa-check-circle"></i> Painting & finishing services</div>
                         </div>
                         <div class="service-cta">
-                            <a href="contact.html">Discuss Your Project</a>
+                            <a href="contact">Discuss Your Project</a>
                         </div>
                     </div>
                 </div>
@@ -1088,7 +1088,7 @@
                         <p>Keep your property safe and accessible all winter long with our professional snow removal services.</p>
                         <div class="promo-code">15% OFF</div>
                         <p>First 3 Snow Visits 2025</p>
-                        <a href="contact.html" class="cta-button" style="padding: 12px 25px; font-size: 1rem;">Claim Offer</a>
+                        <a href="contact" class="cta-button" style="padding: 12px 25px; font-size: 1rem;">Claim Offer</a>
                     </div>
                     
                     <div class="promo-card">
@@ -1096,7 +1096,7 @@
                         <p>Beautiful, healthy lawn all season long with our comprehensive lawn care program.</p>
                         <div class="promo-code">LAWN2026</div>
                         <p>20% OFF Full Season</p>
-                        <a href="contact.html" class="cta-button" style="padding: 12px 25px; font-size: 1rem;">Claim Offer</a>
+                        <a href="contact" class="cta-button" style="padding: 12px 25px; font-size: 1rem;">Claim Offer</a>
                     </div>
                     
                     <div class="promo-card">
@@ -1104,7 +1104,7 @@
                         <p>Free home safety assessment to identify potential hazards and recommend solutions.</p>
                         <div class="promo-code">FREE</div>
                         <p>Safety Assessment</p>
-                        <a href="contact.html" class="cta-button" style="padding: 12px 25px; font-size: 1rem;">Schedule Free Assessment</a>
+                        <a href="contact" class="cta-button" style="padding: 12px 25px; font-size: 1rem;">Schedule Free Assessment</a>
                     </div>
                 </div>
             </div>
@@ -1124,7 +1124,7 @@
                 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
                 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services near you.</p>
                 <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-                <p><a href="sitemap.html">Sitemap</a> | <a href="privacy-policy.html">Privacy Policy</a></p>
+                <p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a></p>
             </div>
             <div class="footer-links">
                 <h3>Our Services</h3>

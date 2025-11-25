@@ -163,22 +163,21 @@
    
     <style>
         :root {
-    --teal: #00C4B4;
-    --navy: #0A1D37;
-    --light: #F8FAFC;
-    --gray: #64748B;
-    --gold: #FFD700;
-    --white: #FFFFFF;
-    --warm-light: #FEF7ED;
-    --warm-accent: #F59E0B;
-    --warm-dark: #E07C10;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.15);
-    /* ADD THESE NEW ONES: */
-    --teal-glow: 0 15px 40px rgba(0, 196, 180, 0.15);
-    --navy-glow: 0 15px 40px rgba(10, 29, 55, 0.12);
-    --gold-glow: 0 15px 40px rgba(255, 215, 0, 0.1);
-}
+            --teal: #00C4B4;
+            --navy: #0A1D37;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gold: #FFD700;
+            --white: #FFFFFF;
+            --warm-light: #FEF7ED;
+            --warm-accent: #F59E0B;
+            --warm-dark: #E07C10;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --teal-glow: 0 15px 40px rgba(0, 196, 180, 0.15);
+            --navy-glow: 0 15px 40px rgba(10, 29, 55, 0.12);
+            --gold-glow: 0 15px 40px rgba(255, 215, 0, 0.1);
+        }
        
         * { 
             margin: 0; 
@@ -358,22 +357,22 @@
         }
        
         /* Services Hero - MATCHING INDEX.HML */
-.services-hero {
-    position: relative;
-    height: 60vh;
-    min-height: 500px;
-    background: 
-        linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
-        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
-    color: var(--white);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 0 20px;
-    width: 100%;
-}
+        .services-hero {
+            position: relative;
+            height: 60vh;
+            min-height: 500px;
+            background: 
+                linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
+                url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            width: 100%;
+        }
         
         .services-hero h1 {
             font-family: 'Playfair Display', serif;
@@ -400,237 +399,250 @@
         }
         
         /* Enhanced Services Grid with Professional Spacing */
-.services-section {
-    padding: 100px 20px;
-    position: relative;
-}
-
-.services-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23f59e0b' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-    opacity: 0.6;
-}
-
-.services-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 70px;
-    margin-bottom: 80px;
-    position: relative;
-}
-
-/* Enhanced Service Cards with Colored Shadows & Professional Buffers */
-.service-card {
-    background: var(--white);
-    border-radius: 25px;
-    overflow: hidden;
-    box-shadow: var(--shadow), 0 5px 20px rgba(10, 29, 55, 0.08);
-    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    margin: 15px;
-    position: relative;
-    isolation: isolate;
-}
-
-.service-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(135deg, var(--teal), var(--navy));
-    z-index: 2;
-}
-
-.service-card::after {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: -10px;
-    bottom: -10px;
-    background: linear-gradient(135deg, rgba(0, 196, 180, 0.1), rgba(10, 29, 55, 0.05));
-    border-radius: 30px;
-    z-index: -1;
-    opacity: 0;
-    transition: all 0.4s ease;
-}
-
-.service-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: var(--teal-glow), 0 25px 60px rgba(10, 29, 55, 0.15);
-}
-
-.service-card:hover::after {
-    opacity: 1;
-    transform: translateY(5px);
-}
-
-/* Individual Card Color Variations */
-.service-card:nth-child(1):hover { /* Accessibility & Safety */
-    box-shadow: var(--teal-glow), 0 25px 60px rgba(0, 196, 180, 0.2);
-}
-
-.service-card:nth-child(2):hover { /* Home Remodeling */
-    box-shadow: 0 15px 40px rgba(245, 158, 11, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
-}
-
-.service-card:nth-child(3):hover { /* Concrete & Flooring */
-    box-shadow: 0 15px 40px rgba(100, 116, 139, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
-}
-
-.service-card:nth-child(4):hover { /* Cabinets & Countertops */
-    box-shadow: var(--gold-glow), 0 25px 60px rgba(10, 29, 55, 0.15);
-}
-
-.service-card:nth-child(5):hover { /* Property Maintenance */
-    box-shadow: 0 15px 40px rgba(224, 124, 16, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
-}
-
-.service-card:nth-child(6):hover { /* Lawn & Landscape */
-    box-shadow: 0 15px 40px rgba(34, 197, 94, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
-}
-
-.service-card:nth-child(7):hover { /* Additional Services */
-    box-shadow: var(--navy-glow), 0 25px 60px rgba(0, 196, 180, 0.15);
-}
-
-.service-image {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.service-card:hover .service-image {
-    transform: scale(1.05);
-}
-
-.service-content {
-    padding: 40px 35px 35px;
-    position: relative;
-    background: linear-gradient(to bottom, var(--white) 0%, #fafafa 100%);
-}
-
-.service-title {
-    font-size: 1.8rem;
-    color: var(--navy);
-    margin-bottom: 20px;
-    font-family: 'Playfair Display', serif;
-    position: relative;
-    padding-bottom: 15px;
-}
-
-.service-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 50px;
-    height: 3px;
-    background: linear-gradient(135deg, var(--teal), var(--warm-accent));
-    border-radius: 2px;
-}
-
-.service-description {
-    color: var(--gray);
-    margin-bottom: 25px;
-    line-height: 1.7;
-    font-size: 1.1rem;
-    padding: 0 5px;
-}
-
-.service-features {
-    margin-bottom: 30px;
-    background: rgba(248, 250, 252, 0.7);
-    border-radius: 15px;
-    padding: 25px;
-    border: 1px solid rgba(0, 196, 180, 0.1);
-}
-
-.service-feature {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    font-size: 1.05rem;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(0, 196, 180, 0.05);
-}
-
-.service-feature:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.service-feature i {
-    color: var(--teal);
-    margin-right: 15px;
-    font-size: 1.1rem;
-    background: rgba(0, 196, 180, 0.1);
-    padding: 8px;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.service-badge {
-    background: linear-gradient(135deg, var(--gold), var(--warm-accent));
-    color: var(--navy);
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    display: inline-block;
-    margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.service-cta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0, 196, 180, 0.1);
-}
-
-.service-cta a {
-    background: linear-gradient(135deg, var(--teal), #00a396);
-    color: white;
-    padding: 16px 32px;
-    border-radius: 15px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    font-size: 1.1rem;
-    box-shadow: 0 5px 20px rgba(0, 196, 180, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.service-cta a:hover {
-    background: linear-gradient(135deg, var(--navy), #09182e);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(10, 29, 55, 0.4);
-}
+        .services-section {
+            padding: 100px 20px;
+            background: var(--warm-light);
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         
+        .services-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23f59e0b' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.7;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: var(--navy);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 80px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.6;
+        }
+
+        .services-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+            position: relative;
+            justify-content: center;
+            align-items: start;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* Enhanced Service Cards with Hamburger Dropdown */
+        .service-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--teal-glow);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--teal-glow), var(--navy-glow);
+            background: linear-gradient(135deg, var(--teal) 0%, var(--navy) 100%);
+            color: var(--white);
+        }
+
+        .service-card:hover .service-title, .service-card:hover .service-description {
+            color: var(--white);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover .service-image {
+            transform: scale(1.05);
+        }
+
+        .service-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            color: var(--navy);
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .service-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(135deg, var(--teal), var(--warm-accent));
+            border-radius: 2px;
+        }
+
+        .service-description {
+            color: var(--gray);
+            margin-bottom: 15px;
+            line-height: 1.6;
+            font-size: 1rem;
+            overflow: visible;
+            text-overflow: initial;
+            white-space: normal;
+            hyphens: auto;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--teal);
+            align-self: center;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .hamburger:hover {
+            color: var(--navy);
+        }
+
+        .service-dropdown {
+            display: none;
+            background: var(--white);
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow-hover);
+            padding: 15px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(-10px);
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .service-dropdown.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 500px;
+        }
+
+        .service-dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .service-dropdown li {
+            margin-bottom: 8px;
+        }
+
+        .service-dropdown a {
+            color: var(--navy);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .service-dropdown a:hover {
+            color: var(--teal);
+        }
+
+        .service-dropdown i {
+            margin-right: 10px;
+            color: var(--teal);
+        }
+
+        .service-badge {
+            background: linear-gradient(135deg, var(--teal), #00a396);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 8px;
+            box-shadow: 0 3px 10px rgba(0, 196, 180, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .service-cta {
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 196, 180, 0.1);
+        }
+
+        .service-cta a {
+            background: linear-gradient(135deg, var(--teal), #00a396);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0, 196, 180, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .service-cta a:hover {
+            background: linear-gradient(135deg, var(--navy), #09182e);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(10, 29, 55, 0.3);
+        }
+
         /* Promo Section */
         .promo-section {
             background: linear-gradient(135deg, var(--navy), #1e3a5f);
@@ -639,6 +651,8 @@
             text-align: center;
             border-radius: 20px;
             margin: 50px 0;
+            max-width: 1200px;
+            width: 100%;
         }
         
         .promo-section h2 {
@@ -807,7 +821,7 @@
         @media (max-width: 1024px) {
             .services-hero h1 { font-size: 3.2rem; }
             .section-title { font-size: 3rem; }
-            .services-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 50px; }
+            .services-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
             .footer-container { grid-template-columns: 1fr 1fr; gap: 40px; }
             .nav-links { gap: 25px; }
         }
@@ -822,16 +836,15 @@
                 width: 100%;
                 background: var(--navy);
                 flex-direction: column;
-                padding: 30px 20px; /* Increased padding */
-                gap: 20px; /* Increased gap */
+                padding: 30px 20px;
+                gap: 20px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
             .nav-links.active { display: flex; }
             
-            /* Improved mobile navigation buttons */
             .nav-links a {
-                padding: 15px 0; /* Larger touch targets */
-                font-size: 1.2rem; /* Larger font for mobile */
+                padding: 15px 0;
+                font-size: 1.2rem;
                 text-align: center;
                 width: 100%;
                 display: block;
@@ -842,7 +855,9 @@
             .services-hero { padding: 80px 20px; }
             .services-hero h1 { font-size: 2.5rem; }
             .section-title { font-size: 2.5rem; }
-            .services-grid { grid-template-columns: 1fr; gap: 40px; }
+            .services-grid { grid-template-columns: 1fr; gap: 30px; }
+            .service-card { max-width: 90%; margin: 0 auto; }
+            .service-dropdown { position: relative; top: 0; }
             .footer-container { grid-template-columns: 1fr; gap: 40px; }
             .promo-cards { grid-template-columns: 1fr; }
         }
@@ -864,7 +879,7 @@
             .services-hero h1 { font-size: 2.2rem; }
             .section-title { font-size: 2.2rem; }
             .services-grid { grid-template-columns: 1fr; }
-            .service-card { margin: 10px; }
+            .service-card { margin: 0 10px; }
             .cta-button { padding: 18px 40px; font-size: 1.2rem; }
             .services-hero p { font-size: 1.2rem; }
         }
@@ -898,13 +913,13 @@
             </button>
             
             <nav class="nav-links" id="navLinks">
-    <a href="index">Home</a>
-    <a href="services" class="active">Services</a>
-    <a href="service-area">Service Area</a>
-    <a href="about">About</a>
-    <a href="referrals">Referrals</a>
-    <a href="contact">Contact</a>
-</nav>
+                <a href="index">Home</a>
+                <a href="services" class="active">Services</a>
+                <a href="service-area">Service Area</a>
+                <a href="about">About</a>
+                <a href="referrals">Referrals</a>
+                <a href="contact">Contact</a>
+            </nav>
             
             <a href="tel:+14054106402" class="phone-link">
                 <i class="fas fa-phone"></i> (405) 410-6402
@@ -923,12 +938,12 @@
     </nav>
 
     <!-- Services Hero -->
-<section class="services-hero">
-    <h1>Professional Contractor Services</h1>
-    <p>Comprehensive solutions for your home safety, accessibility, and maintenance needs in Norfolk NE and surrounding areas</p>
-    <div class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25</div>
-    <a href="tel:+14054106402" class="cta-button">Call Now for Free Estimate</a>
-</section>
+    <section class="services-hero">
+        <h1>Professional Contractor Services</h1>
+        <p>Comprehensive solutions for your home safety, accessibility, and maintenance needs in Norfolk NE and surrounding areas</p>
+        <div class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25</div>
+        <a href="tel:+14054106402" class="cta-button">Call Now for Free Estimate</a>
+    </section>
 
     <!-- Main Services Section -->
     <section class="services-section">
@@ -943,13 +958,16 @@
                     <div class="service-content">
                         <h3 class="service-title">Accessibility & Safety Solutions</h3>
                         <p class="service-description">Create safe, accessible environments with our professional ADA-compliant solutions. We specialize in modifications for seniors and individuals with mobility challenges.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> ADA-compliant showers & zero-step entries</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Commercial-grade grab bars (500+ lbs rating)</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Custom wheelchair ramps & accessibility solutions</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Non-slip flooring installations</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Senior safety modifications & fall prevention</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Bathroom accessibility remodeling</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/ada-compliant-showers.html"><i class="fas fa-check-circle"></i> ADA-compliant showers & zero-step entries</a></li>
+                                <li><a href="/service-pages/grab-bars.html"><i class="fas fa-check-circle"></i> Commercial-grade grab bars (500+ lbs rating)</a></li>
+                                <li><a href="/service-pages/custom-ramps.html"><i class="fas fa-check-circle"></i> Custom wheelchair ramps & accessibility solutions</a></li>
+                                <li><a href="/service-pages/non-slip-flooring.html"><i class="fas fa-check-circle"></i> Non-slip flooring installations</a></li>
+                                <li><a href="/service-pages/senior-safety.html"><i class="fas fa-check-circle"></i> Senior safety modifications & fall prevention</a></li>
+                                <li><a href="/service-pages/bathroom-accessibility.html"><i class="fas fa-check-circle"></i> Bathroom accessibility remodeling</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Get Free Assessment</a>
@@ -963,12 +981,15 @@
                     <div class="service-content">
                         <h3 class="service-title">Home Remodeling & Improvements</h3>
                         <p class="service-description">Transform your living space with our comprehensive remodeling services. From concept to completion, we deliver exceptional craftsmanship.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Complete home remodeling projects</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Deck construction & repair</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Siding replacement & installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Basement finishing & remodeling</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/kitchen-renovations.html"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</a></li>
+                                <li><a href="/service-pages/home-remodeling.html"><i class="fas fa-check-circle"></i> Complete home remodeling projects</a></li>
+                                <li><a href="/service-pages/deck-construction.html"><i class="fas fa-check-circle"></i> Deck construction & repair</a></li>
+                                <li><a href="/service-pages/siding-replacement.html"><i class="fas fa-check-circle"></i> Siding replacement & installation</a></li>
+                                <li><a href="/service-pages/basement-finishing.html"><i class="fas fa-check-circle"></i> Basement finishing & remodeling</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Start Your Project</a>
@@ -982,13 +1003,16 @@
                     <div class="service-content">
                         <h3 class="service-title">Concrete & Floor Services</h3>
                         <p class="service-description">Professional concrete work and floor services for durable, beautiful surfaces that stand the test of time.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Concrete pouring & finishing</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Driveway & sidewalk installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Patio & outdoor living spaces</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Floor sanding & refinishing</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Hardwood floor installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Concrete repair & restoration</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/concrete-pouring.html"><i class="fas fa-check-circle"></i> Concrete pouring & finishing</a></li>
+                                <li><a href="/service-pages/driveway-installation.html"><i class="fas fa-check-circle"></i> Driveway & sidewalk installation</a></li>
+                                <li><a href="/service-pages/patio-construction.html"><i class="fas fa-check-circle"></i> Patio & outdoor living spaces</a></li>
+                                <li><a href="/service-pages/floor-refinishing.html"><i class="fas fa-check-circle"></i> Floor sanding & refinishing</a></li>
+                                <li><a href="/service-pages/hardwood-flooring.html"><i class="fas fa-check-circle"></i> Hardwood floor installation</a></li>
+                                <li><a href="/service-pages/concrete-repair.html"><i class="fas fa-check-circle"></i> Concrete repair & restoration</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Get Floor Quote</a>
@@ -996,19 +1020,22 @@
                     </div>
                 </div>
 
-                <!-- Cabinets & Countertops - FIXED IMAGE -->
+                <!-- Cabinets & Countertops -->
                 <div class="service-card" id="cabinets-countertops">
                     <img loading="lazy" src="https://images.unsplash.com/photo-1631049035343-da37e3e38630?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8a2l0Y2hlbiUyMGNhYmluZXRzJTIwYW5kJTIwY291bnRlcnRvcHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Cabinet Installation Norfolk NE - Custom Kitchen & Bath Cabinets with Countertops" class="service-image">
                     <div class="service-content">
                         <h3 class="service-title">Cabinets & Countertops</h3>
                         <p class="service-description">Elevate your space with custom cabinetry and beautiful countertop installations that combine functionality with style.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Custom cabinet installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Cabinet refacing & remodeling</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Onyx countertop installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Kitchen & bathroom cabinetry</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Custom built-in storage solutions</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Countertop repair & replacement</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/custom-cabinets.html"><i class="fas fa-check-circle"></i> Custom cabinet installation</a></li>
+                                <li><a href="/service-pages/cabinet-refacing.html"><i class="fas fa-check-circle"></i> Cabinet refacing & remodeling</a></li>
+                                <li><a href="/service-pages/onyx-countertops.html"><i class="fas fa-check-circle"></i> Onyx countertop installation</a></li>
+                                <li><a href="/service-pages/kitchen-cabinetry.html"><i class="fas fa-check-circle"></i> Kitchen & bathroom cabinetry</a></li>
+                                <li><a href="/service-pages/custom-storage.html"><i class="fas fa-check-circle"></i> Custom built-in storage solutions</a></li>
+                                <li><a href="/service-pages/countertop-repair.html"><i class="fas fa-check-circle"></i> Countertop repair & replacement</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Design Consultation</a>
@@ -1022,13 +1049,16 @@
                     <div class="service-content">
                         <h3 class="service-title">Property Maintenance</h3>
                         <p class="service-description">Comprehensive property maintenance services to keep your home or business in pristine condition year-round.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Snow removal & de-icing services</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Emergency repair services</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Seasonal property preparation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Tree trimming & removal</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Gutter cleaning & maintenance</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> On Call emergency response</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/snow-removal.html"><i class="fas fa-check-circle"></i> Snow removal & de-icing services</a></li>
+                                <li><a href="/service-pages/emergency-repairs.html"><i class="fas fa-check-circle"></i> Emergency repair services</a></li>
+                                <li><a href="/service-pages/seasonal-prep.html"><i class="fas fa-check-circle"></i> Seasonal property preparation</a></li>
+                                <li><a href="/service-pages/tree-trimming.html"><i class="fas fa-check-circle"></i> Tree trimming & removal</a></li>
+                                <li><a href="/service-pages/gutter-cleaning.html"><i class="fas fa-check-circle"></i> Gutter cleaning & maintenance</a></li>
+                                <li><a href="/service-pages/emergency-snow.html"><i class="fas fa-check-circle"></i> On Call emergency response</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Schedule Service</a>
@@ -1043,12 +1073,15 @@
                     <div class="service-content">
                         <h3 class="service-title">Lawn & Landscape Care</h3>
                         <p class="service-description">Transform your outdoor space with our professional lawn care and landscaping services for beautiful, healthy yards.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Regular lawn maintenance & mowing</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Fertilization & weed control programs</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Landscape design & installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Seasonal clean-up services</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Garden bed maintenance</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/lawn-maintenance.html"><i class="fas fa-check-circle"></i> Regular lawn maintenance & mowing</a></li>
+                                <li><a href="/service-pages/fertilization.html"><i class="fas fa-check-circle"></i> Fertilization & weed control programs</a></li>
+                                <li><a href="/service-pages/landscape-design.html"><i class="fas fa-check-circle"></i> Landscape design & installation</a></li>
+                                <li><a href="/service-pages/seasonal-cleanup.html"><i class="fas fa-check-circle"></i> Seasonal clean-up services</a></li>
+                                <li><a href="/service-pages/garden-maintenance.html"><i class="fas fa-check-circle"></i> Garden bed maintenance</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Get Lawn Quote</a>
@@ -1063,14 +1096,17 @@
                     <div class="service-content">
                         <h3 class="service-title">Additional Services</h3>
                         <p class="service-description">Complete home solutions from a trusted general contractor with over 10 years of experience.</p>
-                        <div class="service-features">
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Home audio installation & setup</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> TV mounting & home theater setup</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Audio visual equipment installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Window & door installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Fence installation & repair</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Drywall repair & installation</div>
-                            <div class="service-feature"><i class="fas fa-check-circle"></i> Painting & finishing services</div>
+                        <i class="fas fa-bars hamburger"></i>
+                        <div class="service-dropdown">
+                            <ul>
+                                <li><a href="/service-pages/home-audio.html"><i class="fas fa-check-circle"></i> Home audio installation & setup</a></li>
+                                <li><a href="/service-pages/tv-mounting-residential.html"><i class="fas fa-check-circle"></i> TV mounting & home theater setup</a></li>
+                                <li><a href="/service-pages/audio-visual.html"><i class="fas fa-check-circle"></i> Audio visual equipment installation</a></li>
+                                <li><a href="/service-pages/window-doors.html"><i class="fas fa-check-circle"></i> Window & door installation</a></li>
+                                <li><a href="/service-pages/fence-installation.html"><i class="fas fa-check-circle"></i> Fence installation & repair</a></li>
+                                <li><a href="/service-pages/drywall-repair.html"><i class="fas fa-check-circle"></i> Drywall repair & installation</a></li>
+                                <li><a href="/service-pages/painting-services.html"><i class="fas fa-check-circle"></i> Painting & finishing services</a></li>
+                            </ul>
                         </div>
                         <div class="service-cta">
                             <a href="contact">Discuss Your Project</a>
@@ -1170,6 +1206,23 @@
 
         // Current year for copyright
         document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Hamburger dropdown toggle
+        document.querySelectorAll('.hamburger').forEach(function(btn) {
+            btn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                this.nextElementSibling.classList.toggle('active');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            document.querySelectorAll('.service-dropdown.active').forEach(function(dropdown) {
+                if (!dropdown.parentElement.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        });
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

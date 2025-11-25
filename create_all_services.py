@@ -1,100 +1,36 @@
-# create_all_services.py
-import os
-
-# Create ALL service pages
 services = [
-    # TV & Audio Visual
-    "tv-mounting-service",
-    "home-theater-installation", 
-    "audio-visual-setup",
-    "projector-mounting",
-    
-    # Bathroom Services
-    "bathroom-remodeling",
-    "walk-in-shower-installation",
-    "bathroom-accessibility-modifications",
-    
-    # Kitchen Services
-    "kitchen-remodeling", 
-    "cabinet-installation",
-    "countertop-installation",
-    
-    # Accessibility Services
-    "ada-ramp-installation",
-    "wheelchair-ramp-construction",
-    "grab-bar-installation",
-    "stairlift-installation",
-    
-    # Maintenance Services
-    "snow-removal-service",
-    "lawn-maintenance", 
-    "landscape-design",
-    "emergency-repair-services",
-    
-    # Handyman Services
-    "handyman-services-hourly",
-    "small-home-repairs"
+    {
+        "id": "accessibility-safety",
+        "title": "Accessibility & Safety Solutions",
+        "description": "We specialize in creating safe, accessible environments for individuals with mobility challenges. Our comprehensive solutions include ADA-compliant showers with zero-step entries, commercial-grade grab bars rated for 500+ lbs, non-slip flooring options, and custom-built accessibility ramps that meet all regulatory requirements.",
+        "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        "alt": "Accessibility & Safety Solutions Near Me - ADA Ramps & Grab Bars",
+        "sub_services": [
+            {"name": "ADA-compliant showers & bathrooms", "link": "/service-pages/ada-compliant-showers.html"},
+            {"name": "Commercial-grade grab bars & handrails", "link": "/service-pages/grab-bars.html"},
+            {"name": "Non-slip flooring installations", "link": "/service-pages/non-slip-flooring.html"},
+            {"name": "Custom accessibility ramps", "link": "/service-pages/custom-ramps.html"},
+            {"name": "Senior safety modifications", "link": "/service-pages/senior-safety.html"}
+        ]
+    },
+    # Add similar dictionaries for other services: home-remodeling, tv-mounting, property-maintenance (including lawn care subs)
 ]
 
-# Create service-pages folder
-if not os.path.exists('service-pages'):
-    os.makedirs('service-pages')
-
-# HTML template
-html_template = '''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} | Watts Safety Installs</title>
-    <meta name="description" content="{description}">
-    
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }}
-        h1 {{
-            color: #0A1D37;
-            border-bottom: 3px solid #00C4B4;
-            padding-bottom: 10px;
-        }}
-        .back-link {{
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #00C4B4;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }}
-    </style>
-</head>
-<body>
-    <h1>{title}</h1>
-    <p>{description}</p>
-    <p><strong>Contact: (405) 410-6402</strong></p>
-    <a href="../index.html" class="back-link">Back to Home</a>
-</body>
-</html>
-'''
-
-print("Creating service pages...")
+os.makedirs('service-pages', exist_ok=True)
 
 for service in services:
-    readable_name = service.replace('-', ' ').title()
-    
-    html_content = html_template.format(
-        title=readable_name,
-        description=f"Professional {readable_name} services in Norfolk NE. ATP approved contractor with Nebraska license #54690-25."
-    )
-    
-    filename = f"service-pages/{service}.html"
-    with open(filename, 'w', encoding='utf-8') as file:
-        file.write(html_content)
-    
-    print(f"Created: {filename}")
-
-print(f"SUCCESS! Created {len(services)} service pages!")
+    with open(f'service-pages/{service["id"]}.html', 'w') as f:
+        f.write(f'''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{service["title"]} | Watts Safety Installs</title>
+</head>
+<body>
+    <h1>{service["title"]}</h1>
+    <p>{service["description"]}</p>
+    <!-- Add more content -->
+</body>
+</html>
+        ''')
+print("Service pages created.")

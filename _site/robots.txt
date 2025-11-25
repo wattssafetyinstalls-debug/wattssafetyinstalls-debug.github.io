@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wattsatpcontractor.com/sitemap.xml
+Sitemap: https://wattsatpcontractor.com/sitemap.html

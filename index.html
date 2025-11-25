@@ -454,116 +454,165 @@
             z-index: 1;
             line-height: 1.6;
         }
+/* PROFESSIONAL Service Cards - Clean & Spacious */
+.services-grid { 
+    max-width: 1400px; 
+    margin: 0 auto;
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+    gap: 50px; /* Much more breathing room */
+    position: relative;
+    z-index: 1;
+    justify-items: center;
+    width: 100%;
+    padding: 40px 20px; /* Added top/bottom padding */
+}
 
-        /* IMPROVED Service Cards - More Professional */
-        .services-grid { 
-            max-width: 1400px; 
-            margin: 0 auto;
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
-            gap: 30px; 
-            position: relative;
-            z-index: 1;
-            justify-items: center;
-            width: 100%;
-            padding: 0 20px;
-        }
-        
-        .service-card { 
-            background: var(--white); 
-            border-radius: 15px; 
-            overflow: hidden; 
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            position: relative;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--teal-glow);
-        }
-        
-        .service-image { 
-            width: 100%; 
-            height: 220px; 
-            object-fit: cover; 
-        }
-        
-        .service-content { 
-            padding: 25px; 
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .service-title { 
-            font-size: 1.5rem; 
-            color: var(--navy); 
-            margin-bottom: 15px; 
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .service-description { 
-            color: var(--gray); 
-            margin-bottom: 20px; 
-            flex-grow: 1;
-            line-height: 1.6;
-        }
-        
-        .service-features {
-            margin-bottom: 20px;
-        }
-        
-        .service-feature {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-        
-        .service-feature i {
-            color: var(--teal);
-            margin-right: 10px;
-            font-size: 0.9rem;
-        }
-        
-        .service-badge { 
-            background: linear-gradient(135deg, var(--gold), var(--warm-accent));
-            color: var(--navy); 
-            padding: 6px 12px; 
-            border-radius: 15px; 
-            font-size: 0.8rem; 
-            font-weight: 700; 
-            display: inline-block; 
-            margin-top: 10px;
-        }
-        
-        .service-cta {
-            margin-top: auto;
-        }
-        
-        .service-cta a {
-            background: var(--teal);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            display: inline-block;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .service-cta a:hover {
-            background: var(--navy);
-            transform: translateY(-2px);
-        }
+.service-card { 
+    background: var(--white); 
+    border-radius: 20px; 
+    overflow: hidden; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.05);
+    margin: 15px 0; /* Extra margin for comfort */
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 60px rgba(0,196,180,0.12);
+}
+
+.service-image { 
+    width: 100%; 
+    height: 250px; 
+    object-fit: cover; 
+    transition: transform 0.4s ease;
+}
+
+.service-card:hover .service-image {
+    transform: scale(1.08);
+}
+
+.service-content { 
+    padding: 35px 30px 30px; 
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.service-title { 
+    font-size: 1.6rem; 
+    color: var(--navy); 
+    font-family: 'Playfair Display', serif;
+    line-height: 1.3;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.service-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--teal), var(--warm-accent));
+    border-radius: 2px;
+}
+
+.service-description { 
+    color: var(--gray); 
+    line-height: 1.7;
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+.service-features {
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid rgba(0, 196, 180, 0.08);
+    margin: 10px 0;
+}
+
+.service-feature {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    padding: 6px 0;
+}
+
+.service-feature:last-child {
+    margin-bottom: 0;
+}
+
+.service-feature i {
+    color: var(--teal);
+    margin-right: 12px;
+    font-size: 1rem;
+    background: rgba(0, 196, 180, 0.1);
+    padding: 6px;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Clean Professional Badge - NO MORE YELLOW */
+.service-badge { 
+    background: linear-gradient(135deg, var(--teal), #00a396);
+    color: white; 
+    padding: 10px 20px; 
+    border-radius: 25px; 
+    font-size: 0.9rem; 
+    font-weight: 600; 
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 196, 180, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 5px 0;
+}
+
+.service-cta {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 196, 180, 0.1);
+}
+
+.service-cta a {
+    background: linear-gradient(135deg, var(--teal), #00a396);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    text-align: center;
+    border: none;
+    box-shadow: 0 5px 20px rgba(0, 196, 180, 0.3);
+}
+
+.service-cta a:hover {
+    background: linear-gradient(135deg, var(--navy), #09182e);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(10, 29, 55, 0.4);
+}}
         
         /* About Section */
         .about { 

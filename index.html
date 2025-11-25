@@ -455,13 +455,13 @@
             line-height: 1.6;
         }
 
-        /* REFINED Service Cards - More Professional Design */
+        /* IMPROVED Service Cards - More Professional */
         .services-grid { 
             max-width: 1400px; 
             margin: 0 auto;
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); 
-            gap: 40px; 
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+            gap: 30px; 
             position: relative;
             z-index: 1;
             justify-items: center;
@@ -471,204 +471,98 @@
         
         .service-card { 
             background: var(--white); 
-            border-radius: 20px; 
+            border-radius: 15px; 
             overflow: hidden; 
-            box-shadow: var(--shadow), 0 5px 20px rgba(10, 29, 55, 0.08);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             height: 100%;
             position: relative;
-            width: 100%;
-            max-width: 480px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            isolation: isolate;
-        }
-        
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--teal), var(--navy));
-            z-index: 2;
-        }
-        
-        .service-card::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: -10px;
-            bottom: -10px;
-            background: linear-gradient(135deg, rgba(0, 196, 180, 0.1), rgba(10, 29, 55, 0.05));
-            border-radius: 25px;
-            z-index: -1;
-            opacity: 0;
-            transition: all 0.4s ease;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         
         .service-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: var(--teal-glow), 0 25px 60px rgba(10, 29, 55, 0.15);
-        }
-        
-        .service-card:hover::after {
-            opacity: 1;
-            transform: translateY(5px);
-        }
-        
-        /* Individual Card Color Variations */
-        .service-card:nth-child(1):hover { /* Accessibility & Safety */
-            box-shadow: var(--teal-glow), 0 25px 60px rgba(0, 196, 180, 0.2);
-        }
-        
-        .service-card:nth-child(2):hover { /* Home Remodeling */
-            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
-        }
-        
-        .service-card:nth-child(3):hover { /* TV Mounting */
-            box-shadow: 0 15px 40px rgba(100, 116, 139, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
-        }
-        
-        .service-card:nth-child(4):hover { /* Property Maintenance */
-            box-shadow: var(--gold-glow), 0 25px 60px rgba(10, 29, 55, 0.15);
-        }
-        
-        .service-card:nth-child(5):hover { /* Lawn & Landscape */
-            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.15), 0 25px 60px rgba(10, 29, 55, 0.15);
+            transform: translateY(-5px);
+            box-shadow: var(--teal-glow);
         }
         
         .service-image { 
             width: 100%; 
-            height: 240px; 
+            height: 220px; 
             object-fit: cover; 
-            transition: transform 0.5s ease;
-        }
-        
-        .service-card:hover .service-image {
-            transform: scale(1.05);
         }
         
         .service-content { 
-            padding: 35px 30px 30px; 
+            padding: 25px; 
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
-            background: linear-gradient(to bottom, var(--white) 0%, #fafafa 100%);
         }
         
         .service-title { 
-            font-size: 1.7rem; 
+            font-size: 1.5rem; 
             color: var(--navy); 
-            margin-bottom: 18px; 
+            margin-bottom: 15px; 
             font-family: 'Playfair Display', serif;
-            text-align: center;
-            position: relative;
-            padding-bottom: 15px;
-        }
-        
-        .service-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(135deg, var(--teal), var(--warm-accent));
-            border-radius: 2px;
         }
         
         .service-description { 
             color: var(--gray); 
-            margin-bottom: 25px; 
+            margin-bottom: 20px; 
             flex-grow: 1;
-            line-height: 1.7;
-            text-align: center;
-            font-size: 1.05rem;
-            padding: 0 5px;
+            line-height: 1.6;
         }
         
         .service-features {
-            margin-bottom: 25px;
-            background: rgba(248, 250, 252, 0.7);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(0, 196, 180, 0.1);
+            margin-bottom: 20px;
         }
         
         .service-feature {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
-            font-size: 1rem;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(0, 196, 180, 0.05);
-        }
-        
-        .service-feature:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
         }
         
         .service-feature i {
             color: var(--teal);
-            margin-right: 12px;
-            font-size: 1.05rem;
-            background: rgba(0, 196, 180, 0.1);
-            padding: 6px;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            margin-right: 10px;
+            font-size: 0.9rem;
         }
         
         .service-badge { 
             background: linear-gradient(135deg, var(--gold), var(--warm-accent));
             color: var(--navy); 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            font-size: 0.85rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            font-size: 0.8rem; 
             font-weight: 700; 
             display: inline-block; 
             margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.5);
         }
         
         .service-cta {
             margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 196, 180, 0.1);
         }
         
         .service-cta a {
-            background: linear-gradient(135deg, var(--teal), #00a396);
+            background: var(--teal);
             color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
+            padding: 12px 24px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
-            font-size: 1.05rem;
-            box-shadow: 0 5px 20px rgba(0, 196, 180, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.95rem;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
         }
         
         .service-cta a:hover {
-            background: linear-gradient(135deg, var(--navy), #09182e);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(10, 29, 55, 0.4);
+            background: var(--navy);
+            transform: translateY(-2px);
         }
         
         /* About Section */
@@ -828,8 +722,8 @@
             .hero h1 { font-size: 3.5rem; } 
             .about-container { grid-template-columns: 1fr; gap: 50px; } 
             .services-grid { 
-                grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
-                gap: 35px;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+                gap: 25px;
             }
             .footer-container { grid-template-columns: 1fr 1fr; gap: 40px; }
             .nav-links { gap: 25px; }
@@ -848,21 +742,18 @@
                 width: 100%;
                 background: var(--navy);
                 flex-direction: column;
-                padding: 30px 20px; /* Increased padding for better spacing */
-                gap: 20px; /* Increased gap between menu items */
+                padding: 20px;
+                gap: 15px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
             .nav-links.active {
                 display: flex;
             }
             
-            /* Improved mobile navigation buttons */
             .nav-links a {
-                padding: 15px 0; /* Larger touch targets */
-                font-size: 1.2rem; /* Larger font for mobile */
+                padding: 12px 0;
+                font-size: 1.1rem;
                 text-align: center;
-                width: 100%;
-                display: block;
             }
             
             .mobile-menu-btn {
@@ -873,7 +764,7 @@
             }
             .hero { 
                 height: auto; 
-                padding: 120px 20px; 
+                padding: 100px 20px; 
             } 
             .hero h1 { 
                 font-size: 2.8rem; 
@@ -883,10 +774,7 @@
             }
             .services-grid { 
                 grid-template-columns: 1fr; 
-                gap: 35px;
-            }
-            .service-card {
-                max-width: 100%;
+                gap: 25px;
             }
             .footer-container { 
                 grid-template-columns: 1fr; 
@@ -905,18 +793,8 @@
         
         @media (max-width: 480px) { 
             .nav-links {
-                padding: 25px 15px;
-                gap: 15px;
+                padding: 15px;
             }
-            .nav-links a {
-                font-size: 1.1rem;
-                padding: 12px 0;
-            }
-            .mobile-menu-btn {
-                font-size: 1.6rem;
-                padding: 10px;
-            }
-            
             .hero h1 { 
                 font-size: 2.3rem; 
             } 
@@ -928,9 +806,6 @@
             } 
             .trust-item { 
                 flex: 0 0 100%; 
-            }
-            .service-card {
-                margin: 0 10px;
             }
             .cta-button {
                 padding: 18px 40px;
@@ -949,7 +824,7 @@
     <header>
         <div class="header-container">
             <div class="logo-container">
-                <a href="" class="logo">WATTS</a>
+                <a href="/" class="logo">WATTS</a>
             </div>
             
             <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -957,12 +832,12 @@
             </button>
             
             <nav class="nav-links" id="navLinks">
-                <a href="" class="active">Home</a>
-                <a href="services">Services</a>
-                <a href="service-area">Service Area</a>
-                <a href="about">About</a>
-                <a href="referrals">Referrals</a>
-                <a href="contact">Contact</a>
+                <a href="/" class="active">Home</a>
+                <a href="/services">Services</a>
+                <a href="/service-area">Service Area</a>
+                <a href="/about">About</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/contact">Contact</a>
             </nav>
             
             <a href="tel:+14054106402" class="phone-link">
@@ -1009,7 +884,7 @@
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Senior safety modifications</div>
                     </div>
                     <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
+                        <a href="/contact">Get Free Quote</a>
                     </div>
                 </div>
             </div>
@@ -1027,7 +902,7 @@
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Basement finishing</div>
                     </div>
                     <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
+                        <a href="/contact">Get Free Quote</a>
                     </div>
                 </div>
             </div>
@@ -1046,7 +921,7 @@
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Projector Mounting & Screen Installations</div>
                     </div>
                     <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
+                        <a href="/contact">Get Free Quote</a>
                     </div>
                 </div>
             </div>
@@ -1065,7 +940,7 @@
                         <div class="service-feature"><i class="fas fa-check-circle"></i> On call emergency snow removal</div>
                     </div>
                     <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
+                        <a href="/contact">Get Free Quote</a>
                         <span class="service-badge">15% OFF Snow Removal</span>
                     </div>
                 </div>
@@ -1084,7 +959,7 @@
                         <div class="service-feature"><i class="fas fa-check-circle"></i> Garden bed maintenance & rose care</div>
                     </div>
                     <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
+                        <a href="/contact">Get Free Quote</a>
                         <span class="service-badge">LAWN2026 - 20% OFF</span>
                     </div>
                 </div>
@@ -1125,16 +1000,16 @@
                 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
                 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
                 <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-                <p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a> | <a href="referrals">Referral Program</a></p>
+                <p><a href="/sitemap">Sitemap</a> | <a href="/privacy-policy">Privacy Policy</a> | <a href="/referrals">Referral Program</a></p>
             </div>
             <div class="footer-links">
                 <h3>Our Services</h3>
                 <ul>
-                    <li><a href="services.html#accessibility-safety">Accessibility & Safety</a></li>
-                    <li><a href="services.html#home-remodeling">Home Remodeling</a></li>
-                    <li><a href="services.html#tv-mounting">TV Mounting & AV</a></li>
-                    <li><a href="services.html#property-maintenance">Property Maintenance</a></li>
-                    <li><a href="services.html#lawn-care">Lawn & Landscape</a></li>
+                    <li><a href="/services#accessibility-safety">Accessibility & Safety</a></li>
+                    <li><a href="/services#home-remodeling">Home Remodeling</a></li>
+                    <li><a href="/services#tv-mounting">TV Mounting & AV</a></li>
+                    <li><a href="/services#property-maintenance">Property Maintenance</a></li>
+                    <li><a href="/services#lawn-care">Lawn & Landscape</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -1146,9 +1021,18 @@
             </div>
         </div>
         <div class="copyright">
-            <p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
+            <p>© <span id="current-year">2024</span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
         </div>
     </footer>
 
+    <script>
+        // Simple mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

@@ -1,0 +1,47 @@
+<script>
+// Pretty URL Standardization
+(function() {
+    const path = window.location.pathname;
+    const redirects = {
+        // Main pages
+        '/index': '/',
+        '/services': '/services.html',
+        '/service-area': '/service-area.html', 
+        '/about': '/about.html',
+        '/referrals': '/referrals.html',
+        '/contact': '/contact.html',
+        '/sitemap': '/sitemap.html',
+        
+        // Service pages - pretty URLs to actual files
+        '/ada-compliant-showers': '/services/ada-compliant-showers-bathrooms.html',
+        '/grab-bar-installation': '/services/grab-bar-installation.html',
+        '/wheelchair-ramps': '/services/wheelchair-ramp-installation.html',
+        '/stairlift-installation': '/services/stairlift-elevator-installation.html',
+        '/non-slip-flooring': '/services/non-slip-flooring-solutions.html',
+        '/kitchen-renovations': '/services/kitchen-renovations.html',
+        '/bathroom-remodels': '/services/bathroom-remodels.html',
+        '/room-additions': '/services/room-additions.html',
+        '/flooring-installation': '/services/flooring-installation.html',
+        '/painting-services': '/services/painting-drywall.html',
+        '/tv-mounting': '/services/tv-mounting.html',
+        '/home-theater-installation': '/services/home-theater-installation.html',
+        '/sound-system-setup': '/services/sound-system-setup.html',
+        '/cable-management': '/services/cable-management.html',
+        '/lawn-maintenance': '/services/lawn-maintenance.html',
+        '/pressure-washing': '/services/pressure-washing.html',
+        '/gutter-cleaning': '/services/gutter-cleaning.html',
+        '/fence-repair': '/services/fence-repair.html',
+        '/handyman-services': '/services/handyman-services.html'
+    };
+    
+    // Handle redirects
+    if (redirects[path]) {
+        window.history.replaceState({}, "", redirects[path]);
+    }
+    
+    // Special case for home page
+    if (path === '/index') {
+        window.history.replaceState({}, "", "/");
+    }
+})();
+</script>

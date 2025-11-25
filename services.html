@@ -162,6 +162,40 @@
 </script>
    
     <style>
+        /* Dropdown Menu Styles */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 250px;
+            max-height: 500px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .dropdown li {
+            margin: 0;
+        }
+        .dropdown a {
+            padding: 8px 20px;
+            display: block;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dropdown a:hover {
+            background: #3498db;
+            color: white;
+        }
         :root {
             --teal: #00C4B4;
             --navy: #0A1D37;
@@ -964,6 +998,73 @@ if (redirects[currentPath]) {
         <div class="breadcrumb-container">
             <ol class="breadcrumb-list">
                 <li class="breadcrumb-item"><a href="index">Home</a></li>
+                <li class="nav-dropdown">
+                    <a href="services.html">Services</a>
+                    <ul class="dropdown">
+                        <li><a href="/accessibility-safety-solutions">Accessibility Safety Solutions</a></li>
+                        <li><a href="/ada-compliant-showers-bathrooms">Ada Compliant Showers Bathrooms</a></li>
+                        <li><a href="/ada-compliant-showers">Ada Compliant Showers</a></li>
+                        <li><a href="/audio-visual">Audio Visual</a></li>
+                        <li><a href="/basement-finishing">Basement Finishing</a></li>
+                        <li><a href="/bathroom-accessibility">Bathroom Accessibility</a></li>
+                        <li><a href="/bathroom-remodels">Bathroom Remodels</a></li>
+                        <li><a href="/cabinet-refacing">Cabinet Refacing</a></li>
+                        <li><a href="/cable-management">Cable Management</a></li>
+                        <li><a href="/concrete-pouring">Concrete Pouring</a></li>
+                        <li><a href="/concrete-repair">Concrete Repair</a></li>
+                        <li><a href="/countertop-repair">Countertop Repair</a></li>
+                        <li><a href="/custom-cabinets">Custom Cabinets</a></li>
+                        <li><a href="/custom-ramps">Custom Ramps</a></li>
+                        <li><a href="/custom-storage">Custom Storage</a></li>
+                        <li><a href="/deck-construction">Deck Construction</a></li>
+                        <li><a href="/driveway-installation">Driveway Installation</a></li>
+                        <li><a href="/drywall-repair">Drywall Repair</a></li>
+                        <li><a href="/emergency-repairs">Emergency Repairs</a></li>
+                        <li><a href="/emergency-snow">Emergency Snow</a></li>
+                        <li><a href="/fence-installation">Fence Installation</a></li>
+                        <li><a href="/fence-repair">Fence Repair</a></li>
+                        <li><a href="/fertilization">Fertilization</a></li>
+                        <li><a href="/floor-refinishing">Floor Refinishing</a></li>
+                        <li><a href="/flooring-installation">Flooring Installation</a></li>
+                        <li><a href="/garden-maintenance">Garden Maintenance</a></li>
+                        <li><a href="/grab-bar-installation">Grab Bar Installation</a></li>
+                        <li><a href="/grab-bars">Grab Bars</a></li>
+                        <li><a href="/gutter-cleaning">Gutter Cleaning</a></li>
+                        <li><a href="/handyman-repair-services">Handyman Repair Services</a></li>
+                        <li><a href="/handyman-services">Handyman Services</a></li>
+                        <li><a href="/hardwood-flooring">Hardwood Flooring</a></li>
+                        <li><a href="/home-audio">Home Audio</a></li>
+                        <li><a href="/home-remodeling-renovation">Home Remodeling Renovation</a></li>
+                        <li><a href="/home-remodeling">Home Remodeling</a></li>
+                        <li><a href="/home-theater-installation">Home Theater Installation</a></li>
+                        <li><a href="/kitchen-cabinetry">Kitchen Cabinetry</a></li>
+                        <li><a href="/kitchen-renovations">Kitchen Renovations</a></li>
+                        <li><a href="/landscape-design">Landscape Design</a></li>
+                        <li><a href="/lawn-maintenance">Lawn Maintenance</a></li>
+                        <li><a href="/non-slip-flooring-solutions">Non Slip Flooring Solutions</a></li>
+                        <li><a href="/non-slip-flooring">Non Slip Flooring</a></li>
+                        <li><a href="/onyx-countertops">Onyx Countertops</a></li>
+                        <li><a href="/painting-drywall">Painting Drywall</a></li>
+                        <li><a href="/painting-services">Painting Services</a></li>
+                        <li><a href="/patio-construction">Patio Construction</a></li>
+                        <li><a href="/pressure-washing">Pressure Washing</a></li>
+                        <li><a href="/property-maintenance-services">Property Maintenance Services</a></li>
+                        <li><a href="/room-additions">Room Additions</a></li>
+                        <li><a href="/seasonal-cleanup">Seasonal Cleanup</a></li>
+                        <li><a href="/seasonal-prep">Seasonal Prep</a></li>
+                        <li><a href="/senior-safety">Senior Safety</a></li>
+                        <li><a href="/siding-replacement">Siding Replacement</a></li>
+                        <li><a href="/snow-removal">Snow Removal</a></li>
+                        <li><a href="/sound-system-setup">Sound System Setup</a></li>
+                        <li><a href="/stairlift-elevator-installation">Stairlift Elevator Installation</a></li>
+                        <li><a href="/tree-trimming">Tree Trimming</a></li>
+                        <li><a href="/tv-home-theater-installation">Tv Home Theater Installation</a></li>
+                        <li><a href="/tv-mounting-residential">Tv Mounting Residential</a></li>
+                        <li><a href="/tv-mounting">Tv Mounting</a></li>
+                        <li><a href="/wheelchair-ramp-installation">Wheelchair Ramp Installation</a></li>
+                        <li><a href="/window-doors">Window Doors</a></li>
+                    </ul>
+                </li>
                 <li class="breadcrumb-item active">Services</li>
             </ol>
         </div>

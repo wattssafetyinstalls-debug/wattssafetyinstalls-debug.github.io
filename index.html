@@ -156,6 +156,40 @@
 </script>
  
     <style>
+        /* Dropdown Menu Styles */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 250px;
+            max-height: 500px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .dropdown li {
+            margin: 0;
+        }
+        .dropdown a {
+            padding: 8px 20px;
+            display: block;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dropdown a:hover {
+            background: #3498db;
+            color: white;
+        }
         :root {
             --teal: #00C4B4;
             --navy: #0A1D37;

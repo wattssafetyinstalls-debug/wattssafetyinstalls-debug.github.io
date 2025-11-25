@@ -884,6 +884,38 @@
             .services-hero p { font-size: 1.2rem; }
         }
     </style>
+
+<!-- Pretty URL Redirects -->
+<script>
+const redirects = {
+    '/driveway-installation': '/services/driveway-installation.html',
+    '/concrete-pouring': '/services/concrete-pouring.html',
+    '/hardwood-flooring': '/services/hardwood-flooring.html',
+    '/garden-maintenance': '/services/garden-maintenance.html',
+    '/landscape-design': '/services/landscape-design.html',
+    '/painting-services': '/services/painting-services.html',
+    '/snow-removal': '/services/snow-removal.html',
+    '/custom-cabinets': '/services/custom-cabinets.html',
+    '/deck-construction': '/services/deck-construction.html',
+    '/home-remodeling': '/services/home-remodeling.html',
+    '/bathroom-remodels': '/services/bathroom-remodels.html',
+    '/kitchen-renovations': '/services/kitchen-renovations.html',
+    '/fence-installation': '/services/fence-installation.html',
+    '/patio-construction': '/services/patio-construction.html',
+    '/window-doors': '/services/window-doors.html',
+    '/siding-replacement': '/services/siding-replacement.html',
+    '/roofing-repair': '/services/roofing-repair.html',
+    '/electrical-services': '/services/electrical-services.html',
+    '/plumbing-services': '/services/plumbing-services.html',
+    '/hvac-services': '/services/hvac-services.html',
+};
+
+// Handle pretty URL redirects
+const currentPath = window.location.pathname;
+if (redirects[currentPath]) {
+    window.location.href = redirects[currentPath];
+}
+</script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -984,10 +1016,10 @@
                         <i class="fas fa-bars hamburger"></i>
                         <div class="service-dropdown">
                             <ul>
-                                <li><a href="/services/kitchen-renovations.html"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</a></li>
-                                <li><a href="/services/home-remodeling.html"><i class="fas fa-check-circle"></i> Complete home remodeling projects</a></li>
-                                <li><a href="/services/deck-construction.html"><i class="fas fa-check-circle"></i> Deck construction & repair</a></li>
-                                <li><a href="/services/siding-replacement.html"><i class="fas fa-check-circle"></i> Siding replacement & installation</a></li>
+                                <li><a href="/kitchen-renovations"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</a></li>
+                                <li><a href="/home-remodeling"><i class="fas fa-check-circle"></i> Complete home remodeling projects</a></li>
+                                <li><a href="/deck-construction"><i class="fas fa-check-circle"></i> Deck construction & repair</a></li>
+                                <li><a href="/siding-replacement"><i class="fas fa-check-circle"></i> Siding replacement & installation</a></li>
                                 <li><a href="/services/basement-finishing.html"><i class="fas fa-check-circle"></i> Basement finishing & remodeling</a></li>
                             </ul>
                         </div>
@@ -1006,11 +1038,11 @@
                         <i class="fas fa-bars hamburger"></i>
                         <div class="service-dropdown">
                             <ul>
-                                <li><a href="/services/concrete-pouring.html"><i class="fas fa-check-circle"></i> Concrete pouring & finishing</a></li>
-                                <li><a href="/services/driveway-installation.html"><i class="fas fa-check-circle"></i> Driveway & sidewalk installation</a></li>
-                                <li><a href="/services/patio-construction.html"><i class="fas fa-check-circle"></i> Patio & outdoor living spaces</a></li>
+                                <li><a href="/concrete-pouring"><i class="fas fa-check-circle"></i> Concrete pouring & finishing</a></li>
+                                <li><a href="/driveway-installation"><i class="fas fa-check-circle"></i> Driveway & sidewalk installation</a></li>
+                                <li><a href="/patio-construction"><i class="fas fa-check-circle"></i> Patio & outdoor living spaces</a></li>
                                 <li><a href="/services/floor-refinishing.html"><i class="fas fa-check-circle"></i> Floor sanding & refinishing</a></li>
-                                <li><a href="/services/hardwood-flooring.html"><i class="fas fa-check-circle"></i> Hardwood floor installation</a></li>
+                                <li><a href="/hardwood-flooring"><i class="fas fa-check-circle"></i> Hardwood floor installation</a></li>
                                 <li><a href="/services/concrete-repair.html"><i class="fas fa-check-circle"></i> Concrete repair & restoration</a></li>
                             </ul>
                         </div>
@@ -1029,7 +1061,7 @@
                         <i class="fas fa-bars hamburger"></i>
                         <div class="service-dropdown">
                             <ul>
-                                <li><a href="/services/custom-cabinets.html"><i class="fas fa-check-circle"></i> Custom cabinet installation</a></li>
+                                <li><a href="/custom-cabinets"><i class="fas fa-check-circle"></i> Custom cabinet installation</a></li>
                                 <li><a href="/services/cabinet-refacing.html"><i class="fas fa-check-circle"></i> Cabinet refacing & remodeling</a></li>
                                 <li><a href="/services/onyx-countertops.html"><i class="fas fa-check-circle"></i> Onyx countertop installation</a></li>
                                 <li><a href="/services/kitchen-cabinetry.html"><i class="fas fa-check-circle"></i> Kitchen & bathroom cabinetry</a></li>
@@ -1052,7 +1084,7 @@
                         <i class="fas fa-bars hamburger"></i>
                         <div class="service-dropdown">
                             <ul>
-                                <li><a href="/services/snow-removal.html"><i class="fas fa-check-circle"></i> Snow removal & de-icing services</a></li>
+                                <li><a href="/snow-removal"><i class="fas fa-check-circle"></i> Snow removal & de-icing services</a></li>
                                 <li><a href="/services/emergency-repairs.html"><i class="fas fa-check-circle"></i> Emergency repair services</a></li>
                                 <li><a href="/services/seasonal-prep.html"><i class="fas fa-check-circle"></i> Seasonal property preparation</a></li>
                                 <li><a href="/services/tree-trimming.html"><i class="fas fa-check-circle"></i> Tree trimming & removal</a></li>
@@ -1078,9 +1110,9 @@
                             <ul>
                                 <li><a href="/services/lawn-maintenance.html"><i class="fas fa-check-circle"></i> Regular lawn maintenance & mowing</a></li>
                                 <li><a href="/services/fertilization.html"><i class="fas fa-check-circle"></i> Fertilization & weed control programs</a></li>
-                                <li><a href="/services/landscape-design.html"><i class="fas fa-check-circle"></i> Landscape design & installation</a></li>
+                                <li><a href="/landscape-design"><i class="fas fa-check-circle"></i> Landscape design & installation</a></li>
                                 <li><a href="/services/seasonal-cleanup.html"><i class="fas fa-check-circle"></i> Seasonal clean-up services</a></li>
-                                <li><a href="/services/garden-maintenance.html"><i class="fas fa-check-circle"></i> Garden bed maintenance</a></li>
+                                <li><a href="/garden-maintenance"><i class="fas fa-check-circle"></i> Garden bed maintenance</a></li>
                             </ul>
                         </div>
                         <div class="service-cta">
@@ -1102,10 +1134,10 @@
                                 <li><a href="/services/home-audio.html"><i class="fas fa-check-circle"></i> Home audio installation & setup</a></li>
                                 <li><a href="/services/tv-mounting-residential.html"><i class="fas fa-check-circle"></i> TV mounting & home theater setup</a></li>
                                 <li><a href="/services/audio-visual.html"><i class="fas fa-check-circle"></i> Audio visual equipment installation</a></li>
-                                <li><a href="/services/window-doors.html"><i class="fas fa-check-circle"></i> Window & door installation</a></li>
-                                <li><a href="/services/fence-installation.html"><i class="fas fa-check-circle"></i> Fence installation & repair</a></li>
+                                <li><a href="/window-doors"><i class="fas fa-check-circle"></i> Window & door installation</a></li>
+                                <li><a href="/fence-installation"><i class="fas fa-check-circle"></i> Fence installation & repair</a></li>
                                 <li><a href="/services/drywall-repair.html"><i class="fas fa-check-circle"></i> Drywall repair & installation</a></li>
-                                <li><a href="/services/painting-services.html"><i class="fas fa-check-circle"></i> Painting & finishing services</a></li>
+                                <li><a href="/painting-services"><i class="fas fa-check-circle"></i> Painting & finishing services</a></li>
                             </ul>
                         </div>
                         <div class="service-cta">
@@ -1168,7 +1200,7 @@
                 <h3>Our Services</h3>
                 <ul>
                     <li><a href="services.html#accessibility-safety">Accessibility & Safety</a></li>
-                    <li><a href="services.html#home-remodeling">Complete Home Remodeling Services</a></li>
+                    <li><a href="/home-remodeling">Complete Home Remodeling Services</a></li>
                     <li><a href="services.html#concrete-flooring">Concrete & Flooring</a></li>
                     <li><a href="services.html#cabinets-countertops">Cabinets & Countertops</a></li>
                     <li><a href="services.html#property-maintenance">Property Maintenance</a></li>

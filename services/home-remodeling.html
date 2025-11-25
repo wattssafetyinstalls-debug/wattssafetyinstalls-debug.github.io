@@ -647,6 +647,38 @@
             }
         }
     </style>
+
+<!-- Pretty URL Redirects -->
+<script>
+const redirects = {
+    '/driveway-installation': '/services/driveway-installation.html',
+    '/concrete-pouring': '/services/concrete-pouring.html',
+    '/hardwood-flooring': '/services/hardwood-flooring.html',
+    '/garden-maintenance': '/services/garden-maintenance.html',
+    '/landscape-design': '/services/landscape-design.html',
+    '/painting-services': '/services/painting-services.html',
+    '/snow-removal': '/services/snow-removal.html',
+    '/custom-cabinets': '/services/custom-cabinets.html',
+    '/deck-construction': '/services/deck-construction.html',
+    '/home-remodeling': '/services/home-remodeling.html',
+    '/bathroom-remodels': '/services/bathroom-remodels.html',
+    '/kitchen-renovations': '/services/kitchen-renovations.html',
+    '/fence-installation': '/services/fence-installation.html',
+    '/patio-construction': '/services/patio-construction.html',
+    '/window-doors': '/services/window-doors.html',
+    '/siding-replacement': '/services/siding-replacement.html',
+    '/roofing-repair': '/services/roofing-repair.html',
+    '/electrical-services': '/services/electrical-services.html',
+    '/plumbing-services': '/services/plumbing-services.html',
+    '/hvac-services': '/services/hvac-services.html',
+};
+
+// Handle pretty URL redirects
+const currentPath = window.location.pathname;
+if (redirects[currentPath]) {
+    window.location.href = redirects[currentPath];
+}
+</script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->

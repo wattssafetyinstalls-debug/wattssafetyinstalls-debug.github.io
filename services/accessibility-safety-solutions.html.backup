@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>if(window.location.pathname==="/index"){window.history.replaceState({},"","/");}</script>
+<script>if(}</script>
 <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE</title>
-    <meta name="description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE. 15% OFF First 3 Snow Visits.">
+    <title>Accessibility & Safety Solutions | Watts Safety Installs | Norfolk NE</title>
+    <meta name="description" content="Complete ADA-compliant accessibility modifications and safety installations for homes and businesses throughout Norfolk NE. ATP Approved Contractor specializing in mobility solutions. ATP Approved Contractor. Nebraska Licensed #54690-25. Call (405) 410-6402">
   
-    <!-- Favicon -->
+    <!-- Favicon and meta tags -->
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
@@ -28,168 +28,28 @@
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
   
-    <!-- Search Engine & Social Media Meta Tags -->
+    <!-- SEO Meta Tags -->
     <meta name="google-site-verification" content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" />
-  
-    <!-- Open Graph for Facebook/LinkedIn -->
-    <meta property="og:title" content="Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE">
-    <meta property="og:description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
-    <meta property="og:url" content="https://wattsatpcontractor.com">
+    <meta property="og:title" content="Accessibility & Safety Solutions | Watts Safety Installs">
+    <meta property="og:description" content="Complete ADA-compliant accessibility modifications and safety installations for homes and businesses throughout Norfolk NE. ATP Approved Contractor specializing in mobility solutions.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
+    <meta property="og:url" content="https://wattsatpcontractor.com/services/accessibility-safety-solutions">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Watts Safety Installs">
-  
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Accessibility Contractor Near Me | Watts Safety Installs">
-    <meta name="twitter:description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, TV mounting & audio visual in Norfolk NE">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
-  
-    <!-- Additional SEO Meta Tags -->
-    <meta name="keywords" content="accessibility contractor near me, ADA contractor near me, wheelchair ramp installation near me, grab bars installation near me, snow removal near me, lawn care near me, TV mounting service near me, audio visual installation near me, Norfolk NE contractor">
+    <meta name="twitter:title" content="Accessibility & Safety Solutions">
+    <meta name="twitter:description" content="Complete ADA-compliant accessibility modifications and safety installations for homes and businesses throughout Norfolk NE. ATP Approved Contractor specializing in mobility solutions.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
+    <meta name="keywords" content="Accessibility & Safety Solutions Norfolk NE, professional installation services, ATP Approved Contractor">
     <meta name="author" content="Watts Safety Installs">
     <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="https://wattsatpcontractor.com">
-  
-    <!-- Cache Control for Performance -->
+    <link rel="canonical" href="https://wattsatpcontractor.com/services/accessibility-safety-solutions">
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
  
-    <!-- Fonts -->
+    <!-- Fonts and Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
- 
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-    <!-- Structured Data / Schema Markup -->
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "HomeAndConstructionBusiness",
-      "@id": "https://wattsatpcontractor.com/#organization",
-      "name": "Watts Safety Installs",
-      "url": "https://wattsatpcontractor.com",
-      "telephone": "+14054106402",
-      "email": "wattssafetyinstalls@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "500 Block Omaha Ave",
-        "addressLocality": "Norfolk",
-        "addressRegion": "NE",
-        "postalCode": "68701",
-        "addressCountry": "US"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 42.032,
-        "longitude": -97.418
-      },
-      "openingHours": "Mo-Fr 08:30-18:00",
-      "priceRange": "$$",
-      "areaServed": "Nebraska",
-      "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
-      "knowsAbout": [
-        "Accessibility Modifications",
-        "ADA Compliance",
-        "Home Safety",
-        "Snow Removal",
-        "Lawn Care",
-        "TV Mounting",
-        "Audio Visual Installation"
-      ],
-      "makesOffer": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Accessibility & Safety Solutions"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Home Remodeling"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Property Maintenance"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "TV Mounting Services"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Audio Visual Installation"
-          }
-        }
-      ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5.0",
-        "reviewCount": "1"
-      }
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://wattsatpcontractor.com/#website",
-      "url": "https://wattsatpcontractor.com",
-      "name": "Watts Safety Installs",
-      "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
-      "publisher": {
-        "@id": "https://wattsatpcontractor.com/#organization"
-      }
-    }
-  ]
-}
-</script>
- 
     <style>
-        /* Dropdown Menu Styles */
-        .nav-dropdown {
-            position: relative;
-        }
-        .nav-dropdown:hover .dropdown {
-            display: block;
-        }
-        .dropdown {
-            display: none;
-            position: absolute;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-width: 250px;
-            max-height: 500px;
-            overflow-y: auto;
-            list-style: none;
-            padding: 10px 0;
-            z-index: 1000;
-        }
-        .dropdown li {
-            margin: 0;
-        }
-        .dropdown a {
-            padding: 8px 20px;
-            display: block;
-            color: #333;
-            text-decoration: none;
-            white-space: nowrap;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .dropdown a:hover {
-            background: #3498db;
-            color: white;
-        }
         :root {
             --teal: #00C4B4;
             --navy: #0A1D37;
@@ -515,7 +375,7 @@
             color: var(--white);
         }
       
-        .service-card:hover .service-title, .service-card:hover .service-description {
+        .service-card:hover .service-title { .service-card:hover .service-description {
             color: var(--white);
         }
       
@@ -974,94 +834,58 @@
         }
     </style>
 
-<!-- Pretty URL Redirects - UPDATED WITH ALL SERVICES -->
 <script>
-const redirects = {
-    // Accessibility & Safety Services
-    '/ada-compliant-showers': '/services/ada-compliant-showers.html',
-    '/grab-bars': '/services/grab-bars.html',
-    '/non-slip-flooring': '/services/non-slip-flooring.html',
-    '/custom-ramps': '/services/custom-ramps.html',
-    '/senior-safety': '/services/senior-safety.html',
-    '/bathroom-accessibility': '/services/bathroom-accessibility.html',
-    '/wheelchair-ramps': '/services/wheelchair-ramp-installation.html',
-    '/stairlift-installation': '/services/stairlift-elevator-installation.html',
+// Pretty URL Standardization
+(function() {
+    const path = window.location.pathname;
+    const redirects = {
+        // Main pages
+        '/index': '/',
+        '/services': '/services.html',
+        '/service-area': '/service-area.html', 
+        '/about': '/about.html',
+        '/referrals': '/referrals.html',
+        '/contact': '/contact.html',
+        '/sitemap': '/sitemap.html',
+        
+        // Service pages - pretty URLs to actual files
+        '/ada-compliant-showers': '/services/ada-compliant-showers-bathrooms.html',
+        '/grab-bar-installation': '/services/grab-bar-installation.html',
+        '/wheelchair-ramps': '/services/wheelchair-ramp-installation.html',
+        '/stairlift-installation': '/services/stairlift-elevator-installation.html',
+        '/non-slip-flooring': '/services/non-slip-flooring-solutions.html',
+        '/kitchen-renovations': '/services/kitchen-renovations.html',
+        '/bathroom-remodels': '/services/bathroom-remodels.html',
+        '/room-additions': '/services/room-additions.html',
+        '/flooring-installation': '/services/flooring-installation.html',
+        '/painting-services': '/services/painting-drywall.html',
+        '/tv-mounting': '/services/tv-mounting.html',
+        '/home-theater-installation': '/services/home-theater-installation.html',
+        '/sound-system-setup': '/services/sound-system-setup.html',
+        '/cable-management': '/services/cable-management.html',
+        '/lawn-maintenance': '/services/lawn-maintenance.html',
+        '/pressure-washing': '/services/pressure-washing.html',
+        '/gutter-cleaning': '/services/gutter-cleaning.html',
+        '/fence-repair': '/services/fence-repair.html',
+        '/handyman-services': '/services/handyman-services.html'
+    };
     
-    // Home Remodeling Services
-    '/kitchen-renovations': '/services/kitchen-renovations.html',
-    '/bathroom-remodels': '/services/bathroom-remodels.html',
-    '/deck-construction': '/services/deck-construction.html',
-    '/siding-replacement': '/services/siding-replacement.html',
-    '/home-remodeling': '/services/home-remodeling.html',
-    '/basement-finishing': '/services/basement-finishing.html',
-    '/room-additions': '/services/room-additions.html',
-    '/fence-installation': '/services/fence-installation.html',
-    '/window-doors': '/services/window-doors.html',
-    '/painting-services': '/services/painting-services.html',
+    // Handle redirects
+    if (redirects[path]) {
+        window.history.replaceState({}, "", redirects[path]);
+    }
     
-    // TV & Audio Visual Services
-    '/tv-mounting': '/services/tv-mounting.html',
-    '/home-theater': '/services/home-theater-installation.html',
-    '/soundbar-setup': '/services/sound-system-setup.html',
-    '/cable-management': '/services/cable-management.html',
-    '/smart-audio': '/services/audio-visual.html',
-    '/projector-install': '/services/tv-home-theater-installation.html',
-    
-    // Property Maintenance
-    '/snow-removal': '/services/snow-removal.html',
-    '/lawn-maintenance': '/services/lawn-maintenance.html',
-    '/landscape-design': '/services/landscape-design.html',
-    '/garden-maintenance': '/services/garden-maintenance.html',
-    '/tree-trimming': '/services/tree-trimming.html',
-    '/emergency-repairs': '/services/emergency-repairs.html',
-    '/seasonal-cleanup': '/services/seasonal-cleanup.html',
-    '/gutter-cleaning': '/services/gutter-cleaning.html',
-    '/pressure-washing': '/services/pressure-washing.html',
-    
-    // Concrete & Flooring
-    '/concrete-pouring': '/services/concrete-pouring.html',
-    '/driveway-installation': '/services/driveway-installation.html',
-    '/patio-construction': '/services/patio-construction.html',
-    '/hardwood-flooring': '/services/hardwood-flooring.html',
-    '/floor-refinishing': '/services/floor-refinishing.html',
-    
-    // Cabinets & Countertops
-    '/custom-cabinets': '/services/custom-cabinets.html',
-    '/cabinet-refacing': '/services/cabinet-refacing.html',
-    '/onyx-countertops': '/services/onyx-countertops.html',
-    '/kitchen-cabinetry': '/services/kitchen-cabinetry.html',
-    
-    // Additional Services
-    '/driveway-installation': '/services/driveway-installation.html',
-    '/concrete-pouring': '/services/concrete-pouring.html',
-    '/hardwood-flooring': '/services/hardwood-flooring.html',
-    '/garden-maintenance': '/services/garden-maintenance.html',
-    '/landscape-design': '/services/landscape-design.html',
-    '/painting-services': '/services/painting-services.html',
-    '/snow-removal': '/services/snow-removal.html',
-    '/custom-cabinets': '/services/custom-cabinets.html',
-    '/deck-construction': '/services/deck-construction.html',
-    '/home-remodeling': '/services/home-remodeling.html',
-    '/bathroom-remodels': '/services/bathroom-remodels.html',
-    '/kitchen-renovations': '/services/kitchen-renovations.html',
-    '/fence-installation': '/services/fence-installation.html',
-    '/patio-construction': '/services/patio-construction.html',
-    '/window-doors': '/services/window-doors.html',
-    '/siding-replacement': '/services/siding-replacement.html'
-};
-
-// Handle pretty URL redirects
-const currentPath = window.location.pathname;
-if (redirects[currentPath]) {
-    window.location.href = redirects[currentPath];
-}
+    // Special case for home page
+    if (path === '/index') {
+        window.history.replaceState({}, "", "/");
+    }
+})();
 </script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCPM8VZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- Google Tag Manager -->
-    <!-- Header -->
+
     <header>
         <div class="header-container">
             <div class="logo-container">
@@ -1086,15 +910,19 @@ if (redirects[currentPath]) {
             </a>
         </div>
     </header>
-    <section class="hero">
-        <h1>WATTS SAFETY INSTALLS</h1>
+
+    <!-- Service Hero Section with Header Image -->
+    <section class="hero" style="height: 60vh; min-height: 500px; background: linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245,158,11,0.2) 100%), url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;">
+        <h1>Accessibility & Safety Solutions</h1>
         <p class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25 • Serving All Nebraska</p>
-        <p>Professional Accessibility, Safety & Audio Visual Solutions Near You</p>
+        <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto;">Complete ADA-compliant accessibility modifications and safety installations for homes and businesses throughout Norfolk NE. ATP Approved Contractor specializing in mobility solutions.</p>
         <div class="promo-banner">
-            <p style="font-size:1.6rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
+            <p style="font-size:1.4rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
         </div>
         <a href="tel:+14054106402" class="cta-button">Call (405) 410-6402 – Free Quote</a>
     </section>
+
+    <!-- Trust Bar -->
     <section class="trust-bar">
         <div class="trust-container">
             <div class="trust-item"><div class="trust-icon">✓</div><div class="trust-text">Licensed & Insured</div></div>
@@ -1103,139 +931,65 @@ if (redirects[currentPath]) {
             <div class="trust-item"><div class="trust-icon">🏆</div><div class="trust-text">ATP Approved Contractor</div></div>
         </div>
     </section>
-    <!-- Services Section -->
-    <section class="services" id="services">
-        <h2 class="section-title">Our Professional Services</h2>
-        <p class="section-subtitle">Comprehensive accessibility, safety, and audio visual solutions for your home or business in Norfolk NE and surrounding areas</p>
-     
-        <div class="services-grid">
-            <div class="service-card" id="accessibility-safety">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Accessibility & Safety Solutions Near Me - ADA Ramps & Grab Bars" class="service-image">
-                <div class="service-content">
-                    <h3 class="service-title">Accessibility & Safety Solutions</h3>
-                    <p class="service-description">We specialize in creating safe, accessible environments for individuals with mobility challenges. Our comprehensive solutions include ADA-compliant showers with zero-step entries, commercial-grade grab bars rated for 500+ lbs, non-slip flooring options, and custom-built accessibility ramps that meet all regulatory requirements.</p>
-                    <i class="fas fa-bars hamburger"></i>
-                    <div class="service-dropdown">
-                        <ul>
-                            <li><a href="/ada-compliant-showers"><i class="fas fa-check-circle"></i> ADA-compliant showers & bathrooms</a></li>
-                            <li><a href="/grab-bars"><i class="fas fa-check-circle"></i> Commercial-grade grab bars & handrails</a></li>
-                            <li><a href="/non-slip-flooring"><i class="fas fa-check-circle"></i> Non-slip flooring installations</a></li>
-                            <li><a href="/custom-ramps"><i class="fas fa-check-circle"></i> Custom accessibility ramps</a></li>
-                            <li><a href="/senior-safety"><i class="fas fa-check-circle"></i> Senior safety modifications</a></li>
-                            <li><a href="/bathroom-accessibility"><i class="fas fa-check-circle"></i> Bathroom accessibility upgrades</a></li>
-                            <li><a href="/wheelchair-ramps"><i class="fas fa-check-circle"></i> Wheelchair ramp installation</a></li>
-                            <li><a href="/stairlift-installation"><i class="fas fa-check-circle"></i> Stairlift & elevator installation</a></li>
-                        </ul>
-                    </div>
-                    <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
-                    </div>
+
+    <!-- Service Details Section -->
+    <section class="services" style="padding: 80px 20px;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <h2 class="section-title">Our Accessibility & Safety Solutions</h2>
+            <p class="section-subtitle">Comprehensive professional services tailored to your needs in Norfolk NE and surrounding areas</p>
+            
+            <div class="services-grid" style="grid-template-columns: 1fr 1fr; gap: 40px; margin: 3rem 0;">
+                <div class="service-card" style="background: var(--white); border-radius: 20px; padding: 2rem; box-shadow: var(--teal-glow);">
+                    <h3 style="color: var(--navy); margin-bottom: 1.5rem; border-bottom: 3px solid var(--teal); padding-bottom: 0.5rem;">Services Included</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray);">
+                        <li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>ADA-Compliant Bathroom Modifications</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Zero-Step Shower Installations</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Commercial-Grade Grab Bar Installation (500+ lb capacity)</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Wheelchair Ramp Construction & Installation</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Stairlift & Residential Elevator Installation</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Non-Slip Flooring Solutions</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Handrail & Safety Rail Systems</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Doorway Widening & Accessibility Modifications</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Senior Safety Modifications</li>
+<li style="margin-bottom: 0.8rem; display: flex; align-items: center;"><i class="fas fa-check-circle" style="color: var(--teal); margin-right: 10px;"></i>Mobility Equipment Installation</li>
+
+                    </ul>
+                </div>
+                
+                <div class="service-card" style="background: linear-gradient(135deg, var(--teal), var(--navy)); color: white; border-radius: 20px; padding: 2rem; box-shadow: var(--navy-glow);">
+                    <h3 style="margin-bottom: 1.5rem; border-bottom: 3px solid var(--gold); padding-bottom: 0.5rem;">Key Benefits</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.8rem;"><i class="fas fa-star" style="color: var(--gold); margin-right: 10px;"></i>Full ADA Compliance Certification</li>
+<li style="margin-bottom: 0.8rem;"><i class="fas fa-star" style="color: var(--gold); margin-right: 10px;"></i>Increased Property Value & Safety</li>
+<li style="margin-bottom: 0.8rem;"><i class="fas fa-star" style="color: var(--gold); margin-right: 10px;"></i>Professional Assessment & Planning</li>
+<li style="margin-bottom: 0.8rem;"><i class="fas fa-star" style="color: var(--gold); margin-right: 10px;"></i>Licensed & Insured Installations</li>
+<li style="margin-bottom: 0.8rem;"><i class="fas fa-star" style="color: var(--gold); margin-right: 10px;"></i>Lifetime Workmanship Warranty</li>
+
+                    </ul>
                 </div>
             </div>
-         
-            <div class="service-card" id="home-remodeling">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Home Remodeling Contractor Near Me - Kitchen & Bathroom Renovations" class="service-image">
-                <div class="service-content">
-                    <h3 class="service-title">Home Remodeling & Improvements</h3>
-                    <p class="service-description">Transform your living space with our comprehensive remodeling services. From kitchen and bathroom renovations to deck construction and siding replacement, we handle projects of all sizes with precision and care. Our team works closely with you to bring your vision to life while ensuring quality craftsmanship and attention to detail.</p>
-                    <i class="fas fa-bars hamburger"></i>
-                    <div class="service-dropdown">
-                        <ul>
-                            <li><a href="/kitchen-renovations"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</a></li>
-                            <li><a href="/deck-construction"><i class="fas fa-check-circle"></i> Deck construction & repair</a></li>
-                            <li><a href="/siding-replacement"><i class="fas fa-check-circle"></i> Siding replacement & installation</a></li>
-                            <li><a href="/home-remodeling"><i class="fas fa-check-circle"></i> Complete home remodeling</a></li>
-                            <li><a href="/basement-finishing"><i class="fas fa-check-circle"></i> Basement finishing</a></li>
-                            <li><a href="/room-additions"><i class="fas fa-check-circle"></i> Room additions</a></li>
-                            <li><a href="/fence-installation"><i class="fas fa-check-circle"></i> Fence installation</a></li>
-                            <li><a href="/window-doors"><i class="fas fa-check-circle"></i> Window & door installation</a></li>
-                            <li><a href="/painting-services"><i class="fas fa-check-circle"></i> Painting services</a></li>
-                        </ul>
-                    </div>
-                    <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
-                    </div>
+
+            <!-- Professional CTA Section -->
+            <div style="background: linear-gradient(135deg, var(--navy), #1e3a5f); color: white; padding: 3rem; border-radius: 20px; text-align: center; margin: 3rem 0;">
+                <h2 style="margin-bottom: 1rem;">Ready to Get Started?</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                    Contact us today for a professional consultation and free estimate on accessibility & safety solutions services.
+                </p>
+                <div>
+                    <a href="tel:+14054106402" class="cta-button" style="background: var(--teal); margin: 0 10px;">Call (405) 410-6402</a>
+                    <a href="/contact" class="cta-button" style="background: var(--gold); color: var(--navy); margin: 0 10px;">Schedule Consultation</a>
                 </div>
-            </div>
-         
-            <div class="service-card" id="tv-mounting">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="TV Mounting Service Near Me - Residential & Commercial TV Installation" class="service-image">
-                <div class="service-content">
-                    <h3 class="service-title">TV Mounting & Audio Visual Services</h3>
-                    <p class="service-description">Professional TV mounting and audio visual installation for both residential and commercial clients. We handle everything from simple TV wall mounting to complete home theater setups, soundbar installation, and cable management. Our experts ensure secure mounting and optimal viewing angles for the best entertainment experience.</p>
-                    <i class="fas fa-bars hamburger"></i>
-                    <div class="service-dropdown">
-                        <ul>
-                            <li><a href="/tv-mounting"><i class="fas fa-check-circle"></i> Residential & commercial TV mounting</a></li>
-                            <li><a href="/home-theater"><i class="fas fa-check-circle"></i> Home theater system installation</a></li>
-                            <li><a href="/soundbar-setup"><i class="fas fa-check-circle"></i> Soundbar & speaker setup</a></li>
-                            <li><a href="/cable-management"><i class="fas fa-check-circle"></i> Cable management & concealment</a></li>
-                            <li><a href="/smart-audio"><i class="fas fa-check-circle"></i> Smart home audio integration</a></li>
-                            <li><a href="/projector-install"><i class="fas fa-check-circle"></i> Projector Mounting & Screen Installations</a></li>
-                        </ul>
-                    </div>
-                    <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
-                    </div>
-                </div>
-            </div>
-         
-            <div class="service-card" id="property-maintenance">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2058&q=80" alt="Property Maintenance & Snow Removal Service Near Me - Norfolk NE" class="service-image">
-                <div class="service-content">
-                    <h3 class="service-title">Property Maintenance, Snow Removal & Lawn Care</h3>
-                    <p class="service-description">Keep your property in top condition year-round with our comprehensive maintenance services, including routine upkeep, emergency repairs, seasonal snow removal, lawn mowing, fertilization, landscape design, and garden maintenance to ensure safety, functionality, and beauty throughout the year.</p>
-                    <i class="fas fa-bars hamburger"></i>
-                    <div class="service-dropdown">
-                        <ul>
-                            <li><a href="/snow-removal"><i class="fas fa-check-circle"></i> Snow removal & de-icing</a></li>
-                            <li><a href="/lawn-maintenance"><i class="fas fa-check-circle"></i> Lawn maintenance & care</a></li>
-                            <li><a href="/landscape-design"><i class="fas fa-check-circle"></i> Landscape design & installation</a></li>
-                            <li><a href="/garden-maintenance"><i class="fas fa-check-circle"></i> Garden maintenance</a></li>
-                            <li><a href="/tree-trimming"><i class="fas fa-check-circle"></i> Tree trimming & removal</a></li>
-                            <li><a href="/emergency-repairs"><i class="fas fa-check-circle"></i> Emergency repair services</a></li>
-                            <li><a href="/seasonal-cleanup"><i class="fas fa-check-circle"></i> Seasonal clean-up services</a></li>
-                            <li><a href="/gutter-cleaning"><i class="fas fa-check-circle"></i> Gutter cleaning</a></li>
-                            <li><a href="/pressure-washing"><i class="fas fa-check-circle"></i> Pressure washing</a></li>
-                        </ul>
-                    </div>
-                    <div class="service-cta">
-                        <a href="contact">Get Free Quote</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="promo-floating">
-            <a href="contact">
-                <p style="font-size:1.2rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
-            </a>
-        </div>
-    </section>
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-container">
-            <div class="about-content">
-                <h2>Your Trusted Nebraska Contractor</h2>
-                <p>As an ATP Approved Contractor with Nebraska license #54690-25, Watts Safety Installs is your premier choice for accessibility modifications, home safety solutions, and professional TV mounting services throughout Nebraska.</p>
-                <p>We specialize in creating safe, accessible environments for seniors and individuals with mobility challenges, while also providing comprehensive contracting services for all your home improvement and audio visual needs.</p>
-                <div class="about-features">
-                    <div class="feature"><div class="feature-icon">✓</div><div>Free Estimates & Consultations</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>Licensed & Insured</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>Senior & Veteran Discounts</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>On Call Emergency Response</div></div>
-                </div>
-            </div>
-            <div class="map-container">
-                <iframe loading="lazy" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11647.878497200923!2d-97.4268435!3d42.032!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDAxJzU1LjIiTiA5N8KwMjUnMzYuNyJX!5e0!3m2!1sen!2sus!4v1640000000000!5m2!1sen!2sus" allowfullscreen="" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </section>
-    <!-- CTA Section -->
+
+    <!-- Final CTA Section -->
     <section class="cta-section">
-        <h2>Ready to Make Your Home Safer & Smarter?</h2>
+        <h2>Professional Accessibility & Safety Solutions Services</h2>
         <p>Contact us today for a free consultation and estimate. We serve Norfolk NE and surrounding areas.</p>
         <a href="tel:+14054106402" class="cta-button">Call Now: (405) 410-6402</a>
     </section>
+
     <footer>
         <div class="footer-container">
             <div class="footer-about">
@@ -1247,10 +1001,10 @@ if (redirects[currentPath]) {
             <div class="footer-links">
                 <h3>Our Services</h3>
                 <ul>
-                    <li><a href="/ada-compliant-showers">Accessibility & Safety</a></li>
-                    <li><a href="/home-remodeling">Complete Home Remodeling</a></li>
-                    <li><a href="/tv-mounting">TV Mounting & AV</a></li>
-                    <li><a href="/snow-removal">Property Maintenance</a></li>
+                    <li><a href="services.html#accessibility-safety">Accessibility & Safety</a></li>
+                    <li><a href="services.html#home-remodeling">Home Remodeling</a></li>
+                    <li><a href="services.html#tv-mounting">TV Mounting & AV</a></li>
+                    <li><a href="services.html#property-maintenance">Property Maintenance</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -1265,28 +1019,7 @@ if (redirects[currentPath]) {
             <p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
         </div>
     </footer>
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            document.getElementById('navLinks').classList.toggle('active');
-        });
-        // Update copyright year
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-        // Hamburger dropdown toggle
-        document.querySelectorAll('.hamburger').forEach(function(btn) {
-            btn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                this.nextElementSibling.classList.toggle('active');
-            });
-        });
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            document.querySelectorAll('.service-dropdown.active').forEach(function(dropdown) {
-                if (!dropdown.parentElement.contains(event.target)) {
-                    dropdown.classList.remove('active');
-                }
-            });
-        });
-    </script>
+
+    <script>if(}</script>
 </body>
 </html>

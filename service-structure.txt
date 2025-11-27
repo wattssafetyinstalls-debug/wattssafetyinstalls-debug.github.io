@@ -1,0 +1,101 @@
+            margin: 0;
+        }
+        .dropdown a {
+            padding: 8px 20px;
+            display: block;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dropdown a:hover {
+            background: #3498db;
+            color: white;
+        }
+        :root {
+            --teal: #00C4B4;
+            --navy: #0A1D37;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gold: #FFD700;
+            --white: #FFFFFF;
+            --warm-light: #FEF7ED;
+            --warm-accent: #F59E0B;
+            --warm-dark: #E07C10;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --teal-glow: 0 15px 40px rgba(0, 196, 180, 0.15);
+            --navy-glow: 0 15px 40px rgba(10, 29, 55, 0.12);
+            --gold-glow: 0 15px 40px rgba(255, 215, 0, 0.1);
+        }
+     
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+     
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--warm-light);
+            color: #1E293B;
+            line-height: 1.7;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+     
+        /* Professional Navigation */
+        header {
+            background: var(--navy);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 80px;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--teal);
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 10px 0;
+        }
+        .nav-links a:hover {
+            color: var(--teal);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;

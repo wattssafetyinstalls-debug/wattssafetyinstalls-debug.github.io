@@ -124,22 +124,21 @@
         .trust-text { font-weight: 600; color: var(--navy); font-size: 1.1rem; }
 
         /* === SERVICES CAROUSEL === */
-/* === FINAL MOBILE FIX - WORKING 100% ON ALL DEVICES === */
-.service-card,
-.promo-card {
+/* === CLEAN MOBILE FIX - WORKING === */
+.service-card {
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    transition: all 0.3s ease;
 }
 
-/* Gradient overlay for service cards */
 .service-card::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #0A1D37, #00C4B4);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--navy), var(--teal));
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 1;
@@ -147,41 +146,58 @@
     pointer-events: none;
 }
 
-/* Hover OR tap = full effect */
-.service-card:hover::after,
-.service-card:active::after,
-.promo-card:hover,
-.promo-card:active {
+.service-card:hover::after {
     opacity: 1;
 }
 
-.service-card:hover,
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.service-card:hover .service-title {
+    color: white;
+}
+
+.service-card:hover .service-description {
+    color: rgba(255,255,255,0.9);
+}
+
+/* Mobile active state */
+.service-card:active::after {
+    opacity: 1;
+}
+
 .service-card:active {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+}
+
+.service-card:active .service-title {
+    color: white;
+}
+
+.service-card:active .service-description {
+    color: rgba(255,255,255,0.9);
+}
+
+/* Promo cards */
+.promo-card {
+    transition: all 0.3s ease;
 }
 
 .promo-card:hover,
 .promo-card:active {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
-/* Text color change on service cards */
-.service-card:hover .service-title,
-.service-card:active .service-title,
-.service-card:hover .service-description,
-.service-card:active .service-description {
-    color: white !important;
-}
-
-/* Make sure content is above gradient */
-.service-card > * {
-    position: relative;
-    z-index: 2;
-}
-
-
+/* Mobile improvements */
+@media (max-width: 768px) {
+    .service-card,
+    .promo-card {
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+    }
 }
 
 
@@ -769,7 +785,10 @@
         }
 
         /* === TOUCH OPTIMIZATIONS === */
-        
+        @media (hover: none) {
+            .service-card:hover {
+                transform: none;
+            }
             
             .service-card:hover::before,
 
@@ -876,12 +895,12 @@
                         <h3 class="service-title">Accessibility & Safety Solutions</h3>
                         <p class="service-description">Create safe, accessible environments with our professional ADA-compliant solutions. We specialize in modifications for seniors and individuals with mobility challenges.</p>
                         <div class="service-dropdown">
-                            <a href="/services/ada-compliant-showers">ADA Compliant Showers</a>
-                            <a href="/services/grab-bars">Grab Bars Installation</a>
-                            <a href="/services/non-slip-flooring">Non-Slip Flooring</a>
-                            <a href="/services/custom-ramps">Custom Ramps</a>
-                            <a href="/services/senior-safety">Senior Safety</a>
-                            <a href="/services/bathroom-accessibility">Bathroom Accessibility</a>
+                            <a href="https://wattsatpcontractor.com/services/ada-compliant-showers.html">ADA Compliant Showers</a>
+                            <a href="https://wattsatpcontractor.com/services/grab-bars.html">Grab Bars Installation</a>
+                            <a href="https://wattsatpcontractor.com/services/non-slip-flooring.html">Non-Slip Flooring</a>
+                            <a href="https://wattsatpcontractor.com/services/custom-ramps.html">Custom Ramps</a>
+                            <a href="https://wattsatpcontractor.com/services/senior-safety.html">Senior Safety</a>
+                            <a href="https://wattsatpcontractor.com/services/bathroom-accessibility.html">Bathroom Accessibility</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Get Free Assessment</a>
@@ -902,10 +921,10 @@
                             <a href="https://wattsatpcontractor.com/deck-construction">Deck Construction</a>
                             <a href="https://wattsatpcontractor.com/siding-replacement">Siding Replacement</a>
                             <a href="https://wattsatpcontractor.com/home-remodeling">Home Remodeling</a>
-                            <a href="/services/basement-finishing">Basement Finishing</a>
+                            <a href="https://wattsatpcontractor.com/services/basement-finishing.html">Basement Finishing</a>
                             <a href="https://wattsatpcontractor.com/window-doors">Window & Doors</a>
                             <a href="https://wattsatpcontractor.com/fence-installation">Fence Installation</a>
-                            <a href="/services/drywall-repair">Drywall Repair</a>
+                            <a href="https://wattsatpcontractor.com/services/drywall-repair.html">Drywall Repair</a>
                             <a href="https://wattsatpcontractor.com/painting-services">Painting Services</a>
                         </div>
                         <div class="service-cta">
@@ -926,9 +945,9 @@
                             <a href="https://wattsatpcontractor.com/concrete-pouring">Concrete Pouring</a>
                             <a href="https://wattsatpcontractor.com/driveway-installation">Driveway Installation</a>
                             <a href="https://wattsatpcontractor.com/patio-construction">Patio Construction</a>
-                            <a href="/services/floor-refinishing">Floor Refinishing</a>
+                            <a href="https://wattsatpcontractor.com/services/floor-refinishing.html">Floor Refinishing</a>
                             <a href="https://wattsatpcontractor.com/hardwood-flooring">Hardwood Flooring</a>
-                            <a href="/services/concrete-repair">Concrete Repair</a>
+                            <a href="https://wattsatpcontractor.com/services/concrete-repair.html">Concrete Repair</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Get Floor Quote</a>
@@ -946,11 +965,11 @@
                         <p class="service-description">Elevate your space with custom cabinetry and beautiful countertop installations that combine functionality with style.</p>
                         <div class="service-dropdown">
                             <a href="https://wattsatpcontractor.com/custom-cabinets">Custom Cabinets</a>
-                            <a href="/services/cabinet-refacing">Cabinet Refacing</a>
-                            <a href="/services/onyx-countertops">Onyx Countertops</a>
-                            <a href="/services/kitchen-cabinetry">Kitchen Cabinetry</a>
-                            <a href="/services/custom-storage">Custom Storage</a>
-                            <a href="/services/countertop-repair">Countertop Repair</a>
+                            <a href="https://wattsatpcontractor.com/services/cabinet-refacing.html">Cabinet Refacing</a>
+                            <a href="https://wattsatpcontractor.com/services/onyx-countertops.html">Onyx Countertops</a>
+                            <a href="https://wattsatpcontractor.com/services/kitchen-cabinetry.html">Kitchen Cabinetry</a>
+                            <a href="https://wattsatpcontractor.com/services/custom-storage.html">Custom Storage</a>
+                            <a href="https://wattsatpcontractor.com/services/countertop-repair.html">Countertop Repair</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Design Consultation</a>
@@ -967,12 +986,12 @@
                         <h3 class="service-title">Property Maintenance</h3>
                         <p class="service-description">Comprehensive property maintenance services to keep your home or business in pristine condition year-round.</p>
                         <div class="service-dropdown">
-                            <a href="/services/property-maintenance-routine">Routine Maintenance</a>
-                            <a href="/services/emergency-repairs">Emergency Repairs</a>
+                            <a href="https://wattsatpcontractor.com/services/property-maintenance-routine.html">Routine Maintenance</a>
+                            <a href="https://wattsatpcontractor.com/services/emergency-repairs.html">Emergency Repairs</a>
                             <a href="https://wattsatpcontractor.com/snow-removal">Snow Removal</a>
-                            <a href="/services/seasonal-prep">Seasonal Preparation</a>
-                            <a href="/services/tree-trimming">Tree Trimming</a>
-                            <a href="/services/emergency-snow">Emergency Snow</a>
+                            <a href="https://wattsatpcontractor.com/services/seasonal-prep.html">Seasonal Preparation</a>
+                            <a href="https://wattsatpcontractor.com/services/tree-trimming.html">Tree Trimming</a>
+                            <a href="https://wattsatpcontractor.com/services/emergency-snow.html">Emergency Snow</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Schedule Service</a>
@@ -990,10 +1009,10 @@
                         <h3 class="service-title">Lawn & Landscape Care</h3>
                         <p class="service-description">Transform your outdoor space with our professional lawn care and landscaping services for beautiful, healthy yards.</p>
                         <div class="service-dropdown">
-                            <a href="/services/lawn-maintenance">Lawn Maintenance</a>
-                            <a href="/services/fertilization">Fertilization</a>
+                            <a href="https://wattsatpcontractor.com/services/lawn-maintenance.html">Lawn Maintenance</a>
+                            <a href="https://wattsatpcontractor.com/services/fertilization.html">Fertilization</a>
                             <a href="https://wattsatpcontractor.com/landscape-design">Landscape Design</a>
-                            <a href="/services/seasonal-cleanup">Seasonal Cleanup</a>
+                            <a href="https://wattsatpcontractor.com/services/seasonal-cleanup.html">Seasonal Cleanup</a>
                             <a href="https://wattsatpcontractor.com/garden-maintenance">Garden Maintenance</a>
                         </div>
                         <div class="service-cta">
@@ -1012,14 +1031,14 @@
                         <h3 class="service-title">Additional Services</h3>
                         <p class="service-description">Complete home solutions from a trusted general contractor with over 10 years of experience.</p>
                         <div class="service-dropdown">
-                            <a href="/services/tv-mounting-residential">TV Mounting</a>
-                            <a href="/services/home-theater">Home Theater</a>
-                            <a href="/services/soundbar-setup">Soundbar Setup</a>
-                            <a href="/services/cable-management">Cable Management</a>
-                            <a href="/services/smart-audio">Smart Audio</a>
-                            <a href="/services/projector-install">Projector Installation</a>
-                            <a href="/services/home-audio">Home Audio</a>
-                            <a href="/services/audio-visual">Audio Visual</a>
+                            <a href="https://wattsatpcontractor.com/services/tv-mounting-residential.html">TV Mounting</a>
+                            <a href="https://wattsatpcontractor.com/services/home-theater.html">Home Theater</a>
+                            <a href="https://wattsatpcontractor.com/services/soundbar-setup.html">Soundbar Setup</a>
+                            <a href="https://wattsatpcontractor.com/services/cable-management.html">Cable Management</a>
+                            <a href="https://wattsatpcontractor.com/services/smart-audio.html">Smart Audio</a>
+                            <a href="https://wattsatpcontractor.com/services/projector-install.html">Projector Installation</a>
+                            <a href="https://wattsatpcontractor.com/services/home-audio.html">Home Audio</a>
+                            <a href="https://wattsatpcontractor.com/services/audio-visual.html">Audio Visual</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Discuss Your Project</a>
@@ -1155,7 +1174,17 @@
         // Year
         document.getElementById('year').textContent = new Date().getFullYear();
         
-        );
+        // Touch-friendly service card interactions
+        
+                    });
+                    
+                    // Toggle this card
+                    
+                });
+            });
+            
+            
+            });
         }
     </script>
 </body>

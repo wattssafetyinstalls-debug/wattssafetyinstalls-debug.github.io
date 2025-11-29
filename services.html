@@ -1189,6 +1189,75 @@
     }
     </style>
     
+
+    <!-- MOBILE LAST CAROUSEL TILE FIX -->
+    <style>
+    @media (max-width: 768px) {
+        /* ONLY target the last service card in carousel on mobile */
+        .service-card:last-child.touch-active .service-dropdown {
+            max-height: 800px !important;
+            transition: max-height 1.2s ease !important;
+            padding: 30px 25px !important;
+        }
+        
+        /* Keep text readable for last tile only */
+        .service-card:last-child.touch-active .service-title,
+        .service-card:last-child.touch-active .service-description {
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+        }
+        
+        /* Make dropdown links more visible in last tile */
+        .service-card:last-child.touch-active .service-dropdown a {
+            color: white !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+            font-weight: 600 !important;
+            padding: 14px 0 !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3) !important;
+        }
+    }
+    </style>
+    
+
+    <!-- CAROUSEL DROPDOWN READABILITY FIX -->
+    <style>
+    /* FIX DROPDOWN TEXT READABILITY FOR ALL TILES */
+    .service-card:hover .service-dropdown,
+    .service-card.touch-active .service-dropdown {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    .service-card:hover .service-dropdown a,
+    .service-card.touch-active .service-dropdown a {
+        color: var(--navy) !important;
+        text-shadow: none !important;
+        font-weight: 600 !important;
+        border-bottom: 1px solid rgba(10, 29, 55, 0.1) !important;
+    }
+    
+    .service-card:hover .service-dropdown a:hover,
+    .service-card.touch-active .service-dropdown a:hover {
+        color: var(--teal) !important;
+        background: rgba(0, 196, 180, 0.05) !important;
+    }
+    
+    /* MOBILE LAST TILE OPTIMIZATION */
+    @media (max-width: 768px) {
+        .service-card:last-child.touch-active .service-dropdown {
+            max-height: 800px !important;
+            transition: max-height 1.2s ease !important;
+            padding: 30px 25px !important;
+        }
+        
+        .service-card:last-child.touch-active .service-title,
+        .service-card:last-child.touch-active .service-description {
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+        }
+    }
+    </style>
+    
 </head>
 <body>
 
@@ -1848,6 +1917,92 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.matchMedia("(max-width: 768px)").matches) {
         document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
     }
+    </script>
+    
+
+    <!-- MOBILE LAST TILE FIX SCRIPT -->
+    <script>
+    // Only fix the last carousel tile on mobile
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceCards = document.querySelectorAll('.service-card');
+            const lastCard = serviceCards[serviceCards.length - 1];
+            
+            if (lastCard) {
+                let lastCardTouchTimer;
+                
+                lastCard.addEventListener('touchstart', function() {
+                    clearTimeout(lastCardTouchTimer);
+                    lastCardTouchTimer = setTimeout(() => {
+                        // Close other cards
+                        serviceCards.forEach(otherCard => {
+                            if (otherCard !== this && otherCard.classList.contains('touch-active')) {
+                                otherCard.classList.remove('touch-active');
+                            }
+                        });
+                        
+                        // Toggle this card with longer delay
+                        this.classList.toggle('touch-active');
+                    }, 400); // Longer delay for last card only
+                });
+                
+                lastCard.addEventListener('touchend', function() {
+                    clearTimeout(lastCardTouchTimer);
+                });
+            }
+            
+            console.log('Last carousel tile mobile optimization applied');
+        });
+    }
+    </script>
+    
+
+    <!-- CAROUSEL DROPDOWN FIX SCRIPT -->
+    <script>
+    // Fix dropdown readability and last tile optimization
+    document.addEventListener('DOMContentLoaded', function() {
+        const serviceCards = document.querySelectorAll('.service-card');
+        const lastCard = serviceCards[serviceCards.length - 1];
+        
+        // Add touch support for all cards
+        serviceCards.forEach(card => {
+            let touchTimer;
+            
+            card.addEventListener('touchstart', function() {
+                clearTimeout(touchTimer);
+                
+                // Different timing for last card
+                const delay = card === lastCard ? 400 : 300;
+                
+                touchTimer = setTimeout(() => {
+                    // Close other cards
+                    serviceCards.forEach(otherCard => {
+                        if (otherCard !== this && otherCard.classList.contains('touch-active')) {
+                            otherCard.classList.remove('touch-active');
+                        }
+                    });
+                    
+                    // Toggle this card
+                    this.classList.toggle('touch-active');
+                }, delay);
+            });
+            
+            card.addEventListener('touchend', function() {
+                clearTimeout(touchTimer);
+            });
+        });
+        
+        // Close dropdown when tapping outside
+        document.addEventListener('touchstart', function(e) {
+            if (!e.target.closest('.service-card')) {
+                serviceCards.forEach(card => {
+                    card.classList.remove('touch-active');
+                });
+            }
+        });
+        
+        console.log('Carousel dropdown readability and last tile optimization applied');
+    });
     </script>
     
 </body>

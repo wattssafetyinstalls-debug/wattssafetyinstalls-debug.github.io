@@ -56,6 +56,27 @@
     <h1>Accessibility & Safety Solutions</h1>
     <p>We specialize in creating safe, accessible environments for individuals with mobility challenges. Our comprehensive solutions include ADA-compliant showers with zero-step entries, commercial-grade grab bars rated for 500+ lbs, non-slip flooring options, and custom-built accessibility ramps that meet all regulatory requirements.</p>
     <!-- Add more content -->
+
+<script>
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
+    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled');
+        });
+        // Optional: Add touchstart for better mobile support
+        hamburger.addEventListener('touchstart', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled via touch');
+        });
+    }
+});
+</script>
+
 </body>
 </html>
         

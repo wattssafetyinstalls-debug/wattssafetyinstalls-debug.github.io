@@ -94,5 +94,26 @@
     <p>Professional ADA compliant ramp installation for wheelchair access. Nebraska licensed contractor serving Norfolk and surrounding areas.</p>
     <p>Contact us at (405) 410-6402 for a free quote!</p>
     <p><a href="../index.html">← Back to Home</a></p>
+
+<script>
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
+    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled');
+        });
+        // Optional: Add touchstart for better mobile support
+        hamburger.addEventListener('touchstart', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled via touch');
+        });
+    }
+});
+</script>
+
 </body>
 </html>

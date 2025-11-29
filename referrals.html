@@ -1,6 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- EMERGENCY TILE FIX -->
+    <style>
+    /* FORCE GRADIENT ANIMATIONS WITH !IMPORTANT */
+    .benefit-card, .value-tile, .service-tile, .trust-item,
+    .service-card, .promo-card, .category-card, .contact-tile, .area-tile {
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    }
+    
+    .benefit-card::before, .value-tile::before, .service-tile::before, 
+    .trust-item::before, .service-card::before, .promo-card::before,
+    .category-card::before, .contact-tile::before, .area-tile::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+        z-index: 1 !important;
+    }
+    
+    .benefit-card:hover::before, .value-tile:hover::before, 
+    .service-tile:hover::before, .trust-item:hover::before,
+    .service-card:hover::before, .promo-card:hover::before,
+    .category-card:hover::before, .contact-tile:hover::before,
+    .area-tile:hover::before {
+        left: 0 !important;
+    }
+    
+    .benefit-card > *, .value-tile > *, .service-tile > *, 
+    .trust-item > *, .service-card > *, .promo-card > *,
+    .category-card > *, .contact-tile > *, .area-tile > * {
+        position: relative !important;
+        z-index: 2 !important;
+    }
+    
+    .benefit-card:hover, .value-tile:hover, .service-tile:hover, 
+    .trust-item:hover, .service-card:hover, .promo-card:hover,
+    .category-card:hover, .contact-tile:hover, .area-tile:hover {
+        transform: translateY(-8px) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    /* FORCE TEXT COLOR CHANGE */
+    .benefit-card:hover *, .value-tile:hover *, .service-tile:hover *, 
+    .trust-item:hover *, .service-card:hover *, .promo-card:hover *,
+    .category-card:hover *, .contact-tile:hover *, .area-tile:hover * {
+        color: white !important;
+    }
+    </style>
+    
+    
+    
 <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta charset="UTF-8">
@@ -783,6 +839,619 @@
         }
     </style>
 </style>
+
+    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
+    <style>
+    /* FIX: Mobile carousel dropdown background */
+    @media (max-width: 768px) {
+        .service-card.touch-active .service-dropdown {
+            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+            color: white !important;
+        }
+        
+        .service-card.touch-active .service-dropdown a {
+            color: white !important;
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .service-card.touch-active .service-dropdown a:hover {
+            background: rgba(255,255,255,0.1) !important;
+            color: var(--gold) !important;
+        }
+    }
+
+    /* BENEFIT CARD ANIMATIONS - Same as service tiles */
+    .benefit-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .benefit-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .benefit-card:hover::before {
+        left: 0;
+    }
+    
+    .benefit-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .benefit-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* SATIN GLOSS SWIPE FOR BENEFIT CARDS */
+    .benefit-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .benefit-card:hover::after {
+        left: 100%;
+    }
+    
+    /* TEXT COLOR OPTIMIZATION FOR BENEFIT CARDS */
+    .benefit-card:hover .benefit-icon,
+    .benefit-card:hover h3,
+    .benefit-card:hover p {
+        color: white !important;
+    }
+    
+    /* MOBILE AUTO-ANIMATION FOR BENEFIT CARDS */
+    @media (max-width: 768px) {
+        .benefit-card.mobile-animated {
+            animation: benefitMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes benefitMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
+
+    <!-- SERVICE TILES 4-GRID LAYOUT & ANIMATIONS -->
+    <style>
+    /* 4-GRID LAYOUT FOR SERVICE TILES */
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+    }
+    
+    @media (max-width: 1200px) {
+        .benefits-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* GRADIENT ANIMATIONS FOR VALUE TILES & SERVICE TILES */
+    .benefit-card, .value-tile, .service-tile, .trust-item {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .benefit-card::before, .value-tile::before, .service-tile::before, .trust-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .benefit-card:hover::before, .value-tile:hover::before, .service-tile:hover::before, .trust-item:hover::before {
+        left: 0;
+    }
+    
+    .benefit-card > *, .value-tile > *, .service-tile > *, .trust-item > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .benefit-card:hover, .value-tile:hover, .service-tile:hover, .trust-item:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* SATIN GLOSS SWIPE EFFECT */
+    .benefit-card::after, .value-tile::after, .service-tile::after, .trust-item::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .benefit-card:hover::after, .value-tile:hover::after, .service-tile:hover::after, .trust-item:hover::after {
+        left: 100%;
+    }
+    
+    /* TEXT COLOR OPTIMIZATION ON HOVER */
+    .benefit-card:hover .benefit-icon,
+    .benefit-card:hover h3,
+    .benefit-card:hover p,
+    .value-tile:hover .value-icon,
+    .value-tile:hover h3,
+    .value-tile:hover p,
+    .service-tile:hover .service-icon,
+    .service-tile:hover h3,
+    .service-tile:hover p,
+    .trust-item:hover .trust-icon,
+    .trust-item:hover .trust-text {
+        color: white !important;
+    }
+    
+    /* MOBILE AUTO-ANIMATIONS */
+    @media (max-width: 768px) {
+        .benefit-card.mobile-animated,
+        .value-tile.mobile-animated,
+        .service-tile.mobile-animated,
+        .trust-item.mobile-animated {
+            animation: tileMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes tileMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
+
+    <!-- CENTER 3 BENEFIT TILES & ABOUT PAGE GRADIENTS -->
+    <style>
+    /* CENTER THE 3 BENEFIT TILES IN REFERRALS.HTML */
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+        justify-content: center;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    @media (max-width: 1024px) {
+        .benefits-grid {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .benefits-grid {
+            grid-template-columns: 1fr;
+            max-width: 500px;
+        }
+    }
+    
+    /* GRADIENT ANIMATIONS FOR ALL TILES IN ABOUT.HTML */
+    .benefit-card, 
+    .value-tile, 
+    .service-tile, 
+    .trust-item,
+    .service-card,
+    .promo-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .benefit-card::before, 
+    .value-tile::before, 
+    .service-tile::before, 
+    .trust-item::before,
+    .service-card::before,
+    .promo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .benefit-card:hover::before, 
+    .value-tile:hover::before, 
+    .service-tile:hover::before, 
+    .trust-item:hover::before,
+    .service-card:hover::before,
+    .promo-card:hover::before {
+        left: 0;
+    }
+    
+    .benefit-card > *, 
+    .value-tile > *, 
+    .service-tile > *, 
+    .trust-item > *,
+    .service-card > *,
+    .promo-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .benefit-card:hover, 
+    .value-tile:hover, 
+    .service-tile:hover, 
+    .trust-item:hover,
+    .service-card:hover,
+    .promo-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* SATIN GLOSS SWIPE EFFECT */
+    .benefit-card::after, 
+    .value-tile::after, 
+    .service-tile::after, 
+    .trust-item::after,
+    .service-card::after,
+    .promo-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .benefit-card:hover::after, 
+    .value-tile:hover::after, 
+    .service-tile:hover::after, 
+    .trust-item:hover::after,
+    .service-card:hover::after,
+    .promo-card:hover::after {
+        left: 100%;
+    }
+    
+    /* TEXT COLOR OPTIMIZATION */
+    .benefit-card:hover *, 
+    .value-tile:hover *, 
+    .service-tile:hover *, 
+    .trust-item:hover *,
+    .service-card:hover *,
+    .promo-card:hover * {
+        color: white !important;
+    }
+    
+    /* MOBILE AUTO-ANIMATIONS */
+    @media (max-width: 768px) {
+        .benefit-card.mobile-animated,
+        .value-tile.mobile-animated,
+        .service-tile.mobile-animated,
+        .trust-item.mobile-animated,
+        .service-card.mobile-animated,
+        .promo-card.mobile-animated {
+            animation: tileMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes tileMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
+
+    <!-- COMPREHENSIVE TILE LAYOUTS & ANIMATIONS -->
+    <style>
+    /* 4-GRID LAYOUT FOR ALL MULTI-TILE SECTIONS */
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+        justify-content: center;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* 3-GRID LAYOUT FOR SECTIONS WITH 3 TILES */
+    .benefits-grid.three-column {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 1000px;
+    }
+    
+    /* TRUST BAR - 4 ITEMS IN A ROW */
+    .trust-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        max-width: 1300px;
+        margin: 0 auto;
+        justify-content: center;
+    }
+    
+    /* SERVICE CATEGORIES GRID */
+    .service-categories {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+        justify-content: center;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* PROMO GRID - 3 COLUMNS */
+    .promo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        max-width: 1300px;
+        margin: 0 auto;
+        justify-content: center;
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1200px) {
+        .benefits-grid,
+        .trust-container,
+        .service-categories {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+        
+        .promo-grid {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+        
+        .benefits-grid.three-column {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .benefits-grid,
+        .trust-container,
+        .service-categories,
+        .promo-grid,
+        .benefits-grid.three-column {
+            grid-template-columns: 1fr;
+            max-width: 500px;
+        }
+    }
+    
+    /* CONSISTENT GRADIENT ANIMATIONS FOR ALL TILES */
+    .benefit-card, 
+    .value-tile, 
+    .service-tile, 
+    .trust-item,
+    .service-card,
+    .promo-card,
+    .category-card,
+    .contact-tile,
+    .area-tile {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .benefit-card::before, 
+    .value-tile::before, 
+    .service-tile::before, 
+    .trust-item::before,
+    .service-card::before,
+    .promo-card::before,
+    .category-card::before,
+    .contact-tile::before,
+    .area-tile::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .benefit-card:hover::before, 
+    .value-tile:hover::before, 
+    .service-tile:hover::before, 
+    .trust-item:hover::before,
+    .service-card:hover::before,
+    .promo-card:hover::before,
+    .category-card:hover::before,
+    .contact-tile:hover::before,
+    .area-tile:hover::before {
+        left: 0;
+    }
+    
+    .benefit-card > *, 
+    .value-tile > *, 
+    .service-tile > *, 
+    .trust-item > *,
+    .service-card > *,
+    .promo-card > *,
+    .category-card > *,
+    .contact-tile > *,
+    .area-tile > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .benefit-card:hover, 
+    .value-tile:hover, 
+    .service-tile:hover, 
+    .trust-item:hover,
+    .service-card:hover,
+    .promo-card:hover,
+    .category-card:hover,
+    .contact-tile:hover,
+    .area-tile:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* SATIN GLOSS SWIPE EFFECT */
+    .benefit-card::after, 
+    .value-tile::after, 
+    .service-tile::after, 
+    .trust-item::after,
+    .service-card::after,
+    .promo-card::after,
+    .category-card::after,
+    .contact-tile::after,
+    .area-tile::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .benefit-card:hover::after, 
+    .value-tile:hover::after, 
+    .service-tile:hover::after, 
+    .trust-item:hover::after,
+    .service-card:hover::after,
+    .promo-card:hover::after,
+    .category-card:hover::after,
+    .contact-tile:hover::after,
+    .area-tile:hover::after {
+        left: 100%;
+    }
+    
+    /* TEXT COLOR OPTIMIZATION */
+    .benefit-card:hover *, 
+    .value-tile:hover *, 
+    .service-tile:hover *, 
+    .trust-item:hover *,
+    .service-card:hover *,
+    .promo-card:hover *,
+    .category-card:hover *,
+    .contact-tile:hover *,
+    .area-tile:hover * {
+        color: white !important;
+    }
+    
+    /* MOBILE AUTO-ANIMATIONS */
+    @media (max-width: 768px) {
+        .mobile-animated {
+            animation: tileMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes tileMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -1130,5 +1799,267 @@
             });
         });
     </script>
+
+    <!-- BENEFIT CARD ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation for benefit cards
+    function initBenefitAnimations() {
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        
+        console.log('Found ' + benefitCards.length + ' benefit cards');
+        
+        // Add touch support for mobile
+        benefitCards.forEach(card => {
+            card.classList.remove('mobile-animated');
+            
+            // Touch events for mobile
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+        
+        // Auto-animate benefit cards on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            let delay = 0;
+            benefitCards.forEach(card => {
+                setTimeout(() => {
+                    card.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        card.classList.remove('mobile-animated');
+                    }, 3000);
+                }, delay);
+                delay += 500;
+            });
+            
+            // Re-animate when page becomes visible again
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    setTimeout(() => {
+                        let newDelay = 0;
+                        benefitCards.forEach(card => {
+                            setTimeout(() => {
+                                card.classList.add('mobile-animated');
+                                setTimeout(() => {
+                                    card.classList.remove('mobile-animated');
+                                }, 3000);
+                            }, newDelay);
+                            newDelay += 500;
+                        });
+                    }, 1000);
+                }
+            });
+        }
+    }
+    
+    // Initialize when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBenefitAnimations);
+    } else {
+        initBenefitAnimations();
+    }
+    
+    // Re-initialize on page show
+    window.addEventListener('pageshow', initBenefitAnimations);
+    
+    // Also animate when benefit cards come into view
+    function animateBenefitOnScroll() {
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
+                    entry.target.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        entry.target.classList.remove('mobile-animated');
+                    }, 3000);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        benefitCards.forEach(card => {
+            observer.observe(card);
+        });
+    }
+    
+    // Start scroll animation observer
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
+    }
+    </script>
+    
+
+    <!-- TILE ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation for all tiles
+    function initTileAnimations() {
+        const allTiles = document.querySelectorAll('.benefit-card, .value-tile, .service-tile, .trust-item');
+        
+        console.log('Found ' + allTiles.length + ' tiles for animation');
+        
+        // Add touch support for mobile
+        allTiles.forEach(tile => {
+            tile.classList.remove('mobile-animated');
+            
+            // Touch events for mobile
+            tile.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            tile.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+        
+        // Auto-animate tiles on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            let delay = 0;
+            allTiles.forEach(tile => {
+                setTimeout(() => {
+                    tile.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        tile.classList.remove('mobile-animated');
+                    }, 3000);
+                }, delay);
+                delay += 300;
+            });
+            
+            // Re-animate when page becomes visible again
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    setTimeout(() => {
+                        let newDelay = 0;
+                        allTiles.forEach(tile => {
+                            setTimeout(() => {
+                                tile.classList.add('mobile-animated');
+                                setTimeout(() => {
+                                    tile.classList.remove('mobile-animated');
+                                }, 3000);
+                            }, newDelay);
+                            newDelay += 300;
+                        });
+                    }, 1000);
+                }
+            });
+        }
+    }
+    
+    // Initialize when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTileAnimations);
+    } else {
+        initTileAnimations();
+    }
+    
+    // Re-initialize on page show
+    window.addEventListener('pageshow', initTileAnimations);
+    
+    // Also animate when tiles come into view
+    function animateTilesOnScroll() {
+        const allTiles = document.querySelectorAll('.benefit-card, .value-tile, .service-tile, .trust-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
+                    entry.target.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        entry.target.classList.remove('mobile-animated');
+                    }, 3000);
+                }
+            });
+        }, { threshold: 0.3 });
+        
+        allTiles.forEach(tile => {
+            observer.observe(tile);
+        });
+    }
+    
+    // Start scroll animation observer
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
+    }
+    </script>
+    
+
+    <!-- COMPREHENSIVE TILE ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation for all tiles
+    function initAllTileAnimations() {
+        const allTiles = document.querySelectorAll(
+            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
+            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
+        );
+        
+        console.log('Animating ' + allTiles.length + ' tiles across all pages');
+        
+        // Add touch support for mobile
+        allTiles.forEach(tile => {
+            tile.classList.remove('mobile-animated');
+            
+            // Touch events for mobile
+            tile.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            tile.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+        
+        // Auto-animate tiles on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            let delay = 0;
+            allTiles.forEach(tile => {
+                setTimeout(() => {
+                    tile.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        tile.classList.remove('mobile-animated');
+                    }, 3000);
+                }, delay);
+                delay += 300;
+            });
+        }
+    }
+    
+    // Initialize when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAllTileAnimations);
+    } else {
+        initAllTileAnimations();
+    }
+    
+    // Re-initialize on page show
+    window.addEventListener('pageshow', initAllTileAnimations);
+    
+    // Animate when tiles come into view
+    function animateTilesOnScroll() {
+        const allTiles = document.querySelectorAll(
+            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
+            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
+        );
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
+                    entry.target.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        entry.target.classList.remove('mobile-animated');
+                    }, 3000);
+                }
+            });
+        }, { threshold: 0.3 });
+        
+        allTiles.forEach(tile => {
+            observer.observe(tile);
+        });
+    }
+    
+    // Start scroll animation observer
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
+    }
+    </script>
+    
 </body>
 </html>

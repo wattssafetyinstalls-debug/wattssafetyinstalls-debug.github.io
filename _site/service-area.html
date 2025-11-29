@@ -936,5 +936,26 @@
             });
         });
     </script>
+
+<script>
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
+    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled');
+        });
+        // Optional: Add touchstart for better mobile support
+        hamburger.addEventListener('touchstart', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled via touch');
+        });
+    }
+});
+</script>
+
 </body>
 </html>

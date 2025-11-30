@@ -1298,7 +1298,24 @@
                 display: block;
             }
         }
-    </style>
+    
+        /* Homepage Service Tile Text Color Fix */
+        @media (max-width: 768px) {
+            .service-tile:hover h2,
+            .service-tile:hover p,
+            .service-tile:hover .trust-text,
+            .service-tile:active h2,
+            .service-tile:active p,
+            .service-tile:active .trust-text {
+                color: var(--navy) !important;
+            }
+            
+            .service-tile.mobile-animated h2,
+            .service-tile.mobile-animated p, 
+            .service-tile.mobile-animated .trust-text {
+                color: white !important;
+            }
+        }</style>
 </style>
 
 <!-- Pretty URL Redirects - UPDATED WITH ALL SERVICES -->

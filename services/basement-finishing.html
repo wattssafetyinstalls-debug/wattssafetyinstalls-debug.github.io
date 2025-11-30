@@ -615,7 +615,38 @@
         }
     
 
-            </style>
+            
+        /* Mobile Animation Fix */
+        @media (max-width: 768px) {
+            .service-tile.mobile-animated {
+                transform: translateY(-12px) scale(1.03);
+                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
+                background: linear-gradient(135deg, var(--teal), var(--navy));
+                color: white;
+                border-color: var(--gray);
+            }
+            .service-tile.mobile-animated::before {
+                opacity: 1;
+                animation: gloss 1.3s ease-out forwards;
+            }
+            .service-tile.mobile-animated::after {
+                opacity: 1;
+                border-color: rgba(0,196,180,0.7);
+                box-shadow: 0 0 35px rgba(0,196,180,0.6);
+            }
+            .service-tile.mobile-animated h2, 
+            .service-tile.mobile-animated p, 
+            .service-tile.mobile-animated .trust-text {
+                color: white !important;
+            }
+            .service-tile.mobile-animated .trust-bar {
+                background: rgba(255,255,255,0.12);
+            }
+            .service-tile.mobile-animated .trust-icon {
+                transform: scale(1.5) translateY(-8px);
+                color: var(--gold) !important;
+            }
+        }</style>
 
     <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANINETIONS -->
     <style>
@@ -1021,5 +1052,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
 
-            </body>
+            
+        <!-- Mobile Animation Script -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth <= 768) {
+                console.log('Mobile animation script loaded');
+                
+                setTimeout(function() {
+                    const mainTile = document.getElementById('mainServiceTile');
+                    const categories = document.querySelectorAll('.service-category');
+                    
+                    if (mainTile) {
+                        mainTile.classList.add('mobile-animated');
+                        console.log('Mobile animation applied to main tile');
+                    }
+                    
+                    categories.forEach(category => {
+                        category.classList.add('mobile-animated');
+                    });
+                    
+                    console.log('Mobile animation completed');
+                    
+                    // Remove animation after it finishes
+                    setTimeout(function() {
+                        if (mainTile) {
+                            mainTile.classList.remove('mobile-animated');
+                        }
+                        categories.forEach(category => {
+                            category.classList.remove('mobile-animated');
+                        });
+                        console.log('Mobile animation removed');
+                    }, 3000);
+                    
+                }, 3000);
+            }
+        });
+        </script>
+    </body>
 </html>

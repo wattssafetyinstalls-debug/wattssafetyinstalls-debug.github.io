@@ -185,16 +185,7 @@
                     
                     console.log('Mobile animation completed');
                     
-                    // Remove animation after it finishes
-                    setTimeout(function() {
-                        if (mainTile) {
-                            mainTile.classList.remove('mobile-animated');
-                        }
-                        categories.forEach(category => {
-                            category.classList.remove('mobile-animated');
-                        });
-                        console.log('Mobile animation removed');
-                    }, 3000);
+                    
                     
                 }, 3000);
             }

@@ -355,13 +355,26 @@
         }
         
         @media (hover:hover) and (pointer:fine) {
-            .service-category:hover {
-                transform: translateY(-8px) scale(1.02);
-                box-shadow: 0 25px 60px rgba(10,29,55,0.3);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
+            
+        /* FIXED: Service category hover - always readable */
+        .service-category:hover,
+        .service-category:active {
+            background: linear-gradient(135deg, #00C4B4, #0A1D37) !important;
+            color: white !important;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(10,29,55,0.4);
+        }
+        .service-category:hover .category-title,
+        .service-category:hover .category-services,
+        .service-category:active .category-title,
+        .service-category:active .category-services {
+            color: white !important;
+        }
+        .service-category:hover .category-icon,
+        .service-category:active .category-icon {
+            color: #FFD700 !important;
+        }
+        
             .service-category:hover::before {
                 opacity: 1;
                 animation: gloss 1.6s ease-out forwards;
@@ -1047,16 +1060,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     console.log('Mobile animation completed');
                     
-                    // Remove animation after it finishes
-                    setTimeout(function() {
-                        if (mainTile) {
-                            mainTile.classList.remove('mobile-animated');
-                        }
-                        categories.forEach(category => {
-                            category.classList.remove('mobile-animated');
-                        });
-                        console.log('Mobile animation removed');
-                    }, 3000);
+                    
                     
                 }, 3000);
             }

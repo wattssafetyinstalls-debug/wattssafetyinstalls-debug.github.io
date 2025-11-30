@@ -355,13 +355,26 @@
         }
         
         @media (hover:hover) and (pointer:fine) {
-            .service-category:hover {
-                transform: translateY(-8px) scale(1.02);
-                box-shadow: 0 25px 60px rgba(10,29,55,0.3);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
+            
+        /* FIXED: Service category hover - always readable */
+        .service-category:hover,
+        .service-category:active {
+            background: linear-gradient(135deg, #00C4B4, #0A1D37) !important;
+            color: white !important;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(10,29,55,0.4);
+        }
+        .service-category:hover .category-title,
+        .service-category:hover .category-services,
+        .service-category:active .category-title,
+        .service-category:active .category-services {
+            color: white !important;
+        }
+        .service-category:hover .category-icon,
+        .service-category:active .category-icon {
+            color: #FFD700 !important;
+        }
+        
             .service-category:hover::before {
                 opacity: 1;
                 animation: gloss 1.6s ease-out forwards;
@@ -765,13 +778,7 @@
 
     <div class="service-tile" id="mainServiceTile">
         <h2>Cable Management</h2>
-        <p class="service-description">Professional Cable Management services in Norfolk, Nebraska. Watts Safety Installs provides expert cable management solutions for homeowners throughout Northeast Nebraska.
-
-Our professional approach ensures quality workmanship using proper techniques and materials. We focus on customer satisfaction and reliable service that stands the test of time. Every project receives our comprehensive attention from initial consultation to final cleanup.
-
-Watts Safety Installs delivers professional results you can trust.
-
-Call (405) 410-6402 today for your free consultation.</p>
+        <p class="service-description">Professional Cable Management services in Norfolk, Nebraska. Watts Safety Installs provides expert cable management solutions for homeowners throughout Northeast Nebraska. Our professional approach ensures quality workmanship using proper techniques and materials.</p>
 
         <div class="trust-bar">
             <div class="trust-item"><div class="trust-icon"><i class="fas fa-check-circle"></i></div><div class="trust-text">Licensed & Insured</div></div>
@@ -1045,16 +1052,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     console.log('Mobile animation completed');
                     
-                    // Remove animation after it finishes
-                    setTimeout(function() {
-                        if (mainTile) {
-                            mainTile.classList.remove('mobile-animated');
-                        }
-                        categories.forEach(category => {
-                            category.classList.remove('mobile-animated');
-                        });
-                        console.log('Mobile animation removed');
-                    }, 3000);
+                    
                     
                 }, 3000);
             }

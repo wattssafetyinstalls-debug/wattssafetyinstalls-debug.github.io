@@ -356,13 +356,26 @@
         }
         
         @media (hover:hover) and (pointer:fine) {
-            .service-category:hover {
-                transform: translateY(-8px) scale(1.02);
-                box-shadow: 0 25px 60px rgba(10,29,55,0.3);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
+            
+        /* FIXED: Service category hover - always readable */
+        .service-category:hover,
+        .service-category:active {
+            background: linear-gradient(135deg, #00C4B4, #0A1D37) !important;
+            color: white !important;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(10,29,55,0.4);
+        }
+        .service-category:hover .category-title,
+        .service-category:hover .category-services,
+        .service-category:active .category-title,
+        .service-category:active .category-services {
+            color: white !important;
+        }
+        .service-category:hover .category-icon,
+        .service-category:active .category-icon {
+            color: #FFD700 !important;
+        }
+        
             .service-category:hover::before {
                 opacity: 1;
                 animation: gloss 1.6s ease-out forwards;
@@ -800,13 +813,7 @@
 
     <div class="service-tile" id="mainServiceTile">
         <h2>Tv Mounting</h2>
-        <p class="service-description">Professional TV mounting services in Norfolk, NE and surrounding areas. Watts Safety Installs provides reliable television wall mounting with proper viewing angles, cable management, and secure installations. I serve Norfolk, Madison, Stanton, Pierce, and nearby communities with flexible scheduling.
-
-I mount various TV sizes and types on different surfaces including drywall, brick, and fireplace mantels. Each installation includes basic wire management and uses quality mounts that provide stability and safety. I can also help set up soundbars and basic home theater components to enhance your viewing experience.
-
-Homeowners appreciate my attention to detail and clean installation work. I focus on making sure your TV is securely mounted at the right height and position for comfortable viewing. When searching for professional TV mounting in Norfolk Nebraska, customers choose Watts Safety Installs for dependable service you can trust.
-
-Safety and quality workmanship are my priorities. As a licensed Nebraska contractor, I ensure every installation meets proper safety standards. Call (405) 410-6402 today to discuss your TV mounting needs.</p>
+        <p class="service-description">Expert TV mounting services in Norfolk, NE. We mount televisions of all sizes with perfect placement, cable concealment, and secure installation. Serving Northeast Nebraska with same-day availability.</p>
 
         <div class="trust-bar">
             <div class="trust-item"><div class="trust-icon"><i class="fas fa-check-circle"></i></div><div class="trust-text">Licensed & Insured</div></div>
@@ -1080,16 +1087,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     console.log('Mobile animation completed');
                     
-                    // Remove animation after it finishes
-                    setTimeout(function() {
-                        if (mainTile) {
-                            mainTile.classList.remove('mobile-animated');
-                        }
-                        categories.forEach(category => {
-                            category.classList.remove('mobile-animated');
-                        });
-                        console.log('Mobile animation removed');
-                    }, 3000);
+                    
                     
                 }, 3000);
             }

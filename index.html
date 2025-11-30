@@ -3,18 +3,29 @@
 <head>
 <script>if(window.location.pathname==="/index"){window.history.replaceState({},"","/");}
         // Mobile touch optimization for service cards
-        
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceCards = document.querySelectorAll('.service-card');
+            
+            serviceCards.forEach(card => {
+                card.addEventListener('touchstart', function(e) {
+                    // Close all other cards
+                    serviceCards.forEach(otherCard => {
+                        if (otherCard !== this) {
+                            otherCard.classList.remove('touch-active');
+                        }
                     });
                     
                     // Toggle this card
-                    this.classList.toggle('mobile-active');
+                    this.classList.toggle('touch-active');
                     
                     // Prevent default to avoid scrolling issues
                     e.preventDefault();
                 });
                 
                 // Close card when tapping outside
-                );
+                document.addEventListener('touchstart', function(e) {
+                    if (!card.contains(e.target)) {
+                        card.classList.remove('touch-active');
                     }
                 });
             });
@@ -380,6 +391,24 @@
                 scroll-behavior: auto;
             }
         }
+        
+        /* === SERVICE CARD DROPDOWN LINK FIX === */
+        .service-dropdown a {
+            color: #0A1D37 !important;
+            background: white !important;
+        }
+
+        .service-card:hover .service-dropdown a,
+        .service-card.touch-active .service-dropdown a {
+            color: white !important;
+            background: transparent !important;
+        }
+
+        .service-card:hover .service-dropdown,
+        .service-card.touch-active .service-dropdown {
+            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+        }
+        
         /* Dropdown Menu Styles */
         .nav-dropdown {
             position: relative;
@@ -1196,7 +1225,7 @@
                 font-size: 1.2rem;
             }
         }
-    /* MOBILE AUTO-ANINETION EFFECTS */
+    /* MOBILE AUTO-ANIMATION EFFECTS */
         @media (max-width: 768px) {
             .service-tile.mobile-animated {
                 transform: translateY(-12px) scale(1.03);
@@ -1315,8 +1344,8 @@
             .service-tile.mobile-animated .trust-text {
                 color: white !important;
             }
-        }</style>
-</style>
+        }
+    </style>
 
 <!-- Pretty URL Redirects - UPDATED WITH ALL SERVICES -->
 <script>
@@ -1401,7 +1430,7 @@ if (redirects[currentPath]) {
 }
 </script>
 
-    <!-- SEASONAL PROMO ANINETIONS -->
+    <!-- SEASONAL PROMO ANIMATIONS -->
     <style>
     /* Seasonal promo card animations */
     .promo-card {
@@ -1498,27 +1527,20 @@ if (redirects[currentPath]) {
     </style>
     
 
-    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANINETIONS -->
+    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
     <style>
     /* FIX: Mobile carousel dropdown background */
     @media (max-width: 768px) {
-        .service-card.touch-active .service-dropdown {
-            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-            color: white !important;
-        }
-        
         .service-card.touch-active .service-dropdown a {
-            color: white !important;
             border-bottom: 1px solid rgba(255,255,255,0.2) !important;
         }
         
         .service-card.touch-active .service-dropdown a:hover {
             background: rgba(255,255,255,0.1) !important;
-            color: var(--gold) !important;
         }
     }
 
-    /* BENEFIT CARD ANINETIONS - Same as service tiles */
+    /* BENEFIT CARD ANIMATIONS - Same as service tiles */
     .benefit-card {
         position: relative;
         overflow: hidden;
@@ -1580,7 +1602,7 @@ if (redirects[currentPath]) {
         color: white !important;
     }
     
-    /* MOBILE AUTO-ANINETION FOR BENEFIT CARDS */
+    /* MOBILE AUTO-ANIMATION FOR BENEFIT CARDS */
     @media (max-width: 768px) {
         .benefit-card.mobile-animated {
             animation: benefitMobileGlow 3s ease-in-out 1;
@@ -1604,7 +1626,7 @@ if (redirects[currentPath]) {
     </style>
     
 
-    <!-- COMPREHENSIVE TILE LAYOUTS & ANINETIONS -->
+    <!-- COMPREHENSIVE TILE LAYOUTS & ANIMATIONS -->
     <style>
     /* 4-GRID LAYOUT FOR ALL MULTI-TILE SECTIONS */
     .benefits-grid {
@@ -1687,7 +1709,7 @@ if (redirects[currentPath]) {
         }
     }
     
-    /* CONSISTENT GRADIENT ANINETIONS FOR ALL TILES */
+    /* CONSISTENT GRADIENT ANIMATIONS FOR ALL TILES */
     .benefit-card, 
     .value-tile, 
     .service-tile, 
@@ -1811,7 +1833,7 @@ if (redirects[currentPath]) {
         color: white !important;
     }
     
-    /* MOBILE AUTO-ANINETIONS */
+    /* MOBILE AUTO-ANIMATIONS */
     @media (max-width: 768px) {
         .mobile-animated {
             animation: tileMobileGlow 3s ease-in-out 1;
@@ -2201,7 +2223,7 @@ if (redirects[currentPath]) {
                 }
             });
         });</script>
-    <!-- SEASONAL PROMO ANINETION SCRIPT -->
+    <!-- SEASONAL PROMO ANIMATION SCRIPT -->
     <script>
     // Mobile auto-animation for seasonal promo cards
     function initPromoAnimations() {
@@ -2292,7 +2314,7 @@ if (redirects[currentPath]) {
     </script>
     
 
-    <!-- BENEFIT CARD ANINETION SCRIPT -->
+    <!-- BENEFIT CARD ANIMATION SCRIPT -->
     <script>
     // Mobile auto-animation for benefit cards
     function initBenefitAnimations() {
@@ -2383,7 +2405,7 @@ if (redirects[currentPath]) {
     </script>
     
 
-    <!-- COMPREHENSIVE TILE ANINETION SCRIPT -->
+    <!-- COMPREHENSIVE TILE ANIMATION SCRIPT -->
     <script>
     // Mobile auto-animation for all tiles
     function initAllTileAnimations() {

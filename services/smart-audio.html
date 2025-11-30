@@ -10,7 +10,104 @@
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { color: #0A1D37; border-bottom: 3px solid #00C4B4; padding-bottom: 10px; }
         .contact-btn { background: #00C4B4; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
-    </style>
+    
+        /* Mobile Menu Fix */
+        .mobile-nav {
+            display: none;
+        }
+        
+        .mobile-menu-container {
+            position: relative;
+        }
+        
+        .mobile-menu-toggle {
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hamburger-box {
+            width: 30px;
+            height: 24px;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .hamburger-inner {
+            display: block;
+            top: 50%;
+            margin-top: -2px;
+        }
+        
+        .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+            border-radius: 4px;
+            position: absolute;
+            transition: transform 0.15s ease;
+        }
+        
+        .hamburger-inner::before, .hamburger-inner::after {
+            content: "";
+            display: block;
+        }
+        
+        .hamburger-inner::before {
+            top: -10px;
+        }
+        
+        .hamburger-inner::after {
+            bottom: -10px;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            z-index: 1000;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .mobile-menu a:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Show mobile nav only on mobile */
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: block;
+            }
+            .desktop-nav {
+                display: none;
+            }
+        }
+            </style>
 </head>
 <body>
     <div class="container">
@@ -33,5 +130,7 @@
         <p>Contact us today for a free consultation and estimate!</p>
         <a href="/contact" class="contact-btn">Get Free Quote</a>
     </div>
-</body>
+
+
+            </body>
 </html>

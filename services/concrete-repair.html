@@ -589,7 +589,9 @@
                 display: block;
             }
         }
-    </style>
+    
+
+            </style>
 
     <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANINETIONS -->
     <style>
@@ -694,7 +696,9 @@
             }
         }
     }
-    </style>
+    
+
+            </style>
     
 </head>
 <body>
@@ -718,6 +722,8 @@
             </nav>
         </div>
     </header>
+
+            
 
     <section class="hero">
         <h1 class="service-title">Concrete Repair</h1>
@@ -789,22 +795,55 @@ Call (405) 410-6402 today for your free consultation.</p>
     </footer>
 
     <script>
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            document.getElementById('navLinks').classList.toggle('active');
-        document.addEventListener('click', function(event) {
-            const navLinks = document.getElementById('navLinks');
+        // Mobile menu toggle for both menus
+        document.addEventListener('DOMContentLoaded', function() {
+            // Original mobile menu button (three lines)
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
             
-            if (!navLinks.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
-                navLinks.classList.remove('active');
+            // New hamburger menu
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            // Toggle original mobile menu
+            if (mobileMenuBtn && navLinks) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navLinks.classList.toggle('active');
+                });
             }
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                gtag('event', 'link_click', {
-                    'event_category': 'Navigation',
-                    'event_label': this.href,
-                    'transport_type': 'beacon'
-                </script>
+            
+            // Toggle new hamburger menu
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mobileMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+            }
+            
+            // Close menus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (navLinks && !navLinks.contains(e.target) && mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                }
+                if (mobileMenu && !mobileMenu.contains(e.target) && mobileMenuToggle && !mobileMenuToggle.contains(e.target)) {
+                    mobileMenu.classList.remove('active');
+                    if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
+                }
+            });
+            
+            // Close menus when clicking links
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (navLinks) navLinks.classList.remove('active');
+                    if (mobileMenu) mobileMenu.classList.remove('active');
+                    if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
+                });
+            });
+        });
+        </script>
 
     <script>
         // Mobile auto-animation after 3 seconds
@@ -812,22 +851,10 @@ Call (405) 410-6402 today for your free consultation.</p>
             if (window.innerWidth <= 768) {
                 
             }
-        <script>
-    // Mobile auto-animation after 3 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.innerWidth <= 768) {
-            
-        }
-    </script>
-
-
-<script>
-// Mobile auto-animation after 3 seconds
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth <= 768) {
         
-    }
-</script>
+
+
+
 
 
 <script>
@@ -963,5 +990,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     </script>
     
-</body>
+
+
+            </body>
 </html>

@@ -190,7 +190,7 @@
         .service-card > * { position: relative; z-index: 2; }
         .service-card:hover { transform: translateY(-12px); box-shadow: 0 25px 60px rgba(0,0,0,0.18); }
         
-        /* === HYBRID INEGE SOLUTION - FULL INEGES WITH BRANDED BACKGROUNDS === */
+        /* === HYBRID IMAGE SOLUTION - FULL IMAGES WITH BRANDED BACKGROUNDS === */
         .service-image-container {
             width: 100%;
             height: 300px;
@@ -243,7 +243,7 @@
         
         .service-card:hover .service-description { color: rgba(255,255,255,0.95); }
 
-        /* === HOVER DROPDOWN MENUS === */
+        /* === HOVER DROPDOWN MENUS - TEAL/NAVY GRADIENT (FROM INDEX.HTML) === */
         .service-dropdown {
             max-height: 0;
             overflow: hidden;
@@ -253,7 +253,7 @@
         }
         
         .service-card:hover .service-dropdown {
-            max-height: 600px;
+            max-height: 800px;
             padding: 25px;
         }
         
@@ -271,6 +271,23 @@
             color: var(--teal); 
             padding-left: 15px;
             background: rgba(0,196,180,0.05);
+        }
+        
+        /* === UPDATED: TEAL/NAVY GRADIENT FOR DROPDOWN ON HOVER/ACTIVE === */
+        .service-card:hover .service-dropdown,
+        .service-card.touch-active .service-dropdown {
+            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+        }
+
+        .service-card:hover .service-dropdown a,
+        .service-card.touch-active .service-dropdown a {
+            color: white !important;
+        }
+
+        .service-card:hover .service-dropdown a:hover,
+        .service-card.touch-active .service-dropdown a:hover {
+            background: rgba(255,255,255,0.1) !important;
+            color: var(--gold) !important;
         }
         
         .service-cta { margin-top: 25px; }
@@ -632,6 +649,30 @@
             .trust-text {
                 font-size: 1rem;
             }
+            
+            .service-card:hover .service-dropdown,
+            .service-card.touch-active .service-dropdown {
+                max-height: 900px;
+            }
+            
+            .service-card:last-child.touch-active .service-dropdown {
+                max-height: 1000px !important;
+            }
+            
+            /* Mobile gradient fix */
+            .service-card.touch-active .service-dropdown {
+                background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+            }
+            
+            .service-card.touch-active .service-dropdown a {
+                color: white !important;
+                border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+            }
+            
+            .service-card.touch-active .service-dropdown a:hover {
+                background: rgba(255,255,255,0.1) !important;
+                color: var(--gold) !important;
+            }
         }
         
         @media (max-width: 480px) {
@@ -729,7 +770,7 @@
             
             /* Add touch-friendly dropdown toggle */
             .service-card.touch-active .service-dropdown {
-                max-height: 600px;
+                max-height: 900px;
                 padding: 25px;
             }
             
@@ -755,509 +796,6 @@
             }
         }
     </style>
-
-    <!-- SEASONAL PROMO ANINETIONS -->
-    <style>
-    /* Seasonal promo card animations */
-    .promo-card {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .promo-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .promo-card:hover::before {
-        left: 0;
-    }
-    
-    .promo-card > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .promo-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Satin gloss swipe for promo cards */
-    .promo-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .promo-card:hover::after {
-        left: 100%;
-    }
-    
-    /* Text color optimization for promo cards on hover */
-    .promo-card:hover .promo-title,
-    .promo-card:hover .promo-description {
-        color: white !important;
-    }
-    
-    .promo-card:hover .promo-code {
-        background: var(--gold) !important;
-        color: var(--navy) !important;
-    }
-    
-    .promo-card:hover .promo-cta {
-        background: white !important;
-        color: var(--teal) !important;
-    }
-    
-    /* Mobile auto-animation for promo cards */
-    @media (max-width: 768px) {
-        .promo-card.mobile-animated {
-            animation: promoMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes promoMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-        }
-    }
-    </style>
-    
-
-    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANINETIONS -->
-    <style>
-    /* FIX: Mobile carousel dropdown background */
-    @media (max-width: 768px) {
-        .service-card.touch-active .service-dropdown {
-            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-            color: white !important;
-        }
-        
-        .service-card.touch-active .service-dropdown a {
-            color: white !important;
-            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
-        }
-        
-        .service-card.touch-active .service-dropdown a:hover {
-            background: rgba(255,255,255,0.1) !important;
-            color: var(--gold) !important;
-        }
-    }
-
-    /* BENEFIT CARD ANINETIONS - Same as service tiles */
-    .benefit-card {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .benefit-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .benefit-card:hover::before {
-        left: 0;
-    }
-    
-    .benefit-card > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .benefit-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* SATIN GLOSS SWIPE FOR BENEFIT CARDS */
-    .benefit-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .benefit-card:hover::after {
-        left: 100%;
-    }
-    
-    /* TEXT COLOR OPTIMIZATION FOR BENEFIT CARDS */
-    .benefit-card:hover .benefit-icon,
-    .benefit-card:hover h3,
-    .benefit-card:hover p {
-        color: white !important;
-    }
-    
-    /* MOBILE AUTO-ANINETION FOR BENEFIT CARDS */
-    @media (max-width: 768px) {
-        .benefit-card.mobile-animated {
-            animation: benefitMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes benefitMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-        }
-    }
-    </style>
-    
-
-    <!-- COMPREHENSIVE TILE LAYOUTS & ANINETIONS -->
-    <style>
-    /* 4-GRID LAYOUT FOR ALL MULTI-TILE SECTIONS */
-    .benefits-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        margin: 40px 0;
-        justify-content: center;
-        max-width: 1300px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    /* 3-GRID LAYOUT FOR SECTIONS WITH 3 TILES */
-    .benefits-grid.three-column {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 1000px;
-    }
-    
-    /* TRUST BAR - 4 ITEMS IN A ROW */
-    .trust-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        max-width: 1300px;
-        margin: 0 auto;
-        justify-content: center;
-    }
-    
-    /* SERVICE CATEGORIES GRID */
-    .service-categories {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        margin: 40px 0;
-        justify-content: center;
-        max-width: 1300px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    /* PROMO GRID - 3 COLUMNS */
-    .promo-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        max-width: 1300px;
-        margin: 0 auto;
-        justify-content: center;
-    }
-    
-    /* RESPONSIVE BREAKPOINTS */
-    @media (max-width: 1200px) {
-        .benefits-grid,
-        .trust-container,
-        .service-categories {
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 800px;
-        }
-        
-        .promo-grid {
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 800px;
-        }
-        
-        .benefits-grid.three-column {
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 800px;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .benefits-grid,
-        .trust-container,
-        .service-categories,
-        .promo-grid,
-        .benefits-grid.three-column {
-            grid-template-columns: 1fr;
-            max-width: 500px;
-        }
-    }
-    
-    /* CONSISTENT GRADIENT ANINETIONS FOR ALL TILES */
-    .benefit-card, 
-    .value-tile, 
-    .service-tile, 
-    .trust-item,
-    .service-card,
-    .promo-card,
-    .category-card,
-    .contact-tile,
-    .area-tile {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .benefit-card::before, 
-    .value-tile::before, 
-    .service-tile::before, 
-    .trust-item::before,
-    .service-card::before,
-    .promo-card::before,
-    .category-card::before,
-    .contact-tile::before,
-    .area-tile::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .benefit-card:hover::before, 
-    .value-tile:hover::before, 
-    .service-tile:hover::before, 
-    .trust-item:hover::before,
-    .service-card:hover::before,
-    .promo-card:hover::before,
-    .category-card:hover::before,
-    .contact-tile:hover::before,
-    .area-tile:hover::before {
-        left: 0;
-    }
-    
-    .benefit-card > *, 
-    .value-tile > *, 
-    .service-tile > *, 
-    .trust-item > *,
-    .service-card > *,
-    .promo-card > *,
-    .category-card > *,
-    .contact-tile > *,
-    .area-tile > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .benefit-card:hover, 
-    .value-tile:hover, 
-    .service-tile:hover, 
-    .trust-item:hover,
-    .service-card:hover,
-    .promo-card:hover,
-    .category-card:hover,
-    .contact-tile:hover,
-    .area-tile:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* SATIN GLOSS SWIPE EFFECT */
-    .benefit-card::after, 
-    .value-tile::after, 
-    .service-tile::after, 
-    .trust-item::after,
-    .service-card::after,
-    .promo-card::after,
-    .category-card::after,
-    .contact-tile::after,
-    .area-tile::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .benefit-card:hover::after, 
-    .value-tile:hover::after, 
-    .service-tile:hover::after, 
-    .trust-item:hover::after,
-    .service-card:hover::after,
-    .promo-card:hover::after,
-    .category-card:hover::after,
-    .contact-tile:hover::after,
-    .area-tile:hover::after {
-        left: 100%;
-    }
-    
-    /* TEXT COLOR OPTIMIZATION */
-    .benefit-card:hover *, 
-    .value-tile:hover *, 
-    .service-tile:hover *, 
-    .trust-item:hover *,
-    .service-card:hover *,
-    .promo-card:hover *,
-    .category-card:hover *,
-    .contact-tile:hover *,
-    .area-tile:hover * {
-        color: white !important;
-    }
-    
-    /* MOBILE AUTO-ANINETIONS */
-    @media (max-width: 768px) {
-        .mobile-animated {
-            animation: tileMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes tileMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-        }
-    }
-    </style>
-    
-
-    <!-- MOBILE LAST CAROUSEL TILE FIX -->
-    <style>
-    @media (max-width: 768px) {
-        /* ONLY target the last service card in carousel on mobile */
-        .service-card:last-child.touch-active .service-dropdown {
-            max-height: 800px !important;
-            transition: max-height 1.2s ease !important;
-            padding: 30px 25px !important;
-        }
-        
-        /* Keep text readable for last tile only */
-        .service-card:last-child.touch-active .service-title,
-        .service-card:last-child.touch-active .service-description {
-            color: white !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
-        }
-        
-        /* Make dropdown links more visible in last tile */
-        .service-card:last-child.touch-active .service-dropdown a {
-            color: white !important;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
-            font-weight: 600 !important;
-            padding: 14px 0 !important;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3) !important;
-        }
-    }
-    </style>
-    
-
-    <!-- CAROUSEL DROPDOWN READABILITY FIX -->
-    <style>
-    /* FIX DROPDOWN TEXT READABILITY FOR ALL TILES */
-    .service-card:hover .service-dropdown,
-    .service-card.touch-active .service-dropdown {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px) !important;
-    }
-    
-    .service-card:hover .service-dropdown a,
-    .service-card.touch-active .service-dropdown a {
-        color: var(--navy) !important;
-        text-shadow: none !important;
-        font-weight: 600 !important;
-        border-bottom: 1px solid rgba(10, 29, 55, 0.1) !important;
-    }
-    
-    .service-card:hover .service-dropdown a:hover,
-    .service-card.touch-active .service-dropdown a:hover {
-        color: var(--teal) !important;
-        background: rgba(0, 196, 180, 0.05) !important;
-    }
-    
-    /* MOBILE LAST TILE OPTIMIZATION */
-    @media (max-width: 768px) {
-        .service-card:last-child.touch-active .service-dropdown {
-            max-height: 800px !important;
-            transition: max-height 1.2s ease !important;
-            padding: 30px 25px !important;
-        }
-        
-        .service-card:last-child.touch-active .service-title,
-        .service-card:last-child.touch-active .service-description {
-            color: white !important;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
-        }
-    }
-    </style>
-    
 </head>
 <body>
 
@@ -1329,12 +867,15 @@
                         <h3 class="service-title">Accessibility & Safety Solutions</h3>
                         <p class="service-description">Professional ADA compliance and accessibility solutions for Norfolk, NE homes and businesses. We specialize in safety modifications, grab bar installations, and wheelchair accessibility upgrades with precision and care.</p>
                         <div class="service-dropdown">
-                            <a href="/services/ada-compliant-showers">ADA Compliant Showers</a>
-                            <a href="/services/grab-bars">Grab Bars Installation</a>
-                            <a href="/services/non-slip-flooring">Non-Slip Flooring</a>
-                            <a href="/services/custom-ramps">Custom Ramps</a>
-                            <a href="/services/senior-safety">Senior Safety</a>
-                            <a href="/services/bathroom-accessibility">Bathroom Accessibility</a>
+                            <a href="services/accessibility-safety-solutions.html">All Accessibility Services</a>
+                            <a href="services/ada-compliant-showers-bathrooms.html">ADA Compliant Showers & Bathrooms</a>
+                            <a href="services/grab-bar-installation.html">Grab Bar Installation</a>
+                            <a href="services/non-slip-flooring.html">Non-Slip Flooring Solutions</a>
+                            <a href="services/custom-ramps.html">Custom Wheelchair Ramps</a>
+                            <a href="services/wheelchair-ramp-installation.html">Wheelchair Ramp Installation</a>
+                            <a href="services/senior-safety.html">Senior Safety Modifications</a>
+                            <a href="services/bathroom-accessibility.html">Bathroom Accessibility</a>
+                            <a href="services/stairlift-elevator-installation.html">Stairlift & Elevator Installation</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Get Free Assessment</a>
@@ -1351,15 +892,18 @@
                         <h3 class="service-title">Home Remodeling & Improvements</h3>
                         <p class="service-description">Complete home transformation services in Norfolk, NE. From kitchen and bathroom remodels to full home renovations, we deliver exceptional craftsmanship and attention to detail that exceeds expectations.</p>
                         <div class="service-dropdown">
-                            <a href="https://wattsatpcontractor.com/kitchen-renovations">Kitchen Renovations</a>
-                            <a href="https://wattsatpcontractor.com/deck-construction">Deck Construction</a>
-                            <a href="https://wattsatpcontractor.com/siding-replacement">Siding Replacement</a>
-                            <a href="https://wattsatpcontractor.com/home-remodeling">Home Remodeling</a>
-                            <a href="/services/basement-finishing">Basement Finishing</a>
-                            <a href="https://wattsatpcontractor.com/window-doors">Window & Doors</a>
-                            <a href="https://wattsatpcontractor.com/fence-installation">Fence Installation</a>
-                            <a href="/services/drywall-repair">Drywall Repair</a>
-                            <a href="https://wattsatpcontractor.com/painting-services">Painting Services</a>
+                            <a href="services/home-remodeling.html">Home Remodeling & Renovation</a>
+                            <a href="services/kitchen-renovations.html">Kitchen Renovations</a>
+                            <a href="services/bathroom-remodels.html">Bathroom Remodels</a>
+                            <a href="services/basement-finishing.html">Basement Finishing</a>
+                            <a href="services/room-additions.html">Room Additions</a>
+                            <a href="services/deck-construction.html">Deck Construction</a>
+                            <a href="services/siding-replacement.html">Siding Replacement</a>
+                            <a href="services/window-doors.html">Window & Door Installation</a>
+                            <a href="services/fence-installation.html">Fence Installation</a>
+                            <a href="services/fence-repair.html">Fence Repair</a>
+                            <a href="services/drywall-repair.html">Drywall Repair</a>
+                            <a href="services/painting-services.html">Painting Services</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Start Your Project</a>
@@ -1376,12 +920,13 @@
                         <h3 class="service-title">Concrete & Floor Services</h3>
                         <p class="service-description">Expert concrete pouring, repair, and finishing services for Norfolk, NE properties. We provide durable, beautiful surfaces for driveways, patios, and interior floors that stand the test of time.</p>
                         <div class="service-dropdown">
-                            <a href="https://wattsatpcontractor.com/concrete-pouring">Concrete Pouring</a>
-                            <a href="https://wattsatpcontractor.com/driveway-installation">Driveway Installation</a>
-                            <a href="https://wattsatpcontractor.com/patio-construction">Patio Construction</a>
-                            <a href="/services/floor-refinishing">Floor Refinishing</a>
-                            <a href="https://wattsatpcontractor.com/hardwood-flooring">Hardwood Flooring</a>
-                            <a href="/services/concrete-repair">Concrete Repair</a>
+                            <a href="services/concrete-pouring.html">Concrete Pouring</a>
+                            <a href="services/driveway-installation.html">Driveway Installation</a>
+                            <a href="services/patio-construction.html">Patio Construction</a>
+                            <a href="services/floor-refinishing.html">Floor Refinishing</a>
+                            <a href="services/hardwood-flooring.html">Hardwood Flooring</a>
+                            <a href="services/concrete-repair.html">Concrete Repair</a>
+                            <a href="services/flooring-installation.html">Flooring Installation</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Get Floor Quote</a>
@@ -1398,12 +943,12 @@
                         <h3 class="service-title">Cabinets & Countertops</h3>
                         <p class="service-description">Custom cabinetry and premium countertop installations in Norfolk, NE. We create beautiful, functional spaces with quality materials and expert installation techniques for lasting satisfaction.</p>
                         <div class="service-dropdown">
-                            <a href="https://wattsatpcontractor.com/custom-cabinets">Custom Cabinets</a>
-                            <a href="/services/cabinet-refacing">Cabinet Refacing</a>
-                            <a href="/services/onyx-countertops">Onyx Countertops</a>
-                            <a href="/services/kitchen-cabinetry">Kitchen Cabinetry</a>
-                            <a href="/services/custom-storage">Custom Storage</a>
-                            <a href="/services/countertop-repair">Countertop Repair</a>
+                            <a href="services/custom-cabinets.html">Custom Cabinets</a>
+                            <a href="services/kitchen-cabinetry.html">Kitchen Cabinetry</a>
+                            <a href="services/cabinet-refacing.html">Cabinet Refacing</a>
+                            <a href="services/custom-storage.html">Custom Storage Solutions</a>
+                            <a href="services/onyx-countertops.html">Onyx Countertops</a>
+                            <a href="services/countertop-repair.html">Countertop Repair</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Design Consultation</a>
@@ -1420,12 +965,16 @@
                         <h3 class="service-title">Property Maintenance</h3>
                         <p class="service-description">Comprehensive property maintenance services for Norfolk, NE homeowners and businesses. From routine upkeep to emergency repairs, we keep your property in optimal condition year-round.</p>
                         <div class="service-dropdown">
-                            <a href="/services/property-maintenance-routine">Routine Maintenance</a>
-                            <a href="/services/emergency-repairs">Emergency Repairs</a>
-                            <a href="https://wattsatpcontractor.com/snow-removal">Snow Removal</a>
-                            <a href="/services/seasonal-prep">Seasonal Preparation</a>
-                            <a href="/services/tree-trimming">Tree Trimming</a>
-                            <a href="/services/emergency-snow">Emergency Snow</a>
+                            <a href="services/property-maintenance-services.html">Property Maintenance Services</a>
+                            <a href="services/handyman-services.html">Handyman Services</a>
+                            <a href="services/emergency-repairs.html">Emergency Repairs</a>
+                            <a href="services/painting-services.html">Painting Services</a>
+                            <a href="services/drywall-repair.html">Drywall Repair</a>
+                            <a href="services/snow-removal.html">Snow Removal</a>
+                            <a href="services/emergency-snow.html">Emergency Snow Services</a>
+                            <a href="services/tree-trimming.html">Tree Trimming</a>
+                            <a href="services/gutter-cleaning.html">Gutter Cleaning</a>
+                            <a href="services/pressure-washing.html">Pressure Washing</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Schedule Service</a>
@@ -1443,11 +992,12 @@
                         <h3 class="service-title">Lawn & Landscape Care</h3>
                         <p class="service-description">Professional lawn maintenance and landscaping services in Norfolk, NE. We provide fertilization, mowing, trimming, and seasonal care to create and maintain beautiful, healthy outdoor spaces.</p>
                         <div class="service-dropdown">
-                            <a href="/services/lawn-maintenance">Lawn Maintenance</a>
-                            <a href="/services/fertilization">Fertilization</a>
-                            <a href="https://wattsatpcontractor.com/landscape-design">Landscape Design</a>
-                            <a href="/services/seasonal-cleanup">Seasonal Cleanup</a>
-                            <a href="https://wattsatpcontractor.com/garden-maintenance">Garden Maintenance</a>
+                            <a href="services/lawn-maintenance.html">Lawn Maintenance</a>
+                            <a href="services/fertilization.html">Lawn Fertilization</a>
+                            <a href="services/landscape-design.html">Landscape Design</a>
+                            <a href="services/seasonal-cleanup.html">Seasonal Cleanup</a>
+                            <a href="services/garden-maintenance.html">Garden Maintenance</a>
+                            <a href="services/seasonal-prep.html">Seasonal Preparation</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Get Lawn Quote</a>
@@ -1465,14 +1015,14 @@
                         <h3 class="service-title">Additional Services</h3>
                         <p class="service-description">Complete home solutions from Norfolk, NE's trusted general contractor. TV mounting, home theater installation, audio visual setup, and smart home integrations with professional precision.</p>
                         <div class="service-dropdown">
-                            <a href="/services/tv-mounting">TV Mounting</a>
-                            <a href="/services/home-theater-installation">Home Theater</a>
-                            <a href="/services/audio-visual">Soundbar Setup</a>
-                            <a href="/services/cable-management">Cable Management</a>
-                            <a href="/services/home-audio">Smart Audio</a>
-                            <a href="/services/home-theater-installation">Projector Installation</a>
-                            <a href="/services/home-audio">Home Audio</a>
-                            <a href="/services/audio-visual">Audio Visual</a>
+                            <a href="services/tv-mounting.html">TV Mounting Services</a>
+                            <a href="services/home-theater-installation.html">Home Theater Installation</a>
+                            <a href="services/audio-visual.html">Audio Visual Solutions</a>
+                            <a href="services/home-audio.html">Home Audio Systems</a>
+                            <a href="services/sound-system-setup.html">Whole Home Sound System Setup</a>
+                            <a href="services/soundbar-setup.html">Soundbar Setup</a>
+                            <a href="services/projector-install.html">Projector Installation</a>
+                            <a href="services/cable-management.html">Cable Management</a>
                         </div>
                         <div class="service-cta">
                             <a href="/contact">Discuss Your Project</a>
@@ -1536,11 +1086,11 @@
             <div class="footer-links">
                 <h3>Our Services</h3>
                 <ul>
-                    <li><a href="/services/ada-compliant-showers.html">Accessibility & Safety</a></li>
-                    <li><a href="/services/home-remodeling.html">Home Remodeling</a></li>
-                    <li><a href="/services/tv-mounting.html">TV & Audio Visual</a></li>
-                    <li><a href="/services/snow-removal.html">Property Maintenance</a></li>
-                    <li><a href="/services/lawn-care.html">Lawn & Landscape</a></li>
+                    <li><a href="services/accessibility-safety-solutions.html">Accessibility & Safety</a></li>
+                    <li><a href="services/home-remodeling.html">Home Remodeling</a></li>
+                    <li><a href="services/tv-mounting.html">TV & Audio Visual</a></li>
+                    <li><a href="services/property-maintenance-services.html">Property Maintenance</a></li>
+                    <li><a href="services/lawn-maintenance.html">Lawn & Landscape</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -1613,21 +1163,34 @@
             const serviceCards = document.querySelectorAll('.service-card');
             
             serviceCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    // Close other open cards
-                    serviceCards.forEach(otherCard => {
-                        if (otherCard !== this && otherCard.classList.contains('touch-active')) {
-                            otherCard.classList.remove('touch-active');
-                        }
-                    });
-                    
-                    // Toggle this card
-                    this.classList.toggle('touch-active');
+                let touchTimer;
+                
+                card.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    touchTimer = setTimeout(() => {
+                        // Close other open cards
+                        serviceCards.forEach(otherCard => {
+                            if (otherCard !== this && otherCard.classList.contains('touch-active')) {
+                                otherCard.classList.remove('touch-active');
+                            }
+                        });
+                        
+                        // Toggle this card
+                        this.classList.toggle('touch-active');
+                    }, 300);
+                });
+                
+                card.addEventListener('touchend', function(e) {
+                    clearTimeout(touchTimer);
+                });
+                
+                card.addEventListener('touchmove', function(e) {
+                    clearTimeout(touchTimer);
                 });
             });
             
-            // Close service cards when clicking outside
-            document.addEventListener('click', function(e) {
+            // Close service cards when tapping outside
+            document.addEventListener('touchstart', function(e) {
                 if (!e.target.closest('.service-card')) {
                     serviceCards.forEach(card => {
                         card.classList.remove('touch-active');
@@ -1636,374 +1199,5 @@
             });
         }
     </script>
-
-<script>
-// Hamburger menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
-    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
-    
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled');
-        });
-        // Optional: Add touchstart for better mobile support
-        hamburger.addEventListener('touchstart', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled via touch');
-        });
-    }
-});
-</script>
-
-
-    <!-- SEASONAL PROMO ANINETION SCRIPT -->
-    <script>
-    // Mobile auto-animation for seasonal promo cards
-    function initPromoAnimations() {
-        const promoCards = document.querySelectorAll('.promo-card');
-        
-        console.log('Found ' + promoCards.length + ' seasonal promo cards');
-        
-        // Add touch support for mobile
-        promoCards.forEach(card => {
-            card.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            card.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Auto-animate promo cards on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            promoCards.forEach(card => {
-                setTimeout(() => {
-                    card.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        card.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 500;
-            });
-            
-            // Re-animate when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    setTimeout(() => {
-                        let newDelay = 0;
-                        promoCards.forEach(card => {
-                            setTimeout(() => {
-                                card.classList.add('mobile-animated');
-                                setTimeout(() => {
-                                    card.classList.remove('mobile-animated');
-                                }, 3000);
-                            }, newDelay);
-                            newDelay += 500;
-                        });
-                    }, 1000);
-                }
-            });
-        }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPromoAnimations);
-    } else {
-        initPromoAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initPromoAnimations);
-    
-    // Also animate when promo cards come into view
-    function animatePromoOnScroll() {
-        const promoCards = document.querySelectorAll('.promo-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        promoCards.forEach(card => {
-            observer.observe(card);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animatePromoOnScroll);
-    }
-    </script>
-    
-
-    <!-- BENEFIT CARD ANINETION SCRIPT -->
-    <script>
-    // Mobile auto-animation for benefit cards
-    function initBenefitAnimations() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        
-        console.log('Found ' + benefitCards.length + ' benefit cards');
-        
-        // Add touch support for mobile
-        benefitCards.forEach(card => {
-            card.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            card.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Auto-animate benefit cards on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            benefitCards.forEach(card => {
-                setTimeout(() => {
-                    card.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        card.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 500;
-            });
-            
-            // Re-animate when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    setTimeout(() => {
-                        let newDelay = 0;
-                        benefitCards.forEach(card => {
-                            setTimeout(() => {
-                                card.classList.add('mobile-animated');
-                                setTimeout(() => {
-                                    card.classList.remove('mobile-animated');
-                                }, 3000);
-                            }, newDelay);
-                            newDelay += 500;
-                        });
-                    }, 1000);
-                }
-            });
-        }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBenefitAnimations);
-    } else {
-        initBenefitAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initBenefitAnimations);
-    
-    // Also animate when benefit cards come into view
-    function animateBenefitOnScroll() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        benefitCards.forEach(card => {
-            observer.observe(card);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
-    }
-    </script>
-    
-
-    <!-- COMPREHENSIVE TILE ANINETION SCRIPT -->
-    <script>
-    // Mobile auto-animation for all tiles
-    function initAllTileAnimations() {
-        const allTiles = document.querySelectorAll(
-            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
-            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
-        );
-        
-        console.log('Animating ' + allTiles.length + ' tiles across all pages');
-        
-        // Add touch support for mobile
-        allTiles.forEach(tile => {
-            tile.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            tile.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            tile.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Auto-animate tiles on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            allTiles.forEach(tile => {
-                setTimeout(() => {
-                    tile.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        tile.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 300;
-            });
-        }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAllTileAnimations);
-    } else {
-        initAllTileAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initAllTileAnimations);
-    
-    // Animate when tiles come into view
-    function animateTilesOnScroll() {
-        const allTiles = document.querySelectorAll(
-            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
-            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
-        );
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.3 });
-        
-        allTiles.forEach(tile => {
-            observer.observe(tile);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
-    }
-    </script>
-    
-
-    <!-- MOBILE LAST TILE FIX SCRIPT -->
-    <script>
-    // Only fix the last carousel tile on mobile
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', function() {
-            const serviceCards = document.querySelectorAll('.service-card');
-            const lastCard = serviceCards[serviceCards.length - 1];
-            
-            if (lastCard) {
-                let lastCardTouchTimer;
-                
-                lastCard.addEventListener('touchstart', function() {
-                    clearTimeout(lastCardTouchTimer);
-                    lastCardTouchTimer = setTimeout(() => {
-                        // Close other cards
-                        serviceCards.forEach(otherCard => {
-                            if (otherCard !== this && otherCard.classList.contains('touch-active')) {
-                                otherCard.classList.remove('touch-active');
-                            }
-                        });
-                        
-                        // Toggle this card with longer delay
-                        this.classList.toggle('touch-active');
-                    }, 400); // Longer delay for last card only
-                });
-                
-                lastCard.addEventListener('touchend', function() {
-                    clearTimeout(lastCardTouchTimer);
-                });
-            }
-            
-            console.log('Last carousel tile mobile optimization applied');
-        });
-    }
-    </script>
-    
-
-    <!-- CAROUSEL DROPDOWN FIX SCRIPT -->
-    <script>
-    // Fix dropdown readability and last tile optimization
-    document.addEventListener('DOMContentLoaded', function() {
-        const serviceCards = document.querySelectorAll('.service-card');
-        const lastCard = serviceCards[serviceCards.length - 1];
-        
-        // Add touch support for all cards
-        serviceCards.forEach(card => {
-            let touchTimer;
-            
-            card.addEventListener('touchstart', function() {
-                clearTimeout(touchTimer);
-                
-                // Different timing for last card
-                const delay = card === lastCard ? 400 : 300;
-                
-                touchTimer = setTimeout(() => {
-                    // Close other cards
-                    serviceCards.forEach(otherCard => {
-                        if (otherCard !== this && otherCard.classList.contains('touch-active')) {
-                            otherCard.classList.remove('touch-active');
-                        }
-                    });
-                    
-                    // Toggle this card
-                    this.classList.toggle('touch-active');
-                }, delay);
-            });
-            
-            card.addEventListener('touchend', function() {
-                clearTimeout(touchTimer);
-            });
-        });
-        
-        // Close dropdown when tapping outside
-        document.addEventListener('touchstart', function(e) {
-            if (!e.target.closest('.service-card')) {
-                serviceCards.forEach(card => {
-                    card.classList.remove('touch-active');
-                });
-            }
-        });
-        
-        console.log('Carousel dropdown readability and last tile optimization applied');
-    });
-    </script>
-    
 </body>
 </html>

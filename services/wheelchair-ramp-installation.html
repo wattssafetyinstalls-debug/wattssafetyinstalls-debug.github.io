@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SEO Title: 58 characters -->
     <title>Wheelchair Ramp Installation Norfolk NE | ADA Ramps</title>
-    <!-- Meta Description: 158 characters -->
     <meta name="description" content="Wheelchair ramp installation in Norfolk, Battle Creek, Pierce, Madison & Antelope County NE. ADA-compliant ramps with handrails. (405) 410-6402">
-    <!-- Added Primary Keyword in Meta -->
     <meta name="keywords" content="wheelchair ramp installation, ADA ramps Norfolk NE, handicap ramp installation, portable wheelchair ramps, senior safety modifications, Norfolk Nebraska wheelchair ramps, Madison County ramp installation, Antelope County accessibility solutions">
     
     <!-- Google Tag Manager -->
@@ -16,79 +13,13 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
-    <!-- End Google Tag Manager -->
 
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-XXXXXXXXXX');
-    </script>
-
-    <!-- Schema.org Structured Data for Local Business -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Watts Safety Installs",
-      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
-      "description": "Professional wheelchair ramp installation serving Norfolk, Battle Creek, Pierce, Madison County & Antelope County NE",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Norfolk",
-        "addressRegion": "NE",
-        "addressCountry": "US"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": "42.0327",
-        "longitude": "-97.4168"
-      },
-      "url": "https://yourwebsite.com",
-      "telephone": "+14054106402",
-      "priceRange": "$$",
-      "openingHours": "Mo-Fr 08:00-18:00",
-      "areaServed": {
-        "@type": "GeoCircle",
-        "geoMidpoint": {
-          "@type": "GeoCoordinates",
-          "latitude": "42.0327",
-          "longitude": "-97.4168"
-        },
-        "geoRadius": "65000",
-        "description": "65-mile radius around Norfolk including Antelope County, Madison County, Pierce, Battle Creek, and surrounding Northeast Nebraska communities"
-      },
-      "serviceArea": ["Madison County NE", "Antelope County NE", "Pierce NE", "Battle Creek NE", "Norfolk NE"],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Accessibility Services",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "ADA-Compliant Wheelchair Ramp Installation"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Portable Wheelchair Ramps"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Senior Safety Home Modifications"
-            }
-          }
-        ]
-      }
-    }
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
@@ -120,6 +51,14 @@
             flex-direction: column;
         }
         
+        /* CONTAINER SYSTEM */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
         header {
             background: var(--navy);
             padding: 20px 0;
@@ -129,12 +68,9 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
         }
         .logo {
             font-family: 'Playfair Display', serif;
@@ -193,11 +129,13 @@
             align-items: center;
             text-align: center;
             color: white;
+            padding: 0 20px;
         }
         .hero h1 {
             font-family: 'Playfair Display', serif;
             font-size: 4.5rem;
             margin-bottom: 15px;
+            max-width: 1000px;
         }
         .certification-badge {
             background: var(--gold);
@@ -205,6 +143,7 @@
             padding: 10px 28px;
             border-radius: 50px;
             font-weight: 700;
+            margin: 15px 0;
         }
         .cta-button {
             background: var(--teal);
@@ -217,6 +156,7 @@
             margin-top: 30px;
             box-shadow: 0 12px 30px rgba(0,196,180,0.4);
             transition: all .3s;
+            display: inline-block;
         }
         .cta-button:hover, .cta-button:active {
             transform: translateY(-5px);
@@ -224,9 +164,9 @@
         }
 
         .service-tile {
-            max-width: 1200px;
+            width: 100%;
             margin: 70px auto;
-            padding: 60px 50px;
+            padding: 60px;
             background: white;
             border-radius: 32px;
             box-shadow: var(--shadow);
@@ -260,62 +200,34 @@
             transition: all 0.5s ease;
             pointer-events: none;
         }
-        @media (hover:hover) and (pointer:fine) {
-            .service-tile:hover {
-                transform: translateY(-14px) scale(1.035);
-                box-shadow: 0 40px 100px rgba(10,29,55,0.4);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
-            .service-tile:hover::before {
-                opacity: 1;
-                animation: gloss 1.6s ease-out forwards;
-            }
-            .service-tile:hover::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.6);
-                box-shadow: 0 0 40px rgba(0,196,180,0.5);
-            }
-            .service-tile:hover h2, .service-tile:hover p, .service-tile:hover .trust-text {
-                color: white !important;
-            }
-            .service-tile:hover .trust-bar {
-                background: rgba(255,255,255,0.12);
-            }
-            .service-tile:hover .trust-icon {
-                transform: scale(1.5) translateY(-8px);
-                color: var(--gold) !important;
-            }
+        
+        .service-tile:hover {
+            transform: translateY(-14px) scale(1.035);
+            box-shadow: 0 40px 100px rgba(10,29,55,0.4);
+            background: linear-gradient(135deg, var(--teal), var(--navy));
+            color: white;
+            border-color: var(--gray);
         }
-        @media (hover:none), (max-width:768px) {
-            .service-tile:active {
-                transform: translateY(-12px) scale(1.03);
-                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
-            .service-tile:active::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-tile:active::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 35px rgba(0,196,180,0.6);
-            }
-            .service-tile:active h2, .service-tile:active p, .service-tile:active .trust-text {
-                color: white !important;
-            }
-            .service-tile:active .trust-bar {
-                background: rgba(255,255,255,0.12);
-            }
-            .service-tile:active .trust-icon {
-                transform: scale(1.5) translateY(-8px);
-                color: var(--gold) !important;
-            }
+        .service-tile:hover::before {
+            opacity: 1;
+            animation: gloss 1.6s ease-out forwards;
         }
+        .service-tile:hover::after {
+            opacity: 1;
+            border-color: rgba(0,196,180,0.6);
+            box-shadow: 0 0 40px rgba(0,196,180,0.5);
+        }
+        .service-tile:hover h2, .service-tile:hover p, .service-tile:hover .trust-text {
+            color: white !important;
+        }
+        .service-tile:hover .trust-bar {
+            background: rgba(255,255,255,0.12);
+        }
+        .service-tile:hover .trust-icon {
+            transform: scale(1.5) translateY(-8px);
+            color: var(--gold) !important;
+        }
+        
         @keyframes gloss {
             0% { left: -100%; }
             100% { left: 100%; }
@@ -397,94 +309,19 @@
             border: 2px solid transparent;
             cursor: pointer;
         }
-        .service-category::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        .service-category::after {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 19px;
-            border: 2px solid transparent;
-            opacity: 0;
-            box-shadow: 0 0 20px rgba(0,196,180,0);
-            transition: all 0.5s ease;
-            pointer-events: none;
-        }
-        
-        @media (hover:hover) and (pointer:fine) {
-            
-        /* FIXED: Service category hover - always readable */
-        .service-category:hover,
-        .service-category:active {
+        .service-category:hover {
             background: linear-gradient(135deg, #00C4B4, #0A1D37) !important;
             color: white !important;
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 25px 60px rgba(10,29,55,0.4);
         }
         .service-category:hover .category-title,
-        .service-category:hover .category-services,
-        .service-category:active .category-title,
-        .service-category:active .category-services {
+        .service-category:hover .category-services {
             color: white !important;
         }
-        .service-category:hover .category-icon,
-        .service-category:active .category-icon {
+        .service-category:hover .category-icon {
             color: #FFD700 !important;
-        }
-        
-            .service-category:hover::before {
-                opacity: 1;
-                animation: gloss 1.6s ease-out forwards;
-            }
-            .service-category:hover::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.6);
-                box-shadow: 0 0 30px rgba(0,196,180,0.5);
-            }
-            .service-category:hover .category-title,
-            .service-category:hover .category-services {
-                color: white !important;
-            }
-            .service-category:hover .category-icon {
-                transform: scale(1.3) translateY(-5px);
-                color: var(--gold) !important;
-            }
-        }
-        @media (hover:none), (max-width:768px) {
-            .service-category:active {
-                transform: translateY(-6px) scale(1.01);
-                box-shadow: 0 20px 45px rgba(10,29,55,0.25);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
-            .service-category:active::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-category:active::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 25px rgba(0,196,180,0.6);
-            }
-            .service-category:active .category-title,
-            .service-category:active .category-services {
-                color: white !important;
-            }
-            .service-category:active .category-icon {
-                transform: scale(1.3) translateY(-5px);
-                color: var(--gold) !important;
-            }
+            transform: scale(1.3) translateY(-5px);
         }
 
         .category-icon {
@@ -507,6 +344,142 @@
             transition: color 0.4s;
         }
 
+        /* FIXED Q&A CAROUSEL */
+        .qa-section {
+            width: 100%;
+            margin: 80px auto 100px;
+            text-align: center;
+        }
+        .qa-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--navy);
+            margin-bottom: 16px;
+        }
+        .qa-section .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .qa-carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 36px;
+        }
+        .qa-track {
+            display: flex;
+            transition: transform 0.8s ease;
+            width: 100%;
+        }
+        .qa-card { 
+            flex: 0 0 100%;
+            width: 100%;
+            padding: 60px; 
+            background: white; 
+            border-radius: 36px; 
+            box-shadow: var(--shadow); 
+            position: relative; 
+            overflow: hidden;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .qa-card.active {
+            background: linear-gradient(135deg, var(--navy), var(--teal));
+            color: white;
+        }
+        .qa-card.active .qa-icon { 
+            color: var(--gold) !important; 
+        }
+        .qa-card.active .qa-question,
+        .qa-card.active .qa-answer,
+        .qa-card.active .consultation-note {
+            color: white !important;
+        }
+
+        .qa-icon { 
+            font-size: 3rem; 
+            color: var(--teal); 
+            margin-bottom: 24px; 
+            transition: color 0.3s;
+        }
+        .qa-question { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 2rem; 
+            color: var(--navy); 
+            margin-bottom: 20px; 
+            line-height: 1.3; 
+            transition: color 0.3s;
+        }
+        .qa-answer { 
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            margin-bottom: 30px; 
+            transition: color 0.3s;
+        }
+        .consultation-note { 
+            font-style: italic; 
+            font-weight: 600; 
+            color: var(--teal); 
+            font-size: 1.1rem; 
+            margin-top: 20px;
+            transition: color 0.3s;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .carousel-dots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,196,180,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            background: var(--teal);
+            transform: scale(1.2);
+        }
+        
+        .carousel-progress {
+            width: 100%;
+            max-width: 380px;
+            height: 6px;
+            background: rgba(0,196,180,0.15);
+            margin: 40px auto 0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--navy), var(--teal));
+            width: 0;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
         .contact-btn {
             background: var(--teal);
             color: white;
@@ -516,11 +489,14 @@
             text-decoration: none;
             box-shadow: 0 8px 25px rgba(0,196,180,0.4);
             transition: all .35s;
+            display: inline-block;
+            margin-top: 20px;
         }
         .contact-btn:hover, .contact-btn:active {
             transform: translateY(-5px) scale(1.06);
             box-shadow: 0 15px 35px rgba(0,196,180,0.6);
         }
+        
         .return-btn {
             display: inline-block;
             background: var(--gray);
@@ -529,13 +505,14 @@
             border-radius: 50px;
             font-weight: 600;
             text-decoration: none;
-            margin: 40px auto 0;
+            margin: 40px auto;
             transition: all .35s;
         }
         .return-btn:hover, .return-btn:active {
             background: var(--teal);
             transform: translateY(-4px);
         }
+        
         footer {
             background: var(--navy);
             color: white;
@@ -560,89 +537,103 @@
             color: var(--gold);
         }
 
+        /* MOBILE RESPONSIVE FIXES */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+                padding: 0 40px;
+            }
+        }
+
         @media (max-width: 1024px) {
             .service-categories {
                 grid-template-columns: repeat(2, 1fr);
             }
+            .hero h1 {
+                font-size: 3.5rem;
+            }
         }
 
-        
-        /* MOBILE AUTO-ANIMATION EFFECTS */
         @media (max-width: 768px) {
-            .service-tile.mobile-animated {
-                transform: translateY(-12px) scale(1.03);
-                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
-            .service-tile.mobile-animated::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-tile.mobile-animated::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 35px rgba(0,196,180,0.6);
-            }
-            .service-tile.mobile-animated h2, 
-            .service-tile.mobile-animated p, 
-            .service-tile.mobile-animated .trust-text {
-                color: white !important;
-            }
-            .service-tile.mobile-animated .trust-bar {
-                background: rgba(255,255,255,0.12);
-            }
-            .service-tile.mobile-animated .trust-icon {
-                transform: scale(1.5) translateY(-8px);
-                color: var(--gold) !important;
+            .container {
+                padding: 0 20px;
             }
             
-            .service-category.mobile-animated {
-                transform: translateY(-6px) scale(1.01);
-                box-shadow: 0 20px 45px rgba(10,29,55,0.25);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
+            .hero {
+                height: auto;
+                min-height: 500px;
+                padding: 60px 20px;
             }
-            .service-category.mobile-animated::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-category.mobile-animated::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 25px rgba(0,196,180,0.6);
-            }
-            .service-category.mobile-animated .category-title,
-            .service-category.mobile-animated .category-services {
-                color: white !important;
-            }
-            .service-category.mobile-animated .category-icon {
-                transform: scale(1.3) translateY(-5px);
-                color: var(--gold) !important;
-            }
-        }
-        
-        @media (max-width: 768px) {
+            
             .hero h1 {
                 font-size: 2.5rem;
+                line-height: 1.2;
             }
+            
             .service-tile {
-                margin: 40px 15px;
+                margin: 40px 0;
                 padding: 40px 25px;
+                border-radius: 24px;
             }
+            
+            .service-tile h2 {
+                font-size: 2.2rem;
+            }
+            
+            .service-description {
+                font-size: 1.1rem;
+            }
+            
             .trust-bar {
                 flex-direction: column;
                 padding: 25px 20px;
                 gap: 15px;
             }
+            
             .trust-item {
                 min-width: 100%;
             }
+            
             .service-categories {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
+            
+            .service-category {
+                padding: 20px;
+            }
+            
+            .qa-section h2 {
+                font-size: 2.2rem;
+            }
+            
+            .qa-card {
+                padding: 40px 24px;
+                min-height: 500px;
+                border-radius: 28px;
+            }
+            
+            .qa-icon {
+                font-size: 2.5rem;
+            }
+            
+            .qa-question {
+                font-size: 1.65rem;
+                line-height: 1.3;
+            }
+            
+            .qa-answer {
+                font-size: 1.05rem;
+            }
+            
+            .consultation-note {
+                font-size: 1rem;
+            }
+            
+            .carousel-progress {
+                max-width: 300px;
+            }
+            
             .nav-links {
                 display: none;
                 position: absolute;
@@ -655,9 +646,11 @@
                 gap: 20px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
+            
             .nav-links.active {
                 display: flex;
             }
+            
             .nav-links a {
                 padding: 15px 0;
                 font-size: 1.2rem;
@@ -665,159 +658,60 @@
                 width: 100%;
                 display: block;
             }
+            
             .mobile-menu-btn {
                 display: block;
             }
-        }
-    
-
             
-        /* Mobile Animation Fix */
-        @media (max-width: 768px) {
-            .service-tile.mobile-animated {
-                transform: translateY(-12px) scale(1.03);
-                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
+            .cta-button {
+                padding: 18px 40px;
+                font-size: 1.2rem;
             }
-            .service-tile.mobile-animated::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-tile.mobile-animated::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 35px rgba(0,196,180,0.6);
-            }
-            .service-tile.mobile-animated h2, 
-            .service-tile.mobile-animated p, 
-            .service-tile.mobile-animated .trust-text {
-                color: white !important;
-            }
-            .service-tile.mobile-animated .trust-bar {
-                background: rgba(255,255,255,0.12);
-            }
-            .service-tile.mobile-animated .trust-icon {
-                transform: scale(1.5) translateY(-8px);
-                color: var(--gold) !important;
-            }
-        }</style>
+        }
 
-    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
-    <style>
-    /* FIX: Mobile carousel dropdown background */
-    @media (max-width: 768px) {
-        .service-card.touch-active .service-dropdown {
-            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-            color: white !important;
-        }
-        
-        .service-card.touch-active .service-dropdown a {
-            color: white !important;
-            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
-        }
-        
-        .service-card.touch-active .service-dropdown a:hover {
-            background: rgba(255,255,255,0.1) !important;
-            color: var(--gold) !important;
-        }
-    }
-
-    /* BENEFIT CARD ANIMATIONS - Same as service tiles */
-    .benefit-card {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .benefit-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .benefit-card:hover::before {
-        left: 0;
-    }
-    
-    .benefit-card > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .benefit-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* SATIN GLOSS SWIPE FOR BENEFIT CARDS */
-    .benefit-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .benefit-card:hover::after {
-        left: 100%;
-    }
-    
-    /* TEXT COLOR OPTIMIZATION FOR BENEFIT CARDS */
-    .benefit-card:hover .benefit-icon,
-    .benefit-card:hover h3,
-    .benefit-card:hover p {
-        color: white !important;
-    }
-    
-    /* MOBILE AUTO-ANIMATION FOR BENEFIT CARDS */
-    @media (max-width: 768px) {
-        .benefit-card.mobile-animated {
-            animation: benefitMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes benefitMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
             }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
+            
+            .hero h1 {
+                font-size: 2rem;
             }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
+            
+            .service-tile {
+                padding: 30px 20px;
+            }
+            
+            .service-tile h2 {
+                font-size: 1.8rem;
+            }
+            
+            .qa-card {
+                padding: 30px 20px;
+                min-height: 480px;
+            }
+            
+            .qa-question {
+                font-size: 1.4rem;
+            }
+            
+            .qa-answer {
+                font-size: 1rem;
+            }
+            
+            .cta-button {
+                padding: 16px 35px;
+                font-size: 1.1rem;
             }
         }
-    }
-    
-
-            </style>
-    
+    </style>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCPM8VZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <header>
-        <div class="nav-container">
+        <div class="container nav-container">
             <a href="/" class="logo">WATTS</a>
             
             <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -834,296 +728,372 @@
         </div>
     </header>
 
-            
-
     <section class="hero">
-        <h1 class="service-title">Professional Wheelchair Ramp Installation in Northeast Nebraska</h1>
-        <p class="certification-badge">ATP Approved Contractor - Nebraska Licensed #54690-25</p>
-        <p>Serving Norfolk, Battle Creek, Pierce, Madison County & Antelope County with ADA-Compliant Solutions</p>
-        <a href="tel:+14054106402" class="cta-button">Call (405) 410-6402</a>
+        <div class="container">
+            <h1 class="service-title">Professional Wheelchair Ramp Installation in Northeast Nebraska</h1>
+            <p class="certification-badge">ATP Approved Contractor - Nebraska Licensed #54690-25</p>
+            <p>Serving Norfolk, Battle Creek, Pierce, Madison County & Antelope County with ADA-Compliant Solutions</p>
+            <a href="tel:+14054106402" class="cta-button">Call (405) 410-6402</a>
+        </div>
     </section>
 
-    <div class="service-tile" id="mainServiceTile">
-        <h2>ADA-Compliant Wheelchair Ramp Installation Services</h2>
-        <p class="service-description">Watts Safety Installs provides professional wheelchair ramp installation throughout Northeast Nebraska, serving a 65-mile radius around Norfolk. As your local accessibility specialists, we expertly install ADA-compliant wheelchair ramps in Norfolk, Battle Creek, Pierce, and throughout Madison County and Antelope County. Our certified technicians design and build permanent and portable ramps with secure handrails, non-slip surfaces, and proper slope ratios for maximum safety. Whether you need a residential wheelchair ramp for aging in place or commercial accessibility solutions, we offer free consultations, same-day service availability, and lifetime craftsmanship warranties. Trust our licensed Nebraska contractors for wheelchair ramp installations that meet ADA standards and enhance mobility independence.</p>
+    <div class="container">
+        <div class="service-tile" id="mainServiceTile">
+            <h2>ADA-Compliant Wheelchair Ramp Installation Services</h2>
+            <p class="service-description">Watts Safety Installs provides professional wheelchair ramp installation throughout Northeast Nebraska, serving a 65-mile radius around Norfolk. As your local accessibility specialists, we expertly install ADA-compliant wheelchair ramps in Norfolk, Battle Creek, Pierce, and throughout Madison County and Antelope County. Our certified technicians design and build permanent and portable ramps with secure handrails, non-slip surfaces, and proper slope ratios for maximum safety. Whether you need a residential wheelchair ramp for aging in place or commercial accessibility solutions, we offer free consultations, same-day service availability, and lifetime craftsmanship warranties. Trust our licensed Nebraska contractors for wheelchair ramp installations that meet ADA standards and enhance mobility independence.</p>
 
-        <div class="trust-bar">
-            <div class="trust-item"><div class="trust-icon"><i class="fas fa-check-circle"></i></div><div class="trust-text">Licensed & Insured</div></div>
-            <div class="trust-item"><div class="trust-icon"><i class="fas fa-star"></i></div><div class="trust-text">5.0/5 Rating</div></div>
-            <div class="trust-item"><div class="trust-icon"><i class="fas fa-bolt"></i></div><div class="trust-text">Same-Day Available</div></div>
-            <div class="trust-item"><div class="trust-icon"><i class="fas fa-trophy"></i></div><div class="trust-text">ATP Approved</div></div>
-        </div>
+            <div class="trust-bar">
+                <div class="trust-item"><div class="trust-icon"><i class="fas fa-check-circle"></i></div><div class="trust-text">Licensed & Insured</div></div>
+                <div class="trust-item"><div class="trust-icon"><i class="fas fa-star"></i></div><div class="trust-text">5.0/5 Rating</div></div>
+                <div class="trust-item"><div class="trust-icon"><i class="fas fa-bolt"></i></div><div class="trust-text">Same-Day Available</div></div>
+                <div class="trust-item"><div class="trust-icon"><i class="fas fa-trophy"></i></div><div class="trust-text">ATP Approved</div></div>
+            </div>
 
-        <div class="service-showcase">
-            <h3>Comprehensive Service Solutions</h3>
-            
-            <div class="service-categories">
-                <div class="service-category">
-                    <div class="category-icon"><i class="fas fa-universal-access"></i></div>
-                    <div class="category-title">Accessibility & Safety</div>
-                    <div class="category-services">ADA Ramps, Grab Bars, Senior Safety Modifications</div>
-                </div>
-                <div class="service-category">
-                    <div class="category-icon"><i class="fas fa-home"></i></div>
-                    <div class="category-title">Home Improvements</div>
-                    <div class="category-services">Remodeling, Deck Construction, Siding & Windows</div>
-                </div>
-                <div class="service-category">
-                    <div class="category-icon"><i class="fas fa-tv"></i></div>
-                    <div class="category-title">Audio Visual</div>
-                    <div class="category-services">TV Mounting, Home Theater, Smart Home Integration</div>
-                </div>
-                <div class="service-category">
-                    <div class="category-icon"><i class="fas fa-snowflake"></i></div>
-                    <div class="category-title">Property Maintenance</div>
-                    <div class="category-services">Snow Removal, Lawn Care, Seasonal Services</div>
+            <div class="service-showcase">
+                <h3>Comprehensive Service Solutions</h3>
+                
+                <div class="service-categories">
+                    <div class="service-category">
+                        <div class="category-icon"><i class="fas fa-universal-access"></i></div>
+                        <div class="category-title">Accessibility & Safety</div>
+                        <div class="category-services">ADA Ramps, Grab Bars, Senior Safety Modifications</div>
+                    </div>
+                    <div class="service-category">
+                        <div class="category-icon"><i class="fas fa-home"></i></div>
+                        <div class="category-title">Home Improvements</div>
+                        <div class="category-services">Remodeling, Deck Construction, Siding & Windows</div>
+                    </div>
+                    <div class="service-category">
+                        <div class="category-icon"><i class="fas fa-tv"></i></div>
+                        <div class="category-title">Audio Visual</div>
+                        <div class="category-services">TV Mounting, Home Theater, Smart Home Integration</div>
+                    </div>
+                    <div class="service-category">
+                        <div class="category-icon"><i class="fas fa-snowflake"></i></div>
+                        <div class="category-title">Property Maintenance</div>
+                        <div class="category-services">Snow Removal, Lawn Care, Seasonal Services</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <a href="tel:+14054106402" class="contact-btn">Contact Us Now</a>
+            <a href="tel:+14054106402" class="contact-btn">Contact Us Now</a>
+        </div>
     </div>
 
-    <a href="/services" class="return-btn">Return to All Services</a>
+    <!-- FIXED Q&A CAROUSEL -->
+    <div class="container">
+        <section class="qa-section">
+            <h2>Wheelchair Ramp Questions & Answers</h2>
+            <p class="section-subtitle">Real answers from local experts. Every home is different — get your custom quote today.</p>
+
+            <div class="qa-carousel-container">
+                <div class="qa-track" id="qaTrack">
+                    <!-- Card 1 -->
+                    <div class="qa-card active">
+                        <i class="fas fa-tools qa-icon"></i>
+                        <h3 class="qa-question">How to install wheelchair ramp in a van</h3>
+                        <p class="qa-answer">Van wheelchair ramps require specialized mounting brackets and proper vehicle modification. We recommend consulting with certified mobility vehicle specialists who can ensure safe installation that doesn't compromise vehicle integrity or safety systems.</p>
+                        <p class="consultation-note">Contact us for mobility vehicle specialist referrals</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="qa-card">
+                        <i class="fas fa-industry qa-icon"></i>
+                        <h3 class="qa-question">How to install aluminum wheelchair ramp</h3>
+                        <p class="qa-answer">Aluminum ramps are lightweight and modular. Professional installation ensures proper anchoring, correct slope ratios, and secure handrails. We measure your entryway, determine the right slope, and secure the ramp with appropriate fasteners for your surface type.</p>
+                        <p class="consultation-note">Proper installation prevents movement and ensures safety</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="qa-card">
+                        <i class="fas fa-hand-holding-heart qa-icon"></i>
+                        <h3 class="qa-question">Where can I get a wheelchair ramp for free</h3>
+                        <p class="qa-answer">Some organizations offer assistance through Medicaid waivers, VA benefits, or local nonprofit programs. Availability varies and often has waiting lists. We offer affordable solutions and can help you explore all available assistance options.</p>
+                        <p class="consultation-note">We help navigate assistance programs</p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="qa-card">
+                        <i class="fas fa-home qa-icon"></i>
+                        <h3 class="qa-question">Adding wheelchair ramp to house</h3>
+                        <p class="qa-answer">We assess your entryway, measure required slope, design for ADA compliance, and construct with proper materials. Each home is unique—we create custom solutions that match your architecture while maintaining safety standards and aesthetic appeal.</p>
+                        <p class="consultation-note">Custom solutions for every home type</p>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="qa-card">
+                        <i class="fas fa-wheelchair qa-icon"></i>
+                        <h3 class="qa-question">How to get a wheelchair down a ramp</h3>
+                        <p class="qa-answer">Always descend backward with assistant support if needed. Proper ramp installation with correct slope ratios (1:12) and non-slip surfaces ensures safe navigation. We design ramps with safety features that make wheelchair use comfortable and secure.</p>
+                        <p class="consultation-note">Proper slope design ensures safe navigation</p>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="qa-card">
+                        <i class="fas fa-clipboard-check qa-icon"></i>
+                        <h3 class="qa-question">What are the requirements for a wheelchair ramp</h3>
+                        <p class="qa-answer">ADA requirements include: 1:12 slope ratio, minimum 36" width, proper handrails on both sides, non-slip surfaces, level landings at top/bottom/turns, and edge protection. We ensure all installations meet or exceed these standards.</p>
+                        <p class="consultation-note">Full ADA compliance guaranteed</p>
+                    </div>
+
+                    <!-- Card 7 -->
+                    <div class="qa-card">
+                        <i class="fas fa-van-shuttle qa-icon"></i>
+                        <h3 class="qa-question">Who install wheelchair ramp in van</h3>
+                        <p class="qa-answer">Certified mobility vehicle specialists handle van ramp installations. While we focus on residential and commercial ramps, we partner with trusted mobility specialists who can properly modify vehicles without voiding warranties or compromising safety.</p>
+                        <p class="consultation-note">We'll connect you with the right specialists</p>
+                    </div>
+
+                    <!-- Card 8 -->
+                    <div class="qa-card">
+                        <i class="fas fa-user-tie qa-icon"></i>
+                        <h3 class="qa-question">Who can install a wheelchair ramp</h3>
+                        <p class="qa-answer">Licensed, insured contractors with ADA experience should install wheelchair ramps. As Nebraska-licensed professionals, we have the expertise to ensure proper construction, code compliance, and long-term safety for all ramp installations.</p>
+                        <p class="consultation-note">Nebraska-licensed professionals only</p>
+                    </div>
+
+                    <!-- Card 9 -->
+                    <div class="qa-card">
+                        <i class="fas fa-hammer qa-icon"></i>
+                        <h3 class="qa-question">Who builds free wheelchair ramps</h3>
+                        <p class="qa-answer">Some nonprofits, churches, or community service groups occasionally build free ramps, but availability is limited. We offer various affordable options and can sometimes work with assistance programs to reduce costs for qualifying individuals.</p>
+                        <p class="consultation-note">Affordable solutions for every budget</p>
+                    </div>
+
+                    <!-- Card 10 -->
+                    <div class="qa-card">
+                        <i class="fas fa-shopping-cart qa-icon"></i>
+                        <h3 class="qa-question">Where can I buy a ramp for a wheelchair</h3>
+                        <p class="qa-answer">We provide complete ramp solutions including materials and professional installation. While ramps can be purchased from medical supply stores, professional installation ensures proper setup, safety compliance, and long-term reliability.</p>
+                        <p class="consultation-note">Complete solutions with professional installation</p>
+                    </div>
+
+                    <!-- Card 11 -->
+                    <div class="qa-card">
+                        <i class="fas fa-map-marker-alt qa-icon"></i>
+                        <h3 class="qa-question">Wheelchair ramp installers near me</h3>
+                        <p class="qa-answer">We serve Norfolk, Battle Creek, Pierce, and throughout Madison & Antelope County. As local Northeast Nebraska experts, we provide prompt service, free consultations, and lifetime warranties on all our wheelchair ramp installations.</p>
+                        <p class="consultation-note">Serving all of Northeast Nebraska</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-dots" id="carouselDots">
+                <!-- Dots will be generated by JavaScript -->
+            </div>
+
+            <div class="carousel-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="container" style="text-align: center;">
+        <a href="/services" class="return-btn">Return to All Services</a>
+    </div>
 
     <footer>
-        <p><strong>Watts Safety Installs</strong> - Norfolk, NE -
-            <span class="footer-contact">
-                <a href="tel:+14054106402">(405) 410-6402</a> -
-                <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a>
-            </span>
-        </p>
-        <div class="footer-links">
-            <a href="/sitemap">Sitemap</a> - <a href="/privacy-policy">Privacy Policy</a> - <a href="/terms">Terms of Service</a>
+        <div class="container">
+            <p><strong>Watts Safety Installs</strong> - Norfolk, NE -
+                <span class="footer-contact">
+                    <a href="tel:+14054106402">(405) 410-6402</a> -
+                    <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a>
+                </span>
+            </p>
+            <div class="footer-links">
+                <a href="/sitemap">Sitemap</a> - <a href="/privacy-policy">Privacy Policy</a> - <a href="/terms">Terms of Service</a>
+            </div>
+            <p style="margin-top:20px; font-size:0.9rem; color:#aaa;">(C) 2025 Watts Safety Installs. All rights reserved.</p>
         </div>
-        <p style="margin-top:20px; font-size:0.9rem; color:#aaa;">(C) 2025 Watts Safety Installs. All rights reserved.</p>
     </footer>
 
+    <!-- FIXED CAROUSEL SCRIPT -->
     <script>
-        // Mobile menu toggle for both menus
-        document.addEventListener('DOMContentLoaded', function() {
-            // Original mobile menu button (three lines)
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const navLinks = document.getElementById('navLinks');
+    document.addEventListener('DOMContentLoaded', function() {
+        const track = document.getElementById('qaTrack');
+        const cards = document.querySelectorAll('.qa-card');
+        const progressBar = document.getElementById('progressBar');
+        const dotsContainer = document.getElementById('carouselDots');
+        
+        let currentSlide = 0;
+        const totalSlides = cards.length;
+        let slideInterval;
+        const slideDuration = 8000; // 8 seconds per slide
+        
+        // Create dots
+        cards.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+        
+        const dots = document.querySelectorAll('.dot');
+        
+        function updateCarousel() {
+            // Update track position
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
             
-            // New hamburger menu
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-            const mobileMenu = document.getElementById('mobileMenu');
+            // Update active card
+            cards.forEach(card => card.classList.remove('active'));
+            cards[currentSlide].classList.add('active');
             
-            // Toggle original mobile menu
-            if (mobileMenuBtn && navLinks) {
-                mobileMenuBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    navLinks.classList.toggle('active');
-                });
-            }
+            // Update dots
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[currentSlide].classList.add('active');
             
-            // Toggle new hamburger menu
-            if (mobileMenuToggle && mobileMenu) {
-                mobileMenuToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    mobileMenu.classList.toggle('active');
-                    this.classList.toggle('active');
-                });
-            }
+            // Reset progress bar
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            void progressBar.offsetWidth; // Force reflow
+            progressBar.style.transition = `width ${slideDuration}ms linear`;
+            progressBar.style.width = '100%';
+        }
+        
+        function goToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            updateCarousel();
+            resetInterval();
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+        
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+        
+        function startInterval() {
+            slideInterval = setInterval(nextSlide, slideDuration);
+        }
+        
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startInterval();
+        }
+        
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+        
+        track.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+        
+        track.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
             
-            // Close menus when clicking outside
-            document.addEventListener('click', function(e) {
-                if (navLinks && !navLinks.contains(e.target) && mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
-                    navLinks.classList.remove('active');
+            if (Math.abs(diff) > 50) { // Minimum swipe distance
+                if (diff > 0) {
+                    // Swiped left, go to next slide
+                    nextSlide();
+                } else {
+                    // Swiped right, go to previous slide
+                    prevSlide();
                 }
-                if (mobileMenu && !mobileMenu.contains(e.target) && mobileMenuToggle && !mobileMenuToggle.contains(e.target)) {
-                    mobileMenu.classList.remove('active');
-                    if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
-                }
-            });
-            
-            // Close menus when clicking links
-            document.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', function() {
-                    if (navLinks) navLinks.classList.remove('active');
-                    if (mobileMenu) mobileMenu.classList.remove('active');
-                    if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
-                });
-            });
-        });
-        </script>
-
-    <script>
-        // Mobile auto-animation after 3 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth <= 768) {
-                
+                resetInterval();
             }
+        }, { passive: true });
         
-
-
-
-
-
-<script>
-// Mobile auto-animation after 3 seconds
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth <= 768) {
-        setTimeout(function() {
-            const mainTile = document.getElementById('mainServiceTile');
-            const categories = document.querySelectorAll('.service-category');
-            
-            if (mainTile) {
-                mainTile.classList.add('mobile-animated');
-                console.log('Mobile animation applied to main tile');
-            }
-            categories.forEach(category => {
-                category.classList.add('mobile-animated');
-            });
-            console.log('Mobile animation completed');
-        }, 3000);
-    }
-});
-</script>
-
-
-<script>
-// Hamburger menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
-    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
-    
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled');
-        });
-        // Optional: Add touchstart for better mobile support
-        hamburger.addEventListener('touchstart', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled via touch');
-        });
-    }
-});
-</script>
-
-
-    <!-- BENEFIT CARD ANIMATION SCRIPT -->
-    <script>
-    // Mobile auto-animation for benefit cards
-    function initBenefitAnimations() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        
-        console.log('Found ' + benefitCards.length + ' benefit cards');
-        
-        // Add touch support for mobile
-        benefitCards.forEach(card => {
-            card.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
+        // Pause on hover (desktop only)
+        if (window.innerWidth > 768) {
+            track.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+                progressBar.style.transition = 'none';
             });
             
-            card.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Auto-animate benefit cards on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            benefitCards.forEach(card => {
-                setTimeout(() => {
-                    card.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        card.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 500;
-            });
-            
-            // Re-animate when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    setTimeout(() => {
-                        let newDelay = 0;
-                        benefitCards.forEach(card => {
-                            setTimeout(() => {
-                                card.classList.add('mobile-animated');
-                                setTimeout(() => {
-                                    card.classList.remove('mobile-animated');
-                                }, 3000);
-                            }, newDelay);
-                            newDelay += 500;
-                        });
-                    }, 1000);
-                }
+            track.addEventListener('mouseleave', () => {
+                startInterval();
+                progressBar.style.transition = `width ${slideDuration}ms linear`;
             });
         }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBenefitAnimations);
-    } else {
-        initBenefitAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initBenefitAnimations);
-    
-    // Also animate when benefit cards come into view
-    function animateBenefitOnScroll() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.5 });
         
-        benefitCards.forEach(card => {
-            observer.observe(card);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
-    }
-    </script>
-    
-
-
-            
-        <!-- Mobile Animation Script -->
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth <= 768) {
-                console.log('Mobile animation script loaded');
-                
-                setTimeout(function() {
-                    const mainTile = document.getElementById('mainServiceTile');
-                    const categories = document.querySelectorAll('.service-category');
-                    
-                    if (mainTile) {
-                        mainTile.classList.add('mobile-animated');
-                        console.log('Mobile animation applied to main tile');
-                    }
-                    
-                    categories.forEach(category => {
-                        category.classList.add('mobile-animated');
-                    });
-                    
-                    console.log('Mobile animation completed');
-                    
-                    
-                    
-                }, 3000);
+        // Initialize
+        updateCarousel();
+        startInterval();
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(slideInterval);
+            } else {
+                resetInterval();
             }
         });
-        </script>
-    </body>
+    });
+    </script>
+
+    <!-- Mobile Menu Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        if (mobileMenuBtn && navLinks) {
+            mobileMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                }
+            });
+            
+            // Close menu when clicking links
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.classList.remove('active');
+                });
+            });
+        }
+    });
+    </script>
+
+    <!-- Simple hover animations (no timed animation) -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const serviceTile = document.getElementById('mainServiceTile');
+        const serviceCategories = document.querySelectorAll('.service-category');
+        
+        // Desktop hover effects
+        if (window.innerWidth > 768) {
+            // Service tile hover
+            if (serviceTile) {
+                serviceTile.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-14px) scale(1.035)';
+                    this.style.background = 'linear-gradient(135deg, var(--teal), var(--navy))';
+                    this.style.color = 'white';
+                });
+                
+                serviceTile.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.background = 'white';
+                    this.style.color = '';
+                });
+            }
+            
+            // Service category hover
+            serviceCategories.forEach(category => {
+                category.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.background = 'linear-gradient(135deg, #00C4B4, #0A1D37)';
+                });
+                
+                category.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.background = 'var(--white)';
+                });
+            });
+        }
+    });
+    </script>
+</body>
 </html>

@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/home-remodeling.html': [
+    'services/kitchen-renovations.html': [
         {
-            'question': 'home remodeling contractor near me Norfolk NE',
-            'answer': "We're the Norfolk remodeling team families keep calling back—whether it's opening up a cramped kitchen, finishing the basement, or finally getting that master suite you've dreamed about. One honest price, one point of contact, zero surprises, and a house you fall in love with all over again.",
+            'question': 'kitchen renovation near me Norfolk Nebraska',
+            'answer': "We turn dated Norfolk kitchens into the heart of the home you've always wanted. New custom or semi-custom cabinets, quartz or granite countertops, luxury vinyl plank or tile flooring, under-cabinet lighting, and layouts that actually make sense for how your family cooks and gathers. You'll love walking in here every single day.",
             'icon': 'fa-home'
         },
         {
-            'question': 'whole house remodel Norfolk Nebraska',
-            'answer': "A whole-house remodel is a big deal, and we treat it like we're working on our own family's home. New floor plans, updated electrical and plumbing, energy-efficient windows, fresh flooring throughout, and gorgeous finishes that make every room feel brand new. Norfolk families tell us it's like moving into a better house—without actually moving.",
+            'question': 'kitchen remodel contractor Norfolk NE',
+            'answer': "One local contractor, one clean job site, one happy family. We handle demo, plumbing moves, electrical upgrades, drywall, tile backsplash, flooring, and final install so you don't have to coordinate five different crews. Norfolk's kitchen remodel go-to since day one.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'home renovation company Norfolk NE',
-            'answer': "From the first design meeting to the final walkthrough, we handle permits, dust control, scheduling every trade, and daily cleanups so you can actually live in your home while we work. Local Norfolk company, fully insured, and obsessed with making the process as smooth as the finished result.",
-            'icon': 'fa-clipboard-check'
-        },
-        {
-            'question': 'house remodeling ideas Norfolk Nebraska',
-            'answer': "Lately Norfolk homeowners are loving open-concept kitchens that flow into living areas, spa-like master bathrooms with huge walk-in showers, finished basements with home theaters or guest suites, and four-season sunrooms that bring the outdoors in. We'll show you what's trending locally and what fits your budget perfectly.",
+            'question': 'custom kitchen remodeling Norfolk Nebraska',
+            'answer': "Dream kitchen? We build it. Islands with waterfall edges, hidden appliance garages, pull-out pantry towers, soft-close everything, built-in coffee stations, double ovens, pot-filler faucets… whatever makes you smile when you cook, we make real in your Norfolk home.",
             'icon': 'fa-lightbulb'
         },
         {
-            'question': 'general contractor for home remodel Norfolk',
-            'answer': "As your true boots-on-the-ground general contractor, we coordinate the carpenters, plumbers, electricians, painters, and everyone else so you don't have to chase ten different people. One contract, one payment schedule, one team that's 100% accountable to you from start to beautiful finish.",
-            'icon': 'fa-wrench'
+            'question': 'affordable kitchen renovation Norfolk',
+            'answer': "Big impact, smart budget. Cabinet refacing instead of full replacement, new quartz that looks like marble, fresh paint, updated lighting, and new hardware can give you a $40k look for half the price. Norfolk families are shocked how far their dollars go with us.",
+            'icon': 'fa-dollar-sign'
+        },
+        {
+            'question': 'modern kitchen remodel near me Norfolk',
+            'answer': "Clean lines, handle-less cabinets, matte black or brushed gold fixtures, huge islands everyone gathers around, smart storage that hides the clutter, and tons of natural light. That's the modern Norfolk kitchen we're building right now—and it's absolutely gorgeous.",
+            'icon': 'fa-check-circle'
         }
     ]
 }

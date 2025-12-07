@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/non-slip-flooring.html': [
+    'services/custom-ramps.html': [
         {
-            'question': 'non-slip flooring installation near me Norfolk',
-            'answer': "We bring real peace-of-mind flooring to Norfolk homes every week. Whether it's luxury vinyl plank with deep embossed texture, porcelain tile with a high DCOF rating (0.60+), or a commercial-grade epoxy-quartz broadcast system, we only install surfaces that stay grippy even when soaking wet—because one fall is one too many.",
-            'icon': 'fa-shoe-prints'
+            'question': 'custom wheelchair ramp builder near Norfolk NE',
+            'answer': "We're Norfolk's go-to custom ramp builders because every ramp we create is measured, designed, and built specifically for your home, your porch height, and your exact needs. Choose pressure-treated wood that we can stain or paint to match your house perfectly, or go with maintenance-free aluminum—either way you get gentle 1:12 slope, wide platforms for turns, double handrails, concrete footings, and a non-slip surface that handles Nebraska ice and snow like a champ.",
+            'icon': 'fa-wheelchair'
         },
         {
-            'question': 'non-slip bathroom floor coating Norfolk Nebraska',
-            'answer': "Our clear non-slip bathroom floor coatings go right over your existing tile or concrete and create a permanent textured surface that's invisible until your feet thank you. No more worrying about kids, grandkids, or aging parents slipping—Norfolk families call it the best $800–$1,200 they've ever spent on safety.",
-            'icon': 'fa-shield-alt'
+            'question': 'custom wood wheelchair ramp Norfolk Nebraska',
+            'answer': "There's something warm and welcoming about a beautifully crafted wood ramp. We use premium pressure-treated lumber, dig proper concrete footings, add sturdy handrails on both sides, texture the walking surface for traction, and finish it with deck stain or exterior paint so it looks like it grew right out of your house. Norfolk families love that it feels permanent and blends right in.",
+            'icon': 'fa-hammer'
         },
         {
-            'question': 'anti-slip flooring for seniors Norfolk NE',
-            'answer': "We've installed hundreds of senior-safe floors across Norfolk and know exactly what works: matte-finish LVP that looks like real wood but grips like sandpaper when wet, small mosaic shower floors with tons of grout lines for traction, and warm-to-the-touch vinyl that doesn't get slick with soap or shampoo. Safety never looked this good.",
-            'icon': 'fa-users'
-        },
-        {
-            'question': 'safe shower floor for elderly near me Norfolk',
-            'answer': "The safest shower floors we install for Norfolk seniors are either tiny 1×1 or 2×2 mosaic porcelain (all those grout lines = instant traction), factory-textured luxury vinyl bases, or our rolled-on quartz epoxy system that feels like fine sandpaper underfoot. Pair it with a grab bar and a seat and showering becomes worry-free again.",
-            'icon': 'fa-bath'
-        },
-        {
-            'question': 'non-slip kitchen flooring Norfolk Nebraska',
-            'answer': "Kitchens see spills constantly, so we steer Norfolk homeowners toward cork (naturally grippy + forgiving), commercial-grade textured LVP, rubber flooring that looks like hardwood, or matte porcelain with a high slip rating. You still get the gorgeous look you want—just without the ER visit when the spaghetti sauce hits the floor.",
+            'question': 'custom porch ramp installation near me Norfolk',
+            'answer': "Your porch deserves a ramp that looks intentional, not tacked-on. We design custom layouts with landings, gentle turns when space is tight, keyed railings that match your existing ones, and textured decking so it's safe in rain, snow, or sun. Most Norfolk porch ramps we build become a seamless extension families actually enjoy using.",
             'icon': 'fa-home'
+        },
+        {
+            'question': 'permanent wheelchair ramp for home Norfolk NE',
+            'answer': "A permanent ramp should last decades with zero headaches. We pour concrete footings below frost line, use treated lumber or aluminum, add double 1.5-inch handrails at the correct height, and finish with commercial-grade non-slip surfacing. Once it's in, you'll forget it's even an \"accessibility feature\"—it just feels like part of the home.",
+            'icon': 'fa-check-circle'
+        },
+        {
+            'question': 'custom accessibility ramp contractor Norfolk Nebraska',
+            'answer': "From the first on-site measurement to the final handshake, we handle every detail—permits if needed, precise rise-and-run calculations, material choices that match your budget and style, and rock-solid construction. Norfolk homeowners trust us because we've been building safe, beautiful custom ramps for our neighbors for years.",
+            'icon': 'fa-clipboard-check'
         }
     ]
 }

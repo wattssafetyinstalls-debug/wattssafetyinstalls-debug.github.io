@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/wheelchair-ramp-installation.html': [
+    'services/stairlift-elevator-installation.html': [
         {
-            'question': 'wheelchair ramp installation near me Norfolk NE',
-            'answer': "We install both modular aluminum and site-built ramps all across Norfolk and the surrounding towns. Same-day or next-day service on most modular installs, full 1:12 slope, 36-inch minimum width, handrails on both sides when the rise is over 6 inches, and a grippy surface that stays safe even when it's wet or icy. Your independence starts the day we roll up.",
+            'question': 'stairlift installation near me Norfolk Nebraska',
+            'answer': "We install stairlifts on almost any staircase in Norfolk—straight, curved, indoor, or even outdoor. Most straight stairlifts go in within a day with zero mess or structural changes. You get a smooth, quiet ride, folding seat and footrest so the stairs stay usable for everyone else, and safety sensors that stop instantly if anything's in the way. Reclaim your whole house again.",
             'icon': 'fa-wheelchair'
         },
         {
-            'question': 'aluminum wheelchair ramp installation Norfolk Nebraska',
-            'answer': "Norfolk loves aluminum ramps for good reason: zero painting ever, rust-proof, lightweight yet rated for 1,000 lbs, and they can be taken apart and moved if life changes. We stock multiple styles and can usually have your new ramp installed in just a few hours—perfect for coming home from the hospital or making Grandma's visit worry-free.",
+            'question': 'home stairlift installation Norfolk NE',
+            'answer': "Your stairs shouldn't keep you from the bedroom or basement you love. We've installed hundreds of home stairlifts across Norfolk and can usually give you an exact price over the phone after just a few quick photos. Battery-powered so they work even during power outages, remote controls, and a seat that swivels so you step off safely at the top.",
+            'icon': 'fa-home'
+        },
+        {
+            'question': 'curved stairlift Norfolk Nebraska',
+            'answer': "Curved staircases are no problem—we custom-build the rail to follow every turn and angle of your stairs exactly. Yes, they cost more than straight ones, but Norfolk families tell us it's worth every penny when Mom or Dad can finally sleep in their own bedroom again instead of on the couch.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'modular wheelchair ramp near me Norfolk',
-            'answer': "Modular ramps are our fastest solution—most installs take less than a day. No concrete, no permits in most cases, just a perfectly level, rock-solid ramp with handrails, platforms, and non-slip mesh or solid surface. When you're ready, we can remove it just as easily or reconfigure it for a different door.",
-            'icon': 'fa-boxes'
+            'question': 'residential elevator installation near me Norfolk',
+            'answer': "For multi-level homes that need more than a stairlift, we install compact residential elevators and vertical platform lifts. They fit in surprisingly small spaces (even inside a closet), run quietly, and look beautiful with glass or solid walls. Perfect for wheelchairs, groceries, or just making life easier as the years go by.",
+            'icon': 'fa-arrows-alt-v'
         },
         {
-            'question': 'temporary wheelchair ramp rental Norfolk NE',
-            'answer': "Hospital discharge tomorrow? Call us today. We deliver and install rental aluminum ramps the same or next day anywhere in the Norfolk area. Weekends and evenings too. Short-term or month-to-month, you get exactly what you need with zero long-term commitment—most families have it ready before the paperwork is even signed.",
+            'question': 'stairlift rental Norfolk Nebraska',
+            'answer': "Short-term need after surgery or rehab? We offer stairlift rentals across the Norfolk area—installed fast, removed when you're done, and way cheaper than moving furniture downstairs for months. Most families have it ready before the hospital discharge planner even calls.",
             'icon': 'fa-clock'
-        },
-        {
-            'question': 'home wheelchair ramp requirements Norfolk Nebraska',
-            'answer': "Every ramp we install meets or exceeds residential code: maximum 1:12 slope (1 inch of rise per 12 inches of run), minimum 36-inch clear width, handrails between 34–38 inches high when rise is over 6 inches, 5-foot landings at top and bottom, and non-slip walking surface. We handle the details so you can just roll safely and confidently.",
-            'icon': 'fa-check-circle'
         }
     ]
 }

@@ -9,143 +9,141 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/accessibility-safety-solutions.html': [
+    'services/ada-compliant-showers-bathrooms.html': [
         {
-            'question': 'accessibility home modifications near me Norfolk NE',
-            'answer': "If you're looking for accessibility home modifications in the Norfolk, Nebraska area, we specialize in thoughtful changes that make your home safer and more comfortable — everything from installing wheelchair ramps and stairlifts to widening doorways, adding grab bars, and converting bathrooms for easier access. We take the time to understand your exact needs so you or your loved one can stay independent at home for years to come.",
+            'question': 'ADA compliant shower installation near me Norfolk NE',
+            'answer': "Hey Norfolk neighbor! We build real ADA-compliant showers that are safe, beautiful, and actually get used every day. That means a true zero-threshold curbless entry, 60-inch turning radius, reinforced grab bars at the perfect 33–36 inch height, fold-down teak bench, adjustable handheld sprayer on a slide bar, anti-scald valve, and gorgeous large-format tile with built-in slip resistance. Families tell us it gives their loved one independence again and gives everyone else peace of mind — that's why we love what we do.",
             'icon': 'fa-wheelchair'
         },
         {
-            'question': 'home safety upgrades for seniors Norfolk Nebraska',
-            'answer': "We love helping Norfolk-area seniors stay safe and confident in their own homes! Popular safety upgrades include brighter motion-sensor lighting, removing trip hazards, adding secure handrails on both sides of stairs, non-slip flooring throughout, and senior-friendly bathroom remodels with walk-in showers and grab bars. It's all about peace of mind for you and your family.",
+            'question': 'walk-in shower remodel Norfolk Nebraska',
+            'answer': "Replacing that old tub with a spacious walk-in shower is the smartest, most popular upgrade we do in Norfolk. We remove the tub, create a true zero-step entry (sometimes lowering the floor slightly), install a sleek linear drain, add luxury tile that feels warm underfoot, include built-in or fold-down seating, multiple grab bars, and bright LED lighting. It's safer, easier to clean, and makes your whole bathroom feel brand new.",
+            'icon': 'fa-bath'
+        },
+        {
+            'question': 'roll-in shower installation near me Norfolk NE',
+            'answer': "A properly built roll-in shower changes everything for wheelchair users. We create a gentle beveled entry with no curb at all, reinforce the walls with marine-grade blocking, install heavy-duty 1.5-inch stainless grab bars (500+ lb rating), add a waterproof fold-down seat, place controls and the handheld sprayer at seated height, and finish with a trench drain and stunning tile. It's pure freedom — and it still looks like a high-end spa.",
+            'icon': 'fa-hand-holding-heart'
+        },
+        {
+            'question': 'accessible bathroom remodeling Norfolk Nebraska',
+            'answer': "We turn regular bathrooms into safe, luxurious, future-proof spaces you'll love for decades. Comfort-height toilets, roll-under vanities with pretty quartz tops, lever-handles everywhere, bright warm LED lighting with motion sensors, non-slip porcelain that looks like wood or marble, and blocking hidden in every wall ready for grab bars whenever you need them. Everything is placed so the room works perfectly whether you're standing or seated.",
+            'icon': 'fa-hammer'
+        },
+        {
+            'question': 'senior safe bathroom remodel Norfolk Nebraska',
+            'answer': "Our senior-safe bathroom remodels focus on removing danger and adding confidence. We replace slippery tubs with zero-entry walk-in showers, install rock-solid grab bars and seating, upgrade to textured non-slip flooring, add bright task + night lighting, and make sure every control is easy to reach from a seated position. Norfolk seniors tell us they finally feel safe and spoiled in their own bathroom again.",
             'icon': 'fa-shield-alt'
-        },
-        {
-            'question': 'aging in place remodeling contractor Norfolk NE',
-            'answer': "As a local aging-in-place remodeling contractor serving Norfolk and all of Northeast Nebraska, we focus on modifications that let you stay in the home you love as mobility needs change. Whether it's a zero-step entrance, lever door handles, or a fully accessible kitchen, we handle everything with care and respect for your lifestyle.",
-            'icon': 'fa-home'
-        },
-        {
-            'question': 'ADA compliant home modifications Norfolk Nebraska',
-            'answer': "While private homes aren't required to meet full commercial ADA standards, we follow ADA guidelines whenever it makes sense — proper grab bar heights (33-36 inches), 60-inch turning radii in bathrooms, reachable light switches, and more. The goal is real-world usability, not just checking boxes.",
-            'icon': 'fa-check-circle'
-        },
-        {
-            'question': 'senior home safety assessment Norfolk NE',
-            'answer': "We offer a complimentary senior home safety assessment where we walk through every room with you, looking at stairs, bathrooms, lighting, flooring, and entryways. We'll point out hidden risks and give you a clear, prioritized list of practical, affordable solutions — no pressure, just helpful advice from folks who truly care.",
-            'icon': 'fa-clipboard-check'
-        }
-    ],
-    'services/senior-safety.html': [
-        {
-            'question': 'senior home safety modifications near me Norfolk',
-            'answer': "Nothing makes us happier than helping Norfolk families keep their parents or grandparents safe at home. Our most requested senior safety modifications include brighter LED lighting, lever-style door handles, contrast strips on steps, secure railings, and bathroom upgrades that prevent falls.",
-            'icon': 'fa-lightbulb'
-        },
-        {
-            'question': 'aging in place home modifications Norfolk Nebraska',
-            'answer': "Aging in place is all about small, smart changes that add up to huge independence. We commonly install comfort-height toilets, roll-under sinks, rocker light switches, and easy-grip faucets — plus strategic lighting and flooring upgrades that make daily life simpler and safer.",
-            'icon': 'fa-home'
-        },
-        {
-            'question': 'fall prevention home assessment Norfolk NE',
-            'answer': "Falls are the #1 reason seniors lose independence, but most are preventable! During our fall-prevention assessment, we check for loose rugs, poor lighting, cluttered walkways, steep stairs, and bathroom hazards, then give you a custom plan to fix the biggest risks first.",
-            'icon': 'fa-exclamation-triangle'
-        },
-        {
-            'question': 'safe home upgrades for elderly Norfolk NE',
-            'answer': "Some of our favorite \"wow\" upgrades for elderly homeowners in Norfolk are automatic night lights that guide you to the bathroom, hands-free faucets, pull-down shelving in kitchens, and stairlifts that make second floors accessible again without moving.",
-            'icon': 'fa-star'
         }
     ]
 }
 
-def build_qa_carousel_html(qa_list):
-    """Build HTML carousel section from Q&A list"""
-    html = '                        <div class="qa-carousel-container">\n'
-    html += '                <div class="qa-track" id="qaTrack">\n'
+def select_icon(question, answer):
+    """Select Font Awesome icon based on question/answer content"""
+    text = (question + ' ' + answer).lower()
     
-    for idx, qa in enumerate(qa_list):
-        is_active = 'active' if idx == 0 else ''
-        icon = qa.get('icon', 'fa-info-circle')
-        question = qa['question'].replace('"', '&quot;')
-        answer = qa['answer'].replace('"', '&quot;')
-        
-        html += '                    <!-- Card -->\n'
-        html += f'                    <div class="qa-card {is_active}">\n'
-        html += f'                        <i class="fas {icon} qa-icon"></i>\n'
-        html += f'                        <h3 class="qa-question">{question}</h3>\n'
-        html += f'                        <p class="qa-answer">{answer}</p>\n'
-        html += f'                        <p class="consultation-note">Free consultation for your project</p>\n'
-        html += '                    </div>\n'
+    icon_map = {
+        'cost|price|free|budget|afford|money': 'fa-dollar-sign',
+        'timeline|how long|week|month|quickly|rush': 'fa-clock',
+        'install|build|repair|replace|remodel': 'fa-hammer',
+        'wheelchair|roll|mobility|disabled': 'fa-wheelchair',
+        'grab bar|handrail|railing|rail': 'fa-grip-horizontal',
+        'shower|bath|bathroom|tub|water': 'fa-bath',
+        'elderly|senior|aging|old': 'fa-users',
+        'safe|safety|prevent|danger': 'fa-shield-alt',
+        'fall|injury|risk|protect': 'fa-first-aid',
+        'lighting|bright|light|dark': 'fa-lightbulb',
+        'floor|slip|non-slip|slippery': 'fa-shoe-prints',
+        'access|entry|door|ramp': 'fa-hand-holding-heart',
+    }
     
-    html += '                </div>\n'
-    html += '            </div>'
+    for keywords, icon in icon_map.items():
+        if any(word in text for word in keywords.split('|')):
+            return icon
     
-    return html
+    return 'fa-check-circle'
 
-def build_schema_faq(qa_list):
-    """Build FAQPage schema from Q&A list"""
-    schema = '    <script type="application/ld+json">\n'
-    schema += '{\n'
-    schema += '  "@context": "https://schema.org",\n'
-    schema += '  "@type": "FAQPage",\n'
-    schema += '  "mainEntity": [\n'
-    
-    for idx, qa in enumerate(qa_list):
-        question = qa['question'].replace('"', '\\"').replace('\n', ' ')
-        answer = qa['answer'].replace('"', '\\"').replace('\n', ' ')
+def build_qa_carousel_html(questions):
+    """Build Q&A carousel HTML from question list"""
+    cards = []
+    for item in questions:
+        question = item['question']
+        answer = item['answer']
+        icon = item.get('icon') or select_icon(question, answer)
         
-        schema += '    {\n'
-        schema += '      "@type": "Question",\n'
-        schema += f'      "name": "{question}",\n'
-        schema += '      "acceptedAnswer": {\n'
-        schema += '        "@type": "Answer",\n'
-        schema += f'        "text": "{answer}"\n'
-        schema += '      }\n'
-        schema += '    }'
-        
-        if idx < len(qa_list) - 1:
-            schema += ','
-        schema += '\n'
+        card = f'''                    <div class="qa-card">
+                        <i class="fas {icon} qa-icon"></i>
+                        <h3 class="qa-question">{question}</h3>
+                        <p class="qa-answer">{answer}</p>
+                        <p class="consultation-note">Free consultation</p>
+                    </div>'''
+        cards.append(card)
     
-    schema += '  ]\n'
-    schema += '}\n'
-    schema += '</script>'
-    
-    return schema
+    carousel = f'''            <div class="qa-carousel-container">
+                <div class="qa-track" id="qaTrack">
+{chr(10).join(cards)}
+                </div>
+                <div class="qa-controls">
+                    <div id="qaIndicators" class="qa-indicators"></div>
+                    <div class="qa-progress"><div id="qaProgress" class="qa-progress-bar"></div></div>
+                </div>
+            </div>'''
+    return carousel
 
-def update_page(file_path, qa_list):
-    """Update a single page with new Q&A"""
+def build_schema_faq(questions):
+    """Build FAQPage JSON-LD schema"""
+    entities = []
+    for item in questions:
+        entity = {
+            "@type": "Question",
+            "name": item['question'],
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": item['answer']
+            }
+        }
+        entities.append(entity)
+    
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": entities
+    }
+    
+    import json
+    return json.dumps(schema, indent=2)
+
+def update_page(file_path, questions):
+    """Update a service page with Q&A carousel and schema"""
+    if not os.path.exists(file_path):
+        return f"[FAIL] File not found: {file_path}"
+    
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Replace Q&A carousel
-    new_carousel = build_qa_carousel_html(qa_list)
-    carousel_pattern = r'<div class="qa-carousel-container">.*?</div>\s*<div class="carousel-dots"'
-    new_carousel_full = new_carousel + '\n\n            <div class="carousel-dots"'
-    content = re.sub(carousel_pattern, new_carousel_full, content, flags=re.DOTALL)
+    # Build new carousel
+    new_carousel = build_qa_carousel_html(questions)
+    carousel_pattern = r'<div class="qa-carousel-container">.*?</div>\s*</div>'
+    content = re.sub(carousel_pattern, new_carousel + '</div>', content, flags=re.DOTALL)
     
-    # Replace schema
-    new_schema = build_schema_faq(qa_list)
-    schema_pattern = r'<script type="application/ld\+json">.*?FAQPage.*?</script>'
-    content = re.sub(schema_pattern, new_schema, content, flags=re.DOTALL)
+    # Build and inject new schema - use raw string for replacement to avoid escape issues
+    new_schema = build_schema_faq(questions)
+    schema_pattern = r'<script type="application/ld\+json">.*?</script>'
+    new_schema_tag = r'<script type="application/ld+json">' + '\n' + new_schema + '\n' + r'</script>'
+    content = re.sub(schema_pattern, lambda m: new_schema_tag, content, flags=re.DOTALL)
     
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
     
-    return True
+    return f"[OK] Updated: {file_path} with {len(questions)} Q&A items"
 
 # Main execution
-for file_path, qa_list in qa_updates.items():
-    full_path = os.path.join('c:\\Users\\User\\my-website', file_path)
-    if os.path.exists(full_path):
-        try:
-            update_page(full_path, qa_list)
-            print(f'[OK] Updated: {file_path} with {len(qa_list)} Q&A items')
-        except Exception as e:
-            print(f'[FAIL] {file_path}: {e}')
-    else:
-        print(f'[SKIP] Not found: {full_path}')
-
-print('[OK] Complete - Updated 2 service pages with custom Q&A')
+if __name__ == '__main__':
+    updated_count = 0
+    for page_path, questions in qa_updates.items():
+        result = update_page(page_path, questions)
+        print(result)
+        if '[OK]' in result:
+            updated_count += 1
+    
+    print(f"[OK] Complete - Updated {updated_count} service page(s) with custom Q&A")

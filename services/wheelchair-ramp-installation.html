@@ -1243,5 +1243,84 @@
   </div>
 </div>
 
+    <!-- Q&A CAROUSEL SECTION -->
+    <div class="container">
+        <section class="qa-section">
+            <h2>Questions & Answers</h2>
+            <p class="section-subtitle">Real answers from local experts. Get your custom quote today.</p>
+
+            <div class="qa-carousel-container">
+                <div class="qa-track" id="qaTrack">
+                    <div class="qa-card active">
+                        <i class="fas fa-question-circle qa-icon"></i>
+                        <h3 class="qa-question">What services do you offer?</h3>
+                        <p class="qa-answer">We provide comprehensive professional services tailored to your needs. Contact us for a free consultation.</p>
+                        <p class="consultation-note">Free consultation available</p>
+                    </div>
+                    <div class="qa-card">
+                        <i class="fas fa-dollar-sign qa-icon"></i>
+                        <h3 class="qa-question">How much does this cost?</h3>
+                        <p class="qa-answer">Pricing varies based on project scope and requirements. We provide transparent quotes after assessing your specific needs.</p>
+                        <p class="consultation-note">Clear pricing with no hidden fees</p>
+                    </div>
+                    <div class="qa-card">
+                        <i class="fas fa-search-location qa-icon"></i>
+                        <h3 class="qa-question">Do you serve my area?</h3>
+                        <p class="qa-answer">We serve Norfolk, Battle Creek, Pierce, Madison County, Antelope County, and surrounding communities in Northeast Nebraska.</p>
+                        <p class="consultation-note">Serving all of Northeast Nebraska</p>
+                    </div>
+                    <div class="qa-card">
+                        <i class="fas fa-user-tie qa-icon"></i>
+                        <h3 class="qa-question">Why choose our services?</h3>
+                        <p class="qa-answer">We are licensed, insured, ATP-approved, and committed to quality workmanship with same-day availability when possible.</p>
+                        <p class="consultation-note">Expertise you can trust</p>
+                    </div>
+                    <div class="qa-card">
+                        <i class="fas fa-calendar-alt qa-icon"></i>
+                        <h3 class="qa-question">What is the process?</h3>
+                        <p class="qa-answer">We start with a free consultation, provide a detailed estimate, execute professional work, and ensure your complete satisfaction.</p>
+                        <p class="consultation-note">A seamless process from start to finish</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-dots" id="carouselDots"></div>
+            <div class="carousel-progress"><div class="progress-bar" id="progressBar"></div></div>
+        </section>
+    </div>
+
+    <!-- MOBILE AUTO-ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth <= 768) {
+            setTimeout(function() {
+                const mainTile = document.getElementById('mainServiceTile');
+                const categories = document.querySelectorAll('.service-category');
+                
+                if (mainTile) {
+                    mainTile.classList.add('mobile-animated');
+                    console.log('Mobile animation applied to main tile');
+                }
+                
+                categories.forEach(category => {
+                    category.classList.add('mobile-animated');
+                });
+                
+                console.log('Mobile animation completed');
+                
+                // Remove animation classes after animation completes
+                setTimeout(function() {
+                    if (mainTile) mainTile.classList.remove('mobile-animated');
+                    categories.forEach(category => {
+                        category.classList.remove('mobile-animated');
+                    });
+                }, 3000);
+                
+            }, 3000);
+        }
+    });
+    </script>
+
 </body>
 </html>

@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/stairlift-elevator-installation.html': [
+    'services/accessibility-safety-solutions.html': [
         {
-            'question': 'stairlift installation near me Norfolk Nebraska',
-            'answer': "We install stairlifts on almost any staircase in Norfolk—straight, curved, indoor, or even outdoor. Most straight stairlifts go in within a day with zero mess or structural changes. You get a smooth, quiet ride, folding seat and footrest so the stairs stay usable for everyone else, and safety sensors that stop instantly if anything's in the way. Reclaim your whole house again.",
-            'icon': 'fa-wheelchair'
-        },
-        {
-            'question': 'home stairlift installation Norfolk NE',
-            'answer': "Your stairs shouldn't keep you from the bedroom or basement you love. We've installed hundreds of home stairlifts across Norfolk and can usually give you an exact price over the phone after just a few quick photos. Battery-powered so they work even during power outages, remote controls, and a seat that swivels so you step off safely at the top.",
+            'question': 'accessibility home modifications near me Norfolk NE',
+            'answer': "We're the Norfolk team families call when they want their home to stay safe and livable for decades. Wheelchair ramps, zero-step entries, wider doorways, stairlifts, grab bars, senior-friendly bathrooms; whatever you need to keep loving the house you're in, we make it happen with zero stress and a whole lot of care.",
             'icon': 'fa-home'
         },
         {
-            'question': 'curved stairlift Norfolk Nebraska',
-            'answer': "Curved staircases are no problem—we custom-build the rail to follow every turn and angle of your stairs exactly. Yes, they cost more than straight ones, but Norfolk families tell us it's worth every penny when Mom or Dad can finally sleep in their own bedroom again instead of on the couch.",
+            'question': 'home safety upgrades for seniors Norfolk Nebraska',
+            'answer': "Simple upgrades make the biggest difference: brighter motion-sensor lighting everywhere, removal of throw rugs and clutter, secure handrails on both sides of every step, non-slip flooring, bathroom grab bars, and lever door handles. Norfolk seniors tell us they finally feel steady and confident again in their own home.",
+            'icon': 'fa-lightbulb'
+        },
+        {
+            'question': 'aging in place remodeling contractor Norfolk NE',
+            'answer': "Aging in place isn't about giving things up; it's about smart changes that let you keep everything you love. We widen doorways for walkers and wheelchairs, lower countertops when needed, install easy-grip faucets and handles, add beautiful ramps that match your house, and turn bathrooms into safe retreats. Stay home, stay happy, stay you.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'residential elevator installation near me Norfolk',
-            'answer': "For multi-level homes that need more than a stairlift, we install compact residential elevators and vertical platform lifts. They fit in surprisingly small spaces (even inside a closet), run quietly, and look beautiful with glass or solid walls. Perfect for wheelchairs, groceries, or just making life easier as the years go by.",
-            'icon': 'fa-arrows-alt-v'
+            'question': 'ADA compliant home modifications Norfolk Nebraska',
+            'answer': "Even though private homes aren't required to be fully commercial ADA, we follow the guidelines that actually matter: proper reach ranges, 32-inch clear doorways, 60-inch shower turning spaces, grab-bar blocking, and light switches at 42–48 inches. It's real-world accessibility that looks and feels like home.",
+            'icon': 'fa-check-circle'
         },
         {
-            'question': 'stairlift rental Norfolk Nebraska',
-            'answer': "Short-term need after surgery or rehab? We offer stairlift rentals across the Norfolk area—installed fast, removed when you're done, and way cheaper than moving furniture downstairs for months. Most families have it ready before the hospital discharge planner even calls.",
-            'icon': 'fa-clock'
+            'question': 'senior home safety assessment Norfolk NE',
+            'answer': "Let us walk through your home with you—no cost, no pressure. We'll spot loose rugs, dark hallways, steep steps, slippery bathrooms, and anything else that could cause a fall, then give you a simple prioritized list of fixes from \"do this today\" to \"nice to have later.\" Most Norfolk families say it's the best hour they ever spent.",
+            'icon': 'fa-clipboard-check'
         }
     ]
 }

@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/grab-bar-installation.html': [
+    'services/non-slip-flooring.html': [
         {
-            'question': 'grab bar installation near me Norfolk Nebraska',
-            'answer': "We install grab bars the right way—never just into drywall. Every bar gets mounted into studs or solid blocking, supports 500+ lbs, and is sealed perfectly around tile so water can't sneak behind. Norfolk families trust us because their parents actually feel secure, and the bars look like they belong—not tacked on as an afterthought.",
-            'icon': 'fa-grip-horizontal'
+            'question': 'non-slip flooring installation near me Norfolk',
+            'answer': "We bring real peace-of-mind flooring to Norfolk homes every week. Whether it's luxury vinyl plank with deep embossed texture, porcelain tile with a high DCOF rating (0.60+), or a commercial-grade epoxy-quartz broadcast system, we only install surfaces that stay grippy even when soaking wet—because one fall is one too many.",
+            'icon': 'fa-shoe-prints'
         },
         {
-            'question': 'bathroom grab bar installation Norfolk NE',
-            'answer': "Safety + style is our thing. We place bathroom grab bars exactly where they're needed: 33–36 inches high, beside the toilet, vertical at the shower entry, horizontal and angled on the control wall, and always with 1.5-inch clearance from the wall. You pick brushed nickel, chrome, matte black, or oil-rubbed bronze—we make them disappear into your décor while keeping you safe.",
-            'icon': 'fa-hammer'
-        },
-        {
-            'question': 'professional grab bar installer near me Norfolk',
-            'answer': "DIY grab bars scare us (and should scare you too). We bring stud finders, moisture meters, marine-grade blocking when needed, and years of experience knowing exactly where weight is actually transferred. One customer told us, 'My mom now showers without fear for the first time in years.' That's why we're so careful on every single install.",
-            'icon': 'fa-wrench'
-        },
-        {
-            'question': 'ADA grab bars for seniors Norfolk Nebraska',
-            'answer': "True ADA-spec grab bars are 1.25–1.5 inches in diameter (perfect grip size), knurled or textured for wet hands, mounted 33–36 inches off the floor, and spaced 1.5 inches from the wall. We carry heavy-duty stainless models that look elegant and hold real weight—because your safety deserves the best, not the cheapest option at the big-box store.",
+            'question': 'non-slip bathroom floor coating Norfolk Nebraska',
+            'answer': "Our clear non-slip bathroom floor coatings go right over your existing tile or concrete and create a permanent textured surface that's invisible until your feet thank you. No more worrying about kids, grandkids, or aging parents slipping—Norfolk families call it the best $800–$1,200 they've ever spent on safety.",
             'icon': 'fa-shield-alt'
         },
         {
-            'question': 'shower grab bar placement Norfolk NE',
-            'answer': "Perfect shower grab bar layout we use in nearly every Norfolk home: a 24-inch vertical bar right at the entry (helps stepping in), an 18–24 inch horizontal bar on the back wall at seat height, and a 16–24 inch angled bar on the control wall so you can steady yourself while adjusting temperature. It's the combo seniors and physical therapists love most.",
+            'question': 'anti-slip flooring for seniors Norfolk NE',
+            'answer': "We've installed hundreds of senior-safe floors across Norfolk and know exactly what works: matte-finish LVP that looks like real wood but grips like sandpaper when wet, small mosaic shower floors with tons of grout lines for traction, and warm-to-the-touch vinyl that doesn't get slick with soap or shampoo. Safety never looked this good.",
+            'icon': 'fa-users'
+        },
+        {
+            'question': 'safe shower floor for elderly near me Norfolk',
+            'answer': "The safest shower floors we install for Norfolk seniors are either tiny 1×1 or 2×2 mosaic porcelain (all those grout lines = instant traction), factory-textured luxury vinyl bases, or our rolled-on quartz epoxy system that feels like fine sandpaper underfoot. Pair it with a grab bar and a seat and showering becomes worry-free again.",
             'icon': 'fa-bath'
+        },
+        {
+            'question': 'non-slip kitchen flooring Norfolk Nebraska',
+            'answer': "Kitchens see spills constantly, so we steer Norfolk homeowners toward cork (naturally grippy + forgiving), commercial-grade textured LVP, rubber flooring that looks like hardwood, or matte porcelain with a high slip rating. You still get the gorgeous look you want—just without the ER visit when the spaghetti sauce hits the floor.",
+            'icon': 'fa-home'
         }
     ]
 }

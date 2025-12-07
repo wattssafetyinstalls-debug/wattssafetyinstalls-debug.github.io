@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/bathroom-remodels.html': [
+    'services/basement-finishing.html': [
         {
-            'question': 'bathroom remodel near me Norfolk NE',
-            'answer': "We transform tired Norfolk bathrooms into the relaxing retreat you actually want to step into every morning. New vanities, gorgeous tile showers or soaking tubs, heated floors, better lighting, and storage that makes sense. Whether it's a quick refresh or a full gut-to-the-studs remodel, we keep it clean, on schedule, and completely stress-free.",
-            'icon': 'fa-bath'
-        },
-        {
-            'question': 'bathroom remodeling contractor Norfolk Nebraska',
-            'answer': "One local team that does it all: tear-out, plumbing moves, electrical upgrades, waterproofing, tile work, drywall, painting, and final fixtures. Fully insured, daily cleanups, and we treat your home like it's our own. Norfolk's bathroom remodelers families trust again and again.",
-            'icon': 'fa-hammer'
-        },
-        {
-            'question': 'small bathroom remodel Norfolk NE',
-            'answer': "Small space? Big transformation. We steal every inch with floating vanities, pocket doors, corner sinks, recessed medicine cabinets, large-format tile that makes the room feel bigger, and bright LED lighting. Norfolk's tiny bathrooms become everyone's favorite room after we're done.",
+            'question': 'basement finishing near me Norfolk Nebraska',
+            'answer': "We turn cold, forgotten Norfolk basements into warm, beautiful living space you'll actually use every day. Family rooms, home theaters, guest bedrooms, playrooms, wet bars, or that man-cave you've always wanted. Proper insulation, moisture control, egress windows, and finishes that match the rest of your house perfectly.",
             'icon': 'fa-home'
         },
         {
-            'question': 'luxury bathroom renovation Norfolk Nebraska',
-            'answer': "Spa days at home: huge zero-entry showers with rain heads and body sprays, freestanding soaking tubs under a chandelier, heated tile floors, back-lit mirrors, double vanities with quartz tops, and smart storage hidden behind beautiful doors. Norfolk's version of everyday luxury.",
-            'icon': 'fa-star'
+            'question': 'finished basement contractor Norfolk NE',
+            'answer': "One local crew handles everything from framing and electrical to drywall, trim, flooring, and that final bar countertop. Fully permitted, insured, and we keep dust locked down so you can still live upstairs without feeling like you're in a construction zone.",
+            'icon': 'fa-hammer'
         },
         {
-            'question': 'master bathroom remodel near me Norfolk',
-            'answer': "Your master bath should feel like an escape. We create spacious layouts with separate his-and-hers zones, walk-in showers big enough for two, private toilet rooms, linen towers, makeup vanities, and mood lighting that turns the whole space into your personal sanctuary.",
-            'icon': 'fa-heart'
+            'question': 'basement remodeling ideas Norfolk Nebraska',
+            'answer': "Lately Norfolk families are loving home theaters with tiered seating and star ceilings, built-in bars with kegerators, kids' playrooms that grow into teen hangouts, in-law suites with full baths, and workout rooms with rubber flooring. Whatever your family needs extra space for, we make it awesome.",
+            'icon': 'fa-lightbulb'
+        },
+        {
+            'question': 'basement waterproofing and finishing Norfolk',
+            'answer': "We never finish a basement without protecting it first. Interior drainage systems, sump pumps with battery backup, vapor barriers, and rigid foam insulation keep Nebraska moisture out for good. Dry walls + gorgeous finishes = a basement you'll actually trust and enjoy.",
+            'icon': 'fa-water'
+        },
+        {
+            'question': 'lower level remodel Norfolk NE',
+            'answer': "Egress windows for safety, fire-rated doors and drywall, drop ceilings or drywall with recessed lights, luxury vinyl plank that looks like hardwood but laughs at spills. We know code inside-out so your lower level is safe, legal, and looks like it was always meant to be lived in.",
+            'icon': 'fa-check-circle'
         }
     ]
 }

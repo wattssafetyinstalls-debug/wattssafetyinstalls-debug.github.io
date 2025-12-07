@@ -1,0 +1,101 @@
+    <meta name="author" content="Watts Safety Installs">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://wattsatpcontractor.com">
+  
+    <!-- Cache Control for Performance -->
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+ 
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+ 
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+    <!-- Structured Data / Schema Markup -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "HomeAndConstructionBusiness",
+      "@id": "https://wattsatpcontractor.com/#organization",
+      "name": "Watts Safety Installs",
+      "url": "https://wattsatpcontractor.com",
+      "telephone": "+14054106402",
+      "email": "wattssafetyinstalls@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "500 Block Omaha Ave",
+        "addressLocality": "Norfolk",
+        "addressRegion": "NE",
+        "postalCode": "68701",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.032,
+        "longitude": -97.418
+      },
+      "openingHours": "Mo-Fr 08:30-18:00",
+      "priceRange": "$$",
+      "areaServed": "Nebraska",
+      "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
+      "knowsAbout": [
+        "Accessibility Modifications",
+        "ADA Compliance",
+        "Home Safety",
+        "Snow Removal",
+        "Lawn Care",
+        "TV Mounting",
+        "Audio Visual Installation"
+      ],
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Accessibility & Safety Solutions"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Remodeling"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Property Maintenance"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "TV Mounting Services"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Audio Visual Installation"
+          }
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "1"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://wattsatpcontractor.com/#website",
+      "url": "https://wattsatpcontractor.com",
+      "name": "Watts Safety Installs",
+      "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
+      "publisher": {

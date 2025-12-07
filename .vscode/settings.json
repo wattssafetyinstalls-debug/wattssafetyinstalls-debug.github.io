@@ -1,0 +1,9 @@
+{
+    "explorer.fileNesting.patterns": {
+        ".backup2": "",
+        ".html.backup2": ""
+    },
+    "scm.diffDecorationsGutterPattern": {
+        "added": true
+    }
+}

@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/ada-compliant-showers-bathrooms.html': [
+    'services/bathroom-accessibility.html': [
         {
-            'question': 'ADA compliant shower installation near me Norfolk NE',
-            'answer': "Hey Norfolk neighbor! We build real ADA-compliant showers that are safe, beautiful, and actually get used every day. That means a true zero-threshold curbless entry, 60-inch turning radius, reinforced grab bars at the perfect 33–36 inch height, fold-down teak bench, adjustable handheld sprayer on a slide bar, anti-scald valve, and gorgeous large-format tile with built-in slip resistance. Families tell us it gives their loved one independence again and gives everyone else peace of mind — that's why we love what we do.",
-            'icon': 'fa-wheelchair'
-        },
-        {
-            'question': 'walk-in shower remodel Norfolk Nebraska',
-            'answer': "Replacing that old tub with a spacious walk-in shower is the smartest, most popular upgrade we do in Norfolk. We remove the tub, create a true zero-step entry (sometimes lowering the floor slightly), install a sleek linear drain, add luxury tile that feels warm underfoot, include built-in or fold-down seating, multiple grab bars, and bright LED lighting. It's safer, easier to clean, and makes your whole bathroom feel brand new.",
-            'icon': 'fa-bath'
-        },
-        {
-            'question': 'roll-in shower installation near me Norfolk NE',
-            'answer': "A properly built roll-in shower changes everything for wheelchair users. We create a gentle beveled entry with no curb at all, reinforce the walls with marine-grade blocking, install heavy-duty 1.5-inch stainless grab bars (500+ lb rating), add a waterproof fold-down seat, place controls and the handheld sprayer at seated height, and finish with a trench drain and stunning tile. It's pure freedom — and it still looks like a high-end spa.",
-            'icon': 'fa-hand-holding-heart'
-        },
-        {
-            'question': 'accessible bathroom remodeling Norfolk Nebraska',
-            'answer': "We turn regular bathrooms into safe, luxurious, future-proof spaces you'll love for decades. Comfort-height toilets, roll-under vanities with pretty quartz tops, lever-handles everywhere, bright warm LED lighting with motion sensors, non-slip porcelain that looks like wood or marble, and blocking hidden in every wall ready for grab bars whenever you need them. Everything is placed so the room works perfectly whether you're standing or seated.",
+            'question': 'accessible bathroom remodel near me Norfolk NE',
+            'answer': "We turn everyday bathrooms into safe, beautiful, easy-to-use spaces that work for every body and every age. That means 30×48-inch clear floor spaces beside fixtures, reinforced walls ready for grab bars, roll-under vanities with pretty sinks, comfort-height toilets, lever faucets, bright motion-sensor lighting, and gorgeous non-slip tile throughout. Norfolk families love that it looks like a high-end remodel while being 100% future-proof.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'senior safe bathroom remodel Norfolk Nebraska',
-            'answer': "Our senior-safe bathroom remodels focus on removing danger and adding confidence. We replace slippery tubs with zero-entry walk-in showers, install rock-solid grab bars and seating, upgrade to textured non-slip flooring, add bright task + night lighting, and make sure every control is easy to reach from a seated position. Norfolk seniors tell us they finally feel safe and spoiled in their own bathroom again.",
+            'question': 'handicap accessible bathroom remodeling Norfolk Nebraska',
+            'answer': "Whether you use a wheelchair today or just want to plan ahead, we build bathrooms that give you room to move. Five-foot turning circles, zero-threshold showers with trench drains, lower mirrors and towel bars, roll-under sinks with knee space, heavy-duty grab bars exactly where they're needed, and anti-scald everything. It's accessibility done with style—no hospital vibes here.",
+            'icon': 'fa-wheelchair'
+        },
+        {
+            'question': 'senior friendly bathroom remodel Norfolk Nebraska',
+            'answer': "Our senior-friendly remodels are all about making mornings easier and safer without sacrificing beauty. Higher \"comfort-height\" toilets (easier on hips and knees), spacious walk-in showers with built-in seats and handheld sprayers, grab bars that double as towel bars, bright warm lighting that comes on automatically, and slip-resistant floors that still look elegant. You'll feel independent and spoiled every single day.",
             'icon': 'fa-shield-alt'
+        },
+        {
+            'question': 'bathroom modifications for disabled Norfolk NE',
+            'answer': "We listen first, then customize everything to your exact needs—ceiling track lifts, permanent or removable transfer benches, bidet toilet seats, extra-wide doors, lowered light switches, contrasting toe-kicks so steps are visible, and reinforced walls ready for any equipment you might add later. Whatever makes your daily routine smoother and safer, we make it happen with care.",
+            'icon': 'fa-hand-holding-heart'
+        },
+        {
+            'question': 'wheelchair accessible shower remodel near me Norfolk',
+            'answer': "Our wheelchair-accessible showers give you real room to roll in, turn around, and transfer comfortably. Full 5-foot turning radius, fold-down waterproof teak bench, multiple grab bar layouts (vertical at entry, L-shaped inside, horizontal on back wall), rainfall + handheld combo at the perfect height, trench drain, and large-format tile that's easy to clean and easy on bare feet. It's pure independence that still feels luxurious.",
+            'icon': 'fa-bath'
         }
     ]
 }

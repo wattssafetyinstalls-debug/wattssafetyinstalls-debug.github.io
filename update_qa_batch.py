@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/accessibility-safety-solutions.html': [
+    'services/senior-safety.html': [
         {
-            'question': 'accessibility home modifications near me Norfolk NE',
-            'answer': "We're the Norfolk team families call when they want their home to stay safe and livable for decades. Wheelchair ramps, zero-step entries, wider doorways, stairlifts, grab bars, senior-friendly bathrooms; whatever you need to keep loving the house you're in, we make it happen with zero stress and a whole lot of care.",
-            'icon': 'fa-home'
-        },
-        {
-            'question': 'home safety upgrades for seniors Norfolk Nebraska',
-            'answer': "Simple upgrades make the biggest difference: brighter motion-sensor lighting everywhere, removal of throw rugs and clutter, secure handrails on both sides of every step, non-slip flooring, bathroom grab bars, and lever door handles. Norfolk seniors tell us they finally feel steady and confident again in their own home.",
+            'question': 'senior home safety modifications near me Norfolk',
+            'answer': "We help Norfolk families keep Mom or Dad safe and independent with the little upgrades that matter most: brighter automatic lighting, rock-solid handrails on both sides of every stair, grab bars that actually hold, removal of trip hazards, lever door handles, rocker light switches, and contrast strips on step edges so they're impossible to miss. Small changes, huge difference.",
             'icon': 'fa-lightbulb'
         },
         {
-            'question': 'aging in place remodeling contractor Norfolk NE',
-            'answer': "Aging in place isn't about giving things up; it's about smart changes that let you keep everything you love. We widen doorways for walkers and wheelchairs, lower countertops when needed, install easy-grip faucets and handles, add beautiful ramps that match your house, and turn bathrooms into safe retreats. Stay home, stay happy, stay you.",
+            'question': 'aging in place home modifications Norfolk Nebraska',
+            'answer': "Aging in place is all about staying in the home you love without worry. We make strategic changes like zero-step entries, comfort-height toilets, roll-under sinks, pull-down kitchen shelves, easy-reach closet rods, and motion lights that guide you safely at night. Norfolk seniors tell us they finally sleep better knowing their house has their back.",
+            'icon': 'fa-home'
+        },
+        {
+            'question': 'fall prevention home assessment Norfolk NE',
+            'answer': "Our free fall-prevention assessment is relaxed and judgment-free. We check lighting, flooring transitions, stair risers, bathroom safety, clutter paths, and even furniture height. You walk away with a clear checklist ranked by biggest risk first—most families knock out the top items the same month and feel the difference immediately.",
+            'icon': 'fa-clipboard-check'
+        },
+        {
+            'question': 'senior home modification contractor Norfolk Nebraska',
+            'answer': "We're not just contractors; we're the folks who understand both building codes and the real daily challenges seniors face. Every modification we make is designed to blend beautifully with your home while removing hidden dangers—because safety should never feel clinical or temporary.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'ADA compliant home modifications Norfolk Nebraska',
-            'answer': "Even though private homes aren't required to be fully commercial ADA, we follow the guidelines that actually matter: proper reach ranges, 32-inch clear doorways, 60-inch shower turning spaces, grab-bar blocking, and light switches at 42–48 inches. It's real-world accessibility that looks and feels like home.",
-            'icon': 'fa-check-circle'
-        },
-        {
-            'question': 'senior home safety assessment Norfolk NE',
-            'answer': "Let us walk through your home with you—no cost, no pressure. We'll spot loose rugs, dark hallways, steep steps, slippery bathrooms, and anything else that could cause a fall, then give you a simple prioritized list of fixes from \"do this today\" to \"nice to have later.\" Most Norfolk families say it's the best hour they ever spent.",
-            'icon': 'fa-clipboard-check'
+            'question': 'safe home upgrades for elderly Norfolk NE',
+            'answer': "Our most-loved elderly upgrades in Norfolk homes: automatic night-lights that light a path to the bathroom, hands-free faucets, step-edge contrast tape, bedside remote controls for lights and locks, and video doorbells so no one has to rush to answer the door. Simple, affordable, life-changing.",
+            'icon': 'fa-shield-alt'
         }
     ]
 }

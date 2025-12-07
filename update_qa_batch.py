@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/kitchen-renovations.html': [
+    'services/bathroom-remodels.html': [
         {
-            'question': 'kitchen renovation near me Norfolk Nebraska',
-            'answer': "We turn dated Norfolk kitchens into the heart of the home you've always wanted. New custom or semi-custom cabinets, quartz or granite countertops, luxury vinyl plank or tile flooring, under-cabinet lighting, and layouts that actually make sense for how your family cooks and gathers. You'll love walking in here every single day.",
-            'icon': 'fa-home'
+            'question': 'bathroom remodel near me Norfolk NE',
+            'answer': "We transform tired Norfolk bathrooms into the relaxing retreat you actually want to step into every morning. New vanities, gorgeous tile showers or soaking tubs, heated floors, better lighting, and storage that makes sense. Whether it's a quick refresh or a full gut-to-the-studs remodel, we keep it clean, on schedule, and completely stress-free.",
+            'icon': 'fa-bath'
         },
         {
-            'question': 'kitchen remodel contractor Norfolk NE',
-            'answer': "One local contractor, one clean job site, one happy family. We handle demo, plumbing moves, electrical upgrades, drywall, tile backsplash, flooring, and final install so you don't have to coordinate five different crews. Norfolk's kitchen remodel go-to since day one.",
+            'question': 'bathroom remodeling contractor Norfolk Nebraska',
+            'answer': "One local team that does it all: tear-out, plumbing moves, electrical upgrades, waterproofing, tile work, drywall, painting, and final fixtures. Fully insured, daily cleanups, and we treat your home like it's our own. Norfolk's bathroom remodelers families trust again and again.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'custom kitchen remodeling Norfolk Nebraska',
-            'answer': "Dream kitchen? We build it. Islands with waterfall edges, hidden appliance garages, pull-out pantry towers, soft-close everything, built-in coffee stations, double ovens, pot-filler faucets… whatever makes you smile when you cook, we make real in your Norfolk home.",
-            'icon': 'fa-lightbulb'
+            'question': 'small bathroom remodel Norfolk NE',
+            'answer': "Small space? Big transformation. We steal every inch with floating vanities, pocket doors, corner sinks, recessed medicine cabinets, large-format tile that makes the room feel bigger, and bright LED lighting. Norfolk's tiny bathrooms become everyone's favorite room after we're done.",
+            'icon': 'fa-home'
         },
         {
-            'question': 'affordable kitchen renovation Norfolk',
-            'answer': "Big impact, smart budget. Cabinet refacing instead of full replacement, new quartz that looks like marble, fresh paint, updated lighting, and new hardware can give you a $40k look for half the price. Norfolk families are shocked how far their dollars go with us.",
-            'icon': 'fa-dollar-sign'
+            'question': 'luxury bathroom renovation Norfolk Nebraska',
+            'answer': "Spa days at home: huge zero-entry showers with rain heads and body sprays, freestanding soaking tubs under a chandelier, heated tile floors, back-lit mirrors, double vanities with quartz tops, and smart storage hidden behind beautiful doors. Norfolk's version of everyday luxury.",
+            'icon': 'fa-star'
         },
         {
-            'question': 'modern kitchen remodel near me Norfolk',
-            'answer': "Clean lines, handle-less cabinets, matte black or brushed gold fixtures, huge islands everyone gathers around, smart storage that hides the clutter, and tons of natural light. That's the modern Norfolk kitchen we're building right now—and it's absolutely gorgeous.",
-            'icon': 'fa-check-circle'
+            'question': 'master bathroom remodel near me Norfolk',
+            'answer': "Your master bath should feel like an escape. We create spacious layouts with separate his-and-hers zones, walk-in showers big enough for two, private toilet rooms, linen towers, makeup vanities, and mood lighting that turns the whole space into your personal sanctuary.",
+            'icon': 'fa-heart'
         }
     ]
 }

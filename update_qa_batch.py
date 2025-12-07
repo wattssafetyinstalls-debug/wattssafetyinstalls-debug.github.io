@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/custom-ramps.html': [
+    'services/wheelchair-ramp-installation.html': [
         {
-            'question': 'custom wheelchair ramp builder near Norfolk NE',
-            'answer': "We're Norfolk's go-to custom ramp builders because every ramp we create is measured, designed, and built specifically for your home, your porch height, and your exact needs. Choose pressure-treated wood that we can stain or paint to match your house perfectly, or go with maintenance-free aluminum—either way you get gentle 1:12 slope, wide platforms for turns, double handrails, concrete footings, and a non-slip surface that handles Nebraska ice and snow like a champ.",
+            'question': 'wheelchair ramp installation near me Norfolk NE',
+            'answer': "We install both modular aluminum and site-built ramps all across Norfolk and the surrounding towns. Same-day or next-day service on most modular installs, full 1:12 slope, 36-inch minimum width, handrails on both sides when the rise is over 6 inches, and a grippy surface that stays safe even when it's wet or icy. Your independence starts the day we roll up.",
             'icon': 'fa-wheelchair'
         },
         {
-            'question': 'custom wood wheelchair ramp Norfolk Nebraska',
-            'answer': "There's something warm and welcoming about a beautifully crafted wood ramp. We use premium pressure-treated lumber, dig proper concrete footings, add sturdy handrails on both sides, texture the walking surface for traction, and finish it with deck stain or exterior paint so it looks like it grew right out of your house. Norfolk families love that it feels permanent and blends right in.",
+            'question': 'aluminum wheelchair ramp installation Norfolk Nebraska',
+            'answer': "Norfolk loves aluminum ramps for good reason: zero painting ever, rust-proof, lightweight yet rated for 1,000 lbs, and they can be taken apart and moved if life changes. We stock multiple styles and can usually have your new ramp installed in just a few hours—perfect for coming home from the hospital or making Grandma's visit worry-free.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'custom porch ramp installation near me Norfolk',
-            'answer': "Your porch deserves a ramp that looks intentional, not tacked-on. We design custom layouts with landings, gentle turns when space is tight, keyed railings that match your existing ones, and textured decking so it's safe in rain, snow, or sun. Most Norfolk porch ramps we build become a seamless extension families actually enjoy using.",
-            'icon': 'fa-home'
+            'question': 'modular wheelchair ramp near me Norfolk',
+            'answer': "Modular ramps are our fastest solution—most installs take less than a day. No concrete, no permits in most cases, just a perfectly level, rock-solid ramp with handrails, platforms, and non-slip mesh or solid surface. When you're ready, we can remove it just as easily or reconfigure it for a different door.",
+            'icon': 'fa-boxes'
         },
         {
-            'question': 'permanent wheelchair ramp for home Norfolk NE',
-            'answer': "A permanent ramp should last decades with zero headaches. We pour concrete footings below frost line, use treated lumber or aluminum, add double 1.5-inch handrails at the correct height, and finish with commercial-grade non-slip surfacing. Once it's in, you'll forget it's even an \"accessibility feature\"—it just feels like part of the home.",
+            'question': 'temporary wheelchair ramp rental Norfolk NE',
+            'answer': "Hospital discharge tomorrow? Call us today. We deliver and install rental aluminum ramps the same or next day anywhere in the Norfolk area. Weekends and evenings too. Short-term or month-to-month, you get exactly what you need with zero long-term commitment—most families have it ready before the paperwork is even signed.",
+            'icon': 'fa-clock'
+        },
+        {
+            'question': 'home wheelchair ramp requirements Norfolk Nebraska',
+            'answer': "Every ramp we install meets or exceeds residential code: maximum 1:12 slope (1 inch of rise per 12 inches of run), minimum 36-inch clear width, handrails between 34–38 inches high when rise is over 6 inches, 5-foot landings at top and bottom, and non-slip walking surface. We handle the details so you can just roll safely and confidently.",
             'icon': 'fa-check-circle'
-        },
-        {
-            'question': 'custom accessibility ramp contractor Norfolk Nebraska',
-            'answer': "From the first on-site measurement to the final handshake, we handle every detail—permits if needed, precise rise-and-run calculations, material choices that match your budget and style, and rock-solid construction. Norfolk homeowners trust us because we've been building safe, beautiful custom ramps for our neighbors for years.",
-            'icon': 'fa-clipboard-check'
         }
     ]
 }

@@ -9,30 +9,30 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/bathroom-accessibility.html': [
+    'services/grab-bar-installation.html': [
         {
-            'question': 'accessible bathroom remodel near me Norfolk NE',
-            'answer': "We turn everyday bathrooms into safe, beautiful, easy-to-use spaces that work for every body and every age. That means 30×48-inch clear floor spaces beside fixtures, reinforced walls ready for grab bars, roll-under vanities with pretty sinks, comfort-height toilets, lever faucets, bright motion-sensor lighting, and gorgeous non-slip tile throughout. Norfolk families love that it looks like a high-end remodel while being 100% future-proof.",
+            'question': 'grab bar installation near me Norfolk Nebraska',
+            'answer': "We install grab bars the right way—never just into drywall. Every bar gets mounted into studs or solid blocking, supports 500+ lbs, and is sealed perfectly around tile so water can't sneak behind. Norfolk families trust us because their parents actually feel secure, and the bars look like they belong—not tacked on as an afterthought.",
+            'icon': 'fa-grip-horizontal'
+        },
+        {
+            'question': 'bathroom grab bar installation Norfolk NE',
+            'answer': "Safety + style is our thing. We place bathroom grab bars exactly where they're needed: 33–36 inches high, beside the toilet, vertical at the shower entry, horizontal and angled on the control wall, and always with 1.5-inch clearance from the wall. You pick brushed nickel, chrome, matte black, or oil-rubbed bronze—we make them disappear into your décor while keeping you safe.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'handicap accessible bathroom remodeling Norfolk Nebraska',
-            'answer': "Whether you use a wheelchair today or just want to plan ahead, we build bathrooms that give you room to move. Five-foot turning circles, zero-threshold showers with trench drains, lower mirrors and towel bars, roll-under sinks with knee space, heavy-duty grab bars exactly where they're needed, and anti-scald everything. It's accessibility done with style—no hospital vibes here.",
-            'icon': 'fa-wheelchair'
+            'question': 'professional grab bar installer near me Norfolk',
+            'answer': "DIY grab bars scare us (and should scare you too). We bring stud finders, moisture meters, marine-grade blocking when needed, and years of experience knowing exactly where weight is actually transferred. One customer told us, 'My mom now showers without fear for the first time in years.' That's why we're so careful on every single install.",
+            'icon': 'fa-wrench'
         },
         {
-            'question': 'senior friendly bathroom remodel Norfolk Nebraska',
-            'answer': "Our senior-friendly remodels are all about making mornings easier and safer without sacrificing beauty. Higher \"comfort-height\" toilets (easier on hips and knees), spacious walk-in showers with built-in seats and handheld sprayers, grab bars that double as towel bars, bright warm lighting that comes on automatically, and slip-resistant floors that still look elegant. You'll feel independent and spoiled every single day.",
+            'question': 'ADA grab bars for seniors Norfolk Nebraska',
+            'answer': "True ADA-spec grab bars are 1.25–1.5 inches in diameter (perfect grip size), knurled or textured for wet hands, mounted 33–36 inches off the floor, and spaced 1.5 inches from the wall. We carry heavy-duty stainless models that look elegant and hold real weight—because your safety deserves the best, not the cheapest option at the big-box store.",
             'icon': 'fa-shield-alt'
         },
         {
-            'question': 'bathroom modifications for disabled Norfolk NE',
-            'answer': "We listen first, then customize everything to your exact needs—ceiling track lifts, permanent or removable transfer benches, bidet toilet seats, extra-wide doors, lowered light switches, contrasting toe-kicks so steps are visible, and reinforced walls ready for any equipment you might add later. Whatever makes your daily routine smoother and safer, we make it happen with care.",
-            'icon': 'fa-hand-holding-heart'
-        },
-        {
-            'question': 'wheelchair accessible shower remodel near me Norfolk',
-            'answer': "Our wheelchair-accessible showers give you real room to roll in, turn around, and transfer comfortably. Full 5-foot turning radius, fold-down waterproof teak bench, multiple grab bar layouts (vertical at entry, L-shaped inside, horizontal on back wall), rainfall + handheld combo at the perfect height, trench drain, and large-format tile that's easy to clean and easy on bare feet. It's pure independence that still feels luxurious.",
+            'question': 'shower grab bar placement Norfolk NE',
+            'answer': "Perfect shower grab bar layout we use in nearly every Norfolk home: a 24-inch vertical bar right at the entry (helps stepping in), an 18–24 inch horizontal bar on the back wall at seat height, and a 16–24 inch angled bar on the control wall so you can steady yourself while adjusting temperature. It's the combo seniors and physical therapists love most.",
             'icon': 'fa-bath'
         }
     ]

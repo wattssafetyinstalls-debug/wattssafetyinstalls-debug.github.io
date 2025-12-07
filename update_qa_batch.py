@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/senior-safety.html': [
+    'services/home-remodeling.html': [
         {
-            'question': 'senior home safety modifications near me Norfolk',
-            'answer': "We help Norfolk families keep Mom or Dad safe and independent with the little upgrades that matter most: brighter automatic lighting, rock-solid handrails on both sides of every stair, grab bars that actually hold, removal of trip hazards, lever door handles, rocker light switches, and contrast strips on step edges so they're impossible to miss. Small changes, huge difference.",
-            'icon': 'fa-lightbulb'
-        },
-        {
-            'question': 'aging in place home modifications Norfolk Nebraska',
-            'answer': "Aging in place is all about staying in the home you love without worry. We make strategic changes like zero-step entries, comfort-height toilets, roll-under sinks, pull-down kitchen shelves, easy-reach closet rods, and motion lights that guide you safely at night. Norfolk seniors tell us they finally sleep better knowing their house has their back.",
+            'question': 'home remodeling contractor near me Norfolk NE',
+            'answer': "We're the Norfolk remodeling team families keep calling back—whether it's opening up a cramped kitchen, finishing the basement, or finally getting that master suite you've dreamed about. One honest price, one point of contact, zero surprises, and a house you fall in love with all over again.",
             'icon': 'fa-home'
         },
         {
-            'question': 'fall prevention home assessment Norfolk NE',
-            'answer': "Our free fall-prevention assessment is relaxed and judgment-free. We check lighting, flooring transitions, stair risers, bathroom safety, clutter paths, and even furniture height. You walk away with a clear checklist ranked by biggest risk first—most families knock out the top items the same month and feel the difference immediately.",
-            'icon': 'fa-clipboard-check'
-        },
-        {
-            'question': 'senior home modification contractor Norfolk Nebraska',
-            'answer': "We're not just contractors; we're the folks who understand both building codes and the real daily challenges seniors face. Every modification we make is designed to blend beautifully with your home while removing hidden dangers—because safety should never feel clinical or temporary.",
+            'question': 'whole house remodel Norfolk Nebraska',
+            'answer': "A whole-house remodel is a big deal, and we treat it like we're working on our own family's home. New floor plans, updated electrical and plumbing, energy-efficient windows, fresh flooring throughout, and gorgeous finishes that make every room feel brand new. Norfolk families tell us it's like moving into a better house—without actually moving.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'safe home upgrades for elderly Norfolk NE',
-            'answer': "Our most-loved elderly upgrades in Norfolk homes: automatic night-lights that light a path to the bathroom, hands-free faucets, step-edge contrast tape, bedside remote controls for lights and locks, and video doorbells so no one has to rush to answer the door. Simple, affordable, life-changing.",
-            'icon': 'fa-shield-alt'
+            'question': 'home renovation company Norfolk NE',
+            'answer': "From the first design meeting to the final walkthrough, we handle permits, dust control, scheduling every trade, and daily cleanups so you can actually live in your home while we work. Local Norfolk company, fully insured, and obsessed with making the process as smooth as the finished result.",
+            'icon': 'fa-clipboard-check'
+        },
+        {
+            'question': 'house remodeling ideas Norfolk Nebraska',
+            'answer': "Lately Norfolk homeowners are loving open-concept kitchens that flow into living areas, spa-like master bathrooms with huge walk-in showers, finished basements with home theaters or guest suites, and four-season sunrooms that bring the outdoors in. We'll show you what's trending locally and what fits your budget perfectly.",
+            'icon': 'fa-lightbulb'
+        },
+        {
+            'question': 'general contractor for home remodel Norfolk',
+            'answer': "As your true boots-on-the-ground general contractor, we coordinate the carpenters, plumbers, electricians, painters, and everyone else so you don't have to chase ten different people. One contract, one payment schedule, one team that's 100% accountable to you from start to beautiful finish.",
+            'icon': 'fa-wrench'
         }
     ]
 }

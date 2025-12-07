@@ -1,13 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>if(window.location.pathname==="/index"){window.history.replaceState({},"","/");}</script>
+<script>if(window.location.pathname==="/index"){window.history.replaceState({},"","/");}
+        // Mobile touch optimization for service cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceCards = document.querySelectorAll('.service-card');
+            
+            serviceCards.forEach(card => {
+                card.addEventListener('touchstart', function(e) {
+                    // Close all other cards
+                    serviceCards.forEach(otherCard => {
+                        if (otherCard !== this) {
+                            otherCard.classList.remove('touch-active');
+                        }
+                    });
+                    
+                    // Toggle this card
+                    this.classList.toggle('touch-active');
+                    
+                    // Prevent default to avoid scrolling issues
+                    e.preventDefault();
+                });
+                
+                // Close card when tapping outside
+                document.addEventListener('touchstart', function(e) {
+                    if (!card.contains(e.target)) {
+                        card.classList.remove('touch-active');
+                    }
+                });
+            });
+        }
+</script>
 <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE</title>
-    <meta name="description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE. 15% OFF First 3 Snow Visits.">
+    <title>Accessibility Contractor Near Me | Watts Safety Installs | Norfolk, NE</title>
+    <meta name="description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk, NE. 15% OFF First 3 Snow Visits.">
   
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
@@ -32,8 +61,8 @@
     <meta name="google-site-verification" content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" />
   
     <!-- Open Graph for Facebook/LinkedIn -->
-    <meta property="og:title" content="Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE">
-    <meta property="og:description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk NE.">
+    <meta property="og:title" content="Accessibility Contractor Near Me | Watts Safety Installs | Norfolk, NE">
+    <meta property="og:description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting & audio visual services in Norfolk, NE.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
     <meta property="og:url" content="https://wattsatpcontractor.com">
     <meta property="og:type" content="website">
@@ -42,11 +71,11 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Accessibility Contractor Near Me | Watts Safety Installs">
-    <meta name="twitter:description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, TV mounting & audio visual in Norfolk NE">
+    <meta name="twitter:description" content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, TV mounting & audio visual in Norfolk, NE">
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
   
     <!-- Additional SEO Meta Tags -->
-    <meta name="keywords" content="accessibility contractor near me, ADA contractor near me, wheelchair ramp installation near me, grab bars installation near me, snow removal near me, lawn care near me, TV mounting service near me, audio visual installation near me, Norfolk NE contractor">
+    <meta name="keywords" content="accessibility contractor near me, ADA contractor near me, wheelchair ramp installation near me, grab bars installation near me, snow removal near me, lawn care near me, TV mounting service near me, audio visual installation near me, Norfolk, NE contractor">
     <meta name="author" content="Watts Safety Installs">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://wattsatpcontractor.com">
@@ -156,6 +185,264 @@
 </script>
  
     <style>
+        /* === MOBILE-FIRST SERVICE TILES CAROUSEL === */
+        .service-tiles-carousel {
+            max-width: 1200px;
+            margin: 50px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            padding: 0 10px;
+        }
+        
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            gap: 20px;
+            padding: 20px 10px;
+            scroll-behavior: smooth;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .carousel-item {
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+            min-width: calc(100% - 20px);
+        }
+        
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--teal);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+            display: none;
+        }
+        
+        .carousel-btn:hover {
+            background: var(--navy);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-prev {
+            left: 5px;
+        }
+        
+        .carousel-next {
+            right: 5px;
+        }
+        
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+        
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gray);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .carousel-dot.active {
+            background: var(--teal);
+            transform: scale(1.2);
+        }
+        
+        /* === DROPDOWN MENUS - MOBILE FIRST === */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .dropdown-content a {
+            color: var(--navy);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            border-bottom: 1px solid var(--light);
+            font-size: 0.95rem;
+        }
+        
+        .dropdown-content a:hover {
+            background: var(--teal);
+            color: white;
+        }
+        
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .dropdown-toggle::after {
+            content: ' \25BC';
+            font-size: 0.7em;
+            margin-left: 4px;
+        }
+        
+        /* === TABLET STYLES (768px and up) === */
+        @media (min-width: 768px) {
+            .service-tiles-carousel {
+                padding: 0 20px;
+            }
+            
+            .carousel-container {
+                gap: 25px;
+                padding: 20px;
+                overflow-x: visible;
+            }
+            
+            .carousel-item {
+                min-width: calc(50% - 13px);
+            }
+            
+            .carousel-btn {
+                display: block;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .carousel-prev {
+                left: 15px;
+            }
+            
+            .carousel-next {
+                right: 15px;
+            }
+            
+            .dropdown-content a {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* === DESKTOP STYLES (1024px and up) === */
+        @media (min-width: 1024px) {
+            .carousel-item {
+                min-width: calc(25% - 19px);
+            }
+            
+            .carousel-container {
+                padding: 20px 40px;
+            }
+        }
+        
+        /* === TOUCH DEVICE OPTIMIZATIONS === */
+        @media (hover: none) and (pointer: coarse) {
+            .carousel-btn {
+                width: 52px;
+                height: 52px;
+                font-size: 1.3rem;
+            }
+            
+            .dropdown-content {
+                min-width: 220px;
+            }
+            
+            .dropdown-content a {
+                padding: 14px 18px;
+            }
+        }
+        
+        /* === REDUCED MOTION SUPPORT === */
+        @media (prefers-reduced-motion: reduce) {
+            .carousel-container {
+                transition: none;
+                scroll-behavior: auto;
+            }
+        }
+        
+        /* === SERVICE CARD DROPDOWN LINK FIX === */
+        .service-dropdown a {
+            color: #0A1D37 !important;
+            background: white !important;
+        }
+
+        .service-card:hover .service-dropdown a,
+        .service-card.touch-active .service-dropdown a {
+            color: white !important;
+            background: transparent !important;
+        }
+
+        .service-card:hover .service-dropdown,
+        .service-card.touch-active .service-dropdown {
+            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+        }
+        
+        /* Dropdown Menu Styles */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 250px;
+            max-height: 500px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .dropdown li {
+            margin: 0;
+        }
+        .dropdown a {
+            padding: 8px 20px;
+            display: block;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dropdown a:hover {
+            background: #3498db;
+            color: white;
+        }
         :root {
             --teal: #00C4B4;
             --navy: #0A1D37;
@@ -938,7 +1225,637 @@
                 font-size: 1.2rem;
             }
         }
+    /* MOBILE AUTO-ANIMATION EFFECTS */
+        @media (max-width: 768px) {
+            .service-tile.mobile-animated {
+                transform: translateY(-12px) scale(1.03);
+                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
+                background: linear-gradient(135deg, var(--teal), var(--navy));
+                color: white;
+                border-color: var(--gray);
+            }
+            .service-tile.mobile-animated::before {
+                opacity: 1;
+                animation: gloss 1.3s ease-out forwards;
+            }
+            .service-tile.mobile-animated::after {
+                opacity: 1;
+                border-color: rgba(0,196,180,0.7);
+                box-shadow: 0 0 35px rgba(0,196,180,0.6);
+            }
+            .service-tile.mobile-animated h2, 
+            .service-tile.mobile-animated p, 
+            .service-tile.mobile-animated .trust-text {
+                color: white !important;
+            }
+            .service-tile.mobile-animated .trust-bar {
+                background: rgba(255,255,255,0.12);
+            }
+            .service-tile.mobile-animated .trust-icon {
+                transform: scale(1.5) translateY(-8px);
+                color: var(--gold) !important;
+            }
+            
+            .service-category.mobile-animated {
+                transform: translateY(-6px) scale(1.01);
+                box-shadow: 0 20px 45px rgba(10,29,55,0.25);
+                background: linear-gradient(135deg, var(--teal), var(--navy));
+                color: white;
+                border-color: var(--gray);
+            }
+            .service-category.mobile-animated::before {
+                opacity: 1;
+                animation: gloss 1.3s ease-out forwards;
+            }
+            .service-category.mobile-animated::after {
+                opacity: 1;
+                border-color: rgba(0,196,180,0.7);
+                box-shadow: 0 0 25px rgba(0,196,180,0.6);
+            }
+            .service-category.mobile-animated .category-title,
+            .service-category.mobile-animated .category-services {
+                color: white !important;
+            }
+            .service-category.mobile-animated .category-icon {
+                transform: scale(1.3) translateY(-5px);
+                color: var(--gold) !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .service-tile {
+                margin: 40px 15px;
+                padding: 40px 25px;
+            }
+            .trust-bar {
+                flex-direction: column;
+                padding: 25px 20px;
+                gap: 15px;
+            }
+            .trust-item {
+                min-width: 100%;
+            }
+            .service-categories {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--navy);
+                flex-direction: column;
+                padding: 30px 20px;
+                gap: 20px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links a {
+                padding: 15px 0;
+                font-size: 1.2rem;
+                text-align: center;
+                width: 100%;
+                display: block;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    
+        /* Homepage Service Tile Text Color Fix */
+        @media (max-width: 768px) {
+            .service-tile:hover h2,
+            .service-tile:hover p,
+            .service-tile:hover .trust-text,
+            .service-tile:active h2,
+            .service-tile:active p,
+            .service-tile:active .trust-text {
+                color: var(--navy) !important;
+            }
+            
+            .service-tile.mobile-animated h2,
+            .service-tile.mobile-animated p, 
+            .service-tile.mobile-animated .trust-text {
+                color: white !important;
+            }
+        }
     </style>
+
+<!-- Pretty URL Redirects - UPDATED WITH ALL SERVICES -->
+<script>
+const redirects = {
+    // Accessibility & Safety Services
+    '/ada-compliant-showers': '/services/ada-compliant-showers.html',
+    '/grab-bars': '/services/grab-bars.html',
+    '/non-slip-flooring': '/services/non-slip-flooring.html',
+    '/custom-ramps': '/services/custom-ramps.html',
+    '/senior-safety': '/services/senior-safety.html',
+    '/bathroom-accessibility': '/services/bathroom-accessibility.html',
+    '/wheelchair-ramps': '/services/wheelchair-ramp-installation.html',
+    '/stairlift-installation': '/services/stairlift-elevator-installation.html',
+    
+    // Home Remodeling Services
+    '/kitchen-renovations': '/services/kitchen-renovations.html',
+    '/bathroom-remodels': '/services/bathroom-remodels.html',
+    '/deck-construction': '/services/deck-construction.html',
+    '/siding-replacement': '/services/siding-replacement.html',
+    '/home-remodeling': '/services/home-remodeling.html',
+    '/basement-finishing': '/services/basement-finishing.html',
+    '/room-additions': '/services/room-additions.html',
+    '/fence-installation': '/services/fence-installation.html',
+    '/window-doors': '/services/window-doors.html',
+    '/painting-services': '/services/painting-services.html',
+    
+    // TV & Audio Visual Services
+    '/tv-mounting': '/services/tv-mounting.html',
+    '/home-theater': '/services/home-theater-installation.html',
+    '/soundbar-setup': '/services/sound-system-setup.html',
+    '/cable-management': '/services/cable-management.html',
+    '/smart-audio': '/services/audio-visual.html',
+    '/projector-install': '/services/tv-home-theater-installation.html',
+    
+    // Property Maintenance
+    '/snow-removal': '/services/snow-removal.html',
+    '/lawn-maintenance': '/services/lawn-maintenance.html',
+    '/landscape-design': '/services/landscape-design.html',
+    '/garden-maintenance': '/services/garden-maintenance.html',
+    '/tree-trimming': '/services/tree-trimming.html',
+    '/emergency-repairs': '/services/emergency-repairs.html',
+    '/seasonal-cleanup': '/services/seasonal-cleanup.html',
+    '/gutter-cleaning': '/services/gutter-cleaning.html',
+    '/pressure-washing': '/services/pressure-washing.html',
+    
+    // Concrete & Flooring
+    '/concrete-pouring': '/services/concrete-pouring.html',
+    '/driveway-installation': '/services/driveway-installation.html',
+    '/patio-construction': '/services/patio-construction.html',
+    '/hardwood-flooring': '/services/hardwood-flooring.html',
+    '/floor-refinishing': '/services/floor-refinishing.html',
+    
+    // Cabinets & Countertops
+    '/custom-cabinets': '/services/custom-cabinets.html',
+    '/cabinet-refacing': '/services/cabinet-refacing.html',
+    '/onyx-countertops': '/services/onyx-countertops.html',
+    '/kitchen-cabinetry': '/services/kitchen-cabinetry.html',
+    
+    // Additional Services
+    '/driveway-installation': '/services/driveway-installation.html',
+    '/concrete-pouring': '/services/concrete-pouring.html',
+    '/hardwood-flooring': '/services/hardwood-flooring.html',
+    '/garden-maintenance': '/services/garden-maintenance.html',
+    '/landscape-design': '/services/landscape-design.html',
+    '/painting-services': '/services/painting-services.html',
+    '/snow-removal': '/services/snow-removal.html',
+    '/custom-cabinets': '/services/custom-cabinets.html',
+    '/deck-construction': '/services/deck-construction.html',
+    '/home-remodeling': '/services/home-remodeling.html',
+    '/bathroom-remodels': '/services/bathroom-remodels.html',
+    '/kitchen-renovations': '/services/kitchen-renovations.html',
+    '/fence-installation': '/services/fence-installation.html',
+    '/patio-construction': '/services/patio-construction.html',
+    '/window-doors': '/services/window-doors.html',
+    '/siding-replacement': '/services/siding-replacement.html'
+};
+
+// Handle pretty URL redirects
+const currentPath = window.location.pathname;
+if (redirects[currentPath]) {
+    window.location.href = redirects[currentPath];
+}
+</script>
+
+    <!-- SEASONAL PROMO ANIMATIONS -->
+    <style>
+    /* Seasonal promo card animations */
+    .promo-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .promo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .promo-card:hover::before {
+        left: 0;
+    }
+    
+    .promo-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .promo-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Satin gloss swipe for promo cards */
+    .promo-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .promo-card:hover::after {
+        left: 100%;
+    }
+    
+    /* Text color optimization for promo cards on hover */
+    .promo-card:hover .promo-title,
+    .promo-card:hover .promo-description {
+        color: white !important;
+    }
+    
+    .promo-card:hover .promo-code {
+        background: var(--gold) !important;
+        color: var(--navy) !important;
+    }
+    
+    .promo-card:hover .promo-cta {
+        background: white !important;
+        color: var(--teal) !important;
+    }
+    
+    /* Mobile auto-animation for promo cards */
+    @media (max-width: 768px) {
+        .promo-card.mobile-animated {
+            animation: promoMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes promoMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
+
+    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
+    <style>
+    /* FIX: Mobile carousel dropdown background */
+    @media (max-width: 768px) {
+        .service-card.touch-active .service-dropdown a {
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .service-card.touch-active .service-dropdown a:hover {
+            background: rgba(255,255,255,0.1) !important;
+        }
+    }
+
+    /* BENEFIT CARD ANIMATIONS - Same as service tiles */
+    .benefit-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .benefit-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .benefit-card:hover::before {
+        left: 0;
+    }
+    
+    .benefit-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .benefit-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* SATIN GLOSS SWIPE FOR BENEFIT CARDS */
+    .benefit-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .benefit-card:hover::after {
+        left: 100%;
+    }
+    
+    /* TEXT COLOR OPTIMIZATION FOR BENEFIT CARDS */
+    .benefit-card:hover .benefit-icon,
+    .benefit-card:hover h3,
+    .benefit-card:hover p {
+        color: white !important;
+    }
+    
+    /* MOBILE AUTO-ANIMATION FOR BENEFIT CARDS */
+    @media (max-width: 768px) {
+        .benefit-card.mobile-animated {
+            animation: benefitMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes benefitMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
+
+    <!-- COMPREHENSIVE TILE LAYOUTS & ANIMATIONS -->
+    <style>
+    /* 4-GRID LAYOUT FOR ALL MULTI-TILE SECTIONS */
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+        justify-content: center;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* 3-GRID LAYOUT FOR SECTIONS WITH 3 TILES */
+    .benefits-grid.three-column {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 1000px;
+    }
+    
+    /* TRUST BAR - 4 ITEMS IN A ROW */
+    .trust-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        max-width: 1300px;
+        margin: 0 auto;
+        justify-content: center;
+    }
+    
+    /* SERVICE CATEGORIES GRID */
+    .service-categories {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+        justify-content: center;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* PROMO GRID - 3 COLUMNS */
+    .promo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        max-width: 1300px;
+        margin: 0 auto;
+        justify-content: center;
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1200px) {
+        .benefits-grid,
+        .trust-container,
+        .service-categories {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+        
+        .promo-grid {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+        
+        .benefits-grid.three-column {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .benefits-grid,
+        .trust-container,
+        .service-categories,
+        .promo-grid,
+        .benefits-grid.three-column {
+            grid-template-columns: 1fr;
+            max-width: 500px;
+        }
+    }
+    
+    /* CONSISTENT GRADIENT ANIMATIONS FOR ALL TILES */
+    .benefit-card, 
+    .value-tile, 
+    .service-tile, 
+    .trust-item,
+    .service-card,
+    .promo-card,
+    .category-card,
+    .contact-tile,
+    .area-tile {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .benefit-card::before, 
+    .value-tile::before, 
+    .service-tile::before, 
+    .trust-item::before,
+    .service-card::before,
+    .promo-card::before,
+    .category-card::before,
+    .contact-tile::before,
+    .area-tile::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A1D37, #00C4B4);
+        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 1;
+    }
+    
+    .benefit-card:hover::before, 
+    .value-tile:hover::before, 
+    .service-tile:hover::before, 
+    .trust-item:hover::before,
+    .service-card:hover::before,
+    .promo-card:hover::before,
+    .category-card:hover::before,
+    .contact-tile:hover::before,
+    .area-tile:hover::before {
+        left: 0;
+    }
+    
+    .benefit-card > *, 
+    .value-tile > *, 
+    .service-tile > *, 
+    .trust-item > *,
+    .service-card > *,
+    .promo-card > *,
+    .category-card > *,
+    .contact-tile > *,
+    .area-tile > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .benefit-card:hover, 
+    .value-tile:hover, 
+    .service-tile:hover, 
+    .trust-item:hover,
+    .service-card:hover,
+    .promo-card:hover,
+    .category-card:hover,
+    .contact-tile:hover,
+    .area-tile:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* SATIN GLOSS SWIPE EFFECT */
+    .benefit-card::after, 
+    .value-tile::after, 
+    .service-tile::after, 
+    .trust-item::after,
+    .service-card::after,
+    .promo-card::after,
+    .category-card::after,
+    .contact-tile::after,
+    .area-tile::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 3;
+    }
+    
+    .benefit-card:hover::after, 
+    .value-tile:hover::after, 
+    .service-tile:hover::after, 
+    .trust-item:hover::after,
+    .service-card:hover::after,
+    .promo-card:hover::after,
+    .category-card:hover::after,
+    .contact-tile:hover::after,
+    .area-tile:hover::after {
+        left: 100%;
+    }
+    
+    /* TEXT COLOR OPTIMIZATION */
+    .benefit-card:hover *, 
+    .value-tile:hover *, 
+    .service-tile:hover *, 
+    .trust-item:hover *,
+    .service-card:hover *,
+    .promo-card:hover *,
+    .category-card:hover *,
+    .contact-tile:hover *,
+    .area-tile:hover * {
+        color: white !important;
+    }
+    
+    /* MOBILE AUTO-ANIMATIONS */
+    @media (max-width: 768px) {
+        .mobile-animated {
+            animation: tileMobileGlow 3s ease-in-out 1;
+        }
+        
+        @keyframes tileMobileGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
+                transform: translateY(-5px);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
+                transform: translateY(0);
+            }
+        }
+    }
+    </style>
+    
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -989,7 +1906,7 @@
     <!-- Services Section -->
     <section class="services" id="services">
         <h2 class="section-title">Our Professional Services</h2>
-        <p class="section-subtitle">Comprehensive accessibility, safety, and audio visual solutions for your home or business in Norfolk NE and surrounding areas</p>
+        <p class="section-subtitle">Comprehensive accessibility, safety, and audio visual solutions for your home or business in Norfolk, NE and surrounding areas</p>
      
         <div class="services-grid">
             <div class="service-card" id="accessibility-safety">
@@ -1000,11 +1917,14 @@
                     <i class="fas fa-bars hamburger"></i>
                     <div class="service-dropdown">
                         <ul>
-                            <li><a href="/service-pages/ada-compliant-showers.html"><i class="fas fa-check-circle"></i> ADA-compliant showers & bathrooms</a></li>
-                            <li><a href="/service-pages/grab-bars.html"><i class="fas fa-check-circle"></i> Commercial-grade grab bars & handrails</a></li>
-                            <li><a href="/service-pages/non-slip-flooring.html"><i class="fas fa-check-circle"></i> Non-slip flooring installations</a></li>
-                            <li><a href="/service-pages/custom-ramps.html"><i class="fas fa-check-circle"></i> Custom accessibility ramps</a></li>
-                            <li><a href="/service-pages/senior-safety.html"><i class="fas fa-check-circle"></i> Senior safety modifications</a></li>
+                            <li><a href="/services/ada-compliant-showers"><i class="fas fa-check-circle"></i> ADA-compliant showers & bathrooms</a></li>
+                            <li><a href="/services/grab-bars"><i class="fas fa-check-circle"></i> Commercial-grade grab bars & handrails</a></li>
+                            <li><a href="/services/non-slip-flooring"><i class="fas fa-check-circle"></i> Non-slip flooring installations</a></li>
+                            <li><a href="/services/custom-ramps"><i class="fas fa-check-circle"></i> Custom accessibility ramps</a></li>
+                            <li><a href="/services/senior-safety"><i class="fas fa-check-circle"></i> Senior safety modifications</a></li>
+                            <li><a href="/bathroom-accessibility"><i class="fas fa-check-circle"></i> Bathroom accessibility upgrades</a></li>
+                            <li><a href="/wheelchair-ramps"><i class="fas fa-check-circle"></i> Wheelchair ramp installation</a></li>
+                            <li><a href="/stairlift-installation"><i class="fas fa-check-circle"></i> Stairlift & elevator installation</a></li>
                         </ul>
                     </div>
                     <div class="service-cta">
@@ -1021,11 +1941,15 @@
                     <i class="fas fa-bars hamburger"></i>
                     <div class="service-dropdown">
                         <ul>
-                            <li><a href="/service-pages/kitchen-renovations.html"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</a></li>
-                            <li><a href="/service-pages/deck-construction.html"><i class="fas fa-check-circle"></i> Deck construction & repair</a></li>
-                            <li><a href="/service-pages/siding-replacement.html"><i class="fas fa-check-circle"></i> Siding replacement & installation</a></li>
-                            <li><a href="/service-pages/home-remodeling.html"><i class="fas fa-check-circle"></i> Complete home remodeling</a></li>
-                            <li><a href="/service-pages/basement-finishing.html"><i class="fas fa-check-circle"></i> Basement finishing</a></li>
+                            <li><a href="/services/kitchen-renovations"><i class="fas fa-check-circle"></i> Kitchen & bathroom renovations</a></li>
+                            <li><a href="/services/deck-construction"><i class="fas fa-check-circle"></i> Deck construction & repair</a></li>
+                            <li><a href="/services/siding-replacement"><i class="fas fa-check-circle"></i> Siding replacement & installation</a></li>
+                            <li><a href="/services/home-remodeling"><i class="fas fa-check-circle"></i> Complete home remodeling</a></li>
+                            <li><a href="/basement-finishing"><i class="fas fa-check-circle"></i> Basement finishing</a></li>
+                            <li><a href="/room-additions"><i class="fas fa-check-circle"></i> Room additions</a></li>
+                            <li><a href="/fence-installation"><i class="fas fa-check-circle"></i> Fence installation</a></li>
+                            <li><a href="/window-doors"><i class="fas fa-check-circle"></i> Window & door installation</a></li>
+                            <li><a href="/painting-services"><i class="fas fa-check-circle"></i> Painting services</a></li>
                         </ul>
                     </div>
                     <div class="service-cta">
@@ -1042,12 +1966,12 @@
                     <i class="fas fa-bars hamburger"></i>
                     <div class="service-dropdown">
                         <ul>
-                            <li><a href="/service-pages/tv-mounting-residential.html"><i class="fas fa-check-circle"></i> Residential & commercial TV mounting</a></li>
-                            <li><a href="/service-pages/home-theater.html"><i class="fas fa-check-circle"></i> Home theater system installation</a></li>
-                            <li><a href="/service-pages/soundbar-setup.html"><i class="fas fa-check-circle"></i> Soundbar & speaker setup</a></li>
-                            <li><a href="/service-pages/cable-management.html"><i class="fas fa-check-circle"></i> Cable management & concealment</a></li>
-                            <li><a href="/service-pages/smart-audio.html"><i class="fas fa-check-circle"></i> Smart home audio integration</a></li>
-                            <li><a href="/service-pages/projector-install.html"><i class="fas fa-check-circle"></i> Projector Mounting & Screen Installations</a></li>
+                            <li><a href="/services/tv-mounting"><i class="fas fa-check-circle"></i> Residential & commercial TV mounting</a></li>
+                            <li><a href="/services/home-theater-installation"><i class="fas fa-check-circle"></i> Home theater system installation</a></li>
+                            <li><a href="/soundbar-setup"><i class="fas fa-check-circle"></i> Soundbar & speaker setup</a></li>
+                            <li><a href="/cable-management"><i class="fas fa-check-circle"></i> Cable management & concealment</a></li>
+                            <li><a href="/smart-audio"><i class="fas fa-check-circle"></i> Smart home audio integration</a></li>
+                            <li><a href="/projector-install"><i class="fas fa-check-circle"></i> Projector Mounting & Screen Installations</a></li>
                         </ul>
                     </div>
                     <div class="service-cta">
@@ -1057,24 +1981,22 @@
             </div>
          
             <div class="service-card" id="property-maintenance">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2058&q=80" alt="Property Maintenance & Snow Removal Service Near Me - Norfolk NE" class="service-image">
+                <img loading="lazy" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2058&q=80" alt="Property Maintenance & Snow Removal Service Near Me - Norfolk, NE" class="service-image">
                 <div class="service-content">
                     <h3 class="service-title">Property Maintenance, Snow Removal & Lawn Care</h3>
                     <p class="service-description">Keep your property in top condition year-round with our comprehensive maintenance services, including routine upkeep, emergency repairs, seasonal snow removal, lawn mowing, fertilization, landscape design, and garden maintenance to ensure safety, functionality, and beauty throughout the year.</p>
                     <i class="fas fa-bars hamburger"></i>
                     <div class="service-dropdown">
                         <ul>
-                            <li><a href="/service-pages/property-maintenance-routine.html"><i class="fas fa-check-circle"></i> Routine property maintenance</a></li>
-                            <li><a href="/service-pages/emergency-repairs.html"><i class="fas fa-check-circle"></i> Emergency repair services</a></li>
-                            <li><a href="/service-pages/snow-removal.html"><i class="fas fa-check-circle"></i> Snow removal & de-icing</a></li>
-                            <li><a href="/service-pages/seasonal-prep.html"><i class="fas fa-check-circle"></i> Seasonal property preparation</a></li>
-                            <li><a href="/service-pages/tree-trimming.html"><i class="fas fa-check-circle"></i> Tree trimming & removal services</a></li>
-                            <li><a href="/service-pages/emergency-snow.html"><i class="fas fa-check-circle"></i> On call emergency snow removal</a></li>
-                            <li><a href="/service-pages/lawn-maintenance.html"><i class="fas fa-check-circle"></i> Regular lawn maintenance</a></li>
-                            <li><a href="/service-pages/fertilization.html"><i class="fas fa-check-circle"></i> Fertilization & weed control</a></li>
-                            <li><a href="/service-pages/landscape-design.html"><i class="fas fa-check-circle"></i> Landscape design & installation</a></li>
-                            <li><a href="/service-pages/seasonal-cleanup.html"><i class="fas fa-check-circle"></i> Seasonal clean-up services</a></li>
-                            <li><a href="/service-pages/garden-maintenance.html"><i class="fas fa-check-circle"></i> Garden bed maintenance & rose care</a></li>
+                            <li><a href="/services/snow-removal"><i class="fas fa-check-circle"></i> Snow removal & de-icing</a></li>
+                            <li><a href="/services/lawn-maintenance"><i class="fas fa-check-circle"></i> Lawn maintenance & care</a></li>
+                            <li><a href="/landscape-design"><i class="fas fa-check-circle"></i> Landscape design & installation</a></li>
+                            <li><a href="/garden-maintenance"><i class="fas fa-check-circle"></i> Garden maintenance</a></li>
+                            <li><a href="/tree-trimming"><i class="fas fa-check-circle"></i> Tree trimming & removal</a></li>
+                            <li><a href="/emergency-repairs"><i class="fas fa-check-circle"></i> Emergency repair services</a></li>
+                            <li><a href="/seasonal-cleanup"><i class="fas fa-check-circle"></i> Seasonal clean-up services</a></li>
+                            <li><a href="/gutter-cleaning"><i class="fas fa-check-circle"></i> Gutter cleaning</a></li>
+                            <li><a href="/pressure-washing"><i class="fas fa-check-circle"></i> Pressure washing</a></li>
                         </ul>
                     </div>
                     <div class="service-cta">
@@ -1111,7 +2033,7 @@
     <!-- CTA Section -->
     <section class="cta-section">
         <h2>Ready to Make Your Home Safer & Smarter?</h2>
-        <p>Contact us today for a free consultation and estimate. We serve Norfolk NE and surrounding areas.</p>
+        <p>Contact us today for a free consultation and estimate. We serve Norfolk, NE and surrounding areas.</p>
         <a href="tel:+14054106402" class="cta-button">Call Now: (405) 410-6402</a>
     </section>
     <footer>
@@ -1125,10 +2047,10 @@
             <div class="footer-links">
                 <h3>Our Services</h3>
                 <ul>
-                    <li><a href="services.html#accessibility-safety">Accessibility & Safety</a></li>
-                    <li><a href="services.html#home-remodeling">Home Remodeling</a></li>
-                    <li><a href="services.html#tv-mounting">TV Mounting & AV</a></li>
-                    <li><a href="services.html#property-maintenance">Property Maintenance</a></li>
+                    <li><a href="/services/ada-compliant-showers">Accessibility & Safety</a></li>
+                    <li><a href="/services/home-remodeling">Complete Home Remodeling</a></li>
+                    <li><a href="/services/tv-mounting">TV Mounting & AV</a></li>
+                    <li><a href="/services/snow-removal">Property Maintenance</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -1166,26 +2088,401 @@
             });
         });
     </script>
-
 <script>
-// Hamburger menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
-    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
-    
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled');
+        // Service Tiles Carousel - Mobile Optimized
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousels = document.querySelectorAll('.service-tiles-carousel');
+            
+            carousels.forEach(function(carousel) {
+                const container = carousel.querySelector('.carousel-container');
+                const items = carousel.querySelectorAll('.carousel-item');
+                const prevBtn = carousel.querySelector('.carousel-prev');
+                const nextBtn = carousel.querySelector('.carousel-next');
+                const dots = carousel.querySelectorAll('.carousel-dot');
+                
+                if (!container || items.length === 0) return;
+                
+                let currentIndex = 0;
+                let itemsPerView = 1;
+                
+                function calculateItemsPerView() {
+                    const containerWidth = container.clientWidth;
+                    const itemWidth = items[0].offsetWidth + 20; // including gap
+                    
+                    if (containerWidth >= 1024) {
+                        return 4;
+                    } else if (containerWidth >= 768) {
+                        return 2;
+                    } else {
+                        return 1;
+                    }
+                }
+                
+                function updateCarousel() {
+                    itemsPerView = calculateItemsPerView();
+                    const maxIndex = Math.max(0, items.length - itemsPerView);
+                    currentIndex = Math.min(currentIndex, maxIndex);
+                    
+                    const translateX = -currentIndex * (100 / itemsPerView);
+                    container.style.transform = 'translateX(' + translateX + '%)';
+                    
+                    // Update dots
+                    dots.forEach(function(dot, index) {
+                        dot.classList.toggle('active', index === currentIndex);
+                    });
+                    
+                    // Update button states
+                    if (prevBtn) prevBtn.disabled = currentIndex === 0;
+                    if (nextBtn) nextBtn.disabled = currentIndex >= maxIndex;
+                }
+                
+                function nextSlide() {
+                    itemsPerView = calculateItemsPerView();
+                    const maxIndex = Math.max(0, items.length - itemsPerView);
+                    if (currentIndex < maxIndex) {
+                        currentIndex++;
+                        updateCarousel();
+                    }
+                }
+                
+                function prevSlide() {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateCarousel();
+                    }
+                }
+                
+                // Event listeners for buttons
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', nextSlide);
+                }
+                
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', prevSlide);
+                }
+                
+                // Dot navigation
+                dots.forEach(function(dot, index) {
+                    dot.addEventListener('click', function() {
+                        currentIndex = index;
+                        updateCarousel();
+                    });
+                });
+                
+                // Touch/swipe support
+                let startX = 0;
+                let currentX = 0;
+                
+                container.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                }, { passive: true });
+                
+                container.addEventListener('touchmove', function(e) {
+                    currentX = e.touches[0].clientX;
+                }, { passive: true });
+                
+                container.addEventListener('touchend', function() {
+                    const diff = startX - currentX;
+                    const threshold = 50;
+                    
+                    if (Math.abs(diff) > threshold) {
+                        if (diff > 0) {
+                            nextSlide();
+                        } else {
+                            prevSlide();
+                        }
+                    }
+                });
+                
+                // Keyboard navigation
+                container.setAttribute('tabindex', '0');
+                container.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowLeft') {
+                        prevSlide();
+                    } else if (e.key === 'ArrowRight') {
+                        nextSlide();
+                    }
+                });
+                
+                // Window resize handling
+                let resizeTimer;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function() {
+                        updateCarousel();
+                    }, 250);
+                });
+                
+                // Initialize
+                updateCarousel();
+                
+                // Fallback for older browsers
+                if (!('transform' in document.documentElement.style)) {
+                    container.style.transform = 'none';
+                    container.style.overflowX = 'auto';
+                }
+            });
+        });</script>
+    <!-- SEASONAL PROMO ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation for seasonal promo cards
+    function initPromoAnimations() {
+        const promoCards = document.querySelectorAll('.promo-card');
+        
+        console.log('Found ' + promoCards.length + ' seasonal promo cards');
+        
+        // Add touch support for mobile
+        promoCards.forEach(card => {
+            card.classList.remove('mobile-animated');
+            
+            // Touch events for mobile
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
         });
-        // Optional: Add touchstart for better mobile support
-        hamburger.addEventListener('touchstart', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled via touch');
+        
+        // Auto-animate promo cards on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            let delay = 0;
+            promoCards.forEach(card => {
+                setTimeout(() => {
+                    card.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        card.classList.remove('mobile-animated');
+                    }, 3000);
+                }, delay);
+                delay += 500;
+            });
+            
+            // Re-animate when page becomes visible again
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    setTimeout(() => {
+                        let newDelay = 0;
+                        promoCards.forEach(card => {
+                            setTimeout(() => {
+                                card.classList.add('mobile-animated');
+                                setTimeout(() => {
+                                    card.classList.remove('mobile-animated');
+                                }, 3000);
+                            }, newDelay);
+                            newDelay += 500;
+                        });
+                    }, 1000);
+                }
+            });
+        }
+    }
+    
+    // Initialize when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPromoAnimations);
+    } else {
+        initPromoAnimations();
+    }
+    
+    // Re-initialize on page show
+    window.addEventListener('pageshow', initPromoAnimations);
+    
+    // Also animate when promo cards come into view
+    function animatePromoOnScroll() {
+        const promoCards = document.querySelectorAll('.promo-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
+                    entry.target.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        entry.target.classList.remove('mobile-animated');
+                    }, 3000);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        promoCards.forEach(card => {
+            observer.observe(card);
         });
     }
-});
-</script>
+    
+    // Start scroll animation observer
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', animatePromoOnScroll);
+    }
+    </script>
+    
 
+    <!-- BENEFIT CARD ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation for benefit cards
+    function initBenefitAnimations() {
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        
+        console.log('Found ' + benefitCards.length + ' benefit cards');
+        
+        // Add touch support for mobile
+        benefitCards.forEach(card => {
+            card.classList.remove('mobile-animated');
+            
+            // Touch events for mobile
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+        
+        // Auto-animate benefit cards on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            let delay = 0;
+            benefitCards.forEach(card => {
+                setTimeout(() => {
+                    card.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        card.classList.remove('mobile-animated');
+                    }, 3000);
+                }, delay);
+                delay += 500;
+            });
+            
+            // Re-animate when page becomes visible again
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    setTimeout(() => {
+                        let newDelay = 0;
+                        benefitCards.forEach(card => {
+                            setTimeout(() => {
+                                card.classList.add('mobile-animated');
+                                setTimeout(() => {
+                                    card.classList.remove('mobile-animated');
+                                }, 3000);
+                            }, newDelay);
+                            newDelay += 500;
+                        });
+                    }, 1000);
+                }
+            });
+        }
+    }
+    
+    // Initialize when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBenefitAnimations);
+    } else {
+        initBenefitAnimations();
+    }
+    
+    // Re-initialize on page show
+    window.addEventListener('pageshow', initBenefitAnimations);
+    
+    // Also animate when benefit cards come into view
+    function animateBenefitOnScroll() {
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
+                    entry.target.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        entry.target.classList.remove('mobile-animated');
+                    }, 3000);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        benefitCards.forEach(card => {
+            observer.observe(card);
+        });
+    }
+    
+    // Start scroll animation observer
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
+    }
+    </script>
+    
+
+    <!-- COMPREHENSIVE TILE ANIMATION SCRIPT -->
+    <script>
+    // Mobile auto-animation for all tiles
+    function initAllTileAnimations() {
+        const allTiles = document.querySelectorAll(
+            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
+            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
+        );
+        
+        console.log('Animating ' + allTiles.length + ' tiles across all pages');
+        
+        // Add touch support for mobile
+        allTiles.forEach(tile => {
+            tile.classList.remove('mobile-animated');
+            
+            // Touch events for mobile
+            tile.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            tile.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+        
+        // Auto-animate tiles on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            let delay = 0;
+            allTiles.forEach(tile => {
+                setTimeout(() => {
+                    tile.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        tile.classList.remove('mobile-animated');
+                    }, 3000);
+                }, delay);
+                delay += 300;
+            });
+        }
+    }
+    
+    // Initialize when DOM loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAllTileAnimations);
+    } else {
+        initAllTileAnimations();
+    }
+    
+    // Re-initialize on page show
+    window.addEventListener('pageshow', initAllTileAnimations);
+    
+    // Animate when tiles come into view
+    function animateTilesOnScroll() {
+        const allTiles = document.querySelectorAll(
+            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
+            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
+        );
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
+                    entry.target.classList.add('mobile-animated');
+                    setTimeout(() => {
+                        entry.target.classList.remove('mobile-animated');
+                    }, 3000);
+                }
+            });
+        }, { threshold: 0.3 });
+        
+        allTiles.forEach(tile => {
+            observer.observe(tile);
+        });
+    }
+    
+    // Start scroll animation observer
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
+    }
+    </script>
+    
 </body>
 </html>

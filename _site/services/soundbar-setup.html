@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundbar Setup | Watts Safety Installs</title>
+    <meta name="description" content="Professional soundbar installation and calibration in Norfolk, NE. Our technicians optimize audio settings, ensure proper connectivity, and integrate with existing entertainment systems.">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0A1D37; border-bottom: 3px solid #00C4B4; padding-bottom: 10px; }
+        .contact-btn { background: #00C4B4; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    
+        /* Mobile Menu Fix */
+        .mobile-nav {
+            display: none;
+        }
+        
+        .mobile-menu-container {
+            position: relative;
+        }
+        
+        .mobile-menu-toggle {
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hamburger-box {
+            width: 30px;
+            height: 24px;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .hamburger-inner {
+            display: block;
+            top: 50%;
+            margin-top: -2px;
+        }
+        
+        .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+            border-radius: 4px;
+            position: absolute;
+            transition: transform 0.15s ease;
+        }
+        
+        .hamburger-inner::before, .hamburger-inner::after {
+            content: "";
+            display: block;
+        }
+        
+        .hamburger-inner::before {
+            top: -10px;
+        }
+        
+        .hamburger-inner::after {
+            bottom: -10px;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            z-index: 1000;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .mobile-menu a:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Show mobile nav only on mobile */
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: block;
+            }
+            .desktop-nav {
+                display: none;
+            }
+        }
+            
+        /* Mobile Animation Fix */
+        @media (max-width: 768px) {
+            .service-tile.mobile-animated {
+                transform: translateY(-12px) scale(1.03);
+                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
+                background: linear-gradient(135deg, var(--teal), var(--navy));
+                color: white;
+                border-color: var(--gray);
+            }
+            .service-tile.mobile-animated::before {
+                opacity: 1;
+                animation: gloss 1.3s ease-out forwards;
+            }
+            .service-tile.mobile-animated::after {
+                opacity: 1;
+                border-color: rgba(0,196,180,0.7);
+                box-shadow: 0 0 35px rgba(0,196,180,0.6);
+            }
+            .service-tile.mobile-animated h2, 
+            .service-tile.mobile-animated p, 
+            .service-tile.mobile-animated .trust-text {
+                color: white !important;
+            }
+            .service-tile.mobile-animated .trust-bar {
+                background: rgba(255,255,255,0.12);
+            }
+            .service-tile.mobile-animated .trust-icon {
+                transform: scale(1.5) translateY(-8px);
+                color: var(--gold) !important;
+            }
+        }</style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="service-title">Soundbar Setup</h1>
+        <div class="professional-intro">
+            <p><strong>Professional soundbar setup services in Norfolk, NE.</strong> Professional soundbar installation and calibration in Norfolk, NE. Our technicians optimize audio settings, ensure proper connectivity, and integrate with existing entertainment systems.</p>
+            <p>Contact Watts Safety Installs today for expert workmanship and guaranteed satisfaction.</p>
+        </div>
+                    
+        <p>Professional soundbar setup installation and setup services in Norfolk, NE. Our expert technicians provide quality workmanship and exceptional customer service.</p>
+        
+        <h2>Our Soundbar Setup Services Include:</h2>
+        <ul>
+            <li>Professional installation and setup</li>
+            <li>Equipment configuration and calibration</li>
+            <li>Cable management solutions</li>
+            <li>Testing and quality assurance</li>
+        </ul>
+        
+        <p>Contact us today for a free consultation and estimate!</p>
+        <a href="/contact" class="contact-btn">Get Free Quote</a>
+    </div>
+
+
+            
+        <!-- Mobile Animation Script -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth <= 768) {
+                console.log('Mobile animation script loaded');
+                
+                setTimeout(function() {
+                    const mainTile = document.getElementById('mainServiceTile');
+                    const categories = document.querySelectorAll('.service-category');
+                    
+                    if (mainTile) {
+                        mainTile.classList.add('mobile-animated');
+                        console.log('Mobile animation applied to main tile');
+                    }
+                    
+                    categories.forEach(category => {
+                        category.classList.add('mobile-animated');
+                    });
+                    
+                    console.log('Mobile animation completed');
+                    
+                    
+                    
+                }, 3000);
+            }
+        });
+        </script>
+    </body>
+</html>

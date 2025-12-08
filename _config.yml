@@ -2,6 +2,37 @@ title: Watts Safety Installs
 description: Professional installation and safety services
 baseurl: ""
 url: "https://wattsatpcontractor.com"
-include: [".html"]
-exclude: ["node_modules", "vendor", "*.log", "website-backup-*", "services-backup-*"]
-# permalink: pretty # Disabled to avoid trailing slashes
+
+# Exclude files from processing and deployment
+exclude: 
+  - "node_modules"
+  - "vendor"
+  - "*.log"
+  - "website-backup-*"
+  - "services-backup-*"
+  - "backup_before_faq_*"
+  - "*.backup"
+  - "*.backup2"
+  - "*.bak"
+  - "test_*"
+  - "test-*"
+  - "html-test.html"
+  - "index-backup.html"
+  - "idex.html"
+  - "*.txt"
+  - "notepad.txt"
+  - "python.txt"
+  - "about.txt"
+  - "homepage-css.txt"
+  - "service-structure.txt"
+  - ".htaccess"
+  - "UPGRADE_PREVIEW.html"
+  - "README.md"
+  - "SEO-IMPROVEMENTS.md"
+
+# Include specific files if needed
+include: []
+
+# Permalink structure - use default (no trailing slashes)
+# GitHub Pages will serve /about.html as /about automatically
+permalink: none

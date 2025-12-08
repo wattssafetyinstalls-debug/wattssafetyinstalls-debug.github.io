@@ -1,23 +1,43 @@
 User-agent: *
 Allow: /
 
-# Block unnecessary files
+# Block unnecessary files and directories
 Disallow: /_includes/
 Disallow: /_layouts/
 Disallow: /_site/
+Disallow: /_data/
 Disallow: /backup_before_faq_*
+Disallow: /website-backup-*
+Disallow: /services-backup-*
 Disallow: /*.backup
+Disallow: /*.backup2
+Disallow: /*.bak
 Disallow: /UPGRADE_PREVIEW.html
 Disallow: /test_*
+Disallow: /test-*
+Disallow: /html-test.html
+Disallow: /index-backup.html
+Disallow: /idex.html
+Disallow: /*.txt
+Disallow: /notepad.txt
+Disallow: /python.txt
+Disallow: /about.txt
+Disallow: /homepage-css.txt
+Disallow: /service-structure.txt
 
 # Allow all important content
 Allow: /services/
 Allow: /about.html
 Allow: /contact.html
 Allow: /privacy-policy.html
+Allow: /testimonials.html
+Allow: /service-area.html
+Allow: /referrals.html
+Allow: /sitemap.xml
+Allow: /robots.txt
 
 # Sitemap location
 Sitemap: https://wattsatpcontractor.com/sitemap.xml
 
-# Crawl delay (optional - be nice to servers)
+# Crawl delay (be nice to servers)
 Crawl-delay: 1

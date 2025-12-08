@@ -1,0 +1,48 @@
+<!-- GitHub Pages URL Redirect Handler -->
+<script>
+(function() {
+    var path = window.location.pathname;
+    
+    // Redirect /index to root
+    if (path === '/index' || path === '/index.html') {
+        window.location.replace('/');
+        return;
+    }
+    
+    // Handle folder/index patterns - redirect to clean URLs
+    var folderIndexRedirects = {
+        '/about/index': '/about.html',
+        '/about/index.html': '/about.html',
+        '/contact/index': '/contact.html',
+        '/contact/index.html': '/contact.html',
+        '/privacy-policy/index': '/privacy-policy.html',
+        '/privacy-policy/index.html': '/privacy-policy.html',
+        '/service-area/index': '/service-area.html',
+        '/service-area/index.html': '/service-area.html',
+        '/referrals/index': '/referrals.html',
+        '/referrals/index.html': '/referrals.html',
+        '/sitemap/index': '/sitemap.html',
+        '/sitemap/index.html': '/sitemap.html',
+        '/testimonials/index': '/testimonials.html',
+        '/testimonials/index.html': '/testimonials.html'
+    };
+    
+    if (folderIndexRedirects[path]) {
+        window.location.replace(folderIndexRedirects[path]);
+        return;
+    }
+    
+    // Handle service pages - redirect /services/[slug]/index to /services/[slug]/
+    if (path.match(/^\/services\/[^\/]+\/(index|index\.html)$/)) {
+        var newPath = path.replace(/\/(index|index\.html)$/, '/');
+        window.location.replace(newPath);
+        return;
+    }
+    
+    // Clean up URL bar - remove .html from display (cosmetic only, doesn't redirect)
+    if (path.endsWith('.html') && path !== '/404.html') {
+        var cleanPath = path.replace('.html', '');
+        window.history.replaceState({}, '', cleanPath);
+    }
+})();
+</script>

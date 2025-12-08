@@ -1,0 +1,7 @@
+title: Watts Safety Installs
+description: Professional installation and safety services
+baseurl: ""
+url: "https://wattsatpcontractor.com"
+include: [".html"]
+exclude: ["node_modules", "vendor", "*.log", "website-backup-*", "services-backup-*"]
+permalink: pretty

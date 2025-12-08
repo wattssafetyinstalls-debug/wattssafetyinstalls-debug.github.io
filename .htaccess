@@ -1,5 +1,35 @@
+# === SECURITY HEADERS ADDED BY seo_audit_fix.py ===
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Content-Security-Policy "default-src 'self' https:; img-src 'self' data: https:;"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
 # Pretty URL Rewrites
 RewriteEngine On
+
+# ================================================
+# SECURITY HEADERS & SSL
+# ================================================
+<IfModule mod_headers.c>
+    # Force HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    
+    # Security Headers
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy (simplified per SEO/security plan)
+    Header set Content-Security-Policy "default-src 'self' https:"
+    
+    # Feature Policy
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
 
 # ================================================
 # 301 REDIRECTS FOR DUPLICATE/REMOVED PAGES

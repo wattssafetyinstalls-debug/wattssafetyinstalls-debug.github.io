@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Safety Solutions | Watts Safety Installs | Norfolk NE</title>
+    <meta name="description" content="Professional Accessibility Safety Solutions in Norfolk NE. ATP Approved Contractor. Call (405) 410-6402 for free estimate.">
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Your full CSS from template */
+        :root {
+            --teal: #00C4B4;
+            --navy: #0A1D37;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gold: #FFD700;
+            --white: #FFFFFF;
+            --warm-light: #FEF7ED;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--warm-light);
+            color: #1E293B;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* ... Include all your CSS from the template ... */
+    
+        /* ==== 4 SMALL TILES — PERFECT HOVER & TAP (desktop + mobile) ==== */
+        .service-category {
+            background: var(--white);
+            padding: 28px 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all .55s cubic-bezier(0.25,0.8,0.25,1);
+        }
+        .service-category::before {
+            content:''; position:absolute; top:0; left:-100%; width:200%; height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
+            opacity:0; transition:opacity .3s;
+        }
+        .service-category::after {
+            content:''; position:absolute; inset:-4px; border-radius:19px;
+            border:3px solid transparent; opacity:0;
+            box-shadow:0 0 20px rgba(0,196,180,0); transition:all .5s;
+        }
+        @keyframes gloss { from {left:-100%} to {left:100%} }
+
+        @media (hover:hover) and (pointer:fine) {
+            .service-category:hover {
+                transform:translateY(-10px) scale(1.04);
+                box-shadow:0 30px 70px rgba(10,29,55,0.35);
+                background:linear-gradient(135deg,var(--teal),var(--navy));
+                color:white; border-color:var(--gray);
+            }
+            .service-category:hover::before { opacity:1; animation:gloss 1.6s ease-out forwards; }
+            .service-category:hover::after { opacity:1; border-color:rgba(0,196,180,0.6); box-shadow:0 0 35px rgba(0,196,180,0.5); }
+            .service-category:hover .category-title,
+            .service-category:hover .category-services { color:white !important; }
+            .service-category:hover .category-icon { transform:scale(1.4) translateY(-6px); color:var(--gold)!important; }
+        }
+
+        @media (hover:none), (max-width:768px) {
+            .service-category:active {
+                transform:translateY(-8px) scale(1.03);
+                background:linear-gradient(135deg,var(--teal),var(--navy));
+                color:white; border-color:var(--gray);
+            }
+            .service-category:active::before { opacity:1; animation:gloss 1.3s ease-out forwards; }
+            .service-category:active .category-title,
+            .service-category:active .category-services { color:white !important; }
+            .service-category:active .category-icon { transform:scale(1.4) translateY(-6px); color:var(--gold)!important; }
+        }
+        /* ==== END OF SMALL TILES CSS ==== */
+        </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCPM8VZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <header>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">WATTS</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            <nav class="nav-links" id="navLinks">
+                <a href="../services.html">Services</a>
+                <a href="../service-area.html">Service Area</a>
+                <a href="../about.html">About</a>
+                <a href="../referrals.html">Referrals</a>
+                <a href="../contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Accessibility Safety Solutions</h1>
+        <p class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25</p>
+        <p>Professional Accessibility Safety Solutions in Norfolk NE & Surrounding Areas</p>
+        <a href="tel:+14054106402" class="cta-button">Call (405) 410-6402</a>
+    </section>
+
+    <div class="service-tile">
+        <h2>Accessibility Safety Solutions</h2>
+        <p class="service-description">Professional accessibility safety solutions services in Norfolk NE. ATP Approved Contractor serving all of Nebraska. Call (405) 410-6402 for free estimate and same-day service availability.</p>
+
+        <div class="trust-bar">
+            <div class="trust-item"><div class="trust-icon"><i class="fas fa-check-circle"></i></div><div class="trust-text">Licensed & Insured</div></div>
+            <div class="trust-item"><div class="trust-icon"><i class="fas fa-star"></i></div><div class="trust-text">5.0/5 Rating</div></div>
+            <div class="trust-item"><div class="trust-icon"><i class="fas fa-bolt"></i></div><div class="trust-text">Same-Day Available</div></div>
+            <div class="trust-item"><div class="trust-icon"><i class="fas fa-trophy"></i></div><div class="trust-text">ATP Approved</div></div>
+        </div>
+
+        <div class="service-showcase">
+            <h3>Comprehensive Service Solutions</h3>
+            <div class="service-categories">
+                <div class="service-category">
+                    <div class="category-icon"><i class="fas fa-universal-access"></i></div>
+                    <div class="category-title">Accessibility & Safety</div>
+                    <div class="category-services">ADA Ramps, Grab Bars, Senior Safety</div>
+                </div>
+                <div class="service-category">
+                    <div class="category-icon"><i class="fas fa-home"></i></div>
+                    <div class="category-title">Home Improvements</div>
+                    <div class="category-services">Remodeling, Decks, Siding & Windows</div>
+                </div>
+                <div class="service-category">
+                    <div class="category-icon"><i class="fas fa-tv"></i></div>
+                    <div class="category-title">Audio Visual</div>
+                    <div class="category-services">TV Mounting, Home Theater, Smart Audio</div>
+                </div>
+                <div class="service-category">
+                    <div class="category-icon"><i class="fas fa-snowflake"></i></div>
+                    <div class="category-title">Property Maintenance</div>
+                    <div class="category-services">Snow Removal, Lawn Care, Seasonal</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="tel:+14054106402" class="contact-btn">Contact Us Now</a>
+    </div>
+
+    <a href="../services.html" class="return-btn">Return to All Services</a>
+
+    <footer>
+        <p><strong>Watts Safety Installs</strong> • Norfolk, NE • 
+            <span class="footer-contact">
+                <a href="tel:+14054106402">(405) 410-6402</a> • 
+                <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a>
+            </span>
+        </p>
+        <div class="footer-links">
+            <a href="../sitemap.html">Sitemap</a> • <a href="../privacy-policy.html">Privacy Policy</a>
+        </div>
+        <p style="margin-top:20px; font-size:0.9rem; color:#aaa;">© 2025 Watts Safety Installs. Nebraska License #54690-25</p>
+    </footer>
+
+    <script>
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

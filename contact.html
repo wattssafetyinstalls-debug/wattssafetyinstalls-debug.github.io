@@ -818,35 +818,74 @@
         }
     /* MOBILE AUTO-ANINETION EFFECTS */
         @media (max-width: 768px) {
-            .service-tile.mobile-animated {
+            /* Use the same animated style across all tiles */
+            .service-tile.mobile-animated,
+            .benefit-card.mobile-animated,
+            .value-tile.mobile-animated,
+            .trust-item.mobile-animated,
+            .service-card.mobile-animated,
+            .promo-card.mobile-animated,
+            .category-card.mobile-animated,
+            .contact-tile.mobile-animated,
+            .area-tile.mobile-animated {
                 transform: translateY(-12px) scale(1.03);
                 box-shadow: 0 35px 90px rgba(10,29,55,0.38);
                 background: linear-gradient(135deg, var(--teal), var(--navy));
                 color: white;
                 border-color: var(--gray);
             }
-            .service-tile.mobile-animated::before {
+            .service-tile.mobile-animated::before,
+            .benefit-card.mobile-animated::before,
+            .value-tile.mobile-animated::before,
+            .trust-item.mobile-animated::before,
+            .service-card.mobile-animated::before,
+            .promo-card.mobile-animated::before,
+            .category-card.mobile-animated::before,
+            .contact-tile.mobile-animated::before,
+            .area-tile.mobile-animated::before {
                 opacity: 1;
                 animation: gloss 1.3s ease-out forwards;
             }
-            .service-tile.mobile-animated::after {
+            .service-tile.mobile-animated::after,
+            .benefit-card.mobile-animated::after,
+            .value-tile.mobile-animated::after,
+            .trust-item.mobile-animated::after,
+            .service-card.mobile-animated::after,
+            .promo-card.mobile-animated::after,
+            .category-card.mobile-animated::after,
+            .contact-tile.mobile-animated::after,
+            .area-tile.mobile-animated::after {
                 opacity: 1;
                 border-color: rgba(0,196,180,0.7);
                 box-shadow: 0 0 35px rgba(0,196,180,0.6);
             }
-            .service-tile.mobile-animated h2, 
-            .service-tile.mobile-animated p, 
-            .service-tile.mobile-animated .trust-text {
+            .service-tile.mobile-animated h2,
+            .service-tile.mobile-animated p,
+            .service-tile.mobile-animated .trust-text,
+            .benefit-card.mobile-animated h3,
+            .benefit-card.mobile-animated p,
+            .value-tile.mobile-animated h3,
+            .value-tile.mobile-animated p,
+            .contact-tile.mobile-animated *,
+            .area-tile.mobile-animated *,
+            .category-card.mobile-animated .category-title,
+            .category-card.mobile-animated .category-services {
                 color: white !important;
             }
-            .service-tile.mobile-animated .trust-bar {
+            .service-tile.mobile-animated .trust-bar,
+            .benefit-card.mobile-animated .trust-bar {
                 background: rgba(255,255,255,0.12);
             }
-            .service-tile.mobile-animated .trust-icon {
+            .service-tile.mobile-animated .trust-icon,
+            .benefit-card.mobile-animated .benefit-icon,
+            .category-card.mobile-animated .category-icon,
+            .contact-tile.mobile-animated .contact-icon,
+            .area-tile.mobile-animated .area-icon {
                 transform: scale(1.5) translateY(-8px);
                 color: var(--gold) !important;
             }
-            
+
+            /* Slightly softer effect for service categories if present */
             .service-category.mobile-animated {
                 transform: translateY(-6px) scale(1.01);
                 box-shadow: 0 20px 45px rgba(10,29,55,0.25);
@@ -1604,20 +1643,17 @@
             });
         });
         
-        // Auto-animate benefit cards on mobile
+        // Auto-animate benefit cards on mobile (persistent state)
         if (window.matchMedia("(max-width: 768px)").matches) {
             let delay = 0;
             benefitCards.forEach(card => {
                 setTimeout(() => {
                     card.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        card.classList.remove('mobile-animated');
-                    }, 3000);
                 }, delay);
                 delay += 500;
             });
             
-            // Re-animate when page becomes visible again
+            // Re-apply animation class when page becomes visible again
             document.addEventListener('visibilitychange', function() {
                 if (!document.hidden) {
                     setTimeout(() => {
@@ -1625,9 +1661,6 @@
                         benefitCards.forEach(card => {
                             setTimeout(() => {
                                 card.classList.add('mobile-animated');
-                                setTimeout(() => {
-                                    card.classList.remove('mobile-animated');
-                                }, 3000);
                             }, newDelay);
                             newDelay += 500;
                         });
@@ -1654,9 +1687,6 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
                     entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
                 }
             });
         }, { threshold: 0.5 });
@@ -1698,15 +1728,12 @@
             });
         });
         
-        // Auto-animate tiles on mobile
+        // Auto-animate tiles on mobile (persistent state)
         if (window.matchMedia("(max-width: 768px)").matches) {
             let delay = 0;
             allTiles.forEach(tile => {
                 setTimeout(() => {
                     tile.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        tile.classList.remove('mobile-animated');
-                    }, 3000);
                 }, delay);
                 delay += 300;
             });
@@ -1734,9 +1761,6 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
                     entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
                 }
             });
         }, { threshold: 0.3 });

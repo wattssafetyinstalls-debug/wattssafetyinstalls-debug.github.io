@@ -4,4 +4,4 @@ baseurl: ""
 url: "https://wattsatpcontractor.com"
 include: [".html"]
 exclude: ["node_modules", "vendor", "*.log", "website-backup-*", "services-backup-*"]
-permalink: pretty
+# permalink: pretty # Disabled to avoid trailing slashes

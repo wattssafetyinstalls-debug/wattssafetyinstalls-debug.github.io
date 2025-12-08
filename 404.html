@@ -4,34 +4,63 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-        // Get current path
-        var path = window.location.pathname;
+    // Get current path
+    var path = window.location.pathname;
+    var search = window.location.search;
+    var hash = window.location.hash;
+    
+    // Remove trailing slash if present
+    if (path.endsWith("/")) {
+        path = path.slice(0, -1);
+    }
+    
+    // Check if already redirected from .html to avoid loops
+    if (path.endsWith(".html")) {
+        // Already has .html, don't redirect again
+        console.log("Already has .html, not redirecting");
+    } else if (path && !path.includes(".") && path !== "" && path !== "/") {
+        // Try folder/index.html first (GitHub Pages pretty URLs)
+        var folderPath = path + "/";
+        var testUrl = folderPath;
         
-        // Remove trailing slash if present
-        if (path.endsWith('/')) {
-            path = path.slice(0, -1);
-        }
-        
-        // If not already .html and not empty, redirect
-        if (path && !path.endsWith('.html') && 
-            !path.includes('.') && // Don't redirect images, CSS, etc.
-            path !== '') {
-            
-            // Try to redirect to .html version
-            window.location.href = path + '.html';
-        }
+        // Create a test request to check if folder exists
+        fetch(testUrl, {method: 'HEAD'})
+            .then(function(response) {
+                if (response.ok) {
+                    // Folder exists, redirect to it
+                    window.location.href = folderPath + (search || '') + (hash || '');
+                } else {
+                    // Try .html file
+                    var htmlUrl = path + ".html";
+                    fetch(htmlUrl, {method: 'HEAD'})
+                        .then(function(response) {
+                            if (response.ok) {
+                                window.location.href = htmlUrl + (search || '') + (hash || '');
+                            }
+                        })
+                        .catch(function() {
+                            // Neither exists, show 404
+                        });
+                }
+            })
+            .catch(function() {
+                // Try .html directly
+                window.location.href = path + ".html" + (search || '') + (hash || '');
+            });
+    }
     </script>
+    <meta http-equiv="refresh" content="0; url=.">
 </head>
 <body>
     <h1>Redirecting...</h1>
     <p>If you are not redirected automatically, please <a id="redirect-link" href="#">click here</a>.</p>
     <script>
-        // Update the manual link
-        var path = window.location.pathname;
-        if (path.endsWith('/')) {
-            path = path.slice(0, -1);
-        }
-        document.getElementById('redirect-link').href = path + '.html';
+    // Update the manual link
+    var path = window.location.pathname;
+    if (path.endsWith("/")) {
+        path = path.slice(0, -1);
+    }
+    document.getElementById("redirect-link").href = path + (path.endsWith(".html") ? "" : ".html") + window.location.search + window.location.hash;
     </script>
 </body>
 </html>

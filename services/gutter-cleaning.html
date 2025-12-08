@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gutter Cleaning | Watts At Your Service</title>
-    <meta name="description" content="Professional gutter cleaning services in Norfolk, NE. We remove debris, check for proper drainage, and identify potential issues to protect your home from water damage.">Gutter Cleaning | Watts Safety Installs | Norfolk, NE</title>
-    
+    <meta name="description" content="Professional gutter cleaning services in Norfolk, NE. We remove debris, check for proper drainage, and identify potential issues to protect your home from water damage.">
     
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'var f=d.getElementsByTagName(s)[0],
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
@@ -1238,8 +1237,32 @@
       }
     }
   ]
-}
-</script>
+}</script>
 
+    <!-- Mobile Animation Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth <= 768) {
+            console.log('Mobile animation script loaded');
+            
+            setTimeout(function() {
+                const mainTile = document.getElementById('mainServiceTile');
+                const categories = document.querySelectorAll('.service-category');
+                
+                if (mainTile) {
+                    mainTile.classList.add('mobile-animated');
+                    console.log('Mobile animation applied to main tile');
+                }
+                
+                categories.forEach(category => {
+                    category.classList.add('mobile-animated');
+                });
+                
+                console.log('Mobile animation completed');
+                
+            }, 3000);
+        }
+    });
+    </script>
 </body>
 </html>

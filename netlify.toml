@@ -1,0 +1,47 @@
+[build]
+  publish = "."
+  command = ""
+
+[build.environment]
+  NODE_VERSION = "18.0.0"
+  NPM_VERSION = "9.0.0"
+
+[[redirects]]
+  from = "/idex.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/testimonials.html"
+  to = "/testimonials"
+  status = 301
+
+[[redirects]]
+  from = "/test_mobile_fix.html"
+  to = "/test_mobile_fix"
+  status = 301
+
+[[redirects]]
+  from = "/_site/idex.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/_site/testimonials.html"
+  to = "/testimonials"
+  status = 301
+
+[[redirects]]
+  from = "/_site/test_mobile_fix.html"
+  to = "/test_mobile_fix"
+  status = 301
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self' https:; img-src 'self' data: https:;"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"

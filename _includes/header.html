@@ -1,25 +1,25 @@
 <header>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">
-                <a href="{{ '/' | relative_url }}">
-                    <h2>{{ site.title }}</h2>
-                </a>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="{{ '/' | relative_url }}">Home</a></li>
-                <li class="nav-dropdown">
-                    <a href="{{ '/services.html' | relative_url }}">Services</a>
-                    <ul class="dropdown">
+<nav>
+<div class="nav-container">
+<div class="logo">
+<a href="{{ '/' | relative_url }}">
+<h2>{{ site.title }}</h2>
+</a>
+</div>
+<ul class="nav-menu">
+<li><a href="{{ '/' | relative_url }}">Home</a></li>
+<li class="nav-dropdown">
+<a href="{{ '/services.html' | relative_url }}">Services</a>
+<ul class="dropdown">
                         {% for service in site.data.services %}
                         <li><a href="{{ '/' | relative_url }}{{ service.slug }}">{{ service.title }}</a></li>
                         {% endfor %}
                     </ul>
-                </li>
-                <li><a href="{{ '/service-area.html' | relative_url }}">Service Area</a></li>
-                <li><a href="{{ '/about.html' | relative_url }}">About</a></li>
-                <li><a href="{{ '/contact.html' | relative_url }}">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+</li>
+<li><a href="{{ '/service-area.html' | relative_url }}">Service Area</a></li>
+<li><a href="{{ '/about.html' | relative_url }}">About</a></li>
+<li><a href="{{ '/contact.html' | relative_url }}">Contact</a></li>
+</ul>
+</div>
+</nav>
 </header>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
-    <meta name="description" content="{{ page.description | default: site.description }}">
-    
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+<meta content="{{ page.description | default: site.description }}" name="description"/><link href="https://wattsatpcontractor.com/_layouts/default" rel="canonical"/>
+<style>
         * { 
             margin: 0; 
             padding: 0; 
@@ -246,9 +246,8 @@
             transform: translateY(-2px);
         }
     </style>
-
-    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
-    <style>
+<!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
+<style>
     /* FIX: Mobile carousel dropdown background */
     @media (max-width: 768px) {
         .service-card.touch-active .service-dropdown {
@@ -351,7 +350,6 @@
         }
     }
     </style>
-    
 </head>
 <body>
     {% include header.html %}
@@ -381,10 +379,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-
-    <!-- BENEFIT CARD ANIMATION SCRIPT -->
-    <script>
+<!-- BENEFIT CARD ANIMATION SCRIPT -->
+<script>
     // Mobile auto-animation for benefit cards
     function initBenefitAnimations() {
         const benefitCards = document.querySelectorAll('.benefit-card');
@@ -472,6 +468,5 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
     }
     </script>
-    
 </body>
 </html>

@@ -8,6 +8,12 @@
 /privacy-policy.html /privacy-policy 301
 /referrals.html /referrals 301
 
+# Old service-pages redirects to new services/ structure
+/service-pages/accessibility-safety.html /services/accessibility-safety-solutions 301
+/service-pages/ada-ramp-installation.html /services/custom-ramps 301
+/service-pages/accessibility-safety /services/accessibility-safety-solutions 301
+/service-pages/ada-ramp-installation /services/custom-ramps 301
+
 # Service page redirects from .html to clean URLs (no trailing slashes)
 /services/accessibility-safety-solutions.html /services/accessibility-safety-solutions 301
 /services/ada-compliant-showers-bathrooms.html /services/ada-compliant-showers-bathrooms 301

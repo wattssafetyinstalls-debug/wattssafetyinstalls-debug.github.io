@@ -1,20 +1,37 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-        // Get the path from the URL
+        // Get current path
         var path = window.location.pathname;
-        // Remove any trailing slashes
-        path = path.replace(/\/$/, '');
-        // Try to load the .html version
-        window.location.href = path + '.html' + window.location.search + window.location.hash;
+        
+        // Remove trailing slash if present
+        if (path.endsWith('/')) {
+            path = path.slice(0, -1);
+        }
+        
+        // If not already .html and not empty, redirect
+        if (path && !path.endsWith('.html') && 
+            !path.includes('.') && // Don't redirect images, CSS, etc.
+            path !== '') {
+            
+            // Try to redirect to .html version
+            window.location.href = path + '.html';
+        }
     </script>
-    <meta http-equiv="refresh" content="0; url=.">
 </head>
 <body>
     <h1>Redirecting...</h1>
-    <p>If you are not redirected automatically, please <a href=".">click here</a>.</p>
+    <p>If you are not redirected automatically, please <a id="redirect-link" href="#">click here</a>.</p>
+    <script>
+        // Update the manual link
+        var path = window.location.pathname;
+        if (path.endsWith('/')) {
+            path = path.slice(0, -1);
+        }
+        document.getElementById('redirect-link').href = path + '.html';
+    </script>
 </body>
 </html>

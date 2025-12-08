@@ -1,6 +1,0 @@
-title: Watts Safety Installs
-description: Professional installation and safety services
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://wattsatpcontractor.com" # the base hostname & protocol for your site
-permalink: pretty
-include: [".html"]

@@ -1,1 +1,122 @@
-[paste the 404.html code above]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Watts Safety Installs</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0A1D37 0%, #00C4B4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        a {
+            background: white;
+            color: #0A1D37;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+    </style>
+    
+    <!-- GitHub Pages Client-Side Redirect Handler -->
+    <script>
+        (function() {
+            var path = window.location.pathname;
+            
+            // Handle common redirect patterns
+            var redirects = {
+                '/index': '/',
+                '/about/index': '/about.html',
+                '/contact/index': '/contact.html',
+                '/services/index': '/services.html',
+                '/privacy-policy/index': '/privacy-policy.html',
+                '/service-area/index': '/service-area.html',
+                '/referrals/index': '/referrals.html',
+                '/sitemap/index': '/sitemap.html',
+                '/testimonials/index': '/testimonials.html'
+            };
+            
+            // Check if current path needs redirect
+            if (redirects[path]) {
+                window.location.replace(redirects[path]);
+                return;
+            }
+            
+            // Handle service pages with /index
+            if (path.match(/^\/services\/[^\/]+\/index$/)) {
+                var newPath = path.replace('/index', '/');
+                window.location.replace(newPath);
+                return;
+            }
+            
+            // Handle .html extensions in URL bar (redirect to clean URL)
+            if (path.endsWith('.html') && path !== '/404.html') {
+                var cleanPath = path.replace('.html', '');
+                window.history.replaceState({}, '', cleanPath);
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <h2>Page Not Found</h2>
+        <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>
+        <div class="buttons">
+            <a href="/">Go Home</a>
+            <a href="/services.html" class="secondary">View Services</a>
+            <a href="/contact.html" class="secondary">Contact Us</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,35 +2,36 @@
 
 <html lang="en">
 <head>
-<script>if(window.location.pathname==="/index"){window.history.replaceState({},"","/");}
-        // Mobile touch optimization for service cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const serviceCards = document.querySelectorAll('.service-card');
-            
-            serviceCards.forEach(card => {
-                card.addEventListener('touchstart', function(e) {
-                    // Close all other cards
-                    serviceCards.forEach(otherCard => {
-                        if (otherCard !== this) {
-                            otherCard.classList.remove('touch-active');
-                        }
-                    });
-                    
-                    // Toggle this card
-                    this.classList.toggle('touch-active');
-                    
-                    // Prevent default to avoid scrolling issues
-                    e.preventDefault();
-                });
-                
-                // Close card when tapping outside
-                document.addEventListener('touchstart', function(e) {
-                    if (!card.contains(e.target)) {
-                        card.classList.remove('touch-active');
-                    }
-                });
+<script>
+if(window.location.pathname==="/index"||window.location.pathname==="/index.html"){window.location.replace("/");}
+// Mobile touch optimization for service cards
+document.addEventListener('DOMContentLoaded', function() {
+    const serviceCards = document.querySelectorAll('.service-card');
+    
+    serviceCards.forEach(card => {
+        card.addEventListener('touchstart', function(e) {
+            // Close all other cards
+            serviceCards.forEach(otherCard => {
+                if (otherCard !== this) {
+                    otherCard.classList.remove('touch-active');
+                }
             });
-        }
+            
+            // Toggle this card
+            this.classList.toggle('touch-active');
+            
+            // Prevent default to avoid scrolling issues
+            e.preventDefault();
+        });
+        
+        // Close card when tapping outside
+        document.addEventListener('touchstart', function(e) {
+            if (!card.contains(e.target)) {
+                card.classList.remove('touch-active');
+            }
+        });
+    });
+});
 </script>
 <meta content="max-age=31536000; includeSubDomains" http-equiv="Strict-Transport-Security"/>
 <meta content="upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
@@ -38,7 +39,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Accessibility Contractor Near Me | Watts Safety Installs | Norfolk, NE</title>
 <meta content="Watts Safety Installs: Expert accessibility home mods, remodeling, AV, and maintenance in Norfolk, NE. ADA ramps, grab bars, TV mounting, snow removal &amp; more. Free quotes—15% off first snow service!" name="description"/>
-<link href="https://wattsatpcontractor.com" rel="canonical"/>
+<link rel="canonical" href="https://wattsatpcontractor.com/">
 <!-- Favicon -->
 <link href="/apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
 <link href="/apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
@@ -1363,6 +1364,9 @@
             .service-tile.mobile-animated h2,
             .service-tile.mobile-animated p, 
             .service-tile.mobile-animated .trust-text {
+                color: white !important;
+            }
+        }
     </style>
 <!-- Redirects handled by 404.html and _redirects file -->
 <!-- SEASONAL PROMO ANIMATIONS -->

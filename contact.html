@@ -1359,11 +1359,11 @@
     <section class="contact-content">
         <div class="contact-grid">
             <!-- Contact Information -->
-            <div class="contact-info">
+            <div class="contact-info contact-tile">
                 <h2>Get In Touch</h2>
                 <p style="font-size: 1.2rem; margin-bottom: 30px; color: var(--gray);">We'd love to hear from you! Choose the most convenient way to reach out.</p>
                 
-                <div class="contact-method">
+                <div class="contact-method contact-tile">
                     <div class="contact-icon">
                         <i class="fas fa-phone"></i>
                     </div>
@@ -1375,7 +1375,7 @@
                     </div>
                 </div>
                 
-                <div class="contact-method">
+                <div class="contact-method contact-tile">
                     <div class="contact-icon">
                         <i class="fas fa-envelope"></i>
                     </div>
@@ -1386,17 +1386,17 @@
                     </div>
                 </div>
                 
-                <div class="contact-method">
-    		<div class="contact-icon">
-        		<i class="fas fa-exclamation-triangle"></i>
-   		    </div>
-  		    <div class="contact-details">
-   		       <h3>Emergency Services</h3>
-   		       <p>On Call emergency response available</p>
-    		       <a href="tel:+14054106402">Call Now for Emergencies</a>
-  		       <p style="margin-top: 8px; font-size: 0.9rem; color: var(--teal);"><i class="fas fa-bolt"></i> Snow removal & safety emergencies</p>
- 		    </div>
-		 </div>
+                <div class="contact-method contact-tile">
+                    <div class="contact-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Emergency Services</h3>
+                        <p>On Call emergency response available</p>
+                        <a href="tel:+14054106402">Call Now for Emergencies</a>
+                        <p style="margin-top: 8px; font-size: 0.9rem; color: var(--teal);"><i class="fas fa-bolt"></i> Snow removal & safety emergencies</p>
+                    </div>
+                </div>
                 
                 <div class="business-hours">
                     <h3>Business Hours</h3>
@@ -1419,7 +1419,7 @@
             </div>
             
             <!-- Contact Form -->
-            <div class="contact-form-container">
+            <div class="contact-form-container contact-tile">
                 <h2>Send Us a Message</h2>
                 <p style="margin-bottom: 30px; color: var(--gray);">Fill out the form below and we'll get back to you within 24 hours with a free consultation.</p>
                 
@@ -1482,29 +1482,30 @@
         </div>
         
         <!-- Service Areas -->
-        <div class="service-areas">
+        <div class="service-areas contact-tile">
             <h2>Service Areas</h2>
             <p>We proudly serve Norfolk and surrounding communities throughout Nebraska</p>
             <div class="areas-grid">
-                <div class="area-item">Norfolk</div>
-                <div class="area-item">Madison</div>
-                <div class="area-item">Stanton</div>
-                <div class="area-item">Pierce</div>
-                <div class="area-item">Plainview</div>
-                <div class="area-item">Creighton</div>
-                <div class="area-item">Bloomfield</div>
-                <div class="area-item">All Northeast NE</div>
+                <div class="area-item area-tile">Norfolk</div>
+                <div class="area-item area-tile">Madison</div>
+                <div class="area-item area-tile">Stanton</div>
+                <div class="area-item area-tile">Pierce</div>
+                <div class="area-item area-tile">Plainview</div>
+                <div class="area-item area-tile">Creighton</div>
+                <div class="area-item area-tile">Bloomfield</div>
+                <div class="area-item area-tile">All Northeast NE</div>
             </div>
         </div>
         
         <!-- Trust Badges -->
         <div class="trust-badges">
-            <div class="trust-badge">
+            <div class="trust-badge contact-tile">
                 <div class="trust-icon">
                     <i class="fas fa-award"></i>
                 </div>
                 <div class="trust-text">ATP Approved Contractor</div>
             </div>
+            <div class="trust-badge contact-tile">
             <div class="trust-badge">
                 <div class="trust-icon">
                     <i class="fas fa-file-contract"></i>
@@ -1624,6 +1625,7 @@
     <!-- BENEFIT CARD ANINETION SCRIPT -->
     <script>
     // Mobile auto-animation for benefit cards
+    // Note: desktop hover behavior is handled purely in CSS.
     function initBenefitAnimations() {
         const benefitCards = document.querySelectorAll('.benefit-card');
         
@@ -1642,32 +1644,9 @@
                 this.style.transform = '';
             });
         });
-        
-        // Auto-animate benefit cards on mobile (persistent state)
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            benefitCards.forEach(card => {
-                setTimeout(() => {
-                    card.classList.add('mobile-animated');
-                }, delay);
-                delay += 500;
-            });
-            
-            // Re-apply animation class when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    setTimeout(() => {
-                        let newDelay = 0;
-                        benefitCards.forEach(card => {
-                            setTimeout(() => {
-                                card.classList.add('mobile-animated');
-                            }, newDelay);
-                            newDelay += 500;
-                        });
-                    }, 1000);
-                }
-            });
-        }
+
+        // The actual timed auto-animate on mobile is handled by the
+        // global tile animation script below so behavior matches service pages.
     }
     
     // Initialize when DOM loads
@@ -1676,36 +1655,12 @@
     } else {
         initBenefitAnimations();
     }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initBenefitAnimations);
-    
-    // Also animate when benefit cards come into view
-    function animateBenefitOnScroll() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        benefitCards.forEach(card => {
-            observer.observe(card);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
-    }
     </script>
     
 
     <!-- COMPREHENSIVE TILE ANINETION SCRIPT -->
     <script>
-    // Mobile auto-animation for all tiles
+    // Mobile auto-animation for all tiles (match service-page timing)
     function initAllTileAnimations() {
         const allTiles = document.querySelectorAll(
             '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
@@ -1720,6 +1675,7 @@
             
             // Touch events for mobile
             tile.addEventListener('touchstart', function() {
+
                 this.style.transform = 'translateY(-5px)';
             });
             
@@ -1728,15 +1684,14 @@
             });
         });
         
-        // Auto-animate tiles on mobile (persistent state)
+        // Auto-animate tiles on mobile after a single 3s delay, then keep them animated
+        // This mirrors the service-page behavior where the main tile animates after 3 seconds.
         if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            allTiles.forEach(tile => {
-                setTimeout(() => {
+            setTimeout(() => {
+                allTiles.forEach(tile => {
                     tile.classList.add('mobile-animated');
-                }, delay);
-                delay += 300;
-            });
+                });
+            }, 3000);
         }
     }
     
@@ -1747,34 +1702,10 @@
         initAllTileAnimations();
     }
     
-    // Re-initialize on page show
+    // Re-initialize on page show (e.g., back/forward cache)
     window.addEventListener('pageshow', initAllTileAnimations);
-    
-    // Animate when tiles come into view
-    function animateTilesOnScroll() {
-        const allTiles = document.querySelectorAll(
-            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
-            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
-        );
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                }
-            });
-        }, { threshold: 0.3 });
-        
-        allTiles.forEach(tile => {
-            observer.observe(tile);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
-    }
     </script>
     
 </body>
-</html>
+</html>< ! - -   D e p l o y   r e f r e s h   1 2 / 0 8 / 2 0 2 5   0 8 : 1 9 : 4 5   - - >  
+ 

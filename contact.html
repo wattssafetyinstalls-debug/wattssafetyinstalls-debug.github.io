@@ -1570,16 +1570,23 @@
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const navLinks = document.getElementById('navLinks');
 
-        mobileMenuBtn.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-        });
+        console.log('Mobile menu elements:', { mobileMenuBtn, navLinks });
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.header-container')) {
-                navLinks.classList.remove('active');
-            }
-        });
+        if (mobileMenuBtn && navLinks) {
+            mobileMenuBtn.addEventListener('click', function() {
+                console.log('Mobile menu button clicked');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.header-container')) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        } else {
+            console.error('Mobile menu elements not found');
+        }
 
         // Current year for copyright
         document.getElementById('current-year').textContent = new Date().getFullYear();
@@ -1682,7 +1689,6 @@
             
             // Touch events for mobile
             tile.addEventListener('touchstart', function() {
-
                 this.style.transform = 'translateY(-5px)';
             });
             

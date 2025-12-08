@@ -14,30 +14,6 @@
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-KCPM8VZ');
     </script>
-        // Mobile touch optimization for service cards
-        if (window.matchMedia("(hover: none)").matches) {
-            const serviceCards = document.querySelectorAll('.service-card');
-            
-            serviceCards.forEach(card => {
-                card.addEventListener('touchstart', function(e) {
-                    // Remove active class from all other cards
-                    serviceCards.forEach(otherCard => {
-                        if (otherCard !== this) {
-                            otherCard.classList.remove('mobile-active');
-                        }
-                    // Toggle this card
-                    this.classList.toggle('mobile-active');
-                    
-                    // Prevent default to avoid scrolling issues
-                    e.preventDefault();
-                // Close card when tapping outside
-                document.addEventListener('touchstart', function(e) {
-                    if (!e.target.closest('.service-card')) {
-                        serviceCards.forEach(card => {
-                            card.classList.remove('mobile-active');
-                        }
-                }
-</script>
     <!-- End Google Tag Manager -->
 
     <!-- Google tag (gtag.js) -->

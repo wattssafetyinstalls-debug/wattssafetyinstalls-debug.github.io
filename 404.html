@@ -4,19 +4,20 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-    // Simple redirect logic for GitHub Pages
+    // Clean URL redirect logic - NO trailing slashes
     var path = window.location.pathname;
     var search = window.location.search;
     var hash = window.location.hash;
     
-    // If path ends with .html, redirect to clean URL
+    // If path ends with .html, redirect to clean URL (no slash)
     if (path.endsWith('.html')) {
         var cleanPath = path.slice(0, -5);
         window.location.href = cleanPath + (search || '') + (hash || '');
     }
-    // If path doesn't end with slash and is not a file, add slash
-    else if (path !== '/' && !path.includes('.') && !path.endsWith('/')) {
-        window.location.href = path + '/' + (search || '') + (hash || '');
+    // If path ends with slash, remove it for consistency
+    else if (path !== '/' && path.endsWith('/')) {
+        var noSlashPath = path.slice(0, -1);
+        window.location.href = noSlashPath + (search || '') + (hash || '');
     }
     </script>
     <meta http-equiv="refresh" content="0; url=.">

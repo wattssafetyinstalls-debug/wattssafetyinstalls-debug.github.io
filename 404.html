@@ -4,20 +4,29 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-    // Clean URL redirect logic - NO trailing slashes
+    // Clean URL redirect logic - NO trailing slashes for SEO consistency
     var path = window.location.pathname;
     var search = window.location.search;
     var hash = window.location.hash;
     
+    console.log("Original path:", path);
+    
     // If path ends with .html, redirect to clean URL (no slash)
     if (path.endsWith('.html')) {
         var cleanPath = path.slice(0, -5);
+        console.log("Redirecting from .html to:", cleanPath);
         window.location.href = cleanPath + (search || '') + (hash || '');
     }
-    // If path ends with slash, remove it for consistency
+    // If path ends with slash (and is not root), remove it for SEO consistency
     else if (path !== '/' && path.endsWith('/')) {
         var noSlashPath = path.slice(0, -1);
+        console.log("Removing trailing slash, redirecting to:", noSlashPath);
         window.location.href = noSlashPath + (search || '') + (hash || '');
+    }
+    // For service pages without index.html, serve the folder content
+    else if (path.startsWith('/services/') && !path.includes('.')) {
+        console.log("Service page detected, serving content");
+        // Let GitHub Pages serve the index.html from the folder
     }
     </script>
     <meta http-equiv="refresh" content="0; url=.">

@@ -9,11 +9,13 @@
     <meta name="keywords" content="home theater installation Norfolk NE, TV home theater setup, surround sound installation, home theater system installation, projector installation, home audio video installation, home theater installation Battle Creek, Pierce home theater, Madison County home theater, Antelope County home theater installation">
     
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KCPM8VZ');
+    </script>
     <!-- End Google Tag Manager -->
 
     <!-- Google tag (gtag.js) -->
@@ -1079,8 +1081,32 @@
       }
     }
   ]
-}
-</script>
+}</script>
 
+    <!-- Mobile Animation Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth <= 768) {
+            console.log('Mobile animation script loaded');
+            
+            setTimeout(function() {
+                const mainTile = document.getElementById('mainServiceTile');
+                const categories = document.querySelectorAll('.service-category');
+                
+                if (mainTile) {
+                    mainTile.classList.add('mobile-animated');
+                    console.log('Mobile animation applied to main tile');
+                }
+                
+                categories.forEach(category => {
+                    category.classList.add('mobile-animated');
+                });
+                
+                console.log('Mobile animation completed');
+                
+            }, 3000);
+        }
+    });
+    </script>
 </body>
 </html>

@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Renovations | Watts At Your Service</title>
-    <meta name="description" content="Professional kitchen remodeling in Norfolk, NE. We create functional, beautiful kitchen spaces with custom cabinetry, quality countertops, and expert installation techniques.">Kitchen Renovations | Watts Safety Installs | Norfolk, NE</title>
-    
+    <meta name="description" content="Professional kitchen remodeling in Norfolk, NE. We create functional, beautiful kitchen spaces with custom cabinetry, quality countertops, and expert installation techniques.">
     
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'var f=d.getElementsByTagName(s)[0],
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
@@ -1240,6 +1239,32 @@
   ]
 }
 </script>
+
+    <!-- Mobile Animation Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth <= 768) {
+            console.log('Mobile animation script loaded');
+            
+            setTimeout(function() {
+                const mainTile = document.getElementById('mainServiceTile');
+                const categories = document.querySelectorAll('.service-category');
+                
+                if (mainTile) {
+                    mainTile.classList.add('mobile-animated');
+                    console.log('Mobile animation applied to main tile');
+                }
+                
+                categories.forEach(category => {
+                    category.classList.add('mobile-animated');
+                });
+                
+                console.log('Mobile animation completed');
+                
+            }, 3000);
+        }
+    });
+    </script>
 
 </body>
 </html>

@@ -9,31 +9,31 @@ import os
 
 # User-provided Q&A data
 qa_updates = {
-    'services/basement-finishing.html': [
+    'services/room-additions.html': [
         {
-            'question': 'basement finishing near me Norfolk Nebraska',
-            'answer': "We turn cold, forgotten Norfolk basements into warm, beautiful living space you'll actually use every day. Family rooms, home theaters, guest bedrooms, playrooms, wet bars, or that man-cave you've always wanted. Proper insulation, moisture control, egress windows, and finishes that match the rest of your house perfectly.",
+            'question': 'room addition contractor near me Norfolk',
+            'answer': "We've been adding beautiful, seamless rooms to Norfolk homes for years—master suites, sunrooms, in-law apartments, bigger kitchens, or that family room you've outgrown. New foundation, matching roof lines, siding that blends perfectly, and all the permits handled so it looks and feels like your house was born this way.",
             'icon': 'fa-home'
         },
         {
-            'question': 'finished basement contractor Norfolk NE',
-            'answer': "One local crew handles everything from framing and electrical to drywall, trim, flooring, and that final bar countertop. Fully permitted, insured, and we keep dust locked down so you can still live upstairs without feeling like you're in a construction zone.",
+            'question': 'home addition builder Norfolk Nebraska',
+            'answer': "From the first sketch to the final paint touch-up, we're your one-team builder. Concrete foundation poured below frost line, stick-framed or panelized walls, trusses or stick-built roof tied into the existing house, energy-efficient windows, and insulation that keeps your new space comfy year-round in Nebraska weather.",
             'icon': 'fa-hammer'
         },
         {
-            'question': 'basement remodeling ideas Norfolk Nebraska',
-            'answer': "Lately Norfolk families are loving home theaters with tiered seating and star ceilings, built-in bars with kegerators, kids' playrooms that grow into teen hangouts, in-law suites with full baths, and workout rooms with rubber flooring. Whatever your family needs extra space for, we make it awesome.",
+            'question': 'sunroom addition Norfolk NE',
+            'answer': "Imagine coffee with sunrise every morning. Our Norfolk sunrooms come three-season (screened or windows) or four-season with heat, AC, and low-E glass. Cathedral ceilings, knee walls, tile or hardwood floors, and so much natural light your plants will thank you.",
             'icon': 'fa-lightbulb'
         },
         {
-            'question': 'basement waterproofing and finishing Norfolk',
-            'answer': "We never finish a basement without protecting it first. Interior drainage systems, sump pumps with battery backup, vapor barriers, and rigid foam insulation keep Nebraska moisture out for good. Dry walls + gorgeous finishes = a basement you'll actually trust and enjoy.",
-            'icon': 'fa-water'
+            'question': 'family room addition near me Norfolk',
+            'answer': "Outgrowing the living room? We build spacious family room additions with vaulted ceilings, big windows, built-in entertainment centers, and luxury vinyl plank or carpet that stands up to kids and pets. Finally a place for everyone to spread out and still be together.",
+            'icon': 'fa-users'
         },
         {
-            'question': 'lower level remodel Norfolk NE',
-            'answer': "Egress windows for safety, fire-rated doors and drywall, drop ceilings or drywall with recessed lights, luxury vinyl plank that looks like hardwood but laughs at spills. We know code inside-out so your lower level is safe, legal, and looks like it was always meant to be lived in.",
-            'icon': 'fa-check-circle'
+            'question': 'second story addition Norfolk Nebraska',
+            'answer': "Double your living space without eating your yard. We reinforce the existing structure, add a full second story—new bedrooms, bathrooms, laundry upstairs, or that huge master suite you've dreamed about—and tie the roof perfectly so nobody can tell it wasn't original.",
+            'icon': 'fa-arrow-up'
         }
     ]
 }

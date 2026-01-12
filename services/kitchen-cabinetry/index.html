@@ -810,6 +810,53 @@
             }
         }
 
+
+.breadcrumb {
+    background: var(--white, #FFFFFF);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.breadcrumb a {
+    color: var(--gray, #64748B);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: var(--teal, #00C4B4);
+}
+
+.breadcrumb span {
+    color: var(--navy, #0A1D37);
+    font-weight: 600;
+}
+
+.breadcrumb i {
+    margin: 0 10px;
+    color: var(--gray, #64748B);
+}
+
+@media (max-width: 768px) {
+    .breadcrumb {
+        padding: 15px 0;
+    }
+
+    .breadcrumb-container {
+        padding: 0 15px;
+    }
+
+    .breadcrumb i {
+        margin: 0 5px;
+        font-size: 0.8rem;
+    }
+}
 </style>
 <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANINETIONS -->
 <style>
@@ -937,6 +984,16 @@
 </nav>
 </div>
 </header>
+<div class="breadcrumb">
+<div class="breadcrumb-container">
+<a href="/">Home</a>
+<i class="fas fa-chevron-right"></i>
+<a href="/services.html">Services</a>
+<i class="fas fa-chevron-right"></i>
+<span>Kitchen Cabinetry</span>
+</div>
+</div>
+
 <section class="hero">
 <h1 class="service-title">Kitchen Cabinetry</h1>
 <p class="certification-badge">ATP Approved Contractor - Nebraska Licensed #54690-25</p>

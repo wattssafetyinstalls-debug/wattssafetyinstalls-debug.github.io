@@ -793,7 +793,55 @@
                 transform: scale(1.05);
             }
         }
-    </style>
+    
+/* Breadcrumb */
+.breadcrumb {
+    background: var(--white);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.breadcrumb a {
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: var(--teal);
+}
+
+.breadcrumb span {
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.breadcrumb i {
+    margin: 0 10px;
+    color: var(--gray);
+}
+
+@media (max-width: 768px) {
+    .breadcrumb {
+        padding: 15px 0;
+    }
+    
+    .breadcrumb-container {
+        padding: 0 15px;
+    }
+    
+    .breadcrumb i {
+        margin: 0 5px;
+        font-size: 0.8rem;
+    }
+}
+</style>
 </meta><link rel="canonical" href="https://wattsatpcontractor.com/services" />
 </head>
 <body>
@@ -813,6 +861,15 @@
 <a class="phone-link" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402</a>
 </div>
 </header>
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+<div class="breadcrumb-container">
+<a href="/">Home</a>
+<i class="fas fa-chevron-right"></i>
+<span>Services</span>
+</div>
+</div>
+
 <!-- Hero -->
 <section class="hero">
 <h1>All Professional Services</h1>

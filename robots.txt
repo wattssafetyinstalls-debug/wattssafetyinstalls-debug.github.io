@@ -41,3 +41,7 @@ Sitemap: https://wattsatpcontractor.com/sitemap.xml
 
 # Crawl delay (be nice to servers)
 Crawl-delay: 1
+
+# Allow favicon files for Google
+Allow: /favicon.ico
+Allow: /favicon-*.png

@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <meta content="Watts Safety Installs: Expert accessibility home mods, remodeling, AV, and maintenance in Norfolk, NE. ADA ramps, grab bars, TV mounting, snow removal &amp; more. Free quotes—15% off first snow service!" name="description"/>
 <link rel="canonical" href="https://wattsatpcontractor.com/">
 <!-- Favicon -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+
 <link href="/apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
 <link href="/apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
 <link href="/apple-icon-72x72.png" rel="apple-touch-icon" sizes="72x72"/>
@@ -1367,7 +1369,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 color: white !important;
             }
         }
-    </style>
+    
+/* Mobile Touch Optimization */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+    }
+    
+    .service-card {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .hamburger {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+</style>
 <!-- Redirects handled by 404.html and _redirects file -->
 <!-- SEASONAL PROMO ANIMATIONS -->
 <style>
@@ -1804,11 +1822,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </button>
 <nav class="nav-links" id="navLinks">
 <a class="active" href="">Home</a>
-<a href="services">Services</a>
-<a href="service-area">Service Area</a>
-<a href="about">About</a>
-<a href="referrals">Referrals</a>
-<a href="contact">Contact</a>
+<a href="/services.html">Services</a>
+<a href="/service-area.html">Service Area</a>
+<a href="/about.html">About</a>
+<a href="/referrals.html">Referrals</a>
+<a href="/contact.html">Contact</a>
 </nav>
 <a class="phone-link" href="tel:+14054106402">
 <i class="fas fa-phone"></i> (405) 410-6402
@@ -1856,7 +1874,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 </div>
 <div class="service-cta">
-<a href="contact">Get Free Quote</a>
+<a href="/contact.html">Get Free Quote</a>
 </div>
 </div>
 </div>
@@ -1880,7 +1898,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 </div>
 <div class="service-cta">
-<a href="contact">Get Free Quote</a>
+<a href="/contact.html">Get Free Quote</a>
 </div>
 </div>
 </div>
@@ -1901,7 +1919,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 </div>
 <div class="service-cta">
-<a href="contact">Get Free Quote</a>
+<a href="/contact.html">Get Free Quote</a>
 </div>
 </div>
 </div>
@@ -1925,13 +1943,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </ul>
 </div>
 <div class="service-cta">
-<a href="contact">Get Free Quote</a>
+<a href="/contact.html">Get Free Quote</a>
 </div>
 </div>
 </div>
 </div>
 <div class="promo-floating">
-<a href="contact">
+<a href="/contact.html">
 <p style="font-size:1.2rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
 </a>
 </div>
@@ -1967,7 +1985,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
 <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-<p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a> | <a href="referrals">Referral Program</a></p>
+<p><a href="sitemap">Sitemap</a> | <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/referrals.html">Referral Program</a></p>
 </div>
 <div class="footer-links">
 <h3>Our Services</h3>

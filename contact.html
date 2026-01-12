@@ -53,7 +53,55 @@
     .category-card:hover *, .contact-tile:hover *, .area-tile:hover * {
         color: white !important;
     }
-    </style>
+    
+/* Breadcrumb */
+.breadcrumb {
+    background: var(--white);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.breadcrumb a {
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: var(--teal);
+}
+
+.breadcrumb span {
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.breadcrumb i {
+    margin: 0 10px;
+    color: var(--gray);
+}
+
+@media (max-width: 768px) {
+    .breadcrumb {
+        padding: 15px 0;
+    }
+    
+    .breadcrumb-container {
+        padding: 0 15px;
+    }
+    
+    .breadcrumb i {
+        margin: 0 5px;
+        font-size: 0.8rem;
+    }
+}
+</style>
     
     
     
@@ -1343,11 +1391,11 @@
             
             <nav class="nav-links" id="navLinks">
     <a href="index">Home</a>
-    <a href="services">Services</a>
-    <a href="service-area">Service Area</a>
-    <a href="about">About</a>
-    <a href="referrals">Referrals</a>
-    <a href="contact" class="active">Contact</a>
+    <a href="/services.html">Services</a>
+    <a href="/service-area.html">Service Area</a>
+    <a href="/about.html">About</a>
+    <a href="/referrals.html">Referrals</a>
+    <a href="/contact.html" class="active">Contact</a>
 </nav>
             
             <a href="tel:+14054106402" class="phone-link">
@@ -1355,6 +1403,15 @@
             </a>
         </div>
     </header>
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+<div class="breadcrumb-container">
+<a href="/">Home</a>
+<i class="fas fa-chevron-right"></i>
+<span>Contact</span>
+</div>
+</div>
+
 
     <!-- Page Header -->
     <section class="page-header">
@@ -1540,7 +1597,7 @@
                 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
                 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
                 <p>Nebraska Licensed General Contractor • Fully Insured</p>
-                <p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a> | <a href="referrals">Referral Program</a></p>
+                <p><a href="sitemap">Sitemap</a> | <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/referrals.html">Referral Program</a></p>
             </div>
             <div class="footer-links">
                 <h3>Our Services</h3>

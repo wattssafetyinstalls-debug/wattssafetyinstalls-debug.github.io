@@ -1,0 +1,66 @@
+Restore Original DBA Color Scheme
+============================================================
+Total files processed: 60
+Files changed: 59
+
+Changes:
+------------------------------------------------------------
+safety-installs\about.html: Changed CSS variable references to --teal
+safety-installs\contact.html: Changed CSS variable references to --teal
+safety-installs\index.html: Changed CSS variable references to --teal
+safety-installs\referrals.html: Changed CSS variable references to --teal
+safety-installs\service-area.html: Changed CSS variable references to --teal
+safety-installs\services-source.html: Changed CSS variable references to --teal
+safety-installs\services.html: Changed CSS variable references to --teal
+safety-installs\services\audio-visual\index.html: Changed CSS variable references to --teal
+safety-installs\services\basement-finishing\index.html: Changed CSS variable references to --teal
+safety-installs\services\bathroom-remodels\index.html: Changed CSS variable references to --teal
+safety-installs\services\cabinet-refacing\index.html: Changed CSS variable references to --teal
+safety-installs\services\cable-management\index.html: Changed CSS variable references to --teal
+safety-installs\services\concrete-pouring\index.html: Changed CSS variable references to --teal
+safety-installs\services\concrete-repair\index.html: Changed CSS variable references to --teal
+safety-installs\services\countertop-repair\index.html: Changed CSS variable references to --teal
+safety-installs\services\custom-cabinets\index.html: Changed CSS variable references to --teal
+safety-installs\services\custom-storage\index.html: Changed CSS variable references to --teal
+safety-installs\services\deck-construction\index.html: Changed CSS variable references to --teal
+safety-installs\services\driveway-installation\index.html: Changed CSS variable references to --teal
+safety-installs\services\drywall-repair\index.html: Changed CSS variable references to --teal
+safety-installs\services\emergency-repairs\index.html: Changed CSS variable references to --teal
+safety-installs\services\emergency-snow\index.html: Changed CSS variable references to --teal
+safety-installs\services\fence-installation\index.html: Changed CSS variable references to --teal
+safety-installs\services\fence-repair\index.html: Changed CSS variable references to --teal
+safety-installs\services\fertilization\index.html: Changed CSS variable references to --teal
+safety-installs\services\floor-refinishing\index.html: Changed CSS variable references to --teal
+safety-installs\services\flooring-installation\index.html: Changed CSS variable references to --teal
+safety-installs\services\garden-maintenance\index.html: Changed CSS variable references to --teal
+safety-installs\services\gutter-cleaning\index.html: Changed CSS variable references to --teal
+safety-installs\services\handyman-repair-services\index.html: Changed CSS variable references to --teal
+safety-installs\services\handyman-services\index.html: Changed CSS variable references to --teal
+safety-installs\services\hardwood-flooring\index.html: Changed CSS variable references to --teal
+safety-installs\services\home-audio\index.html: Changed CSS variable references to --teal
+safety-installs\services\home-remodeling\index.html: Changed CSS variable references to --teal
+safety-installs\services\home-remodeling-renovation\index.html: Changed CSS variable references to --teal
+safety-installs\services\home-theater-installation\index.html: Changed CSS variable references to --teal
+safety-installs\services\kitchen-cabinetry\index.html: Changed CSS variable references to --teal
+safety-installs\services\kitchen-renovations\index.html: Changed CSS variable references to --teal
+safety-installs\services\landscape-design\index.html: Changed CSS variable references to --teal
+safety-installs\services\lawn-maintenance\index.html: Changed CSS variable references to --teal
+safety-installs\services\onyx-countertops\index.html: Changed CSS variable references to --teal
+safety-installs\services\painting-drywall\index.html: Changed CSS variable references to --teal
+safety-installs\services\painting-services\index.html: Changed CSS variable references to --teal
+safety-installs\services\patio-construction\index.html: Changed CSS variable references to --teal
+safety-installs\services\pressure-washing\index.html: Changed CSS variable references to --teal
+safety-installs\services\projector-install\index.html: Changed CSS variable references to --teal
+safety-installs\services\property-maintenance-services\index.html: Changed CSS variable references to --teal
+safety-installs\services\room-additions\index.html: Changed CSS variable references to --teal
+safety-installs\services\seasonal-cleanup\index.html: Changed CSS variable references to --teal
+safety-installs\services\seasonal-prep\index.html: Changed CSS variable references to --teal
+safety-installs\services\siding-replacement\index.html: Changed CSS variable references to --teal
+safety-installs\services\snow-removal\index.html: Changed CSS variable references to --teal
+safety-installs\services\sound-system-setup\index.html: Changed CSS variable references to --teal
+safety-installs\services\soundbar-setup\index.html: Changed CSS variable references to --teal
+safety-installs\services\tree-trimming\index.html: Changed CSS variable references to --teal
+safety-installs\services\tv-home-theater-installation\index.html: Changed CSS variable references to --teal
+safety-installs\services\tv-mounting\index.html: Changed CSS variable references to --teal
+safety-installs\services\tv-mounting-residential\index.html: Changed CSS variable references to --teal
+safety-installs\services\window-doors\index.html: Changed CSS variable references to --teal

@@ -1,119 +1,56 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <!-- EMERGENCY TILE FIX -->
-    <style>
-    /* FORCE GRADIENT ANINETIONS WITH !IMPORTANT */
-    .benefit-card, .value-tile, .service-tile, .trust-item,
-    .service-card, .promo-card, .category-card, .contact-tile, .area-tile {
-        position: relative !important;
-        overflow: hidden !important;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-    }
-    
-    .benefit-card::before, .value-tile::before, .service-tile::before, 
-    .trust-item::before, .service-card::before, .promo-card::before,
-    .category-card::before, .contact-tile::before, .area-tile::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: -100% !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-        z-index: 1 !important;
-    }
-    
-    .benefit-card:hover::before, .value-tile:hover::before, 
-    .service-tile:hover::before, .trust-item:hover::before,
-    .service-card:hover::before, .promo-card:hover::before,
-    .category-card:hover::before, .contact-tile:hover::before,
-    .area-tile:hover::before {
-        left: 0 !important;
-    }
-    
-    .benefit-card > *, .value-tile > *, .service-tile > *, 
-    .trust-item > *, .service-card > *, .promo-card > *,
-    .category-card > *, .contact-tile > *, .area-tile > * {
-        position: relative !important;
-        z-index: 2 !important;
-    }
-    
-    .benefit-card:hover, .value-tile:hover, .service-tile:hover, 
-    .trust-item:hover, .service-card:hover, .promo-card:hover,
-    .category-card:hover, .contact-tile:hover, .area-tile:hover {
-        transform: translateY(-8px) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-    }
-    
-    /* FORCE TEXT COLOR CHANGE */
-    .benefit-card:hover *, .value-tile:hover *, .service-tile:hover *, 
-    .trust-item:hover *, .service-card:hover *, .promo-card:hover *,
-    .category-card:hover *, .contact-tile:hover *, .area-tile:hover * {
-        color: white !important;
-    }
-    </style>
-    
-    
-    
-<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Watts Safety Installs | Accessibility Contractor | ...</title>
-    <meta name="description" content="Learn about Watts Safety Installs - Norfolk's trusted ATP Approved Contractor specializing in accessibility modifications and safety solutions.">
-    
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
-    
-    <!-- Search Engine & Social Media Meta Tags -->
-    <meta name="google-site-verification" content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" />
-    
-    <!-- Open Graph for Facebook/LinkedIn -->
-    <meta property="og:title" content="About Watts Safety Installs | Accessibility Contractor | Norfolk, NE">
-    <meta property="og:description" content="Learn about Watts Safety Installs - Norfolk's trusted ATP Approved Contractor specializing in accessibility modifications and safety solutions.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
-    <meta property="og:url" content="https://wattsatpcontractor.com/about">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Watts Safety Installs">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="About Watts Safety Installs | Accessibility Contractor">
-    <meta name="twitter:description" content="Norfolk's trusted ATP Approved Contractor specializing in accessibility modifications and safety solutions.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
-    
-    <!-- Additional SEO Meta Tags -->
-    <meta name="keywords" content="accessibility contractor about, ADA contractor Norfolk, wheelchair ramp installer, grab bars installation, ATP approved contractor">
-    <meta name="author" content="Watts Safety Installs">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="https://wattsatpcontractor.com/about">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-   
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Structured Data / Schema Markup -->
-    <script type="application/ld+json">
+<meta content="max-age=31536000; includeSubDomains" http-equiv="Strict-Transport-Security"/>
+<meta content="upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About Watts Safety Installs | Accessibility Contractor | Norfolk NE</title>
+<meta content="Learn about Watts Safety Installs - Norfolk's trusted ATP Approved Contractor specializing in accessibility modifications and safety solutions." name="description"/>
+<!-- Favicon -->
+<link href="/apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
+<link href="/apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
+<link href="/apple-icon-72x72.png" rel="apple-touch-icon" sizes="72x72"/>
+<link href="/apple-icon-76x76.png" rel="apple-touch-icon" sizes="76x76"/>
+<link href="/apple-icon-114x114.png" rel="apple-touch-icon" sizes="114x114"/>
+<link href="/apple-icon-120x120.png" rel="apple-touch-icon" sizes="120x120"/>
+<link href="/apple-icon-144x144.png" rel="apple-touch-icon" sizes="144x144"/>
+<link href="/apple-icon-152x152.png" rel="apple-touch-icon" sizes="152x152"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="/android-chrome-192x192.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png"/>
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/manifest.json" rel="manifest"/>
+<meta content="#ffffff" name="msapplication-TileColor"/>
+<meta content="/ms-icon-144x144.png" name="msapplication-TileImage"/>
+<meta content="#ffffff" name="theme-color"/>
+<!-- Search Engine & Social Media Meta Tags -->
+<meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification">
+<!-- Open Graph for Facebook/LinkedIn -->
+<meta content="About Watts Safety Installs | Accessibility Contractor | Norfolk NE" property="og:title"/>
+<meta content="Learn about Watts Safety Installs - Norfolk's trusted ATP Approved Contractor specializing in accessibility modifications and safety solutions." property="og:description"/>
+<meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" property="og:image"/>
+<meta content="https://wattsatpcontractor.com/about" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="Watts Safety Installs" property="og:site_name"/>
+<!-- Twitter Card -->
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="About Watts Safety Installs | Accessibility Contractor" name="twitter:title"/>
+<meta content="Norfolk's trusted ATP Approved Contractor specializing in accessibility modifications and safety solutions." name="twitter:description"/>
+<meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" name="twitter:image"/>
+<!-- Additional SEO Meta Tags -->
+<meta content="accessibility contractor about, ADA contractor Norfolk, wheelchair ramp installer, grab bars installation, ATP approved contractor" name="keywords"/>
+<meta content="Watts Safety Installs" name="author"/>
+<meta content="index, follow, max-image-preview:large" name="robots"/>
+<link href="https://wattsatpcontractor.com/_site/website-backup-20251128-212845/about" rel="canonical"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Font Awesome for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- Structured Data / Schema Markup -->
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
@@ -123,10 +60,10 @@
       "name": "Watts Safety Installs",
       "url": "https://wattsatpcontractor.com",
       "telephone": "+14054106402",
-      "email": "wattssafetyinstalls@gmail.com",
+      "email": "Justin.Watts@WattsATPContractor.com",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "500 Block Omaha Ave",
+        "streetAddress": "507 West Omaha Ave Suite B",
         "addressLocality": "Norfolk",
         "addressRegion": "NE",
         "postalCode": "68701",
@@ -177,7 +114,7 @@
       "@type": "WebPage",
       "@id": "https://wattsatpcontractor.com/about.html/#webpage",
       "url": "https://wattsatpcontractor.com/about",
-      "name": "About Watts Safety Installs | Accessibility Contractor | Norfolk, NE",
+      "name": "About Watts Safety Installs | Accessibility Contractor | Norfolk NE",
       "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
       "isPartOf": {
         "@id": "https://wattsatpcontractor.com/#website"
@@ -193,8 +130,7 @@
   ]
 }
 </script>
-   
-    <style>
+<style>
         :root {
             --teal: #00C4B4;
             --navy: #0A1D37;
@@ -488,246 +424,22 @@
         
         .values-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 40px;
+            margin-bottom: 25px;
         }
         
         .value-card {
             background: var(--white);
             border-radius: 15px;
             padding: 40px 30px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .value-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0A1D37, #00C4B4);
-            transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 1;
-        }
-        
-        .value-card:hover::before {
-            left: 0;
-        }
-        
-        .value-card > * {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .value-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* SATIN GLOSS SWIPE EFFECT */
-        .value-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.4),
-                transparent
-            );
-            transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 3;
-        }
-        
-        .value-card:hover::after {
-            left: 100%;
-        }
-        
-        /* TEXT COLOR OPTIMIZATION ON HOVER */
-        .value-card:hover .value-icon,
-        .value-card:hover h3,
-        .value-card:hover p {
-            color: white !important;
-        }
-        
-        .value-icon {
-            font-size: 3rem;
-            color: var(--teal);
-            margin-bottom: 25px;
-            transition: color 0.6s;
-        }
-        
-        .value-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
             color: var(--navy);
             font-family: 'Playfair Display', serif;
-            transition: color 0.6s;
         }
         
         .value-card p {
             color: var(--gray);
             line-height: 1.7;
-            transition: color 0.6s;
-        }
-        
-        /* Services Section - SIDE BY SIDE LAYOUT */
-        .services-section {
-            padding: 120px 20px;
-            background: var(--white);
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .services-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        
-        .services-section h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.2rem;
-            margin-bottom: 60px;
-            color: var(--navy);
-            text-align: center;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-        }
-        
-        .service-tile {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 40px 30px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .service-tile::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0A1D37, #00C4B4);
-            transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 1;
-        }
-        
-        .service-tile:hover::before {
-            left: 0;
-        }
-        
-        .service-tile > * {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .service-tile:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* SATIN GLOSS SWIPE EFFECT */
-        .service-tile::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.4),
-                transparent
-            );
-            transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 3;
-        }
-        
-        .service-tile:hover::after {
-            left: 100%;
-        }
-        
-        /* TEXT COLOR OPTIMIZATION ON HOVER */
-        .service-tile:hover .service-icon,
-        .service-tile:hover h3,
-        .service-tile:hover p,
-        .service-tile:hover .service-features li {
-            color: white !important;
-        }
-        
-        .service-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        
-        .service-icon {
-            font-size: 2.8rem;
-            color: var(--teal);
-            margin-right: 20px;
-            transition: color 0.6s;
-            flex-shrink: 0;
-        }
-        
-        .service-title {
-            font-size: 1.8rem;
-            color: var(--navy);
-            font-family: 'Playfair Display', serif;
-            transition: color 0.6s;
-            margin-bottom: 5px;
-        }
-        
-        .service-description {
-            color: var(--gray);
-            line-height: 1.7;
-            transition: color 0.6s;
-            margin-bottom: 25px;
-        }
-        
-        .service-features {
-            list-style: none;
-            margin-top: auto;
-        }
-        
-        .service-features li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            color: var(--gray);
-            transition: color 0.6s;
-        }
-        
-        .service-features li i {
-            color: var(--teal);
-            margin-right: 10px;
-            font-size: 0.9rem;
-            transition: color 0.6s;
-        }
-        
-        .service-tile:hover .service-features li i {
-            color: var(--gold) !important;
         }
         
         /* CTA Section */
@@ -845,7 +557,7 @@
             .about-container { grid-template-columns: 1fr; gap: 50px; } 
             .footer-container { grid-template-columns: 1fr 1fr; gap: 40px; }
             .nav-links { gap: 25px; }
-            .values-grid, .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .values-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
         }
         
         @media (max-width: 768px) { 
@@ -861,17 +573,18 @@
                 width: 100%;
                 background: var(--navy);
                 flex-direction: column;
-                padding: 30px 20px;
-                gap: 20px;
+                padding: 30px 20px; /* Increased padding */
+                gap: 20px; /* Increased gap */
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
             .nav-links.active {
                 display: flex;
             }
             
+            /* Improved mobile navigation buttons */
             .nav-links a {
-                padding: 15px 0;
-                font-size: 1.2rem;
+                padding: 15px 0; /* Larger touch targets */
+                font-size: 1.2rem; /* Larger font for mobile */
                 text-align: center;
                 width: 100%;
                 display: block;
@@ -890,7 +603,7 @@
             .about-hero h1 { 
                 font-size: 2.8rem; 
             }
-            .about-text h2, .mission h2, .values h2, .services-section h2, .cta-section h2 { 
+            .about-text h2, .mission h2, .values h2, .cta-section h2 { 
                 font-size: 2.8rem; 
             }
             .footer-container { 
@@ -900,16 +613,8 @@
             .about-features { 
                 grid-template-columns: 1fr; 
             }
-            .values-grid, .services-grid { 
+            .values-grid { 
                 grid-template-columns: 1fr; 
-            }
-            .service-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .service-icon {
-                margin-right: 0;
-                margin-bottom: 15px;
             }
         }
         
@@ -930,7 +635,7 @@
             .about-hero h1 { 
                 font-size: 2.3rem; 
             } 
-            .about-text h2, .mission h2, .values h2, .services-section h2, .cta-section h2 {
+            .about-text h2, .mission h2, .values h2, .cta-section h2 {
                 font-size: 2.3rem;
             }
             .cta-button {
@@ -939,230 +644,158 @@
             }
         }
     </style>
-</head>
+</meta></head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-container">
-            <div class="logo-container">
-                <a href="index" class="logo">WATTS</a>
-            </div>
-            
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <nav class="nav-links" id="navLinks">
-                <a href="index">Home</a>
-                <a href="services">Services</a>
-                <a href="service-area">Service Area</a>
-                <a href="about" class="active">About</a>
-                <a href="referrals">Referrals</a>
-                <a href="contact">Contact</a>
-            </nav>
-            
-            <a href="tel:+14054106402" class="phone-link">
-                <i class="fas fa-phone"></i> (405) 410-6402
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-KCPM8VZ" style="display:none;visibility:hidden" width="0"></iframe></noscript>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KCPM8VZ');</script>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-R7FNGWQVQG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-R7FNGWQVQG');
+  gtag('config', 'G-4BXXKZJZTZ');
+  gtag('config', 'G-8TF95LBYRV');
+  gtag('config', 'G-B8SKQ9HHPZ');
+  gtag('config', 'G-E21ZQ9L9QC');
+  gtag('config', 'G-JL3RR3JH55');
+  gtag('config', 'G-P2MRLK93YK');
+  gtag('config', 'G-PG3KZVYPV0');
+  gtag('config', 'G-X6LMX9VR0Y');
+  gtag('config', 'AW-586671676');
+</script>
+<!-- Header -->
+<header>
+<div class="header-container">
+<div class="logo-container">
+<a class="logo" href="/">WATTS</a>
+</div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">
+<i class="fas fa-bars"></i>
+</button>
+<nav class="nav-links" id="navLinks">
+<a href="/">Home</a>
+<a href="/services.html">Services</a>
+<a href="/service-area.html">Service Area</a>
+<a class="active" href="/about.html">About</a>
+<a href="/referrals.html">Referrals</a>
+<a href="/contact.html">Contact</a>
+</nav>
+<a class="phone-link" href="tel:+14054106402">
+<i class="fas fa-phone"></i> (405) 410-6402
             </a>
-        </div>
-    </header>
-
-    <!-- About Hero Section -->
-    <section class="about-hero">
-        <h1>About Watts Safety Installs</h1>
-        <p class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25 • Serving All Nebraska</p>
-        <p>Your Trusted Partner for Accessibility & Safety Solutions</p>
-    </section>
-
-    <!-- About Content Section -->
-    <section class="about-content">
-        <div class="about-container">
-            <div class="about-text">
-                <h2>Your Trusted Nebraska Contractor</h2>
-                <p>As an ATP Approved Contractor with Nebraska license #54690-25, Watts Safety Installs is your premier choice for accessibility modifications and home safety solutions throughout Nebraska.</p>
-                <p>We specialize in creating safe, accessible environments for seniors and individuals with mobility challenges, while also providing comprehensive contracting services for all your home improvement needs.</p>
-                <p>With years of experience and a commitment to quality craftsmanship, we've helped hundreds of Nebraska residents create safer, more accessible living spaces.</p>
-                
-                <div class="about-features">
-                    <div class="feature"><div class="feature-icon">✓</div><div>Free Estimates & Consultations</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>Licensed & Insured</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>Senior & Veteran Discounts</div></div>
-                    <div class="feature"><div class="feature-icon">✓</div><div>Emergency Services Available</div></div>
-                </div>
-            </div>
-            <div class="about-image-container">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Watts Safety Installs team working on accessibility installation" class="about-image">
-            </div>
-        </div>
-    </section>
-
-    <!-- Mission Section -->
-    <section class="mission">
-        <div class="mission-container">
-            <h2>Our Mission</h2>
-            <p>At Watts Safety Installs, our mission is to enhance the quality of life for Nebraska residents by creating safer, more accessible living environments. We believe everyone deserves to live comfortably and safely in their own home, regardless of mobility challenges or age.</p>
-            <p>We're committed to providing exceptional service, quality craftsmanship, and personalized solutions that meet the unique needs of each client while adhering to the highest standards of safety and accessibility.</p>
-        </div>
-    </section>
-
-    <!-- Values Section -->
-    <section class="values">
-        <div class="values-container">
-            <h2>Our Values</h2>
-            <div class="values-grid">
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Safety First</h3>
-                    <p>We prioritize safety in every project, ensuring all installations meet or exceed industry standards and regulations.</p>
-                </div>
-                
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-hands-helping"></i>
-                    </div>
-                    <h3>Accessibility</h3>
-                    <p>We're dedicated to creating spaces that are accessible to everyone, regardless of physical abilities.</p>
-                </div>
-                
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-award"></i>
-                    </div>
-                    <h3>Quality</h3>
-                    <p>We use only the highest quality materials and employ skilled craftsmen to ensure lasting results.</p>
-                </div>
-                
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Customer Focus</h3>
-                    <p>We listen to our clients' needs and work closely with them to deliver solutions that exceed expectations.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section - SIDE BY SIDE LAYOUT -->
-    <section class="services-section">
-        <div class="services-container">
-            <h2>Our Services</h2>
-            <div class="services-grid">
-                <div class="service-tile">
-                    <div class="service-header">
-                        <div class="service-icon">
-                            <i class="fas fa-wheelchair"></i>
-                        </div>
-                        <div>
-                            <h3 class="service-title">Accessibility & Safety</h3>
-                        </div>
-                    </div>
-                    <p class="service-description">Creating safe, accessible environments for seniors and individuals with mobility challenges through professional installations and modifications.</p>
-                    <ul class="service-features">
-                        <li><i class="fas fa-check"></i> ADA-compliant wheelchair ramps</li>
-                        <li><i class="fas fa-check"></i> Grab bars & safety rails</li>
-                        <li><i class="fas fa-check"></i> Bathroom accessibility modifications</li>
-                        <li><i class="fas fa-check"></i> Senior safety installations</li>
-                    </ul>
-                </div>
-                
-                <div class="service-tile">
-                    <div class="service-header">
-                        <div class="service-icon">
-                            <i class="fas fa-hammer"></i>
-                        </div>
-                        <div>
-                            <h3 class="service-title">Home Remodeling</h3>
-                        </div>
-                    </div>
-                    <p class="service-description">Transform your living spaces with our professional remodeling services, from kitchen updates to complete home renovations.</p>
-                    <ul class="service-features">
-                        <li><i class="fas fa-check"></i> Kitchen & bathroom renovations</li>
-                        <li><i class="fas fa-check"></i> Deck construction & repair</li>
-                        <li><i class="fas fa-check"></i> Siding replacement</li>
-                        <li><i class="fas fa-check"></i> Interior remodeling</li>
-                    </ul>
-                </div>
-                
-                <div class="service-tile">
-                    <div class="service-header">
-                        <div class="service-icon">
-                            <i class="fas fa-tv"></i>
-                        </div>
-                        <div>
-                            <h3 class="service-title">TV & Audio Visual</h3>
-                        </div>
-                    </div>
-                    <p class="service-description">Professional installation of entertainment systems with clean setups and proper cable management for optimal viewing experiences.</p>
-                    <ul class="service-features">
-                        <li><i class="fas fa-check"></i> Professional TV mounting</li>
-                        <li><i class="fas fa-check"></i> Home theater installation</li>
-                        <li><i class="fas fa-check"></i> Sound system setup</li>
-                        <li><i class="fas fa-check"></i> Smart home integration</li>
-                    </ul>
-                </div>
-                
-                <div class="service-tile">
-                    <div class="service-header">
-                        <div class="service-icon">
-                            <i class="fas fa-snowplow"></i>
-                        </div>
-                        <div>
-                            <h3 class="service-title">Property Maintenance</h3>
-                        </div>
-                    </div>
-                    <p class="service-description">Comprehensive property care services to keep your home and yard looking great year-round with reliable maintenance solutions.</p>
-                    <ul class="service-features">
-                        <li><i class="fas fa-check"></i> Snow removal services</li>
-                        <li><i class="fas fa-check"></i> Lawn care & landscaping</li>
-                        <li><i class="fas fa-check"></i> Seasonal maintenance</li>
-                        <li><i class="fas fa-check"></i> Emergency repair services</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <h2>Ready to Make Your Home Safer?</h2>
-        <p>Contact us today for a free consultation and estimate. We serve Norfolk, NE and surrounding areas.</p>
-        <a href="tel:+14054106402" class="cta-button">Call Now: (405) 410-6402</a>
-    </section>
-
-    <footer>
-        <div class="footer-container">
-            <div class="footer-about">
-                <div class="footer-logo">WATTS SAFETY INSTALLS</div>
-                <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services near you.</p>
-                <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-                <p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a></p>
-            </div>
-            <div class="footer-links">
-                <h3>Our Services</h3>
-                <ul>
-                    <li><a href="services.html#accessibility-safety">Accessibility & Safety</a></li>
-                    <li><a href="services.html#home-remodeling">Home Remodeling</a></li>
-                    <li><a href="services.html#property-maintenance">Property Maintenance</a></li>
-                    <li><a href="services.html#lawn-care">Lawn & Landscape</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h3>Contact Us</h3>
-                <p><strong>Phone:</strong> <a href="tel:+14054106402">(405) 410-6402</a></p>
-                <p><strong>Email:</strong> <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a></p>
-                <p><strong>Address:</strong> 500 Block Omaha Ave, Norfolk, NE 68701</p>
-                <p><strong>Hours:</strong> Mon-Fri 8:30 AM - 6:00 PM, Sat On Call</p>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
-        </div>
-    </footer>
-
-    <script>
+</div>
+</header>
+<!-- About Hero Section -->
+<section class="about-hero">
+<h1>About Watts Safety Installs</h1>
+<p class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25 • Serving All Nebraska</p>
+<p>Your Trusted Partner for Accessibility &amp; Safety Solutions</p>
+</section>
+<!-- About Content Section -->
+<section class="about-content">
+<div class="about-container">
+<div class="about-text">
+<h2>Your Trusted Nebraska Contractor</h2>
+<p>As an ATP Approved Contractor with Nebraska license #54690-25, Watts Safety Installs is your premier choice for accessibility modifications and home safety solutions throughout Nebraska.</p>
+<p>We specialize in creating safe, accessible environments for seniors and individuals with mobility challenges, while also providing comprehensive contracting services for all your home improvement needs.</p>
+<p>With years of experience and a commitment to quality craftsmanship, we've helped hundreds of Nebraska residents create safer, more accessible living spaces.</p>
+<div class="about-features">
+<div class="feature"><div class="feature-icon">✓</div><div>Free Estimates &amp; Consultations</div></div>
+<div class="feature"><div class="feature-icon">✓</div><div>Licensed &amp; Insured</div></div>
+<div class="feature"><div class="feature-icon">✓</div><div>Senior &amp; Veteran Discounts</div></div>
+<div class="feature"><div class="feature-icon">✓</div><div>Emergency Services Available</div></div>
+</div>
+</div>
+<div class="about-image-container">
+<img alt="Watts Safety Installs team working on accessibility installation" class="about-image" loading="lazy" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80"/>
+</div>
+</div>
+</section>
+<!-- Mission Section -->
+<section class="mission">
+<div class="mission-container">
+<h2>Our Mission</h2>
+<p>At Watts Safety Installs, our mission is to enhance the quality of life for Nebraska residents by creating safer, more accessible living environments. We believe everyone deserves to live comfortably and safely in their own home, regardless of mobility challenges or age.</p>
+<p>We're committed to providing exceptional service, quality craftsmanship, and personalized solutions that meet the unique needs of each client while adhering to the highest standards of safety and accessibility.</p>
+</div>
+</section>
+<!-- Values Section -->
+<section class="values">
+<div class="values-container">
+<h2>Our Values</h2>
+<div class="values-grid">
+<div class="value-card">
+<div class="value-icon">
+<i class="fas fa-shield-alt"></i>
+</div>
+<h3>Safety First</h3>
+<p>We prioritize safety in every project, ensuring all installations meet or exceed industry standards and regulations.</p>
+</div>
+<div class="value-card">
+<div class="value-icon">
+<i class="fas fa-hands-helping"></i>
+</div>
+<h3>Accessibility</h3>
+<p>We're dedicated to creating spaces that are accessible to everyone, regardless of physical abilities.</p>
+</div>
+<div class="value-card">
+<div class="value-icon">
+<i class="fas fa-award"></i>
+</div>
+<h3>Quality</h3>
+<p>We use only the highest quality materials and employ skilled craftsmen to ensure lasting results.</p>
+</div>
+<div class="value-card">
+<div class="value-icon">
+<i class="fas fa-users"></i>
+</div>
+<h3>Customer Focus</h3>
+<p>We listen to our clients' needs and work closely with them to deliver solutions that exceed expectations.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="cta-section">
+<h2>Ready to Make Your Home Safer?</h2>
+<p>Contact us today for a free consultation and estimate. We serve Norfolk NE and surrounding areas.</p>
+<a class="cta-button" href="tel:+14054106402">Call Now: (405) 410-6402</a>
+</section>
+<footer>
+<div class="footer-container">
+<div class="footer-about">
+<div class="footer-logo">WATTS SAFETY INSTALLS</div>
+<p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services near you.</p>
+<p>Nebraska License #54690-25 • ATP Approved Contractor</p>
+<p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a></p>
+</div>
+<div class="footer-links">
+<h3>Our Services</h3>
+<ul>
+<li><a href="/services.html#accessibility-safety">Accessibility &amp; Safety</a></li>
+<li><a href="/services.html#bathroom-accessibility">Bathroom Accessibility</a></li>
+<li><a href="/services.html#wheelchair-ramps">Wheelchair Ramps</a></li>
+<li><a href="/services.html#senior-safety">Senior Safety</a></li>
+</ul>
+</div>
+<div class="footer-contact">
+<h3>Contact Us</h3>
+<p><strong>Phone:</strong> <a href="tel:+14054106402">(405) 410-6402</a></p>
+<p><strong>Email:</strong> <a href="mailto:Justin.Watts@WattsATPContractor.com">Justin.Watts@WattsATPContractor.com</a></p>
+<p><strong>Address:</strong> 507 West Omaha Ave Suite B Norfolk, Nebraska</p>
+<p><strong>Hours:</strong> Mon-Fri 8:30 AM - 6:00 PM, Sat On Call</p>
+</div>
+</div>
+<div class="copyright">
+<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
+</div>
+</footer>
+<script>
         // Mobile menu toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const navLinks = document.getElementById('navLinks');
@@ -1198,5 +831,24 @@
             });
         });
     </script>
+<script>
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
+    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled');
+        });
+        // Optional: Add touchstart for better mobile support
+        hamburger.addEventListener('touchstart', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled via touch');
+        });
+    }
+});
+</script>
 </body>
 </html>

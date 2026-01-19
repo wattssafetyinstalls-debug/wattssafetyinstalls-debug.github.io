@@ -4,9 +4,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>All Services | Watts Safety Installs | Norfolk, NE</title>
+<title>All Services | Watts ATP Contractor | Norfolk, NE</title>
 <meta content="Complete list of professional services: ADA ramps, grab bars, TV mounting, snow removal, lawn care, remodeling in Norfolk, NE. ATP Approved Contractor." name="description"/>
-<link rel="canonical" href="https://wattsatpcontractor.com/services">
+
 <!-- All your original meta tags, favicons, SEO -->
 <link href="/apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
 <link href="/apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
@@ -26,7 +26,7 @@
 <meta content="/ms-icon-144x144.png" name="msapplication-TileImage"/>
 <meta content="#ffffff" name="theme-color"/>
 <meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification">
-<meta content="All Services | Watts Safety Installs" property="og:title"/>
+<meta content="All Services | Watts ATP Contractor" property="og:title"/>
 <meta content="ADA accessibility, TV mounting, snow removal, lawn care &amp; more in Norfolk, NE" property="og:description"/>
 <meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" property="og:image"/>
 <meta content="https://wattsatpcontractor.com/services.html" property="og:url"/>
@@ -246,7 +246,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.6s ease;
-            background: rgba(255,255,255,0.95);
+            background: rgba(10,29,55,0.9);
             border-radius: 0 0 20px 20px;
         }
         
@@ -268,7 +268,7 @@
         .service-dropdown a:hover { 
             color: var(--teal); 
             padding-left: 15px;
-            background: rgba(0,196,180,0.05);
+            background: rgba(255,255,255,0.1);
         }
         
         /* === UPDATED: TEAL/NAVY GRADIENT FOR DROPDOWN ON HOVER/ACTIVE === */
@@ -793,8 +793,57 @@
                 transform: scale(1.05);
             }
         }
-    </style>
-</meta><link rel="canonical" href="https://wattsatpcontractor.com/services" />
+    
+/* Breadcrumb */
+.breadcrumb {
+    background: var(--white);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.breadcrumb a {
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: var(--teal);
+}
+
+.breadcrumb span {
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.breadcrumb i {
+    margin: 0 10px;
+    color: var(--gray);
+}
+
+@media (max-width: 768px) {
+    .breadcrumb {
+        padding: 15px 0;
+    }
+    
+    .breadcrumb-container {
+        padding: 0 15px;
+    }
+    
+    .breadcrumb i {
+        margin: 0 5px;
+        font-size: 0.8rem;
+    }
+}
+</style>
+</meta>
+<link rel="canonical" href="https://wattsatpcontractor.com/services">
 </head>
 <body>
 <!-- Header -->
@@ -804,19 +853,28 @@
 <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
 <nav class="nav-links" id="navLinks">
 <a href="/">Home</a>
-<a class="active" href="/services">Services</a>
-<a href="/service-area">Service Area</a>
-<a href="/about">About</a>
-<a href="/referrals">Referrals</a>
-<a href="/contact">Contact</a>
+<a class="active" href="/services.html">Services</a>
+<a href="/service-area.html">Service Area</a>
+<a href="/about.html">About</a>
+<a href="/referrals.html">Referrals</a>
+<a href="/contact.html">Contact</a>
 </nav>
 <a class="phone-link" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402</a>
 </div>
 </header>
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+<div class="breadcrumb-container">
+<a href="/">Home</a>
+<i class="fas fa-chevron-right"></i>
+<span>Services</span>
+</div>
+</div>
+
 <!-- Hero -->
 <section class="hero">
 <h1>All Professional Services</h1>
-<p class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25 • Serving All Nebraska</p>
+<p class="certification-badge">ATP Approved Contractor • Nebraska Regd #54690-25 • Serving All Nebraska</p>
 <p>From ADA ramps to TV mounting, snow removal to full remodels — we do it all.</p>
 <div class="promo-banner">
 <p style="font-size:1.6rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
@@ -847,178 +905,78 @@
 <!-- Services Carousel -->
 <section class="services">
 <div class="services-header">
-<h2 class="section-title">Our Comprehensive Services</h2>
-<p class="section-subtitle">Professional contractor services designed to meet all your home improvement and maintenance needs with precision and care</p>
+<h2 class="section-title">Our Safety & Accessibility Services</h2>
+<p class="section-subtitle">Professional safety and accessibility solutions designed to create compliant, secure environments for homes, businesses, and healthcare facilities throughout Norfolk, NE</p>
 </div>
 <div class="carousel-wrapper">
 <div class="carousel-container" id="carouselContainer">
-<!-- Service Card 1 - Accessibility & Safety -->
+<!-- Service Card 1 - Bathroom Accessibility -->
 <div class="service-card">
 <div class="service-image-container">
-<img alt="Accessibility &amp; Safety Solutions" class="service-image" src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&amp;fit=crop&amp;w=800&amp;q=80"/>
+<img alt="Bathroom Accessibility" class="service-image" src="https://pathwaydc.com/hs-fs/hubfs/pathway%20blog%20images%20(7).jpg?width=2240&height=1260&name=pathway%20blog%20images%20(7).jpg"/>
 </div>
 <div class="service-content">
-<h3 class="service-title">Accessibility &amp; Safety Solutions</h3>
-<p class="service-description">Professional ADA compliance and accessibility solutions for Norfolk, NE homes and businesses. We specialize in safety modifications, grab bar installations, and wheelchair accessibility upgrades with precision and care.</p>
-<div class="service-dropdown">
-<a href="services/accessibility-safety-solutions">All Accessibility Services</a>
-<a href="services/ada-compliant-showers-bathrooms">ADA Compliant Showers &amp; Bathrooms</a>
-<a href="services/grab-bar-installation">Grab Bar Installation</a>
-<a href="services/non-slip-flooring">Non-Slip Flooring Solutions</a>
-<a href="services/custom-ramps">Custom Wheelchair Ramps</a>
-<a href="services/wheelchair-ramp-installation">Wheelchair Ramp Installation</a>
-<a href="services/senior-safety">Senior Safety Modifications</a>
-<a href="services/bathroom-accessibility">Bathroom Accessibility</a>
-<a href="services/stairlift-elevator-installation">Stairlift &amp; Elevator Installation</a>
-</div>
+<h3 class="service-title">Bathroom Accessibility</h3>
+<p class="service-description">Professional ADA bathroom modifications and accessibility solutions. We specialize in walk-in showers, grab bars, raised toilets, and barrier-free designs for safe, independent living.</p>
 <div class="service-cta">
-<a href="/contact">Get Free Assessment</a>
+<a href="/bathroom-accessibility.html">Learn More</a>
 </div>
 </div>
 </div>
-<!-- Service Card 2 - Home Remodeling -->
+<!-- Service Card 2 - Grab Bar Installation -->
 <div class="service-card">
 <div class="service-image-container">
-<img alt="Home Remodeling &amp; Improvements" class="service-image" src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&amp;fit=crop&amp;w=800&amp;q=80"/>
+<img alt="Grab Bar Installation" class="service-image" src="https://images.unsplash.com/photo-1612115482041-d78c0ca829c2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWlfHx8fGVufDB8fHx8fA%3D%3D"/>
 </div>
 <div class="service-content">
-<h3 class="service-title">Home Remodeling &amp; Improvements</h3>
-<p class="service-description">Complete home transformation services in Norfolk, NE. From kitchen and bathroom remodels to full home renovations, we deliver exceptional craftsmanship and attention to detail that exceeds expectations.</p>
-<div class="service-dropdown">
-<a href="services/home-remodeling">Home Remodeling &amp; Renovation</a>
-<a href="services/kitchen-renovations">Kitchen Renovations</a>
-<a href="services/bathroom-remodels">Bathroom Remodels</a>
-<a href="services/basement-finishing">Basement Finishing</a>
-<a href="services/room-additions">Room Additions</a>
-<a href="services/deck-construction">Deck Construction</a>
-<a href="services/siding-replacement">Siding Replacement</a>
-<a href="services/window-doors">Window &amp; Door Installation</a>
-<a href="services/fence-installation">Fence Installation</a>
-<a href="services/fence-repair">Fence Repair</a>
-<a href="services/drywall-repair">Drywall Repair</a>
-<a href="services/painting-services">Painting Services</a>
-</div>
+<h3 class="service-title">Grab Bar Installation</h3>
+<p class="service-description">Professional grab bar and handrail installation for safety and accessibility. We install commercial-grade grab bars rated for 500+ lbs in bathrooms, showers, and throughout your home.</p>
 <div class="service-cta">
-<a href="/contact">Start Your Project</a>
+<a href="/grab-bar-installation.html">Learn More</a>
 </div>
 </div>
 </div>
-<!-- Service Card 3 - Concrete & Flooring -->
+<!-- Service Card 3 - Wheelchair Ramp Installation -->
 <div class="service-card">
 <div class="service-image-container">
-<img alt="Concrete &amp; Floor Services" class="service-image" src="https://images.unsplash.com/photo-1737093787984-b6e492231135?q=80&amp;w=1171&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"/>
+<img alt="Wheelchair Ramp Installation" class="service-image" src="https://cms-artifacts.artlist.io/content/generated-image-v1/image__1/generated-image-6ba9d7c6-efc7-4784-9972-eb8dd70f82e5.jpg?Expires=2084075244&Key-Pair-Id=K2ZDLYDZI2R1DF&Signature=RSiGQ56F-jA8oBmkK3b9-W0VXjoagF7l6ZKi03k-LJ0jSqob~4MfHfD7l81PzqdePBE-uTznbUJTn63FzYEmtGlB5vSTmMHe7KmiA71g96HDzlpUg~jvtlSle55HtcqLKr-zJ6IxwWi4YzoI16j8CdZGVSxdl4xdt1WhceJylbt0Xl9l1-RGXAoSwjdZUKTP43c7VkpWOppfl6HwSbEqlfgdA2Gabi0SkQd4d0fkpBsbuUhXEkPP0WyzV6axYA3F3T3jnwv6kzpXecf~DLwY2mXclta~jFCysQAD0j8rR0MKC-PgcDp4mdOQ7Llb-hUQEA2lJxdQunVsY7MygoXEhQ__"/>
 </div>
 <div class="service-content">
-<h3 class="service-title">Concrete &amp; Floor Services</h3>
-<p class="service-description">Expert concrete pouring, repair, and finishing services for Norfolk, NE properties. We provide durable, beautiful surfaces for driveways, patios, and interior floors that stand the test of time.</p>
-<div class="service-dropdown">
-<a href="services/concrete-pouring">Concrete Pouring</a>
-<a href="services/driveway-installation">Driveway Installation</a>
-<a href="services/patio-construction">Patio Construction</a>
-<a href="services/floor-refinishing">Floor Refinishing</a>
-<a href="services/hardwood-flooring">Hardwood Flooring</a>
-<a href="services/concrete-repair">Concrete Repair</a>
-<a href="services/flooring-installation">Flooring Installation</a>
-</div>
+<h3 class="service-title">Wheelchair Ramp Installation</h3>
+<p class="service-description">Custom wheelchair ramps and accessibility ramps for Norfolk, NE homes. We build code-compliant ramps with proper slope ratios, handrails, and non-slip surfaces to provide safe, independent access for wheelchairs, walkers, and mobility devices.</p>
 <div class="service-cta">
-<a href="/contact">Get Floor Quote</a>
+<a href="/wheelchair-ramp-installation.html">Learn More</a>
 </div>
 </div>
 </div>
-<!-- Service Card 4 - Cabinets & Countertops -->
+<!-- Service Card 4 - Non-Slip Flooring Solutions -->
 <div class="service-card">
 <div class="service-image-container">
-<img alt="Cabinets &amp; Countertops" class="service-image" src="https://images.unsplash.com/photo-1653022577567-622cbc7ef4d3?q=80&amp;w=1170&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"/>
+<img alt="Non-Slip Flooring Solutions" class="service-image" src="https://images.unsplash.com/photo-1722603931789-aea8bd4f5d01?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWlfHx8fGVufDB8fHx8fA%3D%3D"/>
 </div>
 <div class="service-content">
-<h3 class="service-title">Cabinets &amp; Countertops</h3>
-<p class="service-description">Custom cabinetry and premium countertop installations in Norfolk, NE. We create beautiful, functional spaces with quality materials and expert installation techniques for lasting satisfaction.</p>
-<div class="service-dropdown">
-<a href="services/custom-cabinets">Custom Cabinets</a>
-<a href="services/kitchen-cabinetry">Kitchen Cabinetry</a>
-<a href="services/cabinet-refacing">Cabinet Refacing</a>
-<a href="services/custom-storage">Custom Storage Solutions</a>
-<a href="services/onyx-countertops">Onyx Countertops</a>
-<a href="services/countertop-repair">Countertop Repair</a>
-</div>
+<h3 class="service-title">Non-Slip Flooring Solutions</h3>
+<p class="service-description">Professional non-slip flooring installation for fall prevention. We specialize in safety coatings, textured surfaces, and slip-resistant materials for bathrooms, kitchens, and high-traffic areas.</p>
 <div class="service-cta">
-<a href="/contact">Design Consultation</a>
+<a href="/non-slip-flooring-solutions.html">Learn More</a>
 </div>
 </div>
 </div>
-<!-- Service Card 5 - Property Maintenance -->
+<!-- Service Card 5 - Home Accessibility Solutions -->
 <div class="service-card">
 <div class="service-image-container">
-<img alt="Property Maintenance" class="service-image" src="https://images.unsplash.com/photo-1544984243-ec57ea16fe25?auto=format&amp;fit=crop&amp;w=800&amp;q=80"/>
+<img alt="Home Accessibility Solutions" class="service-image" src="https://ltspec.com/wp-content/uploads/2015/12/Finley-Project-Banner-Image-Therapy-Pool-1500x630.png"/>
 </div>
 <div class="service-content">
-<h3 class="service-title">Property Maintenance</h3>
-<p class="service-description">Comprehensive property maintenance services for Norfolk, NE homeowners and businesses. From routine upkeep to emergency repairs, we keep your property in optimal condition year-round.</p>
-<div class="service-dropdown">
-<a href="services/property-maintenance-services">Property Maintenance Services</a>
-<a href="services/handyman-services">Handyman Services</a>
-<a href="services/emergency-repairs">Emergency Repairs</a>
-<a href="services/painting-services">Painting Services</a>
-<a href="services/drywall-repair">Drywall Repair</a>
-<a href="services/snow-removal">Snow Removal</a>
-<a href="services/emergency-snow">Emergency Snow Services</a>
-<a href="services/tree-trimming">Tree Trimming</a>
-<a href="services/gutter-cleaning">Gutter Cleaning</a>
-<a href="services/pressure-washing">Pressure Washing</a>
-</div>
+<h3 class="service-title">Home Accessibility Solutions</h3>
+<p class="service-description">Comprehensive home accessibility modifications for independent living. We provide complete accessibility assessments and solutions including door widening, ramps, and safety modifications throughout your home.</p>
 <div class="service-cta">
-<a href="/contact">Schedule Service</a>
-</div>
-<div class="promo-badge">15% OFF Snow Removal</div>
-</div>
-</div>
-<!-- Service Card 6 - Lawn & Landscape -->
-<div class="service-card">
-<div class="service-image-container">
-<img alt="Lawn &amp; Landscape Care" class="service-image" src="https://images.unsplash.com/photo-1666801251251-df5aa6bd47a4?w=600&amp;auto=format&amp;fit=crop&amp;q=60&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bHV4dXJpb3VzJTIwaG91c2UlMjB3aXRoJTIwbHVzaCUyMGdhcmRlbiUyMGFuZCUyMGZyZXNoJTIwY3V0JTIweWFyZHxlbnwwfHwwfHx8NE%3D%3D"/>
-</div>
-<div class="service-content">
-<h3 class="service-title">Lawn &amp; Landscape Care</h3>
-<p class="service-description">Professional lawn maintenance and landscaping services in Norfolk, NE. We provide fertilization, mowing, trimming, and seasonal care to create and maintain beautiful, healthy outdoor spaces.</p>
-<div class="service-dropdown">
-<a href="services/lawn-maintenance">Lawn Maintenance</a>
-<a href="services/fertilization">Lawn Fertilization</a>
-<a href="services/landscape-design">Landscape Design</a>
-<a href="services/seasonal-cleanup">Seasonal Cleanup</a>
-<a href="services/garden-maintenance">Garden Maintenance</a>
-<a href="services/seasonal-prep">Seasonal Preparation</a>
-</div>
-<div class="service-cta">
-<a href="/contact">Get Lawn Quote</a>
-</div>
-<div class="promo-badge">LAWN2026 - 20% OFF</div>
-</div>
-</div>
-<!-- Service Card 7 - Additional Services -->
-<div class="service-card">
-<div class="service-image-container">
-<img alt="Additional Services" class="service-image" src="https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&amp;fit=crop&amp;w=800&amp;q=80"/>
-</div>
-<div class="service-content">
-<h3 class="service-title">Additional Services</h3>
-<p class="service-description">Complete home solutions from Norfolk, NE's trusted general contractor. TV mounting, home theater installation, audio visual setup, and smart home integrations with professional precision.</p>
-<div class="service-dropdown">
-<a href="services/tv-mounting">TV Mounting Services</a>
-<a href="services/home-theater-installation">Home Theater Installation</a>
-<a href="services/audio-visual">Audio Visual Solutions</a>
-<a href="services/home-audio">Home Audio Systems</a>
-<a href="services/sound-system-setup">Whole Home Sound System Setup</a>
-<a href="services/soundbar-setup">Soundbar Setup</a>
-<a href="services/projector-install">Projector Installation</a>
-<a href="services/cable-management">Cable Management</a>
-</div>
-<div class="service-cta">
-<a href="/contact">Discuss Your Project</a>
+<a href="/accessibility-safety-solutions.html">Learn More</a>
 </div>
 </div>
 </div>
-</div>
-<!-- REMOVED ARROW BUTTONS -->
+</section>
+<!-- Carousel Indicators -->
 <div class="carousel-indicators" id="carouselIndicators">
 <!-- Indicators will be generated by JavaScript -->
 </div>
@@ -1062,25 +1020,29 @@
 <footer>
 <div class="footer-container">
 <div class="footer-about">
-<div class="footer-logo">WATTS SAFETY INSTALLS</div>
-<p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
-<p>Nebraska License #54690-25 • ATP Approved Contractor</p>
+<div class="footer-logo">Watts ATP Contractor</div>
+<p>Nebraska's premier ATP Approved Contractor specializing in ADA accessibility modifications, aging-in-place solutions, and senior safety installations.</p>
+<p>Nebraska Reg #54690-25 • ATP Approved Contractor • Fully Insured $1M</p>
 </div>
 <div class="footer-links">
-<h3>Our Services</h3>
+<h3>ATP Services</h3>
 <ul>
-<li><a href="services/accessibility-safety-solutions">Accessibility &amp; Safety</a></li>
-<li><a href="services/home-remodeling">Home Remodeling</a></li>
-<li><a href="services/tv-mounting">TV &amp; Audio Visual</a></li>
-<li><a href="services/property-maintenance-services">Property Maintenance</a></li>
-<li><a href="services/lawn-maintenance">Lawn &amp; Landscape</a></li>
+<li><a href="/services/accessibility-safety-solutions">Accessibility & Safety</a></li>
+<li><a href="/services/ada-compliant-showers">ADA Showers</a></li>
+<li><a href="/services/grab-bars">Grab Bars</a></li>
+<li><a href="/services/custom-ramps">Wheelchair Ramps</a></li>
+<li><a href="/services/senior-safety">Senior Safety</a></li>
+</ul>
+<h3 style="margin-top: 20px; color: #dc2626;">Home Services</h3>
+<ul>
+<li><a href="/safety-installs/" style="color: #dc2626; font-weight: 600;">Watts Safety Installs →</a></li>
 </ul>
 </div>
 <div class="footer-contact">
 <h3>Contact Us</h3>
 <p><strong>Phone:</strong> <a href="tel:+14054106402">(405) 410-6402</a></p>
-<p><strong>Email:</strong> <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a></p>
-<p><strong>Address:</strong> 500 Block Omaha Ave, Norfolk, NE 68701</p>
+<p><strong>Email:</strong> <a href="mailto:Justin.Watts@WattsATPContractor.com">Justin.Watts@WattsATPContractor.com</a></p>
+<p><strong>Address:</strong> 507 W Omaha Ave Suite B, Norfolk, NE 68701</p>
 <p><strong>Hours:</strong> Mon-Fri: 8AM-6PM, Sat: 9AM-2PM</p>
 </div>
 <div class="footer-legal">
@@ -1093,7 +1055,7 @@
 </div>
 </div>
 <div class="copyright">
-<p>© <span id="year"></span> Watts Safety Installs. All rights reserved. | <a href="/privacy-policy" style="color: #94a3b8;">Privacy Policy</a> | <a href="/sitemap" style="color: #94a3b8;">Sitemap</a></p>
+<p>© <span id="year"></span> Watts ATP Contractor. All rights reserved. | <a href="/privacy-policy" style="color: #94a3b8;">Privacy Policy</a> | <a href="/sitemap" style="color: #94a3b8;">Sitemap</a></p>
 </div>
 </footer>
 <script>
@@ -1184,7 +1146,7 @@
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Service",
-  "name": "All Services | Watts Safety Installs | Norfolk, NE",
+  "name": "All Services | Watts ATP Contractor | Norfolk, NE",
   "provider": {
     "@type": "LocalBusiness",
     "name": "Watts ATP",
@@ -1197,7 +1159,7 @@
         "latitude": 42.032,
         "longitude": -97.418
       },
-      "geoRadius": 80000
+      "geoRadius": 120701
     }
   }
 }</script></body>

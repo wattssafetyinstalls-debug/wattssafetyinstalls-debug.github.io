@@ -7,7 +7,7 @@
 <!-- SEO Title: 58 characters -->
 <title>Stairlift Installation Norfolk NE | Home Elevator Service</title>
 <!-- Meta Description: 158 characters -->
-<meta content="Stairlift &amp; home elevator installation in Norfolk, Battle Creek, Pierce, Madison &amp; Antelope County NE. Straight/curved lifts &amp; residential e..." name="description"/><link href="https://wattsatpcontractor.com/services/stairlift-elevator-installation/" rel="canonical"/>
+<meta content="Stairlift &amp; home elevator installation in Norfolk, Battle Creek, Pierce, Madison &amp; Antelope County NE. Straight/curved lifts &amp; residential elevators. (405) 410-6402" name="description"/>
 <!-- Keywords for SEO -->
 <meta content="stairlift installation Norfolk NE, home elevator installation, stairlift installation Battle Creek, Pierce stairlift installation, Madison County stairlift installation, Antelope County elevator installation, residential stairlift installation, curved stairlift installation, wheelchair lift installation, home accessibility installation" name="keywords"/>
 <!-- Google Tag Manager -->
@@ -878,6 +878,53 @@
             }
         }
 
+
+.breadcrumb {
+    background: var(--white, #FFFFFF);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breadcrumb-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.breadcrumb a {
+    color: var(--gray, #64748B);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: var(--teal, #00C4B4);
+}
+
+.breadcrumb span {
+    color: var(--navy, #0A1D37);
+    font-weight: 600;
+}
+
+.breadcrumb i {
+    margin: 0 10px;
+    color: var(--gray, #64748B);
+}
+
+@media (max-width: 768px) {
+    .breadcrumb {
+        padding: 15px 0;
+    }
+
+    .breadcrumb-container {
+        padding: 0 15px;
+    }
+
+    .breadcrumb i {
+        margin: 0 5px;
+        font-size: 0.8rem;
+    }
+}
 </style>
 <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
 <style>
@@ -986,6 +1033,7 @@
 
             </style>
 
+<link rel="canonical" href="https://wattsatpcontractor.com/services/stairlift-elevator-installation/">
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -1005,15 +1053,25 @@
 </nav>
 </div>
 </header>
+<div class="breadcrumb">
+<div class="breadcrumb-container">
+<a href="/">Home</a>
+<i class="fas fa-chevron-right"></i>
+<a href="/services">Services</a>
+<i class="fas fa-chevron-right"></i>
+<span>Professional Stairlift &amp; Home Elevator Installation in Northeast Nebraska</span>
+</div>
+</div>
+
 <section class="hero">
 <h1 class="service-title">Professional Stairlift &amp; Home Elevator Installation in Northeast Nebraska</h1>
-<p class="certification-badge">ATP Approved Contractor - Nebraska Licensed #54690-25</p>
+<p class="certification-badge">ATP Approved Contractor - Nebraska Regd #54690-25</p>
 <p>Complete Stairlift and Residential Elevator Installation in Norfolk, Battle Creek, Pierce, Madison County &amp; Antelope County</p>
 <a class="cta-button" href="tel:+14054106402">Call (405) 410-6402</a>
 </section>
 <div class="service-tile" id="mainServiceTile">
 <h2>Professional Stairlift &amp; Home Elevator Installation Services</h2>
-<p class="service-description">Watts Safety Installs provides expert stairlift and home elevator installation services throughout Northeast Nebraska, serving Norfolk, Battle Creek, Pierce, and all communities within Madison County and Antelope County. Our certified technicians specialize in complete mobility solutions including straight and curved stairlift installation, residential elevator systems, wheelchair lifts, and platform lifts for multi-level home accessibility. We work with leading manufacturers to provide custom-fitted solutions that meet ADA compliance standards, ensuring safe and reliable operation for seniors and individuals with mobility challenges. Serving residential and commercial clients, we perform professional assessments, precise installation, and comprehensive safety testing for all accessibility equipment. Trust our licensed Nebraska professionals for same-day service availability, lifetime craftsmanship warranties, and free consultations for your home mobility installation needs.</p>
+<p class="service-description">Watts ATP Contractor provides expert stairlift and home elevator installation services throughout Northeast Nebraska, serving Norfolk, Battle Creek, Pierce, and all communities within Madison County and Antelope County. Our certified technicians specialize in complete mobility solutions including straight and curved stairlift installation, residential elevator systems, wheelchair lifts, and platform lifts for multi-level home accessibility. We work with leading manufacturers to provide custom-fitted solutions that meet ADA compliance standards, ensuring safe and reliable operation for seniors and individuals with mobility challenges. Serving residential and commercial clients, we perform professional assessments, precise installation, and comprehensive safety testing for all accessibility equipment. Trust our licensed Nebraska professionals for same-day service availability, lifetime craftsmanship warranties, and free consultations for your home mobility installation needs.</p>
 <div class="trust-bar">
 <div class="trust-item"><div class="trust-icon"><i class="fas fa-check-circle"></i></div><div class="trust-text">Licensed &amp; Insured</div></div>
 <div class="trust-item"><div class="trust-icon"><i class="fas fa-star"></i></div><div class="trust-text">5.0/5 Rating</div></div>
@@ -1214,7 +1272,7 @@
     </script>
 <footer>
 <div class="footer-contact">
-<p><strong>Watts Safety Installs</strong></p>
+<p><strong>Watts ATP Contractor</strong></p>
 <p>Phone: <a href="tel:+14054106402">(405) 410-6402</a></p>
 <p>Service Areas: Norfolk, Battle Creek, Pierce, Madison County &amp; Antelope County NE</p>
 </div>
@@ -1224,7 +1282,7 @@
 <a href="/contact">Contact</a>
 <a href="/privacy-policy">Privacy Policy</a>
 </div>
-<p>© 2025 Watts Safety Installs. All rights reserved.</p>
+<p>© <span id="current-year"></span> Watts ATP Contractor. All rights reserved.</p>
 </footer>
 <script type="application/ld+json">
 {
@@ -1341,6 +1399,9 @@
             }, 3000);
         }
     });
-    </script>
+    
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>

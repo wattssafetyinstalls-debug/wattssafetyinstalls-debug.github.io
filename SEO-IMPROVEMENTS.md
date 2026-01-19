@@ -1,4 +1,4 @@
-# SEO Improvements for Watts Safety Installs
+# SEO Improvements for Watts ATP Contractor
 
 ## Completed Improvements (December 8, 2025)
 
@@ -215,10 +215,10 @@ You can manually copy the content from the includes or use a build process to in
 ## Contact Information for SEO
 
 Ensure consistency across all platforms:
-- **Business Name**: Watts Safety Installs
+- **Business Name**: Watts ATP Contractor
 - **Address**: 500 Block Omaha Ave, Norfolk, NE 68701
 - **Phone**: +1 (405) 410-6402
-- **Email**: wattssafetyinstalls@gmail.com
+- **Email**: Justin.Watts@WattsATPContractor.com
 - **Website**: https://wattsatpcontractor.com
 
 ---

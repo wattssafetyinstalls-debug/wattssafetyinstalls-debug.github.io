@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://wattssafetyinstalls.com/sitemap.xml
-Sitemap: https://wattssafetyinstalls.com/sitemap.html

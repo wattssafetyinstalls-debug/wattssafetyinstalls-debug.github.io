@@ -26,7 +26,7 @@
                 <div class="qa-card">
                     <i class="fas fa-search-location qa-icon"></i>
                     <h3 class="qa-question"><!-- SERVICE_NAME --> near me</h3>
-                    <p class="qa-answer">You've found your local experts. Watts Safety Installs provides professional <!-- SERVICE_NAME --> throughout Northeast Nebraska, serving Norfolk, Battle Creek, Pierce, Madison County, Antelope County, and all surrounding communities.</p>
+                    <p class="qa-answer">You've found your local experts. Watts ATP Contractor provides professional <!-- SERVICE_NAME --> throughout Northeast Nebraska, serving Norfolk, Battle Creek, Pierce, Madison County, Antelope County, and all surrounding communities.</p>
                     <p class="consultation-note">Serving all of Northeast Nebraska</p>
                 </div>
 

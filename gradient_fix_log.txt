@@ -1,0 +1,66 @@
+Gradient Transition Fixes ONLY
+============================================================
+Total files processed: 60
+Files changed: 59
+
+Changes:
+------------------------------------------------------------
+safety-installs\about.html: Fixed 3 gradient transitions, Fixed 1 gradient transitions
+safety-installs\contact.html: Fixed 4 gradient transitions, Fixed 1 gradient transitions
+safety-installs\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions, Fixed 1 gradient transitions
+safety-installs\referrals.html: Fixed 6 gradient transitions, Fixed 1 gradient transitions
+safety-installs\service-area.html: Fixed 1 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services-source.html: Fixed 2 gradient transitions, Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services.html: Fixed 2 gradient transitions, Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\audio-visual\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\basement-finishing\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\bathroom-remodels\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\cabinet-refacing\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\cable-management\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\concrete-pouring\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\concrete-repair\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\countertop-repair\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\custom-cabinets\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\custom-storage\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\deck-construction\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\driveway-installation\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\drywall-repair\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\emergency-repairs\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\emergency-snow\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\fence-installation\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\fence-repair\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\fertilization\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\floor-refinishing\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\flooring-installation\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\garden-maintenance\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\gutter-cleaning\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\handyman-repair-services\index.html: Fixed 2 gradient transitions
+safety-installs\services\handyman-services\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\hardwood-flooring\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\home-audio\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\home-remodeling\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\home-remodeling-renovation\index.html: Fixed 2 gradient transitions
+safety-installs\services\home-theater-installation\index.html: Fixed 1 gradient transitions
+safety-installs\services\kitchen-cabinetry\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\kitchen-renovations\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\landscape-design\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\lawn-maintenance\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\onyx-countertops\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\painting-drywall\index.html: Fixed 2 gradient transitions
+safety-installs\services\painting-services\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\patio-construction\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\pressure-washing\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\projector-install\index.html: Fixed 1 gradient transitions
+safety-installs\services\property-maintenance-services\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\room-additions\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\seasonal-cleanup\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\seasonal-prep\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\siding-replacement\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\snow-removal\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\sound-system-setup\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\soundbar-setup\index.html: Fixed 1 gradient transitions
+safety-installs\services\tree-trimming\index.html: Fixed 2 gradient transitions, Fixed 1 gradient transitions
+safety-installs\services\tv-home-theater-installation\index.html: Fixed 1 gradient transitions
+safety-installs\services\tv-mounting\index.html: Fixed 1 gradient transitions
+safety-installs\services\tv-mounting-residential\index.html: Fixed 2 gradient transitions
+safety-installs\services\window-doors\index.html: Fixed 1 gradient transitions

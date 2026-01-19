@@ -1,6 +1,0 @@
-{
-    "name": "My Website",
-    "short_name": "Website",
-    "start_url": ".",
-    "display": "standalone"
-}

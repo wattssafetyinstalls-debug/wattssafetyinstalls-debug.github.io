@@ -2,99 +2,12 @@
 
 <html lang="en">
 <head>
-<!-- EMERGENCY TILE FIX -->
-<style>
-    /* FORCE GRADIENT ANINETIONS WITH !IMPORTANT */
-    .benefit-card, .value-tile, .service-tile, .trust-item,
-    .service-card, .promo-card, .category-card, .contact-tile, .area-tile,
-    .coverage-card {
-        position: relative !important;
-        overflow: hidden !important;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-    }
-    
-    .benefit-card::before, .value-tile::before, .service-tile::before, 
-    .trust-item::before, .service-card::before, .promo-card::before,
-    .category-card::before, .contact-tile::before, .area-tile::before,
-    .coverage-card::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: -100% !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-        z-index: 1 !important;
-    }
-    
-    .benefit-card:hover::before, .value-tile:hover::before, 
-    .service-tile:hover::before, .trust-item:hover::before,
-    .service-card:hover::before, .promo-card:hover::before,
-    .category-card:hover::before, .contact-tile:hover::before,
-    .area-tile:hover::before, .coverage-card:hover::before {
-        left: 0 !important;
-    }
-    
-    .benefit-card > *, .value-tile > *, .service-tile > *, 
-    .trust-item > *, .service-card > *, .promo-card > *,
-    .category-card > *, .contact-tile > *, .area-tile > *,
-    .coverage-card > * {
-        position: relative !important;
-        z-index: 2 !important;
-    }
-    
-    .benefit-card:hover, .value-tile:hover, .service-tile:hover, 
-    .trust-item:hover, .service-card:hover, .promo-card:hover,
-    .category-card:hover, .contact-tile:hover, .area-tile:hover,
-    .coverage-card:hover {
-        transform: translateY(-8px) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-    }
-    
-    /* FORCE TEXT COLOR CHANGE */
-    .benefit-card:hover *, .value-tile:hover *, .service-tile:hover *, 
-    .trust-item:hover *, .service-card:hover *, .promo-card:hover *,
-    .category-card:hover *, .contact-tile:hover *, .area-tile:hover *,
-    .coverage-card:hover * {
-        color: white !important;
-    }
-    
-    /* SATIN GLOSS SWIPE EFFECT FOR ALL TILES */
-    .benefit-card::after, .value-tile::after, .service-tile::after, 
-    .trust-item::after, .service-card::after, .promo-card::after,
-    .category-card::after, .contact-tile::after, .area-tile::after,
-    .coverage-card::after {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: -100% !important;
-        width: 50% !important;
-        height: 100% !important;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        ) !important;
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-        z-index: 3 !important;
-    }
-    
-    .benefit-card:hover::after, .value-tile:hover::after, 
-    .service-tile:hover::after, .trust-item:hover::after,
-    .service-card:hover::after, .promo-card:hover::after,
-    .category-card:hover::after, .contact-tile:hover::after,
-    .area-tile:hover::after, .coverage-card:hover::after {
-        left: 100% !important;
-    }
-    </style>
 <meta content="max-age=31536000; includeSubDomains" http-equiv="Strict-Transport-Security"/>
 <meta content="upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Service Area | Watts Safety Installs | Norfolk, NE &amp; Surrounding Areas</title>
-<meta content="Watts Safety Installs serves Norfolk, NE and surrounding areas. Check our service area for accessibility solutions, ADA ramps, grab bars, snow removal &amp; lawn care." name="description"/>
+<title>Service Area | Watts Safety Installs | Norfolk NE &amp; Surrounding Areas</title>
+<meta content="Watts Safety Installs serves Norfolk NE and surrounding areas. Check our service area for accessibility solutions, ADA ramps, grab bars, snow removal &amp; lawn care." name="description"/>
 <!-- Favicon -->
 <link href="/apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
 <link href="/apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
@@ -114,10 +27,10 @@
 <meta content="/ms-icon-144x144.png" name="msapplication-TileImage"/>
 <meta content="#ffffff" name="theme-color"/>
 <!-- Search Engine & Social Media Meta Tags -->
-<meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification">
+<meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification"/>
 <!-- Open Graph for Facebook/LinkedIn -->
-<meta content="Service Area | Watts Safety Installs | Norfolk, NE &amp; Surrounding Areas" property="og:title"/>
-<meta content="Watts Safety Installs serves Norfolk, NE and surrounding areas. Check our service area for accessibility solutions, ADA ramps, grab bars, snow removal &amp; lawn care." property="og:description"/>
+<meta content="Service Area | Watts Safety Installs | Norfolk NE &amp; Surrounding Areas" property="og:title">
+<meta content="Watts Safety Installs serves Norfolk NE and surrounding areas. Check our service area for accessibility solutions, ADA ramps, grab bars, snow removal &amp; lawn care." property="og:description"/>
 <meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" property="og:image"/>
 <meta content="https://wattsatpcontractor.com/service-area" property="og:url"/>
 <meta content="website" property="og:type"/>
@@ -125,13 +38,13 @@
 <!-- Twitter Card -->
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="Service Area | Watts Safety Installs" name="twitter:title"/>
-<meta content="Watts Safety Installs serves Norfolk, NE and surrounding areas for accessibility solutions, ADA ramps, grab bars, snow removal &amp; lawn care." name="twitter:description"/>
+<meta content="Watts Safety Installs serves Norfolk NE and surrounding areas for accessibility solutions, ADA ramps, grab bars, snow removal &amp; lawn care." name="twitter:description"/>
 <meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" name="twitter:image"/>
 <!-- Additional SEO Meta Tags -->
-<meta content="service area, Norfolk, NE contractor, accessibility contractor near me, ADA contractor service area, wheelchair ramp installation service area, snow removal service area, lawn care service area" name="keywords"/>
+<meta content="service area, Norfolk NE contractor, accessibility contractor near me, ADA contractor service area, wheelchair ramp installation service area, snow removal service area, lawn care service area" name="keywords"/>
 <meta content="Watts Safety Installs" name="author"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
-<link rel="canonical" href="https://wattsatpcontractor.com/service-area">
+<link href="https://wattsatpcontractor.com/_site/website-backup-20251128-212845/service-area" rel="canonical"/>
 <!-- Cache Control for Performance -->
 <meta content="max-age=31536000, public" http-equiv="Cache-Control"/>
 <!-- Fonts -->
@@ -149,10 +62,10 @@
       "name": "Watts Safety Installs",
       "url": "https://wattsatpcontractor.com",
       "telephone": "+14054106402",
-      "email": "wattssafetyinstalls@gmail.com",
+      "email": "Justin.Watts@WattsATPContractor.com",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "500 Block Omaha Ave",
+        "streetAddress": "507 West Omaha Ave Suite B",
         "addressLocality": "Norfolk",
         "addressRegion": "NE",
         "postalCode": "68701",
@@ -203,7 +116,7 @@
       "@type": "WebPage",
       "@id": "https://wattsatpcontractor.com/service-area.html/#webpage",
       "url": "https://wattsatpcontractor.com/service-area",
-      "name": "Service Area | Watts Safety Installs | Norfolk, NE & Surrounding Areas",
+      "name": "Service Area | Watts Safety Installs | Norfolk NE & Surrounding Areas",
       "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
       "isPartOf": {
         "@id": "https://wattsatpcontractor.com/#website"
@@ -572,11 +485,15 @@
             border: 1px solid rgba(0,0,0,0.05);
         }
         
+        .coverage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
         .coverage-icon {
             font-size: 3rem;
             color: var(--teal);
             margin-bottom: 20px;
-            transition: color 0.6s;
         }
         
         .coverage-card h3 {
@@ -584,13 +501,11 @@
             color: var(--navy);
             margin-bottom: 15px;
             font-family: 'Playfair Display', serif;
-            transition: color 0.6s;
         }
         
         .coverage-card p {
             color: var(--gray);
             line-height: 1.7;
-            transition: color 0.6s;
         }
         
         /* CTA Section */
@@ -792,8 +707,7 @@
             }
         }
     </style>
-</meta><link rel="canonical" href="https://wattsatpcontractor.com/service-area" />
-</head>
+</meta></head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-KCPM8VZ" style="display:none;visibility:hidden" width="0"></iframe></noscript>
@@ -821,13 +735,13 @@
 <header>
 <div class="header-container">
 <div class="logo-container">
-<a class="logo" href="index">WATTS</a>
+<a class="logo" href="/">WATTS</a>
 </div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">
 <i class="fas fa-bars"></i>
 </button>
 <nav class="nav-links" id="navLinks">
-<a href="index">Home</a>
+<a href="/">Home</a>
 <a href="/services.html">Services</a>
 <a class="active" href="/service-area.html">Service Area</a>
 <a href="/about.html">About</a>
@@ -842,7 +756,7 @@
 <!-- Breadcrumb -->
 <div class="breadcrumb">
 <div class="breadcrumb-container">
-<a href="index">Home</a>
+<a href="/">Home</a>
 <i class="fas fa-chevron-right"></i>
 <span>Service Area</span>
 </div>
@@ -850,13 +764,13 @@
 <!-- Page Hero -->
 <section class="page-hero">
 <h1>Our Service Area</h1>
-<p>Providing professional accessibility and safety solutions throughout Norfolk, NE and surrounding areas</p>
+<p>Providing professional accessibility and safety solutions throughout Norfolk NE and surrounding areas</p>
 </section>
 <!-- Service Area Content -->
 <section class="service-area-content">
 <div class="service-area-container">
 <div class="service-area-info">
-<h2>Serving Norfolk, NE &amp; Surrounding Communities</h2>
+<h2>Serving Norfolk NE &amp; Surrounding Communities</h2>
 <p>Watts Safety Installs is proud to serve Norfolk, Nebraska and the surrounding areas. As an ATP Approved Contractor with Nebraska license #54690-25, we bring professional accessibility solutions, safety installations, and comprehensive home services to communities throughout Northeast Nebraska.</p>
 <p>Whether you need ADA-compliant ramps, grab bars for bathroom safety, snow removal services, or lawn care, we're committed to providing exceptional service to residents and businesses in our service area.</p>
 <h3 style="margin-top: 30px; color: var(--navy);">Primary Service Areas:</h3>
@@ -930,7 +844,7 @@
 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
 <p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services near you.</p>
 <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-<p><a href="sitemap">Sitemap</a> | <a href="/privacy-policy.html">Privacy Policy</a></p>
+<p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a></p>
 </div>
 <div class="footer-links">
 <h3>Our Services</h3>
@@ -944,8 +858,8 @@
 <div class="footer-contact">
 <h3>Contact Us</h3>
 <p><strong>Phone:</strong> <a href="tel:+14054106402">(405) 410-6402</a></p>
-<p><strong>Email:</strong> <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a></p>
-<p><strong>Address:</strong> 500 Block Omaha Ave, Norfolk, NE 68701</p>
+<p><strong>Email:</strong> <a href="mailto:Justin.Watts@WattsATPContractor.com">Justin.Watts@WattsATPContractor.com</a></p>
+<p><strong>Address:</strong> 507 West Omaha Ave Suite B Norfolk, Nebraska</p>
 <p><strong>Hours:</strong> Mon-Fri 8:30 AM - 6:00 PM, Sat On Call</p>
 </div>
 </div>
@@ -989,10 +903,29 @@
             });
         });
     </script>
+<script>
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
+    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled');
+        });
+        // Optional: Add touchstart for better mobile support
+        hamburger.addEventListener('touchstart', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled via touch');
+        });
+    }
+});
+</script>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Service",
-  "name": "Service Area | Watts Safety Installs | Norfolk, NE & Surrounding Areas",
+  "name": "Service Area | Watts Safety Installs | Norfolk NE & Surrounding Areas",
   "provider": {
     "@type": "LocalBusiness",
     "name": "Watts ATP",

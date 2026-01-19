@@ -5,7 +5,7 @@ import re
 SERVICES_DIR = "services"
 FOOTER_HTML = """    <footer>
         <div class="footer-contact">
-            <p><strong>Watts Safety Installs</strong></p>
+            <p><strong>Watts ATP Contractor</strong></p>
             <p>Phone: <a href="tel:+14054106402">(405) 410-6402</a></p>
             <p>Service Areas: Norfolk, Battle Creek, Pierce, Madison County & Antelope County NE</p>
         </div>
@@ -15,7 +15,7 @@ FOOTER_HTML = """    <footer>
             <a href="/contact">Contact</a>
             <a href="/privacy-policy">Privacy Policy</a>
         </div>
-        <p>&copy; 2024 Watts Safety Installs. All rights reserved.</p>
+        <p>&copy; 2024 Watts ATP Contractor. All rights reserved.</p>
     </footer>
 """
 

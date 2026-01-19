@@ -32,7 +32,7 @@ def fix_accessibility_page_structure():
     # Replace title and meta tags
     accessibility_content = accessibility_content.replace(
         '<title>Senior Safety | Watts At Your Service</title>',
-        '<title>Accessibility Safety Solutions | Watts Safety Installs</title>'
+        '<title>Accessibility Safety Solutions | Watts ATP Contractor</title>'
     )
     
     accessibility_content = accessibility_content.replace(

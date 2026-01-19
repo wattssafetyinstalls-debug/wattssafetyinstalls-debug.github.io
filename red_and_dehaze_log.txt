@@ -1,0 +1,67 @@
+Restore Red Colors + Remove Haze Effects
+============================================================
+Total files processed: 60
+Files changed: 60
+
+Changes:
+------------------------------------------------------------
+safety-installs\about.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\contact.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable, Removed backdrop-filter blur
+safety-installs\referrals.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\service-area.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services-source.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable, Removed backdrop-filter blur
+safety-installs\services.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable, Removed backdrop-filter blur
+safety-installs\services\audio-visual\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\basement-finishing\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\bathroom-remodels\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\cabinet-refacing\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\cable-management\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\concrete-pouring\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\concrete-repair\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\countertop-repair\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\custom-cabinets\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\custom-storage\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\deck-construction\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\driveway-installation\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\drywall-repair\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\emergency-repairs\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\emergency-snow\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\fence-installation\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\fence-repair\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\fertilization\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\floor-refinishing\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\flooring-installation\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\garden-maintenance\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\gutter-cleaning\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\handyman-repair-services\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\handyman-services\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\hardwood-flooring\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\home-audio\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\home-remodeling\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\home-remodeling-renovation\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\home-theater-installation\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\kitchen-cabinetry\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\kitchen-renovations\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\landscape-design\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\lawn-maintenance\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\onyx-countertops\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\painting-drywall\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\painting-services\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\patio-construction\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\pressure-washing\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\projector-install\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\property-maintenance-services\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\room-additions\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\seasonal-cleanup\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\seasonal-prep\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\siding-replacement\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\smart-audio\index.html: Restored red color scheme, Restored red rgba colors
+safety-installs\services\snow-removal\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\sound-system-setup\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\soundbar-setup\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\tree-trimming\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\tv-home-theater-installation\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\tv-mounting\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\tv-mounting-residential\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable
+safety-installs\services\window-doors\index.html: Restored red color scheme, Restored red rgba colors, Restored red CSS variable, Fixed :root red variable

@@ -1,0 +1,1124 @@
+Footer Fixes Applied
+=============================================================
+Total files processed: 1333
+Files changed: 1117
+
+Changes:
+------------------------------------------------------------
+index-backup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231836\services_window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_before_faq_20251206_231844\services_window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\test_services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\concrete-pouring.html: Fixed hardcoded 2025 year, Added year update script
+services-backup-20251126\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\driveway-installation.html: Fixed hardcoded 2025 year, Added year update script
+services-backup-20251126\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\hardwood-flooring.html: Fixed hardcoded 2025 year, Added year update script
+services-backup-20251126\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251126\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+services-backup-20251126\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211111\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services-backup-20251128-211201\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\index-backup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\test_services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\about\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\contact\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\privacy-policy\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\referrals\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\service-area\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251126\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com, Added year update script
+_site\services-backup-20251126\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211111\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\services-backup-20251128-211201\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\sitemap\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212845\services\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+_site\website-backup-20251128-212831\services\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212845\services\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+website-backup-20251128-212831\services\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+services\accessibility-safety-solutions\index.html: Fixed hardcoded 2025 year, Added year update script
+services\bathroom-accessibility\index.html: Fixed hardcoded 2025 year, Added year update script
+services\grab-bar-installation\index.html: Fixed hardcoded 2025 year
+services\gutter-cleaning\index.html: Fixed hardcoded 2025 year, Added year update script
+services\handyman-services\index.html: Fixed hardcoded 2025 year, Added year update script
+services\hardwood-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+services\home-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+services\home-remodeling\index.html: Fixed hardcoded 2025 year, Added year update script
+services\home-theater-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+services\kitchen-cabinetry\index.html: Fixed hardcoded 2025 year, Added year update script
+services\kitchen-renovations\index.html: Fixed hardcoded 2025 year, Added year update script
+services\landscape-design\index.html: Fixed hardcoded 2025 year, Added year update script
+services\lawn-maintenance\index.html: Fixed hardcoded 2025 year, Added year update script
+services\non-slip-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+services\onyx-countertops\index.html: Fixed hardcoded 2025 year, Added year update script
+services\painting-services\index.html: Fixed hardcoded 2025 year, Added year update script
+services\patio-construction\index.html: Fixed hardcoded 2025 year, Added year update script
+services\pressure-washing\index.html: Fixed hardcoded 2025 year, Added year update script
+services\projector-install\index.html: Fixed hardcoded 2025 year, Added year update script
+services\property-maintenance-services\index.html: Fixed hardcoded 2025 year, Added year update script
+services\room-additions\index.html: Fixed hardcoded 2025 year, Added year update script
+services\seasonal-cleanup\index.html: Fixed hardcoded 2025 year, Added year update script
+services\seasonal-prep\index.html: Fixed hardcoded 2025 year, Added year update script
+services\senior-safety\index.html: Fixed hardcoded 2025 year, Added year update script
+services\siding-replacement\index.html: Fixed hardcoded 2025 year, Added year update script
+services\smart-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+services\snow-removal\index.html: Fixed hardcoded 2025 year, Added year update script
+services\sound-system-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+services\soundbar-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+services\stairlift-elevator-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+services\tree-trimming\index.html: Fixed hardcoded 2025 year, Added year update script
+services\tv-mounting\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\gutter-cleaning\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\handyman-services\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\hardwood-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\home-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\home-remodeling\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\home-theater-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\kitchen-cabinetry\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\kitchen-renovations\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\landscape-design\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\lawn-maintenance\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\onyx-countertops\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\painting-services\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\patio-construction\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\pressure-washing\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\projector-install\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\property-maintenance-services\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\room-additions\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\seasonal-cleanup\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\seasonal-prep\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\siding-replacement\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\smart-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\snow-removal\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\sound-system-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\soundbar-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\tree-trimming\index.html: Fixed hardcoded 2025 year, Added year update script
+safety-installs\services\tv-mounting\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\accessibility-safety-solutions\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\ada-compliant-showers\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\bathroom-accessibility\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\grab-bar-installation\index.html: Fixed hardcoded 2025 year
+backup_service_breadcrumbs_20260112_014823\services\grab-bars\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\gutter-cleaning\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\handyman-repair-services\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\handyman-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\hardwood-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\home-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\home-remodeling\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\home-remodeling-renovation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\home-theater-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\kitchen-cabinetry\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\kitchen-renovations\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\landscape-design\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\lawn-maintenance\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\non-slip-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\non-slip-flooring-solutions\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\onyx-countertops\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\painting-drywall\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\painting-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\patio-construction\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\pressure-washing\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\projector-install\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\property-maintenance-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\room-additions\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\seasonal-cleanup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\seasonal-prep\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\senior-safety\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\siding-replacement\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\snow-removal\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\sound-system-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\soundbar-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\stairlift-elevator-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\tree-trimming\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\tv-home-theater-installation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\tv-mounting\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_service_breadcrumbs_20260112_014823\services\tv-mounting-residential\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\wheelchair-ramp-installation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_service_breadcrumbs_20260112_014823\services\window-doors\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\about\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\contact\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\privacy-policy\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\referrals\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\service-area\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\sitemap\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_includes\structured-data.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\about.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\contact.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\privacy-policy.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\referrals.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\service-area.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\sitemap.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\test_services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\about\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\contact\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\privacy-policy\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\referrals\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\service-area\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\accessibility-safety-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\ada-compliant-showers-bathrooms.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\ada-compliant-showers.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\audio-visual.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\basement-finishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\bathroom-accessibility.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\bathroom-remodels.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\cabinet-refacing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\cable-management.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\concrete-pouring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\concrete-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\countertop-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\custom-cabinets.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\custom-ramps.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\custom-storage.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\deck-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\driveway-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\drywall-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\emergency-repairs.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\emergency-snow.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\fence-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\fence-repair.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\fertilization.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\floor-refinishing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\flooring-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\garden-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\grab-bar-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\grab-bars.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\gutter-cleaning.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\handyman-repair-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\handyman-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\hardwood-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\home-audio.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\home-remodeling-renovation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\home-remodeling.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\kitchen-cabinetry.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\kitchen-renovations.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\landscape-design.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\lawn-maintenance.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\non-slip-flooring-solutions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\non-slip-flooring.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\onyx-countertops.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\painting-drywall.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\painting-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\patio-construction.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\pressure-washing.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\property-maintenance-services.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\room-additions.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\seasonal-cleanup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\seasonal-prep.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\senior-safety.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\siding-replacement.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\snow-removal.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\sound-system-setup.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\stairlift-elevator-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\tree-trimming.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\tv-home-theater-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\tv-mounting-residential.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\tv-mounting.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\wheelchair-ramp-installation.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\services\window-doors.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\_site\sitemap\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\ada-compliant-showers\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\bathroom-accessibility\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\grab-bar-installation\index.html: Fixed hardcoded 2025 year
+backup_safe_20260111_223354\services\grab-bars\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\gutter-cleaning\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\handyman-repair-services\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\handyman-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\hardwood-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\home-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\home-remodeling\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\home-remodeling-renovation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\home-theater-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\kitchen-cabinetry\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\kitchen-renovations\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\landscape-design\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\lawn-maintenance\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\non-slip-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\non-slip-flooring-solutions\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\onyx-countertops\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\painting-drywall\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\painting-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\patio-construction\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\pressure-washing\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\projector-install\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\property-maintenance-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\room-additions\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\seasonal-cleanup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\seasonal-prep\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\senior-safety\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\siding-replacement\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\smart-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\snow-removal\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\sound-system-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\soundbar-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\stairlift-elevator-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\tree-trimming\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\tv-home-theater-installation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\tv-mounting\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_safe_20260111_223354\services\tv-mounting-residential\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\wheelchair-ramp-installation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_safe_20260111_223354\services\window-doors\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\accessibility-safety-solutions\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\ada-compliant-showers\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\bathroom-accessibility\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\grab-bar-installation\index.html: Fixed hardcoded 2025 year
+backup_public_canonicals_20260112_023157\services\grab-bars\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\gutter-cleaning\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\handyman-repair-services\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\handyman-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\hardwood-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\home-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\home-remodeling\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\home-remodeling-renovation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\home-theater-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\kitchen-cabinetry\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\kitchen-renovations\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\landscape-design\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\lawn-maintenance\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\non-slip-flooring\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\non-slip-flooring-solutions\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\onyx-countertops\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\painting-drywall\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\painting-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\patio-construction\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\pressure-washing\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\projector-install\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\property-maintenance-services\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\room-additions\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\seasonal-cleanup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\seasonal-prep\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\senior-safety\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\siding-replacement\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\smart-audio\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\snow-removal\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\sound-system-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\soundbar-setup\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\stairlift-elevator-installation\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\tree-trimming\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\tv-home-theater-installation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\tv-mounting\index.html: Fixed hardcoded 2025 year, Added year update script
+backup_public_canonicals_20260112_023157\services\tv-mounting-residential\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\wheelchair-ramp-installation\index.html: Fixed email to Justin.Watts@WattsATPContractor.com
+backup_public_canonicals_20260112_023157\services\window-doors\index.html: Fixed email to Justin.Watts@WattsATPContractor.com

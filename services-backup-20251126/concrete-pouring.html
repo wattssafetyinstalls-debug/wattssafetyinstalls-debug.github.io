@@ -334,7 +334,7 @@
 </div>
 </div>
 <div class="footer-bottom">
-<p>© 2025 Watts Safety Installs. All rights reserved.</p>
+<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved.</p>
 </div>
 </footer>
 <script>
@@ -355,6 +355,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>

@@ -197,11 +197,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer>
 <div class="footer-container">
 <div class="footer-section">
-<h3>Watts Safety Installs</h3>
+<h3>Watts ATP Contractor</h3>
 <p>Professional ADA accessibility contractor serving Norfolk, NE and surrounding areas.</p>
 <div class="contact-info">
 <p><i class="fas fa-phone"></i> (405) 410-6402</p>
-<p><i class="fas fa-envelope"></i> wattssafetyinstalls@gmail.com</p>
+<p><i class="fas fa-envelope"></i> Justin.Watts@WattsATPContractor.com</p>
 <p><i class="fas fa-map-marker-alt"></i> Norfolk, NE</p>
 </div>
 </div>
@@ -225,7 +225,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 <div class="footer-bottom">
-<p>&copy; <span id="current-year">2024</span> Watts Safety Installs. All rights reserved.</p>
+<p>&copy; <span id="current-year">2024</span> Watts ATP Contractor. All rights reserved.</p>
 <div class="footer-links">
 <a href="/privacy-policy.html">Privacy Policy</a>
 <a href="/terms.html">Terms of Service</a>

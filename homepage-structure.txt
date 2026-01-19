@@ -1,4 +1,4 @@
-    <meta name="author" content="Watts Safety Installs">
+    <meta name="author" content="Watts ATP Contractor">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://wattsatpcontractor.com">
   
@@ -19,10 +19,10 @@
     {
       "@type": "HomeAndConstructionBusiness",
       "@id": "https://wattsatpcontractor.com/#organization",
-      "name": "Watts Safety Installs",
+      "name": "Watts ATP Contractor",
       "url": "https://wattsatpcontractor.com",
       "telephone": "+14054106402",
-      "email": "wattssafetyinstalls@gmail.com",
+      "email": "Justin.Watts@WattsATPContractor.com",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "500 Block Omaha Ave",
@@ -96,6 +96,6 @@
       "@type": "WebSite",
       "@id": "https://wattsatpcontractor.com/#website",
       "url": "https://wattsatpcontractor.com",
-      "name": "Watts Safety Installs",
+      "name": "Watts ATP Contractor",
       "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
       "publisher": {

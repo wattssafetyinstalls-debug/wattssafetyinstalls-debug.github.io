@@ -60,6 +60,10 @@ _site/
 
 # Backup files
 *.bak
+backup_*/
+backup-*/
+services-backup-*/
+website-backup-*/
 
 # Audit files
 audit_report.txt

@@ -1,0 +1,13 @@
+DBA Site Final Fixes - Footer Links & Dynamic Year
+============================================================
+Total files processed: 124
+Files changed: 6
+
+Changes:
+------------------------------------------------------------
+safety-installs\about.html: Added ATP Contractor footer link
+safety-installs\contact.html: Added ATP Contractor footer link
+safety-installs\privacy-policy.html: Added ATP Contractor footer link
+safety-installs\referrals.html: Added ATP Contractor footer link
+safety-installs\service-area.html: Added ATP Contractor footer link
+safety-installs\sitemap.html: Added ATP Contractor footer link

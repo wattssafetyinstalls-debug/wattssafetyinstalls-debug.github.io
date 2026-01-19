@@ -2,47 +2,14 @@
 
 <html lang="en">
 <head>
-<script>
-if(window.location.pathname==="/index"||window.location.pathname==="/index.html"){window.location.replace("/");}
-// Mobile touch optimization for service cards
-document.addEventListener('DOMContentLoaded', function() {
-    const serviceCards = document.querySelectorAll('.service-card');
-    
-    serviceCards.forEach(card => {
-        card.addEventListener('touchstart', function(e) {
-            // Close all other cards
-            serviceCards.forEach(otherCard => {
-                if (otherCard !== this) {
-                    otherCard.classList.remove('touch-active');
-                }
-            });
-            
-            // Toggle this card
-            this.classList.toggle('touch-active');
-            
-            // Prevent default to avoid scrolling issues
-            e.preventDefault();
-        });
-        
-        // Close card when tapping outside
-        document.addEventListener('touchstart', function(e) {
-            if (!card.contains(e.target)) {
-                card.classList.remove('touch-active');
-            }
-        });
-    });
-});
-</script>
+<script>if(window.location.pathname==="/index"){window.history.replaceState({},"","/");}</script>
 <meta content="max-age=31536000; includeSubDomains" http-equiv="Strict-Transport-Security"/>
 <meta content="upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Accessibility Contractor Near Me | Watts Safety Installs | Norfolk, NE</title>
-<meta content="Watts Safety Installs: Expert accessibility home mods, remodeling, AV, and maintenance in Norfolk, NE. ADA ramps, grab bars, TV mounting, snow removal &amp; more. Free quotes—15% off first snow service!" name="description"/>
-<link rel="canonical" href="https://wattsatpcontractor.com/">
+<title>Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE</title>
+<meta content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting &amp; audio visual services in Norfolk NE. 15% OFF First 3 Snow Visits." name="description"/>
 <!-- Favicon -->
-<link rel="icon" href="/favicon.ico" sizes="any">
-
 <link href="/apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
 <link href="/apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
 <link href="/apple-icon-72x72.png" rel="apple-touch-icon" sizes="72x72"/>
@@ -63,8 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Search Engine & Social Media Meta Tags -->
 <meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification"/>
 <!-- Open Graph for Facebook/LinkedIn -->
-<meta content="Accessibility Contractor Near Me | Watts Safety Installs | Norfolk, NE" property="og:title">
-<meta content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting &amp; audio visual services in Norfolk, NE." property="og:description"/>
+<meta content="Accessibility Contractor Near Me | Watts Safety Installs | Norfolk NE" property="og:title">
+<meta content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, snow removal, lawn care, TV mounting &amp; audio visual services in Norfolk NE." property="og:description"/>
 <meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" property="og:image"/>
 <meta content="https://wattsatpcontractor.com" property="og:url"/>
 <meta content="website" property="og:type"/>
@@ -72,12 +39,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Twitter Card -->
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="Accessibility Contractor Near Me | Watts Safety Installs" name="twitter:title"/>
-<meta content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, TV mounting &amp; audio visual in Norfolk, NE" name="twitter:description"/>
+<meta content="ATP Approved Contractor near me for ADA ramps, grab bars, wheelchair access, TV mounting &amp; audio visual in Norfolk NE" name="twitter:description"/>
 <meta content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80" name="twitter:image"/>
 <!-- Additional SEO Meta Tags -->
-<meta content="accessibility contractor near me, ADA contractor near me, wheelchair ramp installation near me, grab bars installation near me, snow removal near me, lawn care near me, TV mounting service near me, audio visual installation near me, Norfolk, NE contractor" name="keywords"/>
+<meta content="accessibility contractor near me, ADA contractor near me, wheelchair ramp installation near me, grab bars installation near me, snow removal near me, lawn care near me, TV mounting service near me, audio visual installation near me, Norfolk NE contractor" name="keywords"/>
 <meta content="Watts Safety Installs" name="author"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
+<link href="https://wattsatpcontractor.com/index-backup" rel="canonical"/>
 <!-- Cache Control for Performance -->
 <meta content="max-age=31536000, public" http-equiv="Cache-Control"/>
 <!-- Fonts -->
@@ -86,386 +54,99 @@ document.addEventListener('DOMContentLoaded', function() {
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 <!-- Structured Data / Schema Markup -->
 <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "HomeAndConstructionBusiness",
+      "@id": "https://wattsatpcontractor.com/#organization",
+      "name": "Watts Safety Installs",
+      "url": "https://wattsatpcontractor.com",
+      "telephone": "+14054106402",
+      "email": "Justin.Watts@WattsATPContractor.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "507 West Omaha Ave Suite B",
+        "addressLocality": "Norfolk",
+        "addressRegion": "NE",
+        "postalCode": "68701",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.032,
+        "longitude": -97.418
+      },
+      "openingHours": "Mo-Fr 08:30-18:00",
+      "priceRange": "$$",
+      "areaServed": "Nebraska",
+      "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
+      "knowsAbout": [
+        "Accessibility Modifications",
+        "ADA Compliance",
+        "Home Safety",
+        "Snow Removal",
+        "Lawn Care",
+        "TV Mounting",
+        "Audio Visual Installation"
+      ],
+      "makesOffer": [
         {
-          "@type": "HomeAndConstructionBusiness",
-          "@id": "https://wattsatpcontractor.com/#organization",
-          "name": "Watts Safety Installs",
-          "url": "https://wattsatpcontractor.com",
-          "telephone": "+14054106402",
-          "email": "wattssafetyinstalls@gmail.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "500 Block Omaha Ave",
-            "addressLocality": "Norfolk",
-            "addressRegion": "NE",
-            "postalCode": "68701",
-            "addressCountry": "US"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 42.032,
-            "longitude": -97.418
-          },
-          "openingHours": "Mo-Fr 08:30-18:00",
-          "priceRange": "$$",
-          "areaServed": {
-            "@type": "GeoCircle",
-            "geoMidpoint": {
-              "@type": "GeoCoordinates",
-              "latitude": 41.9836,
-              "longitude": -97.4264
-            },
-            "geoRadius": 80467,
-            "description": "50-mile radius around Norfolk, NE"
-          },
-          "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications, and property maintenance in Norfolk, NE and surrounding areas.",
-          "sameAs": [
-            "https://wattsatpcontractor.com"
-          ],
-          "knowsAbout": [
-            "Accessibility Modifications",
-            "ADA Compliance",
-            "Home Safety",
-            "Snow Removal",
-            "Lawn Care",
-            "TV Mounting",
-            "Audio Visual Installation"
-          ],
-          "makesOffer": [
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Accessibility & Safety Solutions",
-                "description": "Professional installation of ADA-compliant ramps, grab bars, and safety modifications."
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Home Remodeling",
-                "description": "Complete home renovation and remodeling services."
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Property Maintenance",
-                "description": "Complete property care including lawn care and seasonal maintenance."
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "TV Mounting Services",
-                "description": "Professional TV mounting and home theater installation."
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Audio Visual Installation",
-                "description": "Complete audio and visual system installation services."
-              }
-            }
-          ],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5.0",
-            "reviewCount": "1",
-            "bestRating": "5",
-            "worstRating": "1"
-          },
-          "hasCredential": {
-            "@type": "EducationalOccupationalCredential",
-            "name": "ATP Approved Contractor"
-          },
-          "serviceArea": {
-            "@type": "State",
-            "name": "Nebraska"
-          },
-          "image": "https://wattsatpcontractor.com/logo.png"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Accessibility & Safety Solutions"
+          }
         },
         {
-          "@type": "WebSite",
-          "@id": "https://wattsatpcontractor.com/#website",
-          "url": "https://wattsatpcontractor.com",
-          "name": "Watts Safety Installs",
-          "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance in Norfolk, NE and surrounding areas.",
-          "publisher": {
-            "@id": "https://wattsatpcontractor.com/#organization"
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Remodeling"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Property Maintenance"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "TV Mounting Services"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Audio Visual Installation"
           }
         }
-      ]
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "1"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://wattsatpcontractor.com/#website",
+      "url": "https://wattsatpcontractor.com",
+      "name": "Watts Safety Installs",
+      "description": "Professional ADA accessibility contractor providing ramps, grab bars, safety modifications and property maintenance.",
+      "publisher": {
+        "@id": "https://wattsatpcontractor.com/#organization"
+      }
     }
-    </script>
+  ]
+}
+</script>
 <style>
-        /* === MOBILE-FIRST SERVICE TILES CAROUSEL === */
-        .service-tiles-carousel {
-            max-width: 1200px;
-            margin: 50px auto;
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            padding: 0 10px;
-        }
-        
-        .carousel-container {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-            gap: 20px;
-            padding: 20px 10px;
-            scroll-behavior: smooth;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .carousel-item {
-            flex: 0 0 auto;
-            scroll-snap-align: start;
-            min-width: calc(100% - 20px);
-        }
-        
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--teal);
-            color: white;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
-            display: none;
-        }
-        
-        .carousel-btn:hover {
-            background: var(--navy);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        .carousel-prev {
-            left: 5px;
-        }
-        
-        .carousel-next {
-            right: 5px;
-        }
-        
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-            padding: 0 10px;
-        }
-        
-        .carousel-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--gray);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-        
-        .carousel-dot.active {
-            background: var(--teal);
-            transform: scale(1.2);
-        }
-        
-        /* === DROPDOWN MENUS - MOBILE FIRST === */
-        .dropdown {
-            position: relative;
-        }
-        
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background: white;
-            min-width: 200px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            z-index: 1000;
-            top: 100%;
-            left: 0;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-        
-        .dropdown-content a {
-            color: var(--navy);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            transition: all 0.3s;
-            border-bottom: 1px solid var(--light);
-            font-size: 0.95rem;
-        }
-        
-        .dropdown-content a:hover {
-            background: var(--teal);
-            color: white;
-        }
-        
-        .dropdown-content a:last-child {
-            border-bottom: none;
-        }
-        
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        
-        .dropdown-toggle::after {
-            content: ' \25BC';
-            font-size: 0.7em;
-            margin-left: 4px;
-        }
-        
-        /* === TABLET STYLES (768px and up) === */
-        @media (min-width: 768px) {
-            .service-tiles-carousel {
-                padding: 0 20px;
-            }
-            
-            .carousel-container {
-                gap: 25px;
-                padding: 20px;
-                overflow-x: visible;
-            }
-            
-            .carousel-item {
-                min-width: calc(50% - 13px);
-            }
-            
-            .carousel-btn {
-                display: block;
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
-            }
-            
-            .carousel-prev {
-                left: 15px;
-            }
-            
-            .carousel-next {
-                right: 15px;
-            }
-            
-            .dropdown-content a {
-                padding: 15px 20px;
-                font-size: 1rem;
-            }
-        }
-        
-        /* === DESKTOP STYLES (1024px and up) === */
-        @media (min-width: 1024px) {
-            .carousel-item {
-                min-width: calc(25% - 19px);
-            }
-            
-            .carousel-container {
-                padding: 20px 40px;
-            }
-        }
-        
-        /* === TOUCH DEVICE OPTIMIZATIONS === */
-        @media (hover: none) and (pointer: coarse) {
-            .carousel-btn {
-                width: 52px;
-                height: 52px;
-                font-size: 1.3rem;
-            }
-            
-            .dropdown-content {
-                min-width: 220px;
-            }
-            
-            .dropdown-content a {
-                padding: 14px 18px;
-            }
-        }
-        
-        /* === REDUCED MOTION SUPPORT === */
-        @media (prefers-reduced-motion: reduce) {
-            .carousel-container {
-                transition: none;
-                scroll-behavior: auto;
-            }
-        }
-        
-        /* === SERVICE CARD DROPDOWN LINK FIX === */
-        .service-dropdown a {
-            color: #0A1D37 !important;
-            background: white !important;
-        }
-
-        .service-card:hover .service-dropdown a,
-        .service-card.touch-active .service-dropdown a {
-            color: white !important;
-            background: transparent !important;
-        }
-
-        .service-card:hover .service-dropdown,
-        .service-card.touch-active .service-dropdown {
-            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-        }
-        
-        /* Dropdown Menu Styles */
-        .nav-dropdown {
-            position: relative;
-        }
-        .nav-dropdown:hover .dropdown {
-            display: block;
-        }
-        .dropdown {
-            display: none;
-            position: absolute;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-width: 250px;
-            max-height: 500px;
-            overflow-y: auto;
-            list-style: none;
-            padding: 10px 0;
-            z-index: 1000;
-        }
-        .dropdown li {
-            margin: 0;
-        }
-        .dropdown a {
-            color: #333;
-            text-decoration: none;
-            display: block;
-            transition: color 0.3s;
-            position: relative;
-            padding: 8px 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .dropdown a:hover {
-            background: #3498db;
-            color: white;
-        }
         :root {
             --teal: #00C4B4;
             --navy: #0A1D37;
@@ -478,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
             --warm-dark: #E07C10;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.15);
-            --teal-glow: 0 15px 40px rgba(0,196,180,0.15);
-            --navy-glow: 0 15px 40px rgba(10,29,55,0.12);
+            --teal-glow: 0 15px 40px rgba(0, 196, 180, 0.15);
+            --navy-glow: 0 15px 40px rgba(10, 29, 55, 0.12);
             --gold-glow: 0 15px 40px rgba(255, 215, 0, 0.1);
         }
      
@@ -579,7 +260,6 @@ document.addEventListener('DOMContentLoaded', function() {
             white-space: nowrap;
             font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(0,196,180,0.3);
-            display: none;
         }
         .phone-link:hover {
             transform: translateY(-2px);
@@ -770,18 +450,19 @@ document.addEventListener('DOMContentLoaded', function() {
             padding: 0 20px;
         }
       
+        
         .service-card {
             background: var(--white);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: var(--teal-glow);
-            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
             display: flex;
             flex-direction: column;
-            position: relative;
-            width: 100%;
-            max-width: 350px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            min-height: 775px;
+            max-height: 775px;
             text-align: center;
         }
       
@@ -840,18 +521,22 @@ document.addEventListener('DOMContentLoaded', function() {
         .service-description {
             color: var(--gray);
             margin-bottom: 15px;
-            line-height: 1.6; /* Increased line-height for better readability */
-            font-size: 1rem; /* Slightly larger font */
-            overflow: visible; /* Removed overflow hidden */
-            text-overflow: initial; /* Removed ellipsis */
-            white-space: normal; /* Allow wrapping */
-            hyphens: auto; /* Better word breaking */
+            line-height: 1.6;
+            font-size: 1rem;
+            overflow: visible;
+            text-overflow: initial;
+            white-space: normal;
+            hyphens: auto;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
         }
       
         @media (max-width: 768px) {
             .service-description {
                 line-height: 1.7;
                 font-size: 1.05rem;
+                min-height: 100px;
             }
         }
       
@@ -1122,14 +807,74 @@ document.addEventListener('DOMContentLoaded', function() {
             color: var(--teal);
         }
       
-        .copyright {
-            text-align: center;
-            padding-top: 50px;
-            margin-top: 50px;
-            border-top: 1px solid #334155;
-            color: #94a3b8;
+        .copyright { 
+            text-align: center; 
+            padding-top: 50px; 
+            margin-top: 50px; 
+            border-top: 1px solid #334155; 
+            color: #94a3b8; 
             width: 100%;
             font-size: 1rem;
+        }
+        
+        /* Testimonials Section */
+        .testimonials-section {
+            padding: 100px 20px;
+            background: var(--warm-light);
+        }
+        
+        .testimonials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .testimonial-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: left;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--teal);
+        }
+        
+        .testimonial-rating {
+            color: var(--warm-accent);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .testimonial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #374151;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+        
+        .testimonial-author h4 {
+            font-size: 1.2rem;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+        
+        .testimonial-author p {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
         /* Responsive Design */
         @media (max-width: 1024px) {
@@ -1249,249 +994,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 font-size: 1.2rem;
             }
         }
-    /* MOBILE AUTO-ANIMATION EFFECTS */
-        @media (max-width: 768px) {
-            .service-tile.mobile-animated {
-                transform: translateY(-12px) scale(1.03);
-                box-shadow: 0 35px 90px rgba(10,29,55,0.38);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
-            .service-tile.mobile-animated::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-tile.mobile-animated::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 35px rgba(0,196,180,0.6);
-            }
-            .service-tile.mobile-animated h2, 
-            .service-tile.mobile-animated p, 
-            .service-tile.mobile-animated .trust-text {
-                color: white !important;
-            }
-            .service-tile.mobile-animated .trust-bar {
-                background: rgba(255,255,255,0.12);
-            }
-            .service-tile.mobile-animated .trust-icon {
-                transform: scale(1.5) translateY(-8px);
-                color: var(--gold) !important;
-            }
-            
-            .service-category.mobile-animated {
-                transform: translateY(-6px) scale(1.01);
-                box-shadow: 0 20px 45px rgba(10,29,55,0.25);
-                background: linear-gradient(135deg, var(--teal), var(--navy));
-                color: white;
-                border-color: var(--gray);
-            }
-            .service-category.mobile-animated::before {
-                opacity: 1;
-                animation: gloss 1.3s ease-out forwards;
-            }
-            .service-category.mobile-animated::after {
-                opacity: 1;
-                border-color: rgba(0,196,180,0.7);
-                box-shadow: 0 0 25px rgba(0,196,180,0.6);
-            }
-            .service-category.mobile-animated .category-title,
-            .service-category.mobile-animated .category-services {
-                color: white !important;
-            }
-            .service-category.mobile-animated .category-icon {
-                transform: scale(1.3) translateY(-5px);
-                color: var(--gold) !important;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            .service-tile {
-                margin: 40px 15px;
-                padding: 40px 25px;
-            }
-            .trust-bar {
-                flex-direction: column;
-                padding: 25px 20px;
-                gap: 15px;
-            }
-            .trust-item {
-                min-width: 100%;
-            }
-            .service-categories {
-                grid-template-columns: 1fr;
-            }
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--navy);
-                flex-direction: column;
-                padding: 30px 20px;
-                gap: 20px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .nav-links a {
-                padding: 15px 0;
-                font-size: 1.2rem;
-                text-align: center;
-                width: 100%;
-                display: block;
-            }
-            .mobile-menu-btn {
-                display: block;
-            }
-        }
-    
-        /* Homepage Service Tile Text Color Fix */
-        @media (max-width: 768px) {
-            .service-tile:hover h2,
-            .service-tile:hover p,
-            .service-tile:hover .trust-text,
-            .service-tile:active h2,
-            .service-tile:active p,
-            .service-tile:active .trust-text {
-                color: var(--navy) !important;
-            }
-            
-            .service-tile.mobile-animated h2,
-            .service-tile.mobile-animated p, 
-            .service-tile.mobile-animated .trust-text {
-                color: white !important;
-            }
-        }
-    
-/* Mobile Touch Optimization */
-@media (max-width: 768px) {
-    .mobile-menu-btn {
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-    }
-    
-    .service-card {
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .hamburger {
-        -webkit-tap-highlight-color: transparent;
-    }
-}
-</style>
-<!-- Redirects handled by 404.html and _redirects file -->
-<!-- SEASONAL PROMO ANIMATIONS -->
-<style>
-    /* Seasonal promo card animations */
-    .promo-card {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .promo-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .promo-card:hover::before {
-        left: 0;
-    }
-    
-    .promo-card > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .promo-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Satin gloss swipe for promo cards */
-    .promo-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .promo-card:hover::after {
-        left: 100%;
-    }
-    
-    /* Text color optimization for promo cards on hover */
-    .promo-card:hover .promo-title,
-    .promo-card:hover .promo-description {
-        color: white !important;
-    }
-    
-    .promo-card:hover .promo-code {
-        background: var(--gold) !important;
-        color: var(--navy) !important;
-    }
-    
-    .promo-card:hover .promo-cta {
-        background: white !important;
-        color: var(--teal) !important;
-    }
-    
-    /* Mobile auto-animation for promo cards */
-    @media (max-width: 768px) {
-        .promo-card.mobile-animated {
-            animation: promoMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes promoMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-        }
-    }
     </style>
 <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANIMATIONS -->
 <style>
     /* FIX: Mobile carousel dropdown background */
     @media (max-width: 768px) {
+        .service-card.touch-active .service-dropdown {
+            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
+            color: white !important;
+        }
+        
         .service-card.touch-active .service-dropdown a {
+            color: white !important;
             border-bottom: 1px solid rgba(255,255,255,0.2) !important;
         }
         
         .service-card.touch-active .service-dropdown a:hover {
             background: rgba(255,255,255,0.1) !important;
+            color: var(--gold) !important;
         }
     }
 
@@ -1579,235 +1099,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     </style>
-<!-- COMPREHENSIVE TILE LAYOUTS & ANIMATIONS -->
-<style>
-    /* 4-GRID LAYOUT FOR ALL MULTI-TILE SECTIONS */
-    .benefits-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        margin: 40px 0;
-        justify-content: center;
-        max-width: 1300px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    /* 3-GRID LAYOUT FOR SECTIONS WITH 3 TILES */
-    .benefits-grid.three-column {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 1000px;
-    }
-    
-    /* TRUST BAR - 4 ITEMS IN A ROW */
-    .trust-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        max-width: 1300px;
-        margin: 0 auto;
-        justify-content: center;
-    }
-    
-    /* SERVICE CATEGORIES GRID */
-    .service-categories {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        margin: 40px 0;
-        justify-content: center;
-        max-width: 1300px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    /* PROMO GRID - 3 COLUMNS */
-    .promo-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        max-width: 1300px;
-        margin: 0 auto;
-        justify-content: center;
-    }
-    
-    /* RESPONSIVE BREAKPOINTS */
-    @media (max-width: 1200px) {
-        .benefits-grid,
-        .trust-container,
-        .service-categories {
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 800px;
-        }
-        
-        .promo-grid {
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 800px;
-        }
-        
-        .benefits-grid.three-column {
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 800px;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .benefits-grid,
-        .trust-container,
-        .service-categories,
-        .promo-grid,
-        .benefits-grid.three-column {
-            grid-template-columns: 1fr;
-            max-width: 500px;
-        }
-    }
-    
-    /* CONSISTENT GRADIENT ANIMATIONS FOR ALL TILES */
-    .benefit-card, 
-    .value-tile, 
-    .service-tile, 
-    .trust-item,
-    .service-card,
-    .promo-card,
-    .category-card,
-    .contact-tile,
-    .area-tile {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .benefit-card::before, 
-    .value-tile::before, 
-    .service-tile::before, 
-    .trust-item::before,
-    .service-card::before,
-    .promo-card::before,
-    .category-card::before,
-    .contact-tile::before,
-    .area-tile::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .benefit-card:hover::before, 
-    .value-tile:hover::before, 
-    .service-tile:hover::before, 
-    .trust-item:hover::before,
-    .service-card:hover::before,
-    .promo-card:hover::before,
-    .category-card:hover::before,
-    .contact-tile:hover::before,
-    .area-tile:hover::before {
-        left: 0;
-    }
-    
-    .benefit-card > *, 
-    .value-tile > *, 
-    .service-tile > *, 
-    .trust-item > *,
-    .service-card > *,
-    .promo-card > *,
-    .category-card > *,
-    .contact-tile > *,
-    .area-tile > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .benefit-card:hover, 
-    .value-tile:hover, 
-    .service-tile:hover, 
-    .trust-item:hover,
-    .service-card:hover,
-    .promo-card:hover,
-    .category-card:hover,
-    .contact-tile:hover,
-    .area-tile:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* SATIN GLOSS SWIPE EFFECT */
-    .benefit-card::after, 
-    .value-tile::after, 
-    .service-tile::after, 
-    .trust-item::after,
-    .service-card::after,
-    .promo-card::after,
-    .category-card::after,
-    .contact-tile::after,
-    .area-tile::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .benefit-card:hover::after, 
-    .value-tile:hover::after, 
-    .service-tile:hover::after, 
-    .trust-item:hover::after,
-    .service-card:hover::after,
-    .promo-card:hover::after,
-    .category-card:hover::after,
-    .contact-tile:hover::after,
-    .area-tile:hover::after {
-        left: 100%;
-    }
-    
-    /* TEXT COLOR OPTIMIZATION */
-    .benefit-card:hover *, 
-    .value-tile:hover *, 
-    .service-tile:hover *, 
-    .trust-item:hover *,
-    .service-card:hover *,
-    .promo-card:hover *,
-    .category-card:hover *,
-    .contact-tile:hover *,
-    .area-tile:hover * {
-        color: white !important;
-    }
-    
-    /* MOBILE AUTO-ANIMATIONS */
-    @media (max-width: 768px) {
-        .mobile-animated {
-            animation: tileMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes tileMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-        }
-    }
-    </style>
+</meta></head>
+<body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-KCPM8VZ" style="display:none;visibility:hidden" width="0"></iframe></noscript>
 <!-- Google Tag Manager -->
@@ -1815,13 +1108,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <header>
 <div class="header-container">
 <div class="logo-container">
-<a class="logo" href="">WATTS</a>
+<a class="logo" href="/">WATTS</a>
 </div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">
 <i class="fas fa-bars"></i>
 </button>
 <nav class="nav-links" id="navLinks">
-<a class="active" href="">Home</a>
+<a class="active" href="/">Home</a>
 <a href="/services.html">Services</a>
 <a href="/service-area.html">Service Area</a>
 <a href="/about.html">About</a>
@@ -1834,11 +1127,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </header>
 <section class="hero">
-<h1>WATTS SAFETY INSTALLS</h1>
+<h1>WATTS ATP CONTRACTOR</h1>
 <p class="certification-badge">ATP Approved Contractor • Nebraska Licensed #54690-25 • Serving All Nebraska</p>
 <p>Professional Accessibility, Safety &amp; Audio Visual Solutions Near You</p>
 <div class="promo-banner">
-<p style="font-size:1.6rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
+<p style="font-size:1.6rem; margin:0"><strong>Professional Accessibility Services</strong> • <strong>Free Safety Assessments Available</strong></p>
 </div>
 <a class="cta-button" href="tel:+14054106402">Call (405) 410-6402 – Free Quote</a>
 </section>
@@ -1853,14 +1146,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Services Section -->
 <section class="services" id="services">
 <h2 class="section-title">Our Professional Services</h2>
-<p class="section-subtitle">Comprehensive accessibility, safety, and audio visual solutions for your home or business in Norfolk, NE and surrounding areas</p>
+<p class="section-subtitle">Comprehensive accessibility, safety, and audio visual solutions for your home or business in Norfolk NE and surrounding areas</p>
 <div class="services-grid">
 <div class="service-card" id="accessibility-safety">
 <img alt="Accessibility &amp; Safety Solutions Near Me - ADA Ramps &amp; Grab Bars" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80"/>
 <div class="service-content">
 <h3 class="service-title">Accessibility &amp; Safety Solutions</h3>
 <p class="service-description">We specialize in creating safe, accessible environments for individuals with mobility challenges. Our comprehensive solutions include ADA-compliant showers with zero-step entries, commercial-grade grab bars rated for 500+ lbs, non-slip flooring options, and custom-built accessibility ramps that meet all regulatory requirements.</p>
-<i class="fas fa-bars hamburger"></i>
 <div class="service-dropdown">
 <ul>
 <li><a href="/services/ada-compliant-showers"><i class="fas fa-check-circle"></i> ADA-compliant showers &amp; bathrooms</a></li>
@@ -1868,9 +1160,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><a href="/services/non-slip-flooring"><i class="fas fa-check-circle"></i> Non-slip flooring installations</a></li>
 <li><a href="/services/custom-ramps"><i class="fas fa-check-circle"></i> Custom accessibility ramps</a></li>
 <li><a href="/services/senior-safety"><i class="fas fa-check-circle"></i> Senior safety modifications</a></li>
-<li><a href="/services/bathroom-accessibility"><i class="fas fa-check-circle"></i> Bathroom accessibility upgrades</a></li>
-<li><a href="/wheelchair-ramps"><i class="fas fa-check-circle"></i> Wheelchair ramp installation</a></li>
-<li><a href="/stairlift-installation"><i class="fas fa-check-circle"></i> Stairlift &amp; elevator installation</a></li>
 </ul>
 </div>
 <div class="service-cta">
@@ -1878,44 +1167,37 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </div>
 </div>
-<div class="service-card" id="home-remodeling">
-<img alt="Home Remodeling Contractor Near Me - Kitchen &amp; Bathroom Renovations" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80"/>
+<div class="service-card" id="bathroom-accessibility">
+<img alt="Bathroom Accessibility Remodels Near Me - ADA Showers &amp; Walk-In Tubs" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&amp;fit=crop&amp;w=2070&amp;q=80"/>
 <div class="service-content">
-<h3 class="service-title">Home Remodeling &amp; Improvements</h3>
-<p class="service-description">Transform your living space with our comprehensive remodeling services. From kitchen and bathroom renovations to deck construction and siding replacement, we handle projects of all sizes with precision and care. Our team works closely with you to bring your vision to life while ensuring quality craftsmanship and attention to detail.</p>
-<i class="fas fa-bars hamburger"></i>
+<h3 class="service-title">Bathroom Accessibility Remodels</h3>
+<p class="service-description">Complete bathroom renovations designed for accessibility and safety. We specialize in ADA-compliant showers with zero-step entries, walk-in tubs, grab bar installations, and barrier-free designs that allow you to age in place comfortably and safely.</p>
 <div class="service-dropdown">
 <ul>
-<li><a href="/services/kitchen-renovations"><i class="fas fa-check-circle"></i> Kitchen &amp; bathroom renovations</a></li>
-<li><a href="/services/deck-construction"><i class="fas fa-check-circle"></i> Deck construction &amp; repair</a></li>
-<li><a href="/services/siding-replacement"><i class="fas fa-check-circle"></i> Siding replacement &amp; installation</a></li>
-<li><a href="/services/home-remodeling"><i class="fas fa-check-circle"></i> Complete home remodeling</a></li>
-<li><a href="/services/basement-finishing"><i class="fas fa-check-circle"></i> Basement finishing</a></li>
-<li><a href="/services/room-additions"><i class="fas fa-check-circle"></i> Room additions</a></li>
-<li><a href="/services/fence-installation"><i class="fas fa-check-circle"></i> Fence installation</a></li>
-<li><a href="/services/window-doors"><i class="fas fa-check-circle"></i> Window &amp; door installation</a></li>
-<li><a href="/services/painting-services"><i class="fas fa-check-circle"></i> Painting services</a></li>
+<li><a href="/services/ada-compliant-showers-bathrooms"><i class="fas fa-check-circle"></i> ADA compliant showers &amp; bathrooms</a></li>
+<li><a href="/services/walk-in-tubs"><i class="fas fa-check-circle"></i> Walk-in tub installation</a></li>
+<li><a href="/services/grab-bar-installation"><i class="fas fa-check-circle"></i> Grab bar installation</a></li>
+<li><a href="/services/roll-in-showers"><i class="fas fa-check-circle"></i> Roll-in shower installation</a></li>
+<li><a href="/services/non-slip-flooring"><i class="fas fa-check-circle"></i> Non-slip bathroom flooring</a></li>
 </ul>
 </div>
 <div class="service-cta">
-<a href="/contact.html">Get Free Quote</a>
+<a href="/contact.html">Get Free Assessment</a>
 </div>
 </div>
 </div>
-<div class="service-card" id="tv-mounting">
-<img alt="TV Mounting Service Near Me - Residential &amp; Commercial TV Installation" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2070&amp;q=80"/>
+<div class="service-card" id="wheelchair-ramps">
+<img alt="Wheelchair Ramp Installation Near Me - Custom Accessibility Ramps" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1581094271901-8022df4466f9?auto=format&amp;fit=crop&amp;w=2070&amp;q=80"/>
 <div class="service-content">
-<h3 class="service-title">TV Mounting &amp; Audio Visual Services</h3>
-<p class="service-description">Professional TV mounting and audio visual installation for both residential and commercial clients. We handle everything from simple TV wall mounting to complete home theater setups, soundbar installation, and cable management. Our experts ensure secure mounting and optimal viewing angles for the best entertainment experience.</p>
-<i class="fas fa-bars hamburger"></i>
+<h3 class="service-title">Wheelchair Ramp Installation</h3>
+<p class="service-description">Custom wheelchair ramps and accessibility ramps for homes. We build code-compliant ramps with proper slope ratios, handrails, and non-slip surfaces to provide safe, independent access for wheelchairs, walkers, and mobility devices.</p>
 <div class="service-dropdown">
 <ul>
-<li><a href="/services/tv-mounting"><i class="fas fa-check-circle"></i> Residential &amp; commercial TV mounting</a></li>
-<li><a href="/services/home-theater-installation"><i class="fas fa-check-circle"></i> Home theater system installation</a></li>
-<li><a href="/services/soundbar-setup"><i class="fas fa-check-circle"></i> Soundbar &amp; speaker setup</a></li>
-<li><a href="/services/cable-management"><i class="fas fa-check-circle"></i> Cable management &amp; concealment</a></li>
-<li><a href="/services/smart-audio"><i class="fas fa-check-circle"></i> Smart home audio integration</a></li>
-<li><a href="/services/projector-install"><i class="fas fa-check-circle"></i> Projector Mounting &amp; Screen Installations</a></li>
+<li><a href="/services/wheelchair-ramp-installation"><i class="fas fa-check-circle"></i> Wheelchair ramp installation</a></li>
+<li><a href="/services/custom-ramps"><i class="fas fa-check-circle"></i> Custom accessibility ramps</a></li>
+<li><a href="/services/modular-ramps"><i class="fas fa-check-circle"></i> Modular ramp systems</a></li>
+<li><a href="/services/threshold-ramps"><i class="fas fa-check-circle"></i> Threshold ramps</a></li>
+<li><a href="/services/ramp-handrails"><i class="fas fa-check-circle"></i> Ramp handrails &amp; safety features</a></li>
 </ul>
 </div>
 <div class="service-cta">
@@ -1923,35 +1205,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </div>
 </div>
-<div class="service-card" id="property-maintenance">
-<img alt="Property Maintenance &amp; Snow Removal Service Near Me - Norfolk, NE" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=2058&amp;q=80"/>
+<div class="service-card" id="senior-safety">
+<img alt="Senior Home Safety Near Me - Aging in Place Modifications" class="service-image" loading="lazy" src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&amp;fit=crop&amp;w=2058&amp;q=80"/>
 <div class="service-content">
-<h3 class="service-title">Property Maintenance, Snow Removal &amp; Lawn Care</h3>
-<p class="service-description">Keep your property in top condition year-round with our comprehensive maintenance services, including routine upkeep, emergency repairs, seasonal snow removal, lawn mowing, fertilization, landscape design, and garden maintenance to ensure safety, functionality, and beauty throughout the year.</p>
-<i class="fas fa-bars hamburger"></i>
+<h3 class="service-title">Senior Home Safety</h3>
+<p class="service-description">Comprehensive aging-in-place modifications for seniors. We create safe, comfortable living environments with fall prevention solutions, mobility enhancements, stair lifts, and accessibility upgrades tailored to help you maintain independence in your own home.</p>
 <div class="service-dropdown">
 <ul>
-<li><a href="/services/snow-removal"><i class="fas fa-check-circle"></i> Snow removal &amp; de-icing</a></li>
-<li><a href="/services/lawn-maintenance"><i class="fas fa-check-circle"></i> Lawn maintenance &amp; care</a></li>
-<li><a href="/services/landscape-design"><i class="fas fa-check-circle"></i> Landscape design &amp; installation</a></li>
-<li><a href="/services/garden-maintenance"><i class="fas fa-check-circle"></i> Garden maintenance</a></li>
-<li><a href="/services/tree-trimming"><i class="fas fa-check-circle"></i> Tree trimming &amp; removal</a></li>
-<li><a href="/services/emergency-repairs"><i class="fas fa-check-circle"></i> Emergency repair services</a></li>
-<li><a href="/services/seasonal-cleanup"><i class="fas fa-check-circle"></i> Seasonal clean-up services</a></li>
-<li><a href="/services/gutter-cleaning"><i class="fas fa-check-circle"></i> Gutter cleaning</a></li>
-<li><a href="/services/pressure-washing"><i class="fas fa-check-circle"></i> Pressure washing</a></li>
+<li><a href="/services/senior-safety"><i class="fas fa-check-circle"></i> Senior safety modifications</a></li>
+<li><a href="/services/fall-prevention"><i class="fas fa-check-circle"></i> Fall prevention solutions</a></li>
+<li><a href="/services/aging-in-place"><i class="fas fa-check-circle"></i> Aging-in-place modifications</a></li>
+<li><a href="/services/stair-lifts"><i class="fas fa-check-circle"></i> Stair lift installation</a></li>
+<li><a href="/services/handrail-installation"><i class="fas fa-check-circle"></i> Handrail installation</a></li>
+<li><a href="/services/door-widening"><i class="fas fa-check-circle"></i> Door widening for wheelchairs</a></li>
 </ul>
 </div>
 <div class="service-cta">
-<a href="/contact.html">Get Free Quote</a>
+<a href="/contact.html">Get Safety Assessment</a>
 </div>
 </div>
 </div>
-</div>
-<div class="promo-floating">
-<a href="/contact.html">
-<p style="font-size:1.2rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
-</a>
 </div>
 </section>
 <!-- About Section -->
@@ -1959,7 +1232,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="about-container">
 <div class="about-content">
 <h2>Your Trusted Nebraska Contractor</h2>
-<p>As an ATP Approved Contractor with Nebraska license #54690-25, Watts Safety Installs is your premier choice for accessibility modifications, home safety solutions, and professional TV mounting services throughout Nebraska.</p>
+<p>As an ATP Approved Contractor with Nebraska license #54690-25, Watts ATP Contractor is your premier choice for accessibility modifications, home safety solutions, and professional TV mounting services throughout Nebraska.</p>
 <p>We specialize in creating safe, accessible environments for seniors and individuals with mobility challenges, while also providing comprehensive contracting services for all your home improvement and audio visual needs.</p>
 <div class="about-features">
 <div class="feature"><div class="feature-icon">✓</div><div>Free Estimates &amp; Consultations</div></div>
@@ -1976,36 +1249,62 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- CTA Section -->
 <section class="cta-section">
 <h2>Ready to Make Your Home Safer &amp; Smarter?</h2>
-<p>Contact us today for a free consultation and estimate. We serve Norfolk, NE and surrounding areas.</p>
+<p>Contact us today for a free consultation and estimate. We serve Norfolk NE and surrounding areas.</p>
 <a class="cta-button" href="tel:+14054106402">Call Now: (405) 410-6402</a>
+</section>
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+<div class="testimonials-container">
+<h2 class="section-title">What Our Clients Say</h2>
+<p class="section-subtitle">Trusted by homeowners throughout Norfolk and across Nebraska</p>
+<div class="testimonials-grid">
+<div class="testimonial-card">
+<div class="testimonial-rating">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+</div>
+<div class="testimonial-text">
+"Justin of Watts Safety Installs is very skilled and conscientious about the quality of his work. He is a 'straight shooter' and is honest about the work he contracts. He will let you know how he will fix or go about the job, wanting your satisfaction and a long lasting job detail, not just a cosmetic 'smooth over' job."
+</div>
+<div class="testimonial-author">
+<h4>Sherry Stuifbergen</h4>
+<p>Norfolk, NE</p>
+</div>
+</div>
+</div>
+</div>
 </section>
 <footer>
 <div class="footer-container">
 <div class="footer-about">
-<div class="footer-logo">WATTS SAFETY INSTALLS</div>
-<p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
+<div class="footer-logo">WATTS ATP CONTRACTOR</div>
+<p>Nebraska's premier ATP Contractor specializing in residential accessibility modifications, aging-in-place solutions, and safety installations for Norfolk, NE homes.</p>
 <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-<p><a href="sitemap">Sitemap</a> | <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/referrals.html">Referral Program</a></p>
+<p><a href="/sitemap.html">Sitemap</a> | <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/referrals.html">Referral Program</a></p>
 </div>
 <div class="footer-links">
 <h3>Our Services</h3>
 <ul>
-<li><a href="/services/ada-compliant-showers">Accessibility &amp; Safety</a></li>
-<li><a href="/services/home-remodeling">Complete Home Remodeling</a></li>
-<li><a href="/services/tv-mounting">TV Mounting &amp; AV</a></li>
-<li><a href="/services/snow-removal">Property Maintenance</a></li>
+<li><a href="/services.html#accessibility-safety">Accessibility &amp; Safety</a></li>
+<li><a href="/services.html#bathroom-accessibility">Bathroom Accessibility</a></li>
+<li><a href="/services.html#wheelchair-ramps">Wheelchair Ramps</a></li>
+<li><a href="/services.html#senior-safety">Senior Safety</a></li>
+<li><a href="/safety-installs/">Watts Safety Installs →</a></li>
 </ul>
 </div>
 <div class="footer-contact">
 <h3>Contact Us</h3>
 <p><strong>Phone:</strong> <a href="tel:+14054106402">(405) 410-6402</a></p>
-<p><strong>Email:</strong> <a href="mailto:wattssafetyinstalls@gmail.com">wattssafetyinstalls@gmail.com</a></p>
-<p><strong>Address:</strong> 500 Block Omaha Ave, Norfolk, NE 68701</p>
+<p><strong>Email:</strong> <a href="mailto:Justin.Watts@WattsATPContractor.com">Justin.Watts@WattsATPContractor.com</a></p>
+<p><strong>Address:</strong> 507 West Omaha Ave Suite B Norfolk, Nebraska</p>
 <p><strong>Hours:</strong> Mon-Fri 8:30 AM - 6:00 PM, Sat On Call</p>
 </div>
 </div>
 <div class="copyright">
-<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
+<p>© <span id="current-year"></span> Watts ATP Contractor. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
 </div>
 </footer>
 <script>
@@ -2032,229 +1331,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     </script>
 <script>
-        // Service Tiles Carousel - Mobile Optimized
-        document.addEventListener('DOMContentLoaded', function() {
-            const carousels = document.querySelectorAll('.service-tiles-carousel');
-            
-            carousels.forEach(function(carousel) {
-                const container = carousel.querySelector('.carousel-container');
-                const items = carousel.querySelectorAll('.carousel-item');
-                const prevBtn = carousel.querySelector('.carousel-prev');
-                const nextBtn = carousel.querySelector('.carousel-next');
-                const dots = carousel.querySelectorAll('.carousel-dot');
-                
-                if (!container || items.length === 0) return;
-                
-                let currentIndex = 0;
-                let itemsPerView = 1;
-                
-                function calculateItemsPerView() {
-                    const containerWidth = container.clientWidth;
-                    const itemWidth = items[0].offsetWidth + 20; // including gap
-                    
-                    if (containerWidth >= 1024) {
-                        return 4;
-                    } else if (containerWidth >= 768) {
-                        return 2;
-                    } else {
-                        return 1;
-                    }
-                }
-                
-                function updateCarousel() {
-                    itemsPerView = calculateItemsPerView();
-                    const maxIndex = Math.max(0, items.length - itemsPerView);
-                    currentIndex = Math.min(currentIndex, maxIndex);
-                    
-                    const translateX = -currentIndex * (100 / itemsPerView);
-                    container.style.transform = 'translateX(' + translateX + '%)';
-                    
-                    // Update dots
-                    dots.forEach(function(dot, index) {
-                        dot.classList.toggle('active', index === currentIndex);
-                    });
-                    
-                    // Update button states
-                    if (prevBtn) prevBtn.disabled = currentIndex === 0;
-                    if (nextBtn) nextBtn.disabled = currentIndex >= maxIndex;
-                }
-                
-                function nextSlide() {
-                    itemsPerView = calculateItemsPerView();
-                    const maxIndex = Math.max(0, items.length - itemsPerView);
-                    if (currentIndex < maxIndex) {
-                        currentIndex++;
-                        updateCarousel();
-                    }
-                }
-                
-                function prevSlide() {
-                    if (currentIndex > 0) {
-                        currentIndex--;
-                        updateCarousel();
-                    }
-                }
-                
-                // Event listeners for buttons
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', nextSlide);
-                }
-                
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', prevSlide);
-                }
-                
-                // Dot navigation
-                dots.forEach(function(dot, index) {
-                    dot.addEventListener('click', function() {
-                        currentIndex = index;
-                        updateCarousel();
-                    });
-                });
-                
-                // Touch/swipe support
-                let startX = 0;
-                let currentX = 0;
-                
-                container.addEventListener('touchstart', function(e) {
-                    startX = e.touches[0].clientX;
-                }, { passive: true });
-                
-                container.addEventListener('touchmove', function(e) {
-                    currentX = e.touches[0].clientX;
-                }, { passive: true });
-                
-                container.addEventListener('touchend', function() {
-                    const diff = startX - currentX;
-                    const threshold = 50;
-                    
-                    if (Math.abs(diff) > threshold) {
-                        if (diff > 0) {
-                            nextSlide();
-                        } else {
-                            prevSlide();
-                        }
-                    }
-                });
-                
-                // Keyboard navigation
-                container.setAttribute('tabindex', '0');
-                container.addEventListener('keydown', function(e) {
-                    if (e.key === 'ArrowLeft') {
-                        prevSlide();
-                    } else if (e.key === 'ArrowRight') {
-                        nextSlide();
-                    }
-                });
-                
-                // Window resize handling
-                let resizeTimer;
-                window.addEventListener('resize', function() {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(function() {
-                        updateCarousel();
-                    }, 250);
-                });
-                
-                // Initialize
-                updateCarousel();
-                
-                // Fallback for older browsers
-                if (!('transform' in document.documentElement.style)) {
-                    container.style.transform = 'none';
-                    container.style.overflowX = 'auto';
-                }
-            });
-        });</script>
-<!-- SEASONAL PROMO ANIMATION SCRIPT -->
-<script>
-    // Mobile auto-animation for seasonal promo cards
-    function initPromoAnimations() {
-        const promoCards = document.querySelectorAll('.promo-card');
-        
-        console.log('Found ' + promoCards.length + ' seasonal promo cards');
-        
-        // Add touch support for mobile
-        promoCards.forEach(card => {
-            card.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            card.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
+    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled');
         });
-        
-        // Auto-animate promo cards on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            promoCards.forEach(card => {
-                setTimeout(() => {
-                    card.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        card.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 500;
-            });
-            
-            // Re-animate when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    setTimeout(() => {
-                        let newDelay = 0;
-                        promoCards.forEach(card => {
-                            setTimeout(() => {
-                                card.classList.add('mobile-animated');
-                                setTimeout(() => {
-                                    card.classList.remove('mobile-animated');
-                                }, 3000);
-                            }, newDelay);
-                            newDelay += 500;
-                        });
-                    }, 1000);
-                }
-            });
-        }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPromoAnimations);
-    } else {
-        initPromoAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initPromoAnimations);
-    
-    // Also animate when promo cards come into view
-    function animatePromoOnScroll() {
-        const promoCards = document.querySelectorAll('.promo-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        promoCards.forEach(card => {
-            observer.observe(card);
+        // Optional: Add touchstart for better mobile support
+        hamburger.addEventListener('touchstart', () => {
+            navMenu.classList.toggle('active');
+            console.log('Hamburger menu toggled via touch');
         });
     }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animatePromoOnScroll);
-    }
-    </script>
+});
+</script>
 <!-- BENEFIT CARD ANIMATION SCRIPT -->
 <script>
     // Mobile auto-animation for benefit cards
@@ -2344,83 +1438,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
     }
     </script>
-<!-- COMPREHENSIVE TILE ANIMATION SCRIPT -->
 <script>
-    // Mobile auto-animation for all tiles
-    function initAllTileAnimations() {
-        const allTiles = document.querySelectorAll(
-            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
-            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
-        );
-        
-        console.log('Animating ' + allTiles.length + ' tiles across all pages');
-        
-        // Add touch support for mobile
-        allTiles.forEach(tile => {
-            tile.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            tile.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            tile.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Auto-animate tiles on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            allTiles.forEach(tile => {
-                setTimeout(() => {
-                    tile.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        tile.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 300;
-            });
-        }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAllTileAnimations);
-    } else {
-        initAllTileAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initAllTileAnimations);
-    
-    // Animate when tiles come into view
-    function animateTilesOnScroll() {
-        const allTiles = document.querySelectorAll(
-            '.benefit-card, .value-tile, .service-tile, .trust-item, ' +
-            '.service-card, .promo-card, .category-card, .contact-tile, .area-tile'
-        );
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.3 });
-        
-        allTiles.forEach(tile => {
-            observer.observe(tile);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateTilesOnScroll);
-    }
-    </script>
-</meta><link rel="canonical" href="https://wattsatpcontractor.com" />
-</head></html>
+document.addEventListener('DOMContentLoaded', function() {
+    var yearSpans = document.querySelectorAll('[id*="year"], [class*="year"], #current-year');
+    yearSpans.forEach(function(span) {
+        span.textContent = new Date().getFullYear();
+    });
+});
+</script>
+</body>
+</html>

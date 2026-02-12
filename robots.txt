@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
 
+# Block private tools
+Disallow: /tools/
+
 # Block unnecessary files and directories
 Disallow: /_includes/
 Disallow: /_layouts/

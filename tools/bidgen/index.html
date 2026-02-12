@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Document Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+        h1 { font-size: 28px; margin-bottom: 4px; color: #e8e8e8; }
+        .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 30px; }
+        .card { background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+        .card h2 { font-size: 16px; color: #3498db; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .card h2 .icon { width: 28px; height: 28px; background: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 11px; text-transform: uppercase; color: #7f8c8d; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .form-group input, .form-group textarea, .form-group select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 12px; color: #eee; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3498db; }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: #4a5568; }
+        .form-group select option { background: #0f1a33; color: #eee; }
+        .saved-indicator { color: #27ae60; font-size: 12px; margin-left: 8px; opacity: 0; transition: opacity 0.3s; }
+        .saved-indicator.show { opacity: 1; }
+        .btn-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+        .btn { padding: 14px 28px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-labor { background: #2c3e50; color: white; }
+        .btn-labor:hover { background: #34495e; }
+        .btn-materials { background: #27ae60; color: white; }
+        .btn-materials:hover { background: #2ecc71; }
+        .btn-change { background: #c0392b; color: white; }
+        .btn-change:hover { background: #e74c3c; }
+        .btn-save { background: #2a3a5c; color: #bbb; border: 1px solid #3a4a6c; }
+        .btn-save:hover { background: #3a4a6c; color: white; }
+        .btn-clear { background: transparent; color: #7f8c8d; border: 1px solid #2a3a5c; }
+        .btn-clear:hover { background: #2a3a5c; color: #bbb; }
+        .instructions { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+        .instructions h3 { color: #f39c12; font-size: 14px; margin-bottom: 10px; }
+        .instructions ol { padding-left: 20px; color: #95a5a6; font-size: 13px; }
+        .instructions ol li { margin-bottom: 6px; }
+        .instructions ol li strong { color: #bdc3c7; }
+        .price-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid #2a3a5c; }
+        .price-section h3 { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .price-note { font-size: 11px; color: #555; margin-top: 6px; }
+        .saved-jobs { margin-top: 10px; }
+        .saved-jobs select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 8px 12px; color: #eee; font-size: 13px; width: 100%; margin-bottom: 10px; }
+        .saved-jobs select:focus { outline: none; border-color: #3498db; }
+        .job-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .job-actions .btn { padding: 8px 16px; font-size: 12px; }
+        .trade-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; }
+        .trade-badge.flooring { background: #27ae60; color: white; }
+        .trade-badge.painting { background: #8e44ad; color: white; }
+        .trade-badge.general { background: #e67e22; color: white; }
+        .trade-badge.plumbing { background: #2980b9; color: white; }
+        .trade-badge.electrical { background: #f39c12; color: #1a1a1a; }
+        .trade-badge.custom { background: #7f8c8d; color: white; }
+        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; margin-bottom: 8px; align-items: center; }
+        #laborItemsContainer .li-row input { font-size: 12px; padding: 7px 8px; }
+        #matItemsContainer .mi-row { display: grid; grid-template-columns: 1fr 60px 80px; gap: 8px; margin-bottom: 8px; align-items: center; }
+        #matItemsContainer .mi-row input { font-size: 12px; padding: 7px 8px; }
+        .item-header { display: grid; gap: 8px; margin-bottom: 6px; font-size: 10px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
+        .item-header.labor { grid-template-columns: 1fr 80px 80px; }
+        .item-header.mat { grid-template-columns: 1fr 60px 80px; }
+        .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px; }
+        .add-row-btn:hover { border-color: #3498db; color: #3498db; }
+        .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Bid Document Generator</h1>
+    <p class="subtitle">Fill in the details below, then generate your Labor Estimate, Materials Estimate, or Change Order. All generated docs are editable with e-signature pads.</p>
+
+    <div class="instructions">
+        <h3>How to Use</h3>
+        <ol>
+            <li><strong>Select your trade type</strong> (Section 2) &mdash; scope, materials, and disclaimers auto-populate.</li>
+            <li><strong>Fill in your company info</strong> (Section 1) &mdash; saves automatically.</li>
+            <li><strong>Fill in the job details</strong> (Section 2) &mdash; client name, address, unit, date.</li>
+            <li><strong>Adjust labor line items &amp; materials</strong> (Section 3) &mdash; add, remove, or edit rows.</li>
+            <li><strong>Click a button</strong> to open the document in a new tab.</li>
+            <li>In the generated doc: click <strong>"Edit Values"</strong> to adjust any number or text. Totals auto-recalculate.</li>
+            <li><strong>Sign</strong> with mouse or finger on the signature pads. Date auto-stamps.</li>
+            <li><strong>Ctrl+P</strong> &rarr; <strong>"Save as PDF"</strong> to save the final version.</li>
+        </ol>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="card">
+        <h2><span class="icon">1</span> Your Company Info <span class="saved-indicator" id="companySaved">Saved</span></h2>
+        <div class="form-grid">
+            <div class="form-group full"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Smith General Contracting LLC"></div>
+            <div class="form-group"><label>License Number</label><input type="text" id="licenseNum" placeholder="NE License #"></div>
+            <div class="form-group"><label>Phone</label><input type="text" id="phone" placeholder="(402) 555-1234"></div>
+            <div class="form-group"><label>Email</label><input type="text" id="email" placeholder="you@company.com"></div>
+            <div class="form-group"><label>City / Address (optional)</label><input type="text" id="companyAddress" placeholder="Norfolk, NE"></div>
+        </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="card">
+        <h2><span class="icon">2</span> Job Details <span class="trade-badge flooring" id="tradeBadge">Flooring</span></h2>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label>Trade Type</label>
+                <select id="tradeType" onchange="onTradeChange()">
+                    <option value="flooring">Flooring</option>
+                    <option value="painting">Painting</option>
+                    <option value="general">General / Remodel</option>
+                    <option value="plumbing">Plumbing</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="custom">Custom (blank template)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Client / Property Management Co.</label><input type="text" id="clientName" placeholder="e.g. ABC Property Management"></div>
+            <div class="form-group"><label>Estimate Date</label><input type="date" id="estimateDate"></div>
+            <div class="form-group"><label>Property / Complex Name</label><input type="text" id="complexName" placeholder="e.g. Oakwood Apartments"></div>
+            <div class="form-group"><label>Unit / Address</label><input type="text" id="unitNum" placeholder="e.g. Unit 204"></div>
+            <div class="form-group"><label>City, State</label><input type="text" id="jobCity" placeholder="e.g. Norfolk, NE"></div>
+            <div class="form-group"><label>Area Size (sq ft)</label><input type="number" id="sqft" value="48" min="1"></div>
+            <div class="form-group full"><label>Area Description (e.g. "Bathroom, Second Floor" or "Living Room &amp; Hallway")</label><input type="text" id="areaDesc" placeholder="e.g. Bathroom, Second Floor"></div>
+        </div>
+        <div class="saved-jobs" style="margin-top:16px;">
+            <label style="font-size:11px; text-transform:uppercase; color:#7f8c8d; letter-spacing:0.5px;">Saved Jobs</label>
+            <select id="savedJobsSelect"><option value="">-- Select a saved job --</option></select>
+            <div class="job-actions">
+                <button class="btn btn-save" onclick="saveJob()">Save Current Job</button>
+                <button class="btn btn-save" onclick="loadJob()">Load Selected</button>
+                <button class="btn btn-clear" onclick="deleteJob()">Delete Selected</button>
+                <button class="btn btn-clear" onclick="clearForm()">Clear Form</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="card">
+        <h2><span class="icon">3</span> Labor Line Items</h2>
+        <div class="item-header labor"><span>Description</span><span>Basis</span><span>Price</span></div>
+        <div id="laborItemsContainer"></div>
+        <button class="add-row-btn" onclick="addLaborRow('','','')">+ Add Labor Item</button>
+    </div>
+
+    <div class="card">
+        <h2><span class="icon">4</span> Material Line Items</h2>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group"><label>Materials Markup %</label><input type="number" id="materialsMarkup" value="15" step="1"></div>
+            <div class="form-group"><label>Third-Party Supplier Note (optional)</label><input type="text" id="supplierNote" placeholder="e.g. Scranton Flooring supplies vinyl — PM pays directly"></div>
+        </div>
+        <div class="item-header mat"><span>Material</span><span>Qty</span><span>Price</span></div>
+        <div id="matItemsContainer"></div>
+        <button class="add-row-btn" onclick="addMatRow('','','')">+ Add Material Item</button>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="card">
+        <h2><span class="icon">5</span> Disclaimer &amp; Unforeseen Conditions</h2>
+        <div class="form-group full">
+            <label>Unforeseen Conditions Clause (auto-filled by trade, editable)</label>
+            <textarea id="disclaimer" rows="4" style="resize:vertical;"></textarea>
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-labor" onclick="generateLabor()">Open Labor Estimate (A)</button>
+        <button class="btn btn-materials" onclick="generateMaterials()">Open Materials Estimate (B)</button>
+        <button class="btn btn-change" onclick="generateChangeOrder()">Open Change Order</button>
+    </div>
+</div>
+
+<script>
+// =====================================================================
+// TRADE PRESETS — scope, labor items, materials, disclaimers per trade
+// =====================================================================
+const TRADES = {
+    flooring: {
+        label: 'Flooring',
+        areaDesc: 'Bathroom, Second Floor',
+        scope: [
+            'Disconnect, remove, store, and reinstall toilet',
+            'Demolition and removal of existing flooring layers',
+            'Subfloor inspection and repair as needed',
+            'Concrete/cement patch layer repair using professional-grade compounds',
+            'Self-leveling underlayment — prime and pour',
+            'Installation of new flooring material',
+            'Debris removal, hauling, and disposal'
+        ],
+        labor: [
+            { desc: 'Toilet Removal & Reinstallation', basis: '1 fixture', price: 140 },
+            { desc: 'Demolition — Existing Flooring Layers', basis: 'per sq ft', price: 4.50 },
+            { desc: 'Subfloor Repair', basis: 'fixed', price: 250 },
+            { desc: 'Concrete/Cement Patch Repair', basis: 'per sq ft', price: 1.50 },
+            { desc: 'Self-Leveling Underlayment — Prime & Pour', basis: 'per sq ft', price: 3.00 },
+            { desc: 'Flooring Installation', basis: 'per sq ft', price: 2.75 },
+            { desc: 'Debris Hauling & Disposal', basis: '1 lot', price: 60 },
+            { desc: 'Material Procurement & Coordination', basis: '1 lot', price: 60 }
+        ],
+        materials: [
+            { desc: 'Wax Ring with Plastic Sleeve', qty: '1 ea', price: 8 },
+            { desc: 'Toilet Mounting Bolts', qty: '1 set', price: 5 },
+            { desc: '3/4" OSB Sheet (4\' x 8\')', qty: '1 sheet', price: 45 },
+            { desc: '2x4 Lumber — Blocking', qty: '8 lin ft', price: 10 },
+            { desc: 'Construction Adhesive', qty: '1 tube', price: 6 },
+            { desc: 'Deck Screws / Ring-Shank Nails', qty: '1 box', price: 8 },
+            { desc: 'ARDEX FEATHER FINISH (10 lb)', qty: '1 bag', price: 30 },
+            { desc: 'ARDEX GPS Patch & Skimcoat (10 lb)', qty: '1 bag', price: 25 },
+            { desc: 'ARDEX K 15 Self-Leveling (50 lb)', qty: '1 bag', price: 45 },
+            { desc: 'ARDEX P 51 Primer (1 qt)', qty: '1 qt', price: 15 },
+            { desc: 'Mixing Paddle / Trowels / Spreaders', qty: '1 lot', price: 10 },
+            { desc: 'Scraper Blades / Utility Blades', qty: '1 pack', price: 8 },
+            { desc: 'Containment / Damming Material', qty: '1 lot', price: 5 },
+            { desc: 'Plastic Sheeting / Drop Cloths', qty: '1 roll', price: 6 },
+            { desc: 'Contractor Trash Bags (Heavy Duty)', qty: '1 box', price: 8 }
+        ],
+        supplierNote: 'Sheet vinyl and adhesive supplied by Scranton Flooring — PM pays Scranton directly. This estimate covers subfloor repair materials, underlayment, and consumables only.',
+        disclaimer: 'Due to existing flooring layers, the condition of the underlying subfloor, patch layers, and structural members cannot be fully ascertained prior to demolition. Contractor shall provide immediate written notice upon discovery of any concealed damage, rot, mold, structural deficiency, or non-compliant prior repairs. Work in the affected area shall cease until a written Change Order authorizing additional scope and compensation is executed by both parties.',
+        notes: [
+            'Flooring material may be supplied separately by a third-party vendor as noted above.',
+            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
+            'All work performed per manufacturer specifications and Nebraska building code.'
+        ]
+    },
+    painting: {
+        label: 'Painting',
+        areaDesc: 'Interior Unit',
+        scope: [
+            'Surface preparation — patching, sanding, caulking',
+            'Primer application on all prepared surfaces',
+            'Two coats of finish paint on walls',
+            'Ceiling painting (one coat primer + one coat finish)',
+            'Trim, door, and window frame painting',
+            'Hardware removal and reinstallation as needed',
+            'Drop cloths, masking, and protection of fixtures/flooring',
+            'Cleanup and debris removal'
+        ],
+        labor: [
+            { desc: 'Surface Prep — Patch, Sand, Caulk', basis: 'per sq ft', price: 0.75 },
+            { desc: 'Primer Application — Walls', basis: 'per sq ft', price: 0.50 },
+            { desc: 'Finish Paint — Walls (2 coats)', basis: 'per sq ft', price: 1.25 },
+            { desc: 'Ceiling — Prime & Paint', basis: 'per sq ft', price: 1.00 },
+            { desc: 'Trim / Doors / Window Frames', basis: 'per unit', price: 35 },
+            { desc: 'Hardware Removal & Reinstall', basis: '1 lot', price: 40 },
+            { desc: 'Masking, Protection & Cleanup', basis: '1 lot', price: 50 }
+        ],
+        materials: [
+            { desc: 'Interior Latex Paint — Walls (5 gal)', qty: '1 bucket', price: 145 },
+            { desc: 'Interior Latex Paint — Ceiling (5 gal)', qty: '1 bucket', price: 125 },
+            { desc: 'Primer — Multi-Surface (5 gal)', qty: '1 bucket', price: 95 },
+            { desc: 'Trim Paint — Semi-Gloss (1 gal)', qty: '1 gal', price: 45 },
+            { desc: 'Caulk — Paintable Latex', qty: '4 tubes', price: 16 },
+            { desc: 'Spackle / Joint Compound', qty: '1 qt', price: 8 },
+            { desc: 'Sandpaper Assortment', qty: '1 pack', price: 12 },
+            { desc: 'Painter\'s Tape (Blue)', qty: '4 rolls', price: 24 },
+            { desc: 'Roller Covers / Brushes / Trays', qty: '1 lot', price: 30 },
+            { desc: 'Drop Cloths / Plastic Sheeting', qty: '1 lot', price: 15 },
+            { desc: 'Contractor Trash Bags', qty: '1 box', price: 8 }
+        ],
+        supplierNote: '',
+        disclaimer: 'Existing wall and ceiling conditions may include concealed damage such as water stains, mold, lead-based paint (pre-1978 structures), crumbling plaster, or drywall deterioration not visible until surface preparation begins. Contractor shall provide immediate written notice upon discovery. Work shall cease in the affected area until a written Change Order is executed by both parties. Lead paint testing is the responsibility of the property owner per EPA RRP Rule.',
+        notes: [
+            'Paint colors to be selected and approved by client prior to purchase.',
+            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
+            'Walls with extensive damage may require skim-coating at additional cost (Change Order).'
+        ]
+    },
+    general: {
+        label: 'General / Remodel',
+        areaDesc: 'Unit Interior',
+        scope: [
+            'Demolition and removal of existing materials',
+            'Structural inspection and repair as needed',
+            'Rough carpentry and framing',
+            'Finish carpentry and trim installation',
+            'Material procurement and coordination',
+            'Debris removal, hauling, and disposal',
+            'Final cleanup and punch list'
+        ],
+        labor: [
+            { desc: 'Demolition & Removal', basis: 'per sq ft', price: 3.00 },
+            { desc: 'Framing / Structural Repair', basis: 'fixed', price: 300 },
+            { desc: 'Rough Carpentry', basis: 'per hour', price: 65 },
+            { desc: 'Finish Carpentry / Trim', basis: 'per hour', price: 65 },
+            { desc: 'Material Procurement & Coordination', basis: '1 lot', price: 75 },
+            { desc: 'Debris Hauling & Disposal', basis: '1 lot', price: 75 },
+            { desc: 'Final Cleanup & Punch List', basis: '1 lot', price: 50 }
+        ],
+        materials: [
+            { desc: 'Framing Lumber', qty: '1 lot', price: 80 },
+            { desc: 'Plywood / OSB Sheathing', qty: '1 lot', price: 60 },
+            { desc: 'Fasteners / Screws / Nails', qty: '1 lot', price: 25 },
+            { desc: 'Construction Adhesive', qty: '2 tubes', price: 12 },
+            { desc: 'Trim / Molding', qty: '1 lot', price: 45 },
+            { desc: 'Caulk / Sealant', qty: '1 lot', price: 15 },
+            { desc: 'Plastic Sheeting / Drop Cloths', qty: '1 lot', price: 10 },
+            { desc: 'Contractor Trash Bags', qty: '1 box', price: 8 }
+        ],
+        supplierNote: '',
+        disclaimer: 'Concealed conditions behind walls, above ceilings, or beneath floors cannot be fully assessed until demolition is underway. This includes but is not limited to: structural damage, mold, pest damage, non-code-compliant wiring or plumbing, and asbestos-containing materials. Contractor shall provide immediate written notice upon discovery. Work shall cease until a written Change Order is executed by both parties.',
+        notes: [
+            'Specialty subcontractors (plumbing, electrical, HVAC) quoted separately if needed.',
+            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
+            'All work performed per Nebraska building code and manufacturer specifications.'
+        ]
+    },
+    plumbing: {
+        label: 'Plumbing',
+        areaDesc: 'Bathroom / Kitchen',
+        scope: [
+            'Shut off water supply and drain lines',
+            'Removal of existing fixtures as needed',
+            'Pipe repair, replacement, or rerouting',
+            'Installation of new fixtures and trim',
+            'Pressure testing and leak check',
+            'Drywall / access panel patching (if applicable)',
+            'Cleanup and debris removal'
+        ],
+        labor: [
+            { desc: 'Fixture Removal & Disposal', basis: 'per fixture', price: 75 },
+            { desc: 'Pipe Repair / Replacement', basis: 'per hour', price: 85 },
+            { desc: 'New Fixture Installation', basis: 'per fixture', price: 120 },
+            { desc: 'Pressure Test & Leak Check', basis: '1 lot', price: 50 },
+            { desc: 'Access Panel / Drywall Patch', basis: '1 lot', price: 60 },
+            { desc: 'Cleanup & Debris Removal', basis: '1 lot', price: 40 }
+        ],
+        materials: [
+            { desc: 'PEX / Copper Pipe & Fittings', qty: '1 lot', price: 65 },
+            { desc: 'Shut-Off Valves', qty: '2 ea', price: 24 },
+            { desc: 'Supply Lines (braided)', qty: '2 ea', price: 16 },
+            { desc: 'Wax Ring / Gaskets / Seals', qty: '1 lot', price: 12 },
+            { desc: 'Pipe Sealant / Teflon Tape', qty: '1 lot', price: 8 },
+            { desc: 'Drywall Patch Kit', qty: '1 ea', price: 15 },
+            { desc: 'Contractor Trash Bags', qty: '1 box', price: 8 }
+        ],
+        supplierNote: '',
+        disclaimer: 'Plumbing systems concealed within walls, floors, and ceilings cannot be fully assessed until access is gained. Conditions including corroded pipes, non-code-compliant connections, galvanic corrosion, root intrusion, or deteriorated drain lines may be discovered during work. Contractor shall provide immediate written notice. Work shall cease until a written Change Order is executed by both parties.',
+        notes: [
+            'Fixtures to be selected and approved by client prior to purchase unless specified.',
+            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
+            'Permits pulled if required by local jurisdiction.'
+        ]
+    },
+    electrical: {
+        label: 'Electrical',
+        areaDesc: 'Unit Interior',
+        scope: [
+            'Circuit identification and testing',
+            'Removal of existing fixtures / devices as needed',
+            'Wire repair, replacement, or new runs',
+            'Installation of new fixtures, outlets, and switches',
+            'Panel inspection and breaker work (if applicable)',
+            'Testing and verification of all circuits',
+            'Patching of access points and cleanup'
+        ],
+        labor: [
+            { desc: 'Circuit Testing & Identification', basis: '1 lot', price: 60 },
+            { desc: 'Fixture / Device Removal', basis: 'per unit', price: 25 },
+            { desc: 'Wire Run — New or Replacement', basis: 'per run', price: 120 },
+            { desc: 'Fixture / Outlet / Switch Install', basis: 'per unit', price: 45 },
+            { desc: 'Panel / Breaker Work', basis: 'per hour', price: 95 },
+            { desc: 'Final Testing & Verification', basis: '1 lot', price: 50 },
+            { desc: 'Patching & Cleanup', basis: '1 lot', price: 40 }
+        ],
+        materials: [
+            { desc: 'Romex / Wire (various gauge)', qty: '1 lot', price: 55 },
+            { desc: 'Outlets / Switches / Cover Plates', qty: '1 lot', price: 30 },
+            { desc: 'Junction Boxes / Connectors', qty: '1 lot', price: 20 },
+            { desc: 'Wire Nuts / Electrical Tape', qty: '1 lot', price: 10 },
+            { desc: 'Breakers (if needed)', qty: '1 lot', price: 25 },
+            { desc: 'Drywall Patch Kit', qty: '1 ea', price: 15 },
+            { desc: 'Contractor Trash Bags', qty: '1 box', price: 8 }
+        ],
+        supplierNote: '',
+        disclaimer: 'Electrical systems concealed within walls, ceilings, and floors cannot be fully assessed until access is gained. Conditions including aluminum wiring, knob-and-tube wiring, non-code-compliant connections, overloaded circuits, or deteriorated insulation may be discovered. Contractor shall provide immediate written notice. Work shall cease until a written Change Order is executed by both parties. All electrical work performed per NEC and local code.',
+        notes: [
+            'Light fixtures and specialty devices to be selected by client unless specified.',
+            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
+            'Permits pulled if required by local jurisdiction.'
+        ]
+    },
+    custom: {
+        label: 'Custom',
+        areaDesc: '',
+        scope: ['[Describe scope item]'],
+        labor: [
+            { desc: '[Labor description]', basis: '1 lot', price: 0 },
+            { desc: '[Labor description]', basis: '1 lot', price: 0 },
+            { desc: '[Labor description]', basis: '1 lot', price: 0 }
+        ],
+        materials: [
+            { desc: '[Material description]', qty: '1 lot', price: 0 },
+            { desc: '[Material description]', qty: '1 lot', price: 0 },
+            { desc: '[Material description]', qty: '1 lot', price: 0 }
+        ],
+        supplierNote: '',
+        disclaimer: 'Concealed conditions not visible prior to commencement of work may require additional scope. Contractor shall provide immediate written notice upon discovery. Work shall cease until a written Change Order is executed by both parties.',
+        notes: [
+            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
+            'All work performed per applicable building codes.'
+        ]
+    }
+};
+
+// ========== LAUNCHER LOGIC ==========
+const companyFields = ['companyName', 'licenseNum', 'phone', 'email', 'companyAddress'];
+window.addEventListener('DOMContentLoaded', () => {
+    companyFields.forEach(id => { const s = localStorage.getItem('bid_' + id); if (s) document.getElementById(id).value = s; });
+    if (!document.getElementById('estimateDate').value) document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
+    loadSavedJobsList();
+    onTradeChange(); // populate defaults
+});
+companyFields.forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+        localStorage.setItem('bid_' + id, document.getElementById(id).value);
+        const ind = document.getElementById('companySaved'); ind.classList.add('show'); setTimeout(() => ind.classList.remove('show'), 2000);
+    });
+});
+
+// ========== TRADE CHANGE ==========
+function onTradeChange() {
+    const t = document.getElementById('tradeType').value;
+    const preset = TRADES[t];
+    // Update badge
+    const badge = document.getElementById('tradeBadge');
+    badge.textContent = preset.label;
+    badge.className = 'trade-badge ' + t;
+    // Populate area desc if empty or if it matches a known preset default
+    const adEl = document.getElementById('areaDesc');
+    const knownDefaults = Object.values(TRADES).map(p => p.areaDesc);
+    if (!adEl.value || knownDefaults.includes(adEl.value)) adEl.value = preset.areaDesc;
+    // Populate labor items
+    document.getElementById('laborItemsContainer').innerHTML = '';
+    preset.labor.forEach(li => addLaborRow(li.desc, li.basis, li.price));
+    // Populate material items
+    document.getElementById('matItemsContainer').innerHTML = '';
+    preset.materials.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
+    // Supplier note
+    document.getElementById('supplierNote').value = preset.supplierNote;
+    // Disclaimer
+    document.getElementById('disclaimer').value = preset.disclaimer;
+}
+
+// ========== DYNAMIC ROWS ==========
+function addLaborRow(desc, basis, price) {
+    const c = document.getElementById('laborItemsContainer');
+    const row = document.createElement('div');
+    row.className = 'li-row';
+    row.innerHTML = '<input type="text" placeholder="Description" value="'+esc(desc)+'">'
+        + '<input type="text" placeholder="Basis" value="'+esc(basis)+'">'
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.25" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.li-row\').remove()">&times;</button></div>';
+    c.appendChild(row);
+}
+function addMatRow(desc, qty, price) {
+    const c = document.getElementById('matItemsContainer');
+    const row = document.createElement('div');
+    row.className = 'mi-row';
+    row.innerHTML = '<input type="text" placeholder="Material" value="'+esc(desc)+'">'
+        + '<input type="text" placeholder="Qty" value="'+esc(qty)+'">'
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.mi-row\').remove()">&times;</button></div>';
+    c.appendChild(row);
+}
+function esc(s) { return String(s||'').replace(/"/g, '&quot;'); }
+
+// ========== GATHER DATA ==========
+function getLaborItems() {
+    const rows = document.querySelectorAll('#laborItemsContainer .li-row');
+    return Array.from(rows).map(r => {
+        const inputs = r.querySelectorAll('input');
+        return { desc: inputs[0].value, basis: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
+    }).filter(i => i.desc);
+}
+function getMatItems() {
+    const rows = document.querySelectorAll('#matItemsContainer .mi-row');
+    return Array.from(rows).map(r => {
+        const inputs = r.querySelectorAll('input');
+        return { desc: inputs[0].value, qty: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
+    }).filter(i => i.desc);
+}
+function getScope() {
+    const t = document.getElementById('tradeType').value;
+    return TRADES[t].scope;
+}
+function getNotes() {
+    const t = document.getElementById('tradeType').value;
+    return TRADES[t].notes;
+}
+
+// ========== SAVED JOBS ==========
+function getSavedJobs() { return JSON.parse(localStorage.getItem('bid_saved_jobs') || '{}'); }
+function loadSavedJobsList() {
+    const jobs = getSavedJobs(), sel = document.getElementById('savedJobsSelect');
+    sel.innerHTML = '<option value="">-- Select a saved job --</option>';
+    Object.keys(jobs).sort().forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; sel.appendChild(o); });
+}
+function saveJob() {
+    const c = gv('clientName'), x = gv('complexName'), u = gv('unitNum');
+    const name = prompt('Save job as:', (c+' - '+x+' '+u).trim() || 'New Job'); if (!name) return;
+    const jobs = getSavedJobs();
+    jobs[name] = {
+        tradeType: gv('tradeType'), clientName: c, complexName: x, unitNum: u,
+        jobCity: gv('jobCity'), sqft: gv('sqft'), areaDesc: gv('areaDesc'),
+        estimateDate: gv('estimateDate'), materialsMarkup: gv('materialsMarkup'),
+        supplierNote: gv('supplierNote'), disclaimer: gv('disclaimer'),
+        laborItems: getLaborItems(), matItems: getMatItems()
+    };
+    localStorage.setItem('bid_saved_jobs', JSON.stringify(jobs)); loadSavedJobsList();
+    document.getElementById('savedJobsSelect').value = name; alert('Job saved: ' + name);
+}
+function loadJob() {
+    const n = document.getElementById('savedJobsSelect').value;
+    if (!n) { alert('Select a job first.'); return; }
+    const j = getSavedJobs()[n]; if (!j) return;
+    ['tradeType','clientName','complexName','unitNum','jobCity','sqft','areaDesc','estimateDate','materialsMarkup','supplierNote','disclaimer'].forEach(k => {
+        const e = document.getElementById(k); if (e && j[k] !== undefined) e.value = j[k];
+    });
+    // Update badge
+    const badge = document.getElementById('tradeBadge');
+    const preset = TRADES[j.tradeType] || TRADES.custom;
+    badge.textContent = preset.label; badge.className = 'trade-badge ' + (j.tradeType || 'custom');
+    // Load labor rows
+    if (j.laborItems) {
+        document.getElementById('laborItemsContainer').innerHTML = '';
+        j.laborItems.forEach(li => addLaborRow(li.desc, li.basis, li.price));
+    }
+    // Load mat rows
+    if (j.matItems) {
+        document.getElementById('matItemsContainer').innerHTML = '';
+        j.matItems.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
+    }
+}
+function deleteJob() { const n = document.getElementById('savedJobsSelect').value; if (!n) { alert('Select a job first.'); return; } if (!confirm('Delete "'+n+'"?')) return; const j = getSavedJobs(); delete j[n]; localStorage.setItem('bid_saved_jobs', JSON.stringify(j)); loadSavedJobsList(); }
+function clearForm() {
+    ['clientName','complexName','unitNum','jobCity','areaDesc','supplierNote'].forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('sqft').value = 48;
+    document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
+    onTradeChange();
+}
+
+// ========== HELPERS ==========
+function gv(id) { return document.getElementById(id).value; }
+function gn(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function f(n) { return n.toFixed(2); }
+function fd(s) { if (!s) return '[Date]'; const d = new Date(s+'T12:00:00'); return d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}); }
+function loc() { return [gv('complexName'),gv('unitNum'),gv('jobCity')].filter(Boolean).join(', ') || '[Location]'; }
+function co() { return '<div class="company-info"><h1>'+(gv('companyName')||'[YOUR COMPANY NAME]')+'</h1><p>Licensed General Contractor &mdash; State of Nebraska</p><p>License #: '+(gv('licenseNum')||'[LICENSE #]')+' &nbsp;|&nbsp; Phone: '+(gv('phone')||'[PHONE]')+' &nbsp;|&nbsp; Email: '+(gv('email')||'[EMAIL]')+'</p></div>'; }
+function E(v, extra) { return '<span data-editable '+(extra||'')+'>'+v+'</span>'; }
+function P(v, extra) { return '<span data-editable class="editable-price" '+(extra||'')+'>'+v+'</span>'; }
+
+// ========== SHARED DOC CSS ==========
+function docCSS(accent) {
+    return '@media print { body { margin:0; padding:0.3in; } .no-print { display:none !important; } .sig-canvas { border:none !important; } }'
+    +'* { margin:0; padding:0; box-sizing:border-box; }'
+    +'body { font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif; color:#1a1a1a; line-height:1.5; padding:0.5in; padding-top:60px; max-width:8.5in; margin:0 auto; font-size:11pt; }'
+    +'.toolbar { position:fixed; top:0; left:0; right:0; background:#1a1a2e; color:#eee; padding:8px 20px; display:flex; align-items:center; gap:12px; z-index:9999; box-shadow:0 2px 12px rgba(0,0,0,0.3); font-size:13px; }'
+    +'.toolbar .tbt { font-weight:700; font-size:14px; margin-right:auto; } .toolbar button { padding:8px 18px; border:none; border-radius:5px; font-size:13px; font-weight:600; cursor:pointer; }'
+    +'.toolbar .tbp { background:'+accent+'; color:white; } .toolbar .tbe { background:#2a3a5c; color:#bbb; border:1px solid #3a4a6c; } .toolbar .tbe.active { background:#f39c12; color:#1a1a1a; border-color:#f39c12; } .toolbar .tbs { font-size:11px; color:#7f8c8d; }'
+    +'.header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid '+accent+'; padding-bottom:15px; margin-bottom:20px; }'
+    +'.company-info h1 { font-size:22pt; color:#2c3e50; margin-bottom:2px; } .company-info p { font-size:9pt; color:#555; }'
+    +'.badge { background:'+accent+'; color:white; padding:8px 20px; font-size:12pt; font-weight:bold; text-align:center; border-radius:4px; } .badge small { display:block; font-size:8pt; font-weight:normal; opacity:0.8; }'
+    +'.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px; } .info-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }'
+    +'.info-box { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:10px 14px; } .info-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; letter-spacing:0.5px; display:block; margin-bottom:2px; } .info-box .value { font-size:11pt; font-weight:600; color:#2c3e50; } .info-box.hl { background:#fff3cd; border-color:#ffc107; }'
+    +'.scope { background:#eef2f7; border-left:4px solid '+accent+'; padding:12px 16px; margin-bottom:20px; font-size:10pt; } .scope h3 { font-size:10pt; color:#2c3e50; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; } .scope ul { list-style:none; padding:0; } .scope ul li { padding:2px 0 2px 16px; position:relative; } .scope ul li::before { content:"\\2713"; position:absolute; left:0; color:#27ae60; font-weight:bold; }'
+    +'table { width:100%; border-collapse:collapse; margin-bottom:20px; } table thead th { background:'+accent+'; color:white; padding:8px 10px; text-align:left; font-size:9pt; text-transform:uppercase; letter-spacing:0.5px; }'
+    +'table thead th:last-child, table thead th:nth-child(3), table thead th:nth-child(4), table thead th:nth-child(5) { text-align:right; }'
+    +'table tbody td { padding:8px 10px; border-bottom:1px solid #e9ecef; font-size:10pt; vertical-align:top; } table tbody td:last-child, table tbody td:nth-child(3), table tbody td:nth-child(4), table tbody td:nth-child(5) { text-align:right; white-space:nowrap; } table tbody tr:nth-child(even) { background:#f8f9fa; }'
+    +'.item-num { font-weight:700; color:'+accent+'; width:30px; } .item-desc strong { display:block; font-size:10pt; } .item-desc small { color:#6c757d; font-size:8.5pt; }'
+    +'.subtotal-row td { border-top:2px solid '+accent+'; font-weight:700; font-size:11pt; padding-top:10px; background:transparent !important; }'
+    +'.total-row td { border-top:3px double '+accent+'; font-weight:700; font-size:13pt; color:'+accent+'; padding-top:12px; padding-bottom:12px; background:#f5f5f5 !important; }'
+    +'.markup-row td { font-weight:600; color:#6c757d; font-size:10pt; }'
+    +'.combined { background:#e8f4fd; border:2px solid #2c3e50; border-radius:6px; padding:16px 20px; margin-top:24px; } .combined h3 { font-size:12pt; color:#2c3e50; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; } .combined table { width:100%; border-collapse:collapse; } .combined table td { padding:6px 10px; font-size:11pt; border-bottom:1px solid #b8daff; } .combined table td:last-child { text-align:right; font-weight:600; } .combined .grand td { border-top:3px double #2c3e50; font-size:14pt; font-weight:700; color:#2c3e50; padding-top:10px; } .combined .psf td { font-size:10pt; color:#6c757d; border-bottom:none; }'
+    +'.supplier-note { background:#d4edda; border:1px solid #28a745; border-radius:4px; padding:12px 16px; margin-bottom:20px; font-size:9.5pt; } .supplier-note h4 { color:#155724; font-size:10pt; margin-bottom:4px; } .supplier-note p { color:#155724; }'
+    +'.notes-section { margin-top:20px; } .notes-section h3 { font-size:11pt; color:'+accent+'; border-bottom:2px solid '+accent+'; padding-bottom:4px; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; } .notes-section .note { font-size:9pt; color:#495057; margin-bottom:8px; padding-left:14px; position:relative; } .notes-section .note::before { content:"\\25CF"; position:absolute; left:0; color:'+accent+'; font-size:7pt; top:2px; }'
+    +'.unforeseen-box { background:#fff3cd; border:1px solid #ffc107; border-radius:4px; padding:12px 16px; margin-top:20px; font-size:9pt; } .unforeseen-box h4 { color:#856404; font-size:10pt; margin-bottom:6px; } .unforeseen-box p { color:#664d03; line-height:1.5; }'
+    +'.ref { background:#f0f0f0; border:1px solid #ccc; border-radius:4px; padding:12px 16px; margin-bottom:20px; font-size:9.5pt; } .ref h4 { font-size:10pt; color:#2c3e50; margin-bottom:6px; text-transform:uppercase; } .ref p { color:#495057; margin-bottom:4px; }'
+    +'.stitle { font-size:11pt; color:'+accent+'; border-bottom:2px solid '+accent+'; padding-bottom:4px; margin-bottom:12px; margin-top:24px; text-transform:uppercase; letter-spacing:0.5px; }'
+    +'.dbox { border:1px solid #dee2e6; border-radius:4px; padding:16px; margin-bottom:20px; } .dbox label { font-size:9pt; color:#6c757d; text-transform:uppercase; display:block; margin-bottom:8px; } .dbox .wl { border-bottom:1px solid #dee2e6; min-height:22px; margin-bottom:6px; }'
+    +'.pbox { background:#f8f9fa; border:2px dashed #adb5bd; border-radius:4px; padding:20px; text-align:center; margin-bottom:20px; } .pbox p { color:#6c757d; font-size:9pt; }'
+    +'.impact { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; } .impact-box { border:1px solid #dee2e6; border-radius:4px; padding:12px; text-align:center; } .impact-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; display:block; margin-bottom:4px; } .impact-box .val { font-size:14pt; font-weight:700; color:'+accent+'; } .impact-box .val.grn { color:#27ae60; }'
+    +'.legal { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:16px; margin-top:20px; font-size:9pt; color:#495057; line-height:1.6; } .legal h4 { font-size:10pt; color:#2c3e50; margin-bottom:8px; } .legal p { margin-bottom:8px; }'
+    +'.auth { margin-top:30px; border:2px solid '+accent+'; border-radius:6px; padding:20px; background:#fdf0ef; } .auth h3 { font-size:12pt; color:'+accent+'; margin-bottom:12px; text-transform:uppercase; }'
+    +'.auth-opt { display:flex; align-items:flex-start; margin-bottom:12px; padding:10px; background:white; border:1px solid #dee2e6; border-radius:4px; cursor:pointer; } .auth-opt.selected { border-color:'+accent+'; background:#fff8f7; }'
+    +'.auth-cb { width:18px; height:18px; border:2px solid #2c3e50; border-radius:3px; margin-right:12px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:14px; } .auth-cb.checked { background:'+accent+'; border-color:'+accent+'; color:white; }'
+    +'.auth-txt { font-size:10pt; } .auth-txt strong { display:block; margin-bottom:2px; } .auth-txt small { color:#6c757d; font-size:8.5pt; }'
+    +'[contenteditable="true"] { outline:none; } body.edit-mode [data-editable] { background:#fffde7; border-bottom:2px dashed #f39c12; cursor:text; padding:1px 4px; border-radius:2px; } body.edit-mode [data-editable]:focus { background:#fff9c4; border-bottom-color:#e67e22; } body.edit-mode .editable-price { background:#e3f2fd !important; border-bottom:2px dashed #2196f3 !important; } body.edit-mode .editable-price:focus { background:#bbdefb !important; }'
+    +'.sig-section { margin-top:30px; } .sig-section h3 { font-size:11pt; color:#2c3e50; border-bottom:2px solid #2c3e50; padding-bottom:4px; margin-bottom:16px; text-transform:uppercase; letter-spacing:0.5px; } .sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:30px; } .sig-pad { text-align:center; } .sig-pad label { font-size:9pt; color:#6c757d; display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; } .sig-canvas { border:1px solid #ccc; border-radius:4px; background:white; cursor:crosshair; width:100%; height:100px; display:block; touch-action:none; } .sig-pad .sig-date { font-size:9pt; color:#495057; margin-top:4px; min-height:18px; } .sig-pad .sig-clear { font-size:11px; color:#c0392b; cursor:pointer; background:none; border:none; text-decoration:underline; margin-top:2px; }'
+    +'@media print { .sig-pad .sig-clear { display:none; } .toolbar { display:none !important; } body { padding-top:0 !important; } }'
+    +'.footer { margin-top:30px; text-align:center; font-size:8pt; color:#adb5bd; border-top:1px solid #dee2e6; padding-top:10px; }';
+}
+
+// ========== SHARED DOC JS ==========
+function docJS() {
+    return '<'+'script>'
+    +'let editMode=false;'
+    +'function toggleEdit(){editMode=!editMode;document.body.classList.toggle("edit-mode",editMode);var b=document.getElementById("editBtn");b.textContent=editMode?"EDITING (click to lock)":"Edit Values";b.classList.toggle("active",editMode);document.getElementById("editStatus").textContent=editMode?"Click any highlighted value to change it":"Document locked";document.querySelectorAll("[data-editable]").forEach(function(el){el.contentEditable=editMode?"true":"false";});}'
+    +'function recalc(){var sub=0;document.querySelectorAll("[data-line-total]").forEach(function(el){sub+=parseFloat(el.textContent.replace(/[^0-9.\\-]/g,""))||0;});document.querySelectorAll("[data-subtotal]").forEach(function(el){el.textContent="$"+sub.toFixed(2);});document.querySelectorAll("[data-total]").forEach(function(el){el.textContent="$"+sub.toFixed(2);});var me=document.querySelector("[data-markup-pct]");if(me){var p=parseFloat(me.textContent)||0,ma=sub*(p/100),mt=sub+ma;document.querySelectorAll("[data-markup-amt]").forEach(function(e){e.textContent="$"+ma.toFixed(2);});document.querySelectorAll("[data-mat-total]").forEach(function(e){e.textContent="$"+mt.toFixed(2);});var le=document.querySelector("[data-combined-labor]");if(le){var la=parseFloat(le.textContent.replace(/[^0-9.\\-]/g,""))||0,g=la+mt;document.querySelectorAll("[data-combined-mat]").forEach(function(e){e.textContent="$"+mt.toFixed(2);});document.querySelectorAll("[data-grand-total]").forEach(function(e){e.textContent="$"+g.toFixed(2);});var se=document.querySelector("[data-sqft]"),sq=se?(parseFloat(se.textContent)||1):1;document.querySelectorAll("[data-per-sqft]").forEach(function(e){e.textContent="$"+(g/sq).toFixed(2)+" /sq ft";});}}}'
+    +'document.addEventListener("input",function(e){if(e.target.hasAttribute("data-line-total")||e.target.hasAttribute("data-markup-pct"))recalc();});'
+    +'function initSig(cid,did){var c=document.getElementById(cid);if(!c)return;var x=c.getContext("2d");var d=false,h=false;function rs(){var r=c.getBoundingClientRect();c.width=r.width*2;c.height=r.height*2;x.scale(2,2);x.strokeStyle="#1a1a1a";x.lineWidth=2;x.lineCap="round";x.lineJoin="round";}rs();function gp(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}c.addEventListener("mousedown",function(e){d=true;x.beginPath();var p=gp(e);x.moveTo(p.x,p.y);});c.addEventListener("mousemove",function(e){if(!d)return;var p=gp(e);x.lineTo(p.x,p.y);x.stroke();});c.addEventListener("mouseup",function(){d=false;if(!h){h=true;sd(did);}});c.addEventListener("mouseleave",function(){d=false;});c.addEventListener("touchstart",function(e){e.preventDefault();d=true;x.beginPath();var p=gp(e);x.moveTo(p.x,p.y);},{passive:false});c.addEventListener("touchmove",function(e){e.preventDefault();if(!d)return;var p=gp(e);x.lineTo(p.x,p.y);x.stroke();},{passive:false});c.addEventListener("touchend",function(e){e.preventDefault();d=false;if(!h){h=true;sd(did);}},{passive:false});window["clear_"+cid]=function(){x.clearRect(0,0,c.width,c.height);h=false;document.getElementById(did).textContent="";};}'
+    +'function sd(did){var e=document.getElementById(did);if(e){var n=new Date();e.textContent="Signed: "+n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})+" at "+n.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});}}'
+    +'document.querySelectorAll(".auth-opt").forEach(function(opt){opt.addEventListener("click",function(){document.querySelectorAll(".auth-opt").forEach(function(o){o.classList.remove("selected");o.querySelector(".auth-cb").classList.remove("checked");o.querySelector(".auth-cb").textContent="";});this.classList.add("selected");var cb=this.querySelector(".auth-cb");cb.classList.add("checked");cb.textContent="\\u2713";});});'
+    +'document.addEventListener("DOMContentLoaded",function(){initSig("sigContractor","sigDateContractor");initSig("sigClient","sigDateClient");});'
+    +'</'+'script>';
+}
+function toolbar(title) { return '<div class="toolbar no-print"><span class="tbt">'+title+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="window.print()">Print / Save as PDF</button></div>'; }
+function sigHTML() { return '<div class="sig-section"><h3>Signatures</h3><div class="sig-grid"><div class="sig-pad"><label>Contractor Signature</label><canvas id="sigContractor" class="sig-canvas"></canvas><div class="sig-date" id="sigDateContractor"></div><button class="sig-clear no-print" onclick="clear_sigContractor()">Clear</button></div><div class="sig-pad"><label>Client / Property Manager Signature</label><canvas id="sigClient" class="sig-canvas"></canvas><div class="sig-date" id="sigDateClient"></div><button class="sig-clear no-print" onclick="clear_sigClient()">Clear</button></div></div></div>'; }
+function openDoc(html) { var w = window.open('','_blank'); w.document.write(html); w.document.close(); }
+
+// ========== LABOR ESTIMATE ==========
+function generateLabor() {
+    var sq = gn('sqft'), items = getLaborItems(), scope = getScope(), notes = getNotes();
+    var tot = 0; items.forEach(function(i){ tot += i.price; });
+    var ad = gv('areaDesc') || '[Area]';
+    var disc = gv('disclaimer');
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labor Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS('#2c3e50')+'</style></head><body>';
+    h += toolbar('ESTIMATE A &mdash; LABOR');
+    h += '<div class="header">'+co()+'<div class="badge">ESTIMATE A<br><small>LABOR COSTS</small></div></div>';
+    h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
+    // Scope
+    h += '<div class="scope"><h3>Scope of Work &mdash; '+E(sq)+' sq ft '+E(ad)+'</h3><ul>';
+    scope.forEach(function(s){ h += '<li>'+E(s)+'</li>'; });
+    h += '</ul></div>';
+    // Labor table
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Total</th></tr></thead><tbody>';
+    items.forEach(function(item, i){
+        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.basis)+'</td><td><strong>'+P('$'+f(item.price),'data-line-total')+'</strong></td></tr>';
+    });
+    h += '<tr class="subtotal-row"><td></td><td colspan="2">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
+    h += '<tr class="total-row"><td></td><td colspan="2">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
+    h += '</tbody></table>';
+    // Notes
+    h += '<div class="notes-section"><h3>Labor Estimate Notes</h3>';
+    notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
+    h += '</div>';
+    // Disclaimer
+    if (disc) {
+        h += '<div class="unforeseen-box"><h4>UNFORESEEN CONDITIONS CLAUSE</h4><p>'+E(disc)+'</p></div>';
+    }
+    h += sigHTML();
+    h += '<div class="footer"><p>Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
+    h += docJS() + '</body></html>';
+    openDoc(h);
+}
+
+// ========== MATERIALS ESTIMATE ==========
+function generateMaterials() {
+    var sq = gn('sqft'), mk = gn('materialsMarkup'), items = getMatItems(), notes = getNotes();
+    var sub = 0; items.forEach(function(i){ sub += i.price; });
+    var ma = sub * (mk/100), mt = sub + ma;
+    // Labor total for combined
+    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.price; });
+    var grand = labTot + mt;
+    var ad = gv('areaDesc') || '[Area]';
+    var sn = gv('supplierNote');
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Materials Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS('#27ae60')+'</style></head><body>';
+    h += toolbar('ESTIMATE B &mdash; MATERIALS');
+    h += '<div class="header">'+co()+'<div class="badge">ESTIMATE B<br><small>MATERIAL COSTS</small></div></div>';
+    h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
+    // Supplier note
+    if (sn) {
+        h += '<div class="supplier-note"><h4>MATERIAL SUPPLIER NOTE</h4><p>'+E(sn)+'</p></div>';
+    }
+    // Materials table
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
+    items.forEach(function(item, i){
+        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty)+'</td><td>'+E('$'+f(item.price))+'</td><td><strong>'+P('$'+f(item.price),'data-line-total')+'</strong></td></tr>';
+    });
+    h += '<tr class="subtotal-row"><td></td><td colspan="3">MATERIALS SUBTOTAL</td><td><span data-subtotal>$'+f(sub)+'</span></td></tr>';
+    h += '<tr class="markup-row"><td></td><td colspan="3"><strong>Contractor Markup (<span data-editable data-markup-pct>'+mk+'</span>%)</strong></td><td><span data-markup-amt>$'+f(ma)+'</span></td></tr>';
+    h += '<tr class="total-row"><td></td><td colspan="3">TOTAL MATERIALS &mdash; ESTIMATE B</td><td><span data-mat-total>$'+f(mt)+'</span></td></tr>';
+    h += '</tbody></table>';
+    // Combined
+    h += '<div class="combined"><h3>Combined Project Total</h3><table>';
+    h += '<tr><td>Estimate A &mdash; Labor</td><td><span data-combined-labor>$'+f(labTot)+'</span></td></tr>';
+    h += '<tr><td>Estimate B &mdash; Materials</td><td><span data-combined-mat>$'+f(mt)+'</span></td></tr>';
+    if (sn) h += '<tr><td style="color:#6c757d;font-style:italic;">Third-Party Supplied Materials (paid separately)</td><td style="color:#6c757d;font-style:italic;">Not Included</td></tr>';
+    h += '<tr class="grand"><td>TOTAL PROJECT PRICE</td><td><span data-grand-total>$'+f(grand)+'</span></td></tr>';
+    h += '<tr class="psf"><td>Per Square Foot (<span data-sqft>'+sq+'</span> sq ft)</td><td><span data-per-sqft>$'+f(grand/sq)+' /sq ft</span></td></tr>';
+    h += '</table></div>';
+    // Notes
+    h += '<div class="notes-section"><h3>Materials Notes</h3>';
+    notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
+    h += '</div>';
+    h += sigHTML();
+    h += '<div class="footer"><p>Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
+    h += docJS() + '</body></html>';
+    openDoc(h);
+}
+
+// ========== CHANGE ORDER ==========
+function generateChangeOrder() {
+    var sq = gn('sqft'), mk = gn('materialsMarkup')/100;
+    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.price; });
+    var mitems = getMatItems(), matSub = 0; mitems.forEach(function(i){ matSub += i.price; });
+    var matTot = matSub + (matSub * mk), orig = labTot + matTot;
+    var disc = gv('disclaimer');
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Change Order - '+(gv('clientName')||'Client')+'</title><style>'+docCSS('#c0392b')+'</style></head><body>';
+    h += toolbar('CHANGE ORDER');
+    h += '<div class="header">'+co()+'<div class="badge">CHANGE ORDER<br><small>SCOPE AMENDMENT</small></div></div>';
+    h += '<div class="info-grid-3"><div class="info-box hl"><label>Change Order #</label><div class="value">'+E('CO-001')+'</div></div><div class="info-box"><label>Date Issued</label><div class="value">'+E(fd(new Date().toISOString().split('T')[0]))+'</div></div><div class="info-box"><label>Response Required By</label><div class="value">'+E('3 Business Days')+'</div></div></div>';
+    h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div></div>';
+    h += '<div class="ref"><h4>Reference &mdash; Original Estimate</h4><p><strong>Original Date:</strong> '+fd(gv('estimateDate'))+'</p><p><strong>Original Amount:</strong> Labor $'+f(labTot)+' + Materials $'+f(matTot)+' = <strong>$'+f(orig)+'</strong></p><p><strong>Clause:</strong> '+E(disc || 'Unforeseen Conditions')+'</p></div>';
+    h += '<h3 class="stitle">Section 1 &mdash; Discovered Conditions</h3>';
+    h += '<div class="dbox"><label>Describe the concealed condition(s):</label><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div></div>';
+    h += '<div class="dbox"><label>Location within the unit:</label><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div></div>';
+    h += '<div class="pbox"><p><strong>PHOTO DOCUMENTATION</strong> &mdash; Attach dated photos. Count: '+E('______')+'</p></div>';
+    h += '<h3 class="stitle">Section 2 &mdash; Additional Work</h3>';
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
+    var letters = 'ABCDEFGHIJ';
+    for (var i = 0; i < 5; i++) {
+        h += '<tr><td class="item-num">'+letters[i]+'</td><td class="item-desc"><strong>'+E('[Description]')+'</strong></td><td>'+E('______')+'</td><td>'+P('$______')+'</td><td><strong>'+P('$______','data-line-total')+'</strong></td></tr>';
+    }
+    h += '<tr class="subtotal-row"><td></td><td colspan="3">CHANGE ORDER SUBTOTAL</td><td><span data-subtotal>$0.00</span></td></tr>';
+    h += '<tr class="total-row"><td></td><td colspan="3">CHANGE ORDER TOTAL</td><td><span data-total>$0.00</span></td></tr>';
+    h += '</tbody></table>';
+    h += '<h3 class="stitle">Section 3 &mdash; Project Impact</h3>';
+    h += '<div class="impact"><div class="impact-box"><label>Original Contract</label><div class="val grn">$'+f(orig)+'</div></div><div class="impact-box"><label>This Change Order</label><div class="val">'+E('$______')+'</div></div><div class="impact-box"><label>Revised Total</label><div class="val">'+E('$______')+'</div></div></div>';
+    h += '<div class="info-grid"><div class="info-box"><label>Schedule Impact</label><div class="value">'+E('Additional ___ day(s)')+'</div></div><div class="info-box"><label>Revised Completion</label><div class="value">'+E('______')+'</div></div></div>';
+    h += '<div class="legal"><h4>Terms &amp; Conditions</h4><p>1. This Change Order amends the original estimate upon execution by both parties.</p><p>2. Work shall not commence until written authorization is received.</p><p>3. Additional compensation reflects actual cost plus applicable overhead.</p><p>4. If declined, Contractor restores area to safe condition. Not responsible for unaddressed damage.</p><p>5. Payment due upon completion of additional scope.</p><p>6. Consistent with Nebraska Revised Statute &sect;73-1117.</p></div>';
+    h += '<div class="auth"><h3>Client Authorization</h3>';
+    h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>APPROVED</strong><small>I authorize the Contractor to proceed at the stated price.</small></div></div>';
+    h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>APPROVED WITH MODIFICATIONS</strong><small>Proceed with modifications: '+E('______________________________')+'</small></div></div>';
+    h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>DECLINED</strong><small>I decline. Contractor will restore area to safe condition.</small></div></div></div>';
+    h += sigHTML();
+    h += '<div class="footer"><p>Change Order &mdash; '+(gv('companyName')||'[Company]')+' &nbsp;|&nbsp; Licensed GC &mdash; Nebraska &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
+    h += docJS() + '</body></html>';
+    openDoc(h);
+}
+</script>
+</body>
+</html>

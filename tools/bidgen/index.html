@@ -20,7 +20,8 @@
         .form-group { display: flex; flex-direction: column; }
         .form-group.full { grid-column: 1 / -1; }
         .form-group label { font-size: 11px; text-transform: uppercase; color: #7f8c8d; letter-spacing: 0.5px; margin-bottom: 4px; }
-        .form-group input, .form-group textarea, .form-group select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 12px; color: #eee; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
+        .form-group input, .form-group textarea, .form-group select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 12px; color: #eee; font-size: 14px; font-family: inherit; transition: border-color 0.2s; min-width: 0; }
+        .card { overflow: hidden; }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3498db; }
         .form-group input::placeholder, .form-group textarea::placeholder { color: #4a5568; }
         .form-group select option { background: #0f1a33; color: #eee; }
@@ -58,13 +59,13 @@
         .trade-badge.plumbing { background: #2980b9; color: white; }
         .trade-badge.electrical { background: #f39c12; color: #1a1a1a; }
         .trade-badge.custom { background: #7f8c8d; color: white; }
-        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; margin-bottom: 8px; align-items: center; }
-        #laborItemsContainer .li-row input { font-size: 12px; padding: 7px 8px; }
-        #matItemsContainer .mi-row { display: grid; grid-template-columns: 1fr 60px 80px; gap: 8px; margin-bottom: 8px; align-items: center; }
-        #matItemsContainer .mi-row input { font-size: 12px; padding: 7px 8px; }
+        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 100px 110px; gap: 8px; margin-bottom: 8px; align-items: center; }
+        #laborItemsContainer .li-row input { font-size: 12px; padding: 7px 8px; min-width: 0; }
+        #matItemsContainer .mi-row { display: grid; grid-template-columns: 1fr 70px 110px; gap: 8px; margin-bottom: 8px; align-items: center; }
+        #matItemsContainer .mi-row input { font-size: 12px; padding: 7px 8px; min-width: 0; }
         .item-header { display: grid; gap: 8px; margin-bottom: 6px; font-size: 10px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
-        .item-header.labor { grid-template-columns: 1fr 80px 80px; }
-        .item-header.mat { grid-template-columns: 1fr 60px 80px; }
+        .item-header.labor { grid-template-columns: 1fr 100px 110px; }
+        .item-header.mat { grid-template-columns: 1fr 70px 110px; }
         .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px; }
         .add-row-btn:hover { border-color: #3498db; color: #3498db; }
         .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }

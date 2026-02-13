@@ -71,3 +71,6 @@ changes.log
 
 # Local Netlify folder
 .netlify
+
+# Redundant backup folder
+_REDUNDANT_BACKUP/

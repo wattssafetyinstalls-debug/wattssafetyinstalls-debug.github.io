@@ -69,6 +69,51 @@
         .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px; }
         .add-row-btn:hover { border-color: #3498db; color: #3498db; }
         .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
+        /* Autocomplete dropdown */
+        .ac-wrap { position: relative; }
+        .ac-drop { position: absolute; top: 100%; left: 0; right: 0; background: #0f1a33; border: 1px solid #3498db; border-top: none; border-radius: 0 0 6px 6px; max-height: 220px; overflow-y: auto; z-index: 1000; display: none; }
+        .ac-drop.show { display: block; }
+        .ac-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #1a2744; font-size: 12px; }
+        .ac-item:hover, .ac-item.ac-active { background: #1a2744; }
+        .ac-item .ac-desc { color: #eee; font-weight: 600; }
+        .ac-item .ac-meta { color: #7f8c8d; font-size: 10px; margin-top: 2px; display: flex; gap: 8px; align-items: center; }
+        .ac-item .ac-price { color: #27ae60; font-weight: 600; }
+        .ac-item .ac-adj { color: #f39c12; font-size: 9px; }
+        .ac-item .ac-date { color: #555; }
+        .ac-item .ac-count { background: #2a3a5c; color: #7f8c8d; padding: 1px 5px; border-radius: 8px; font-size: 9px; }
+        /* Catalog stats bar */
+        .catalog-bar { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 8px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; font-size: 11px; color: #7f8c8d; flex-wrap: wrap; }
+        .catalog-bar .cb-stat { display: flex; align-items: center; gap: 4px; }
+        .catalog-bar .cb-num { color: #3498db; font-weight: 700; }
+        .catalog-bar .cb-inflation { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+        .catalog-bar .cb-inflation input { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 4px; padding: 2px 6px; color: #f39c12; font-size: 11px; width: 48px; text-align: center; }
+        .catalog-bar .cb-inflation input:focus { outline: none; border-color: #f39c12; }
+        .predict-btn { background: linear-gradient(135deg, #8e44ad, #3498db); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; letter-spacing: 0.3px; }
+        .predict-btn:hover { filter: brightness(1.15); }
+        /* Price Lookup Panel */
+        .price-lookup { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+        .price-lookup h3 { color: #3498db; font-size: 14px; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; }
+        .price-lookup h3 .pl-dot { width: 8px; height: 8px; border-radius: 50%; background: #e74c3c; display: inline-block; }
+        .price-lookup h3 .pl-dot.online { background: #27ae60; }
+        .pl-search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .pl-search-row input { flex: 1; background: #1a2744; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 14px; color: #eee; font-size: 13px; }
+        .pl-search-row input:focus { outline: none; border-color: #3498db; }
+        .pl-search-row select { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px; color: #eee; font-size: 12px; }
+        .pl-search-row button { background: linear-gradient(135deg, #e67e22, #e74c3c); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .pl-search-row button:hover { filter: brightness(1.15); }
+        .pl-search-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pl-status { font-size: 11px; color: #7f8c8d; margin-bottom: 8px; min-height: 16px; }
+        .pl-results { max-height: 300px; overflow-y: auto; }
+        .pl-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #1a2744; font-size: 12px; gap: 8px; }
+        .pl-item:hover { background: #1a2744; }
+        .pl-item .pl-name { color: #eee; flex: 1; font-weight: 500; }
+        .pl-item .pl-price { color: #27ae60; font-weight: 700; font-size: 13px; min-width: 70px; text-align: right; }
+        .pl-item .pl-src { color: #7f8c8d; font-size: 10px; background: #2a3a5c; padding: 2px 6px; border-radius: 4px; }
+        .pl-item .pl-add { background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+        .pl-item .pl-add:hover { background: #2ecc71; }
+        .pl-empty { color: #555; font-size: 12px; text-align: center; padding: 20px; }
+        .pl-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #2a3a5c; border-top-color: #3498db; border-radius: 50%; animation: plspin 0.6s linear infinite; margin-right: 6px; vertical-align: middle; }
+        @keyframes plspin { to { transform: rotate(360deg); } }
         /* PIN login overlay */
         #loginOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e; z-index: 99999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: #16213e; border: 1px solid #2a3a5c; border-radius: 12px; padding: 40px; text-align: center; max-width: 400px; width: 90%; }
@@ -120,6 +165,33 @@
         <button class="logout-btn" onclick="logout()">Lock</button>
     </div>
 
+    <div class="catalog-bar" id="catalogBar" style="display:none;">
+        <span class="cb-stat">Catalog: <span class="cb-num" id="cbLaborCount">0</span> labor</span>
+        <span class="cb-stat"><span class="cb-num" id="cbMatCount">0</span> materials</span>
+        <span class="cb-stat"><span class="cb-num" id="cbJobCount">0</span> past jobs</span>
+        <span class="cb-inflation">Inflation %/yr <input type="number" id="inflationRate" value="3.2" step="0.1" min="0" max="20" onchange="saveInflationRate()"></span>
+        <button class="predict-btn" onclick="predictiveFill()">&#9889; Smart Fill from History</button>
+    </div>
+
+    <div class="price-lookup" id="priceLookup">
+        <h3><span class="pl-dot online" id="plDot"></span> Price Lookup — Live Store Prices</h3>
+        <div class="pl-search-row">
+            <input type="text" id="plQuery" placeholder="Search products (e.g. vinyl plank flooring, wax ring, 12/2 romex...)" onkeydown="if(event.key==='Enter')plSearch()">
+            <select id="plStore">
+                <option value="">All Stores</option>
+                <option value="menards">Menards</option>
+                <option value="home depot">Home Depot</option>
+                <option value="lowes">Lowe's</option>
+                <option value="amazon">Amazon</option>
+            </select>
+            <button id="plSearchBtn" onclick="plSearch()">Search Prices</button>
+        </div>
+        <div class="pl-status" id="plStatus">Powered by Bing Shopping &mdash; works on any device, no setup needed</div>
+        <div class="pl-results" id="plResults">
+            <div class="pl-empty">Search for products to see live store pricing. Results are added to your catalog.</div>
+        </div>
+    </div>
+
     <div class="instructions">
         <h3>How to Use</h3>
         <ol>
@@ -138,6 +210,13 @@
     <div class="card">
         <h2><span class="icon">1</span> Your Company Info <span class="saved-indicator" id="companySaved">Synced</span></h2>
         <div class="form-grid">
+            <div class="form-group full">
+                <label>Invoice Brand</label>
+                <select id="brandSelect" onchange="onBrandChange()">
+                    <option value="wsi">Watts Safety Installs</option>
+                    <option value="atp">Watts ATP Contractor</option>
+                </select>
+            </div>
             <div class="form-group full"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Smith General Contracting LLC"></div>
             <div class="form-group"><label>License Number</label><input type="text" id="licenseNum" placeholder="NE License #"></div>
             <div class="form-group"><label>Phone</label><input type="text" id="phone" placeholder="(402) 555-1234"></div>
@@ -237,7 +316,11 @@ let userPIN = null;
 let dbRef = null; // will be db.ref('users/<hashed_pin>')
 let companyRef = null;
 let jobsRef = null;
+let catalogRef = null;
+let settingsRef = null;
 let _suppressSync = false; // prevent loops when loading from cloud
+let _catalog = { labor: {}, materials: {} };
+let _inflationRate = 3.2;
 
 // =====================================================================
 // SIMPLE PIN HASHING (not crypto-grade, just obfuscation for DB path)
@@ -268,6 +351,8 @@ function attemptLogin() {
     dbRef = db.ref('users/' + hashed);
     companyRef = dbRef.child('company');
     jobsRef = dbRef.child('jobs');
+    catalogRef = dbRef.child('catalog');
+    settingsRef = dbRef.child('settings');
 
     // Check if this PIN/workspace exists
     dbRef.child('created').once('value').then(snap => {
@@ -546,7 +631,13 @@ function initApp() {
         const data = snap.val() || {};
         _cloudJobs = data;
         loadSavedJobsList();
+        updateCatalogBar();
     });
+
+    // Load price catalog and settings from Firebase
+    loadCatalog();
+
+    // Price lookup is now fully client-side — no proxy needed
 
     // Set up company field auto-save to Firebase
     companyFields.forEach(id => {
@@ -575,8 +666,450 @@ function initApp() {
     });
 }
 
-const companyFields = ['companyName', 'licenseNum', 'phone', 'email', 'companyAddress'];
+const companyFields = ['companyName', 'licenseNum', 'phone', 'email', 'companyAddress', 'brandSelect'];
 let _cloudJobs = {};
+
+// ========== PRICE CATALOG SYSTEM ==========
+function sanitizeKey(s) { return String(s||'').toLowerCase().trim().replace(/[.#$\[\]\/]/g,'_').replace(/\s+/g,'_').substring(0,80) || '_empty'; }
+
+function loadCatalog() {
+    if (!catalogRef) return;
+    catalogRef.on('value', snap => {
+        const d = snap.val() || {};
+        _catalog.labor = d.labor || {};
+        _catalog.materials = d.materials || {};
+        updateCatalogBar();
+    });
+    if (settingsRef) {
+        settingsRef.once('value').then(snap => {
+            const s = snap.val() || {};
+            if (s.inflationRate !== undefined) {
+                _inflationRate = s.inflationRate;
+                const el = document.getElementById('inflationRate');
+                if (el) el.value = _inflationRate;
+            }
+        });
+    }
+}
+
+function updateCatalogBar() {
+    const lc = Object.keys(_catalog.labor).length;
+    const mc = Object.keys(_catalog.materials).length;
+    const jc = Object.keys(_cloudJobs).length;
+    document.getElementById('cbLaborCount').textContent = lc;
+    document.getElementById('cbMatCount').textContent = mc;
+    document.getElementById('cbJobCount').textContent = jc;
+    document.getElementById('catalogBar').style.display = (lc + mc + jc > 0) ? 'flex' : 'none';
+}
+
+function saveInflationRate() {
+    _inflationRate = parseFloat(document.getElementById('inflationRate').value) || 3.2;
+    if (settingsRef) settingsRef.update({ inflationRate: _inflationRate });
+}
+
+function saveToCatalog(type, items, jobName) {
+    if (!catalogRef) return;
+    const now = Date.now();
+    const updates = {};
+    items.forEach(item => {
+        const key = sanitizeKey(item.desc);
+        if (key === '_empty') return;
+        const existing = (_catalog[type] && _catalog[type][key]) || {};
+        const history = existing.history || {};
+        const pushKey = 't' + now + '_' + Math.random().toString(36).substr(2, 4);
+        const entry = { price: item.price, date: now, jobName: jobName || '' };
+        if (type === 'labor') entry.basis = item.basis || '';
+        if (type === 'materials') entry.qty = item.qty || '';
+        history[pushKey] = entry;
+        updates[type + '/' + key] = {
+            desc: item.desc,
+            price: item.price,
+            basis: item.basis || '',
+            qty: item.qty || '',
+            lastUsed: now,
+            firstSeen: existing.firstSeen || now,
+            useCount: (existing.useCount || 0) + 1,
+            history: history
+        };
+    });
+    catalogRef.update(updates);
+}
+
+function inflationAdjust(price, dateMs) {
+    if (!dateMs || !price) return price;
+    const years = (Date.now() - dateMs) / (365.25 * 24 * 60 * 60 * 1000);
+    if (years < 0.05) return price; // less than ~18 days, no adjustment
+    return price * Math.pow(1 + (_inflationRate / 100), years);
+}
+
+function relativeDate(ms) {
+    if (!ms) return '';
+    const days = Math.floor((Date.now() - ms) / 86400000);
+    if (days === 0) return 'today';
+    if (days === 1) return 'yesterday';
+    if (days < 30) return days + 'd ago';
+    if (days < 365) return Math.floor(days / 30) + 'mo ago';
+    return (days / 365).toFixed(1) + 'yr ago';
+}
+
+// ========== AUTOCOMPLETE ENGINE ==========
+let _acActiveInput = null;
+let _acActiveDrop = null;
+let _acActiveIdx = -1;
+
+function acSearch(query, type) {
+    const catalog = _catalog[type] || {};
+    const q = query.toLowerCase().trim();
+    if (!q) return Object.values(catalog).sort((a, b) => (b.useCount || 0) - (a.useCount || 0)).slice(0, 12);
+    return Object.values(catalog).filter(item => {
+        return item.desc && item.desc.toLowerCase().includes(q);
+    }).sort((a, b) => {
+        const aStarts = a.desc.toLowerCase().startsWith(q) ? 1 : 0;
+        const bStarts = b.desc.toLowerCase().startsWith(q) ? 1 : 0;
+        if (aStarts !== bStarts) return bStarts - aStarts;
+        return (b.useCount || 0) - (a.useCount || 0);
+    }).slice(0, 10);
+}
+
+function acRender(results, dropEl, type) {
+    dropEl.innerHTML = '';
+    if (results.length === 0) { dropEl.classList.remove('show'); return; }
+    results.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'ac-item';
+        const adj = inflationAdjust(item.price, item.lastUsed);
+        const showAdj = Math.abs(adj - item.price) > 0.005;
+        let metaHtml = '<span class="ac-price">$' + item.price.toFixed(2) + '</span>';
+        if (showAdj) metaHtml += '<span class="ac-adj">&rarr; $' + adj.toFixed(2) + ' adj.</span>';
+        if (type === 'labor' && item.basis) metaHtml += '<span>' + item.basis + '</span>';
+        if (type === 'materials' && item.qty) metaHtml += '<span>' + item.qty + '</span>';
+        metaHtml += '<span class="ac-date">' + relativeDate(item.lastUsed) + '</span>';
+        metaHtml += '<span class="ac-count">&times;' + (item.useCount || 1) + '</span>';
+        div.innerHTML = '<div class="ac-desc">' + item.desc + '</div><div class="ac-meta">' + metaHtml + '</div>';
+        div.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            acSelect(item, type);
+        });
+        dropEl.appendChild(div);
+    });
+    dropEl.classList.add('show');
+    _acActiveIdx = -1;
+}
+
+function acSelect(item, type) {
+    if (!_acActiveInput) return;
+    const row = _acActiveInput.closest('.li-row, .mi-row');
+    if (!row) return;
+    const inputs = row.querySelectorAll('input');
+    const adj = inflationAdjust(item.price, item.lastUsed);
+    const useAdj = Math.abs(adj - item.price) > 0.005;
+    inputs[0].value = item.desc;
+    if (type === 'labor') {
+        inputs[1].value = item.basis || '';
+        inputs[2].value = (useAdj ? adj : item.price).toFixed(2);
+    } else {
+        inputs[1].value = item.qty || '';
+        inputs[2].value = (useAdj ? adj : item.price).toFixed(2);
+    }
+    acClose();
+}
+
+function acClose() {
+    if (_acActiveDrop) _acActiveDrop.classList.remove('show');
+    _acActiveInput = null;
+    _acActiveDrop = null;
+    _acActiveIdx = -1;
+}
+
+function acKeydown(e, dropEl) {
+    const items = dropEl.querySelectorAll('.ac-item');
+    if (!items.length || !dropEl.classList.contains('show')) return;
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        _acActiveIdx = Math.min(_acActiveIdx + 1, items.length - 1);
+        items.forEach((it, i) => it.classList.toggle('ac-active', i === _acActiveIdx));
+        items[_acActiveIdx].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        _acActiveIdx = Math.max(_acActiveIdx - 1, 0);
+        items.forEach((it, i) => it.classList.toggle('ac-active', i === _acActiveIdx));
+        items[_acActiveIdx].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && _acActiveIdx >= 0) {
+        e.preventDefault();
+        items[_acActiveIdx].dispatchEvent(new MouseEvent('mousedown'));
+    } else if (e.key === 'Escape') {
+        acClose();
+    }
+}
+
+function attachAutocomplete(input, type) {
+    const wrap = document.createElement('div');
+    wrap.className = 'ac-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    const drop = document.createElement('div');
+    drop.className = 'ac-drop';
+    wrap.appendChild(drop);
+
+    input.addEventListener('focus', function() {
+        _acActiveInput = input;
+        _acActiveDrop = drop;
+        const results = acSearch(input.value, type);
+        if (results.length) acRender(results, drop, type);
+    });
+    input.addEventListener('input', function() {
+        _acActiveInput = input;
+        _acActiveDrop = drop;
+        acRender(acSearch(input.value, type), drop, type);
+    });
+    input.addEventListener('blur', function() {
+        setTimeout(acClose, 150);
+    });
+    input.addEventListener('keydown', function(e) {
+        acKeydown(e, drop);
+    });
+}
+
+// ========== PREDICTIVE FILL ==========
+function predictiveFill() {
+    const trade = document.getElementById('tradeType').value;
+    const jobs = Object.values(_cloudJobs).filter(j => j.tradeType === trade);
+    if (jobs.length === 0) { alert('No past jobs found for this trade type. Save some jobs first to build your history.'); return; }
+
+    // Tally frequency of each labor item across past jobs of same trade
+    const laborFreq = {}, matFreq = {};
+    jobs.forEach(j => {
+        (j.laborItems || []).forEach(li => {
+            const k = sanitizeKey(li.desc);
+            if (!laborFreq[k]) laborFreq[k] = { desc: li.desc, basis: li.basis, prices: [], count: 0 };
+            laborFreq[k].prices.push({ price: li.price, date: j.savedAt || Date.now() });
+            laborFreq[k].count++;
+        });
+        (j.matItems || []).forEach(mi => {
+            const k = sanitizeKey(mi.desc);
+            if (!matFreq[k]) matFreq[k] = { desc: mi.desc, qty: mi.qty, prices: [], count: 0 };
+            matFreq[k].prices.push({ price: mi.price, date: j.savedAt || Date.now() });
+            matFreq[k].count++;
+        });
+    });
+
+    // Sort by frequency, take top items
+    const topLabor = Object.values(laborFreq).sort((a, b) => b.count - a.count).slice(0, 10);
+    const topMat = Object.values(matFreq).sort((a, b) => b.count - a.count).slice(0, 15);
+
+    if (topLabor.length === 0 && topMat.length === 0) { alert('Not enough history to predict items.'); return; }
+
+    const msg = 'Smart Fill found ' + topLabor.length + ' labor items and ' + topMat.length + ' materials from ' + jobs.length + ' past ' + trade + ' jobs.\n\nPrices will be inflation-adjusted (' + _inflationRate + '%/yr).\n\nReplace current line items?';
+    if (!confirm(msg)) return;
+
+    // Fill labor
+    document.getElementById('laborItemsContainer').innerHTML = '';
+    topLabor.forEach(item => {
+        const latest = item.prices.sort((a, b) => b.date - a.date)[0];
+        const adjPrice = inflationAdjust(latest.price, latest.date);
+        addLaborRow(item.desc, item.basis, adjPrice.toFixed(2));
+    });
+
+    // Fill materials
+    document.getElementById('matItemsContainer').innerHTML = '';
+    topMat.forEach(item => {
+        const latest = item.prices.sort((a, b) => b.date - a.date)[0];
+        const adjPrice = inflationAdjust(latest.price, latest.date);
+        addMatRow(item.desc, item.qty, adjPrice.toFixed(2));
+    });
+}
+
+// ========== PRICE LOOKUP (CLIENT-SIDE, NO SERVER NEEDED) ==========
+// Uses CORS proxies to fetch Bing Shopping results directly from the browser.
+// Falls back between multiple proxies for reliability.
+const CORS_PROXIES = [
+    url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+    url => 'https://corsproxy.io/?' + encodeURIComponent(url),
+    url => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
+];
+let _corsProxyIdx = 0;
+
+function plFetchViaCors(url) {
+    // Try each CORS proxy in order; rotate on failure
+    const startIdx = _corsProxyIdx;
+    function attempt(idx) {
+        const proxyUrl = CORS_PROXIES[idx](url);
+        return fetch(proxyUrl).then(r => {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            _corsProxyIdx = idx; // remember which one worked
+            return r.text();
+        }).catch(err => {
+            const next = (idx + 1) % CORS_PROXIES.length;
+            if (next === startIdx) throw new Error('All CORS proxies failed: ' + err.message);
+            return attempt(next);
+        });
+    }
+    return attempt(startIdx);
+}
+
+function plParseBingShopping(html) {
+    // Parse Bing Shopping product cards from raw HTML
+    // Structure: <span title="PRODUCT NAME">...</span></div> ... <div class="br-price">$XX.XX</div> ... <span class="br-offSlrTxt">Store</span>
+    const results = [];
+    const seen = new Set();
+    const cardRx = /<span\s+title="([^"]{5,300})"[^>]*>[^<]*<\/span>\s*<\/div>[\s\S]*?<div\s+class="br-price">\s*\$([\d,]+\.?\d*)\s*<\/div>[\s\S]*?(?:<span\s+class="br-offSlrTxt">([^<]{2,60})<\/span>)?/g;
+    let m;
+    while ((m = cardRx.exec(html)) !== null) {
+        const name = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").trim();
+        const priceStr = m[2].replace(/,/g, '');
+        const seller = m[3] ? m[3].replace(/&amp;/g, '&').trim() : '';
+        const price = parseFloat(priceStr);
+        if (isNaN(price) || price < 0.01 || price > 100000) continue;
+        const key = name.toLowerCase().substring(0, 60);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        results.push({ desc: name, price: price, source: seller || 'Bing Shopping' });
+    }
+    // Fallback: broader title + price pattern if few results
+    if (results.length < 3) {
+        const fbRx = /title="([^"]{10,200})"(?:(?!title=").){0,800}\$([\d,]+\.\d{2})/gs;
+        while ((m = fbRx.exec(html)) !== null) {
+            const name = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim();
+            if (/search for|sign in|menu|filter|sort/i.test(name)) continue;
+            const price = parseFloat(m[2].replace(/,/g, ''));
+            if (isNaN(price) || price < 0.50 || price > 100000) continue;
+            const key = name.toLowerCase().substring(0, 60);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            results.push({ desc: name, price: price, source: 'Bing Shopping' });
+        }
+    }
+    return results.slice(0, 25);
+}
+
+function plSearch() {
+    const q = document.getElementById('plQuery').value.trim();
+    if (!q) { document.getElementById('plQuery').focus(); return; }
+
+    const store = document.getElementById('plStore').value;
+    const btn = document.getElementById('plSearchBtn');
+    const statusEl = document.getElementById('plStatus');
+    const resultsEl = document.getElementById('plResults');
+
+    btn.disabled = true;
+    btn.textContent = 'Searching...';
+    statusEl.innerHTML = '<span class="pl-spinner"></span> Searching ' + (store || 'all stores') + ' for "' + escHtml(q) + '"...';
+    resultsEl.innerHTML = '';
+
+    const searchQ = store ? q + ' ' + store : q;
+    const bingUrl = 'https://www.bing.com/shop?q=' + encodeURIComponent(searchQ);
+
+    plFetchViaCors(bingUrl)
+        .then(html => {
+            const items = plParseBingShopping(html);
+            btn.disabled = false;
+            btn.textContent = 'Search Prices';
+
+            // Apply store filter if selected
+            let filtered = items;
+            if (store) {
+                const sf = store.toLowerCase();
+                const storeMatches = items.filter(i => i.source.toLowerCase().includes(sf));
+                if (storeMatches.length > 0) filtered = storeMatches;
+            }
+
+            if (filtered.length === 0) {
+                statusEl.innerHTML = 'No results found for "' + escHtml(q) + '". Try different search terms.';
+                resultsEl.innerHTML = '<div class="pl-empty">No products found. Try a different search term.</div>';
+                return;
+            }
+            statusEl.innerHTML = 'Found <strong>' + filtered.length + '</strong> products via Bing Shopping';
+            resultsEl.innerHTML = '';
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'pl-item';
+                const priceStr = '$' + item.price.toFixed(2);
+                div.innerHTML = '<span class="pl-name">' + escHtml(item.desc) + '</span>'
+                    + '<span class="pl-price">' + priceStr + '</span>'
+                    + '<span class="pl-src">' + escHtml(item.source) + '</span>'
+                    + '<button class="pl-add">+ Catalog</button>';
+                div.querySelector('.pl-add').addEventListener('click', function() {
+                    plAddToCatalog(item);
+                    this.textContent = 'Added!';
+                    this.style.background = '#2a3a5c';
+                    this.disabled = true;
+                });
+                resultsEl.appendChild(div);
+            });
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.textContent = 'Search Prices';
+            statusEl.innerHTML = 'Error: ' + err.message;
+            resultsEl.innerHTML = '<div class="pl-empty">Search failed. Check your internet connection and try again.</div>';
+        });
+}
+
+function plAddToCatalog(item) {
+    if (!catalogRef || !item.desc || !item.price) return;
+    const key = 'materials/' + sanitizeKey(item.desc);
+    const now = Date.now();
+    const existing = (_catalog && _catalog[key]) || {};
+    const history = existing.history || [];
+    history.push({ price: parseFloat(item.price), date: now, job: 'price-lookup:' + (item.source || 'web') });
+    if (history.length > 20) history.splice(0, history.length - 20);
+    catalogRef.child(key).set({
+        desc: item.desc,
+        price: parseFloat(item.price),
+        qty: '1',
+        lastUsed: now,
+        firstSeen: existing.firstSeen || now,
+        useCount: (existing.useCount || 0) + 1,
+        history: history,
+        source: item.source || 'web',
+        model: item.model || ''
+    });
+    updateCatalogBar();
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// ========== BRAND PRESETS ==========
+const BRANDS = {
+    wsi: {
+        name: 'Watts Safety Installs',
+        accent: '#C0392B',
+        dark: '#1A1A1A',
+        headerBg: '#1A1A1A',
+        headerText: '#C0392B',
+        badgeText: '#FFF5E6',
+        scopeCheck: '#C0392B',
+        combinedBg: '#FFF5E6',
+        combinedBorder: '#1A1A1A',
+        combinedGrand: '#1A1A1A',
+        combinedRule: '#e8c9a0',
+        toolbarBg: '#1A1A1A',
+        authBg: '#FFF5E6'
+    },
+    atp: {
+        name: 'Watts ATP Contractor',
+        accent: '#00C4B4',
+        dark: '#0A1D37',
+        headerBg: '#0A1D37',
+        headerText: '#00C4B4',
+        badgeText: 'white',
+        scopeCheck: '#00C4B4',
+        combinedBg: '#e6faf8',
+        combinedBorder: '#0A1D37',
+        combinedGrand: '#0A1D37',
+        combinedRule: '#8dd8cf',
+        toolbarBg: '#0A1D37',
+        authBg: '#e6faf8'
+    }
+};
+
+function getBrand() { return BRANDS[document.getElementById('brandSelect').value] || BRANDS.wsi; }
+
+function onBrandChange() {
+    // Trigger auto-save of company fields
+    const evt = new Event('input', { bubbles: true });
+    document.getElementById('brandSelect').dispatchEvent(evt);
+}
 
 // ========== TRADE CHANGE ==========
 function onTradeChange() {
@@ -596,7 +1129,6 @@ function onTradeChange() {
     document.getElementById('disclaimer').value = preset.disclaimer;
 }
 
-// ========== DYNAMIC ROWS ==========
 function addLaborRow(desc, basis, price) {
     const c = document.getElementById('laborItemsContainer');
     const row = document.createElement('div');
@@ -605,6 +1137,7 @@ function addLaborRow(desc, basis, price) {
         + '<input type="text" placeholder="Basis" value="'+esc(basis)+'">'
         + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.25" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.li-row\').remove()">&times;</button></div>';
     c.appendChild(row);
+    attachAutocomplete(row.querySelector('input'), 'labor');
 }
 function addMatRow(desc, qty, price) {
     const c = document.getElementById('matItemsContainer');
@@ -614,6 +1147,7 @@ function addMatRow(desc, qty, price) {
         + '<input type="text" placeholder="Qty" value="'+esc(qty)+'">'
         + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.mi-row\').remove()">&times;</button></div>';
     c.appendChild(row);
+    attachAutocomplete(row.querySelector('input'), 'materials');
 }
 function esc(s) { return String(s||'').replace(/"/g, '&quot;'); }
 
@@ -657,7 +1191,10 @@ function saveJob() {
         savedAt: Date.now()
     };
     jobsRef.child(name).set(jobData).then(() => {
+        saveToCatalog('labor', jobData.laborItems, name);
+        saveToCatalog('materials', jobData.matItems, name);
         flashSync();
+        updateCatalogBar();
         document.getElementById('savedJobsSelect').value = name;
         alert('Job saved & synced: ' + name);
     });
@@ -700,47 +1237,48 @@ function gn(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function f(n) { return n.toFixed(2); }
 function fd(s) { if (!s) return '[Date]'; const d = new Date(s+'T12:00:00'); return d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}); }
 function loc() { return [gv('complexName'),gv('unitNum'),gv('jobCity')].filter(Boolean).join(', ') || '[Location]'; }
-function co() { return '<div class="company-info"><h1>'+(gv('companyName')||'[YOUR COMPANY NAME]')+'</h1><p>Licensed General Contractor &mdash; State of Nebraska</p><p>License #: '+(gv('licenseNum')||'[LICENSE #]')+' &nbsp;|&nbsp; Phone: '+(gv('phone')||'[PHONE]')+' &nbsp;|&nbsp; Email: '+(gv('email')||'[EMAIL]')+'</p></div>'; }
+function co(brand) { var b = brand || getBrand(); return '<div class="company-info"><h1>'+(gv('companyName')||b.name)+'</h1><p>Licensed General Contractor &mdash; State of Nebraska</p><p>License #: '+(gv('licenseNum')||'[LICENSE #]')+' &nbsp;|&nbsp; Phone: '+(gv('phone')||'[PHONE]')+' &nbsp;|&nbsp; Email: '+(gv('email')||'[EMAIL]')+'</p></div>'; }
 function E(v, extra) { return '<span data-editable '+(extra||'')+'>'+v+'</span>'; }
 function P(v, extra) { return '<span data-editable class="editable-price" '+(extra||'')+'>'+v+'</span>'; }
 
 // ========== SHARED DOC CSS ==========
-function docCSS(accent) {
+function docCSS(brand) {
+    var a = brand.accent, d = brand.dark;
     return '@media print { body { margin:0; padding:0.3in; } .no-print { display:none !important; } .sig-canvas { border:none !important; } }'
     +'* { margin:0; padding:0; box-sizing:border-box; }'
     +'body { font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif; color:#1a1a1a; line-height:1.5; padding:0.5in; padding-top:60px; max-width:8.5in; margin:0 auto; font-size:11pt; }'
-    +'.toolbar { position:fixed; top:0; left:0; right:0; background:#1a1a2e; color:#eee; padding:8px 20px; display:flex; align-items:center; gap:12px; z-index:9999; box-shadow:0 2px 12px rgba(0,0,0,0.3); font-size:13px; }'
+    +'.toolbar { position:fixed; top:0; left:0; right:0; background:'+brand.toolbarBg+'; color:#eee; padding:8px 20px; display:flex; align-items:center; gap:12px; z-index:9999; box-shadow:0 2px 12px rgba(0,0,0,0.3); font-size:13px; }'
     +'.toolbar .tbt { font-weight:700; font-size:14px; margin-right:auto; } .toolbar button { padding:8px 18px; border:none; border-radius:5px; font-size:13px; font-weight:600; cursor:pointer; }'
-    +'.toolbar .tbp { background:'+accent+'; color:white; } .toolbar .tbe { background:#2a3a5c; color:#bbb; border:1px solid #3a4a6c; } .toolbar .tbe.active { background:#f39c12; color:#1a1a1a; border-color:#f39c12; } .toolbar .tbs { font-size:11px; color:#7f8c8d; }'
-    +'.header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid '+accent+'; padding-bottom:15px; margin-bottom:20px; }'
-    +'.company-info h1 { font-size:22pt; color:#2c3e50; margin-bottom:2px; } .company-info p { font-size:9pt; color:#555; }'
-    +'.badge { background:'+accent+'; color:white; padding:8px 20px; font-size:12pt; font-weight:bold; text-align:center; border-radius:4px; } .badge small { display:block; font-size:8pt; font-weight:normal; opacity:0.8; }'
+    +'.toolbar .tbp { background:'+a+'; color:'+brand.badgeText+'; } .toolbar .tbe { background:#2a3a5c; color:#bbb; border:1px solid #3a4a6c; } .toolbar .tbe.active { background:#f39c12; color:#1a1a1a; border-color:#f39c12; } .toolbar .tbs { font-size:11px; color:#7f8c8d; }'
+    +'.header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid '+d+'; padding-bottom:15px; margin-bottom:20px; }'
+    +'.company-info h1 { font-size:22pt; color:'+d+'; margin-bottom:2px; } .company-info p { font-size:9pt; color:#555; }'
+    +'.badge { background:'+a+'; color:'+brand.badgeText+'; padding:8px 20px; font-size:12pt; font-weight:bold; text-align:center; border-radius:4px; } .badge small { display:block; font-size:8pt; font-weight:normal; opacity:0.8; }'
     +'.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px; } .info-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }'
-    +'.info-box { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:10px 14px; } .info-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; letter-spacing:0.5px; display:block; margin-bottom:2px; } .info-box .value { font-size:11pt; font-weight:600; color:#2c3e50; } .info-box.hl { background:#fff3cd; border-color:#ffc107; }'
-    +'.scope { background:#eef2f7; border-left:4px solid '+accent+'; padding:12px 16px; margin-bottom:20px; font-size:10pt; } .scope h3 { font-size:10pt; color:#2c3e50; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; } .scope ul { list-style:none; padding:0; } .scope ul li { padding:2px 0 2px 16px; position:relative; } .scope ul li::before { content:"\\2713"; position:absolute; left:0; color:#27ae60; font-weight:bold; }'
-    +'table { width:100%; border-collapse:collapse; margin-bottom:20px; } table thead th { background:'+accent+'; color:white; padding:8px 10px; text-align:left; font-size:9pt; text-transform:uppercase; letter-spacing:0.5px; }'
+    +'.info-box { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:10px 14px; } .info-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; letter-spacing:0.5px; display:block; margin-bottom:2px; } .info-box .value { font-size:11pt; font-weight:600; color:'+d+'; } .info-box.hl { background:#fff3cd; border-color:#ffc107; }'
+    +'.scope { background:#eef2f7; border-left:4px solid '+a+'; padding:12px 16px; margin-bottom:20px; font-size:10pt; } .scope h3 { font-size:10pt; color:'+d+'; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; } .scope ul { list-style:none; padding:0; } .scope ul li { padding:2px 0 2px 16px; position:relative; } .scope ul li::before { content:"\\2713"; position:absolute; left:0; color:'+brand.scopeCheck+'; font-weight:bold; }'
+    +'table { width:100%; border-collapse:collapse; margin-bottom:20px; } table thead th { background:'+d+'; color:'+a+'; padding:8px 10px; text-align:left; font-size:9pt; text-transform:uppercase; letter-spacing:0.5px; }'
     +'table thead th:last-child, table thead th:nth-child(3), table thead th:nth-child(4), table thead th:nth-child(5) { text-align:right; }'
     +'table tbody td { padding:8px 10px; border-bottom:1px solid #e9ecef; font-size:10pt; vertical-align:top; } table tbody td:last-child, table tbody td:nth-child(3), table tbody td:nth-child(4), table tbody td:nth-child(5) { text-align:right; white-space:nowrap; } table tbody tr:nth-child(even) { background:#f8f9fa; }'
-    +'.item-num { font-weight:700; color:'+accent+'; width:30px; } .item-desc strong { display:block; font-size:10pt; } .item-desc small { color:#6c757d; font-size:8.5pt; }'
-    +'.subtotal-row td { border-top:2px solid '+accent+'; font-weight:700; font-size:11pt; padding-top:10px; background:transparent !important; }'
-    +'.total-row td { border-top:3px double '+accent+'; font-weight:700; font-size:13pt; color:'+accent+'; padding-top:12px; padding-bottom:12px; background:#f5f5f5 !important; }'
+    +'.item-num { font-weight:700; color:'+a+'; width:30px; } .item-desc strong { display:block; font-size:10pt; } .item-desc small { color:#6c757d; font-size:8.5pt; }'
+    +'.subtotal-row td { border-top:2px solid '+a+'; font-weight:700; font-size:11pt; padding-top:10px; background:transparent !important; }'
+    +'.total-row td { border-top:3px double '+d+'; font-weight:700; font-size:13pt; color:'+d+'; padding-top:12px; padding-bottom:12px; background:#f5f5f5 !important; }'
     +'.markup-row td { font-weight:600; color:#6c757d; font-size:10pt; }'
-    +'.combined { background:#e8f4fd; border:2px solid #2c3e50; border-radius:6px; padding:16px 20px; margin-top:24px; } .combined h3 { font-size:12pt; color:#2c3e50; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; } .combined table { width:100%; border-collapse:collapse; } .combined table td { padding:6px 10px; font-size:11pt; border-bottom:1px solid #b8daff; } .combined table td:last-child { text-align:right; font-weight:600; } .combined .grand td { border-top:3px double #2c3e50; font-size:14pt; font-weight:700; color:#2c3e50; padding-top:10px; } .combined .psf td { font-size:10pt; color:#6c757d; border-bottom:none; }'
+    +'.combined { background:'+brand.combinedBg+'; border:2px solid '+brand.combinedBorder+'; border-radius:6px; padding:16px 20px; margin-top:24px; } .combined h3 { font-size:12pt; color:'+brand.combinedGrand+'; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; } .combined table { width:100%; border-collapse:collapse; } .combined table td { padding:6px 10px; font-size:11pt; border-bottom:1px solid '+brand.combinedRule+'; } .combined table td:last-child { text-align:right; font-weight:600; } .combined .grand td { border-top:3px double '+brand.combinedGrand+'; font-size:14pt; font-weight:700; color:'+brand.combinedGrand+'; padding-top:10px; } .combined .psf td { font-size:10pt; color:#6c757d; border-bottom:none; }'
     +'.supplier-note { background:#d4edda; border:1px solid #28a745; border-radius:4px; padding:12px 16px; margin-bottom:20px; font-size:9.5pt; } .supplier-note h4 { color:#155724; font-size:10pt; margin-bottom:4px; } .supplier-note p { color:#155724; }'
-    +'.notes-section { margin-top:20px; } .notes-section h3 { font-size:11pt; color:'+accent+'; border-bottom:2px solid '+accent+'; padding-bottom:4px; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; } .notes-section .note { font-size:9pt; color:#495057; margin-bottom:8px; padding-left:14px; position:relative; } .notes-section .note::before { content:"\\25CF"; position:absolute; left:0; color:'+accent+'; font-size:7pt; top:2px; }'
+    +'.notes-section { margin-top:20px; } .notes-section h3 { font-size:11pt; color:'+a+'; border-bottom:2px solid '+a+'; padding-bottom:4px; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; } .notes-section .note { font-size:9pt; color:#495057; margin-bottom:8px; padding-left:14px; position:relative; } .notes-section .note::before { content:"\\25CF"; position:absolute; left:0; color:'+a+'; font-size:7pt; top:2px; }'
     +'.unforeseen-box { background:#fff3cd; border:1px solid #ffc107; border-radius:4px; padding:12px 16px; margin-top:20px; font-size:9pt; } .unforeseen-box h4 { color:#856404; font-size:10pt; margin-bottom:6px; } .unforeseen-box p { color:#664d03; line-height:1.5; }'
-    +'.ref { background:#f0f0f0; border:1px solid #ccc; border-radius:4px; padding:12px 16px; margin-bottom:20px; font-size:9.5pt; } .ref h4 { font-size:10pt; color:#2c3e50; margin-bottom:6px; text-transform:uppercase; } .ref p { color:#495057; margin-bottom:4px; }'
-    +'.stitle { font-size:11pt; color:'+accent+'; border-bottom:2px solid '+accent+'; padding-bottom:4px; margin-bottom:12px; margin-top:24px; text-transform:uppercase; letter-spacing:0.5px; }'
+    +'.ref { background:#f0f0f0; border:1px solid #ccc; border-radius:4px; padding:12px 16px; margin-bottom:20px; font-size:9.5pt; } .ref h4 { font-size:10pt; color:'+d+'; margin-bottom:6px; text-transform:uppercase; } .ref p { color:#495057; margin-bottom:4px; }'
+    +'.stitle { font-size:11pt; color:'+a+'; border-bottom:2px solid '+a+'; padding-bottom:4px; margin-bottom:12px; margin-top:24px; text-transform:uppercase; letter-spacing:0.5px; }'
     +'.dbox { border:1px solid #dee2e6; border-radius:4px; padding:16px; margin-bottom:20px; } .dbox label { font-size:9pt; color:#6c757d; text-transform:uppercase; display:block; margin-bottom:8px; } .dbox .wl { border-bottom:1px solid #dee2e6; min-height:22px; margin-bottom:6px; }'
     +'.pbox { background:#f8f9fa; border:2px dashed #adb5bd; border-radius:4px; padding:20px; text-align:center; margin-bottom:20px; } .pbox p { color:#6c757d; font-size:9pt; }'
-    +'.impact { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; } .impact-box { border:1px solid #dee2e6; border-radius:4px; padding:12px; text-align:center; } .impact-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; display:block; margin-bottom:4px; } .impact-box .val { font-size:14pt; font-weight:700; color:'+accent+'; } .impact-box .val.grn { color:#27ae60; }'
-    +'.legal { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:16px; margin-top:20px; font-size:9pt; color:#495057; line-height:1.6; } .legal h4 { font-size:10pt; color:#2c3e50; margin-bottom:8px; } .legal p { margin-bottom:8px; }'
-    +'.auth { margin-top:30px; border:2px solid '+accent+'; border-radius:6px; padding:20px; background:#fdf0ef; } .auth h3 { font-size:12pt; color:'+accent+'; margin-bottom:12px; text-transform:uppercase; }'
-    +'.auth-opt { display:flex; align-items:flex-start; margin-bottom:12px; padding:10px; background:white; border:1px solid #dee2e6; border-radius:4px; cursor:pointer; } .auth-opt.selected { border-color:'+accent+'; background:#fff8f7; }'
-    +'.auth-cb { width:18px; height:18px; border:2px solid #2c3e50; border-radius:3px; margin-right:12px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:14px; } .auth-cb.checked { background:'+accent+'; border-color:'+accent+'; color:white; }'
+    +'.impact { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; } .impact-box { border:1px solid #dee2e6; border-radius:4px; padding:12px; text-align:center; } .impact-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; display:block; margin-bottom:4px; } .impact-box .val { font-size:14pt; font-weight:700; color:'+a+'; } .impact-box .val.grn { color:#27ae60; }'
+    +'.legal { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:16px; margin-top:20px; font-size:9pt; color:#495057; line-height:1.6; } .legal h4 { font-size:10pt; color:'+d+'; margin-bottom:8px; } .legal p { margin-bottom:8px; }'
+    +'.auth { margin-top:30px; border:2px solid '+a+'; border-radius:6px; padding:20px; background:'+brand.authBg+'; } .auth h3 { font-size:12pt; color:'+a+'; margin-bottom:12px; text-transform:uppercase; }'
+    +'.auth-opt { display:flex; align-items:flex-start; margin-bottom:12px; padding:10px; background:white; border:1px solid #dee2e6; border-radius:4px; cursor:pointer; } .auth-opt.selected { border-color:'+a+'; background:'+brand.authBg+'; }'
+    +'.auth-cb { width:18px; height:18px; border:2px solid '+d+'; border-radius:3px; margin-right:12px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:14px; } .auth-cb.checked { background:'+a+'; border-color:'+a+'; color:'+brand.badgeText+'; }'
     +'.auth-txt { font-size:10pt; } .auth-txt strong { display:block; margin-bottom:2px; } .auth-txt small { color:#6c757d; font-size:8.5pt; }'
     +'[contenteditable="true"] { outline:none; } body.edit-mode [data-editable] { background:#fffde7; border-bottom:2px dashed #f39c12; cursor:text; padding:1px 4px; border-radius:2px; } body.edit-mode [data-editable]:focus { background:#fff9c4; border-bottom-color:#e67e22; } body.edit-mode .editable-price { background:#e3f2fd !important; border-bottom:2px dashed #2196f3 !important; } body.edit-mode .editable-price:focus { background:#bbdefb !important; }'
-    +'.sig-section { margin-top:30px; } .sig-section h3 { font-size:11pt; color:#2c3e50; border-bottom:2px solid #2c3e50; padding-bottom:4px; margin-bottom:16px; text-transform:uppercase; letter-spacing:0.5px; } .sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:30px; } .sig-pad { text-align:center; } .sig-pad label { font-size:9pt; color:#6c757d; display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; } .sig-canvas { border:1px solid #ccc; border-radius:4px; background:white; cursor:crosshair; width:100%; height:100px; display:block; touch-action:none; } .sig-pad .sig-date { font-size:9pt; color:#495057; margin-top:4px; min-height:18px; } .sig-pad .sig-clear { font-size:11px; color:#c0392b; cursor:pointer; background:none; border:none; text-decoration:underline; margin-top:2px; }'
+    +'.sig-section { margin-top:30px; } .sig-section h3 { font-size:11pt; color:'+d+'; border-bottom:2px solid '+d+'; padding-bottom:4px; margin-bottom:16px; text-transform:uppercase; letter-spacing:0.5px; } .sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:30px; } .sig-pad { text-align:center; } .sig-pad label { font-size:9pt; color:#6c757d; display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; } .sig-canvas { border:1px solid #ccc; border-radius:4px; background:white; cursor:crosshair; width:100%; height:100px; display:block; touch-action:none; } .sig-pad .sig-date { font-size:9pt; color:#495057; margin-top:4px; min-height:18px; } .sig-pad .sig-clear { font-size:11px; color:#c0392b; cursor:pointer; background:none; border:none; text-decoration:underline; margin-top:2px; }'
     +'@media print { .sig-pad .sig-clear { display:none; } .toolbar { display:none !important; } body { padding-top:0 !important; } }'
     +'.footer { margin-top:30px; text-align:center; font-size:8pt; color:#adb5bd; border-top:1px solid #dee2e6; padding-top:10px; }';
 }
@@ -750,8 +1288,8 @@ function docJS() {
     return '<'+'script>'
     +'let editMode=false;'
     +'function toggleEdit(){editMode=!editMode;document.body.classList.toggle("edit-mode",editMode);var b=document.getElementById("editBtn");b.textContent=editMode?"EDITING (click to lock)":"Edit Values";b.classList.toggle("active",editMode);document.getElementById("editStatus").textContent=editMode?"Click any highlighted value to change it":"Document locked";document.querySelectorAll("[data-editable]").forEach(function(el){el.contentEditable=editMode?"true":"false";});}'
-    +'function recalc(){var sub=0;document.querySelectorAll("[data-line-total]").forEach(function(el){sub+=parseFloat(el.textContent.replace(/[^0-9.\\-]/g,""))||0;});document.querySelectorAll("[data-subtotal]").forEach(function(el){el.textContent="$"+sub.toFixed(2);});document.querySelectorAll("[data-total]").forEach(function(el){el.textContent="$"+sub.toFixed(2);});var me=document.querySelector("[data-markup-pct]");if(me){var p=parseFloat(me.textContent)||0,ma=sub*(p/100),mt=sub+ma;document.querySelectorAll("[data-markup-amt]").forEach(function(e){e.textContent="$"+ma.toFixed(2);});document.querySelectorAll("[data-mat-total]").forEach(function(e){e.textContent="$"+mt.toFixed(2);});var le=document.querySelector("[data-combined-labor]");if(le){var la=parseFloat(le.textContent.replace(/[^0-9.\\-]/g,""))||0,g=la+mt;document.querySelectorAll("[data-combined-mat]").forEach(function(e){e.textContent="$"+mt.toFixed(2);});document.querySelectorAll("[data-grand-total]").forEach(function(e){e.textContent="$"+g.toFixed(2);});var se=document.querySelector("[data-sqft]"),sq=se?(parseFloat(se.textContent)||1):1;document.querySelectorAll("[data-per-sqft]").forEach(function(e){e.textContent="$"+(g/sq).toFixed(2)+" /sq ft";});}}}'
-    +'document.addEventListener("input",function(e){if(e.target.hasAttribute("data-line-total")||e.target.hasAttribute("data-markup-pct"))recalc();});'
+    +'function recalc(){var sqEl=document.querySelector("[data-sqft]"),sq=sqEl?(parseFloat(sqEl.textContent)||1):1;document.querySelectorAll("tbody tr").forEach(function(row){var lt=row.querySelector("[data-line-total]");if(!lt)return;var rateEl=row.querySelector("[data-rate]");var basisEl=row.querySelector("[data-basis]");var qtyEl=row.querySelector("[data-qty]");var upEl=row.querySelector("[data-unit-price]");if(rateEl&&basisEl){var rate=parseFloat(rateEl.textContent.replace(/[^0-9.\\-]/g,""))||0;if(basisEl.textContent.toLowerCase().indexOf("sq ft")!==-1){lt.textContent="$"+(rate*sq).toFixed(2);}else{lt.textContent="$"+rate.toFixed(2);}}if(qtyEl&&upEl){var q=parseFloat(qtyEl.textContent)||1;var up=parseFloat(upEl.textContent.replace(/[^0-9.\\-]/g,""))||0;lt.textContent="$"+(q*up).toFixed(2);}});var sub=0;document.querySelectorAll("[data-line-total]").forEach(function(el){sub+=parseFloat(el.textContent.replace(/[^0-9.\\-]/g,""))||0;});document.querySelectorAll("[data-subtotal]").forEach(function(el){el.textContent="$"+sub.toFixed(2);});document.querySelectorAll("[data-total]").forEach(function(el){el.textContent="$"+sub.toFixed(2);});var me=document.querySelector("[data-markup-pct]");if(me){var p=parseFloat(me.textContent)||0,ma=sub*(p/100),mt=sub+ma;document.querySelectorAll("[data-markup-amt]").forEach(function(e){e.textContent="$"+ma.toFixed(2);});document.querySelectorAll("[data-mat-total]").forEach(function(e){e.textContent="$"+mt.toFixed(2);});var le=document.querySelector("[data-combined-labor]");if(le){var la=parseFloat(le.textContent.replace(/[^0-9.\\-]/g,""))||0,g=la+mt;document.querySelectorAll("[data-combined-mat]").forEach(function(e){e.textContent="$"+mt.toFixed(2);});document.querySelectorAll("[data-grand-total]").forEach(function(e){e.textContent="$"+g.toFixed(2);});document.querySelectorAll("[data-per-sqft]").forEach(function(e){e.textContent="$"+(g/sq).toFixed(2)+" /sq ft";});}}}'
+    +'document.addEventListener("input",function(e){if(e.target.hasAttribute("data-line-total")||e.target.hasAttribute("data-markup-pct")||e.target.hasAttribute("data-rate")||e.target.hasAttribute("data-basis")||e.target.hasAttribute("data-qty")||e.target.hasAttribute("data-unit-price")||e.target.hasAttribute("data-sqft")||e.target.hasAttribute("data-combined-labor"))recalc();});'
     +'function initSig(cid,did){var c=document.getElementById(cid);if(!c)return;var x=c.getContext("2d");var d=false,h=false;function rs(){var r=c.getBoundingClientRect();c.width=r.width*2;c.height=r.height*2;x.scale(2,2);x.strokeStyle="#1a1a1a";x.lineWidth=2;x.lineCap="round";x.lineJoin="round";}rs();function gp(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}c.addEventListener("mousedown",function(e){d=true;x.beginPath();var p=gp(e);x.moveTo(p.x,p.y);});c.addEventListener("mousemove",function(e){if(!d)return;var p=gp(e);x.lineTo(p.x,p.y);x.stroke();});c.addEventListener("mouseup",function(){d=false;if(!h){h=true;sd(did);}});c.addEventListener("mouseleave",function(){d=false;});c.addEventListener("touchstart",function(e){e.preventDefault();d=true;x.beginPath();var p=gp(e);x.moveTo(p.x,p.y);},{passive:false});c.addEventListener("touchmove",function(e){e.preventDefault();if(!d)return;var p=gp(e);x.lineTo(p.x,p.y);x.stroke();},{passive:false});c.addEventListener("touchend",function(e){e.preventDefault();d=false;if(!h){h=true;sd(did);}},{passive:false});window["clear_"+cid]=function(){x.clearRect(0,0,c.width,c.height);h=false;document.getElementById(did).textContent="";};}'
     +'function sd(did){var e=document.getElementById(did);if(e){var n=new Date();e.textContent="Signed: "+n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})+" at "+n.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});}}'
     +'document.querySelectorAll(".auth-opt").forEach(function(opt){opt.addEventListener("click",function(){document.querySelectorAll(".auth-opt").forEach(function(o){o.classList.remove("selected");o.querySelector(".auth-cb").classList.remove("checked");o.querySelector(".auth-cb").textContent="";});this.classList.add("selected");var cb=this.querySelector(".auth-cb");cb.classList.add("checked");cb.textContent="\\u2713";});});'
@@ -764,51 +1302,57 @@ function openDoc(html) { var w = window.open('','_blank'); w.document.write(html
 
 // ========== LABOR ESTIMATE ==========
 function generateLabor() {
+    var brand = getBrand();
     var sq = gn('sqft'), items = getLaborItems(), scope = getScope(), notes = getNotes();
-    var tot = 0; items.forEach(function(i){ tot += i.price; });
+    var tot = 0; items.forEach(function(i){ tot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
     var ad = gv('areaDesc') || '[Area]';
     var disc = gv('disclaimer');
-    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labor Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS('#2c3e50')+'</style></head><body>';
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labor Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS(brand)+'</style></head><body>';
     h += toolbar('ESTIMATE A &mdash; LABOR');
-    h += '<div class="header">'+co()+'<div class="badge">ESTIMATE A<br><small>LABOR COSTS</small></div></div>';
+    h += '<div class="header">'+co(brand)+'<div class="badge">ESTIMATE A<br><small>LABOR COSTS</small></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
-    h += '<div class="scope"><h3>Scope of Work &mdash; '+E(sq)+' sq ft '+E(ad)+'</h3><ul>';
+    h += '<div class="scope"><h3>Scope of Work &mdash; <span data-editable data-sqft>'+sq+'</span> sq ft '+E(ad)+'</h3><ul>';
     scope.forEach(function(s){ h += '<li>'+E(s)+'</li>'; });
     h += '</ul></div>';
-    h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Total</th></tr></thead><tbody>';
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
     items.forEach(function(item, i){
-        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.basis)+'</td><td><strong>'+P('$'+f(item.price),'data-line-total')+'</strong></td></tr>';
+        var isSqFt = item.basis.toLowerCase().indexOf('sq ft') !== -1;
+        var lineTotal = isSqFt ? item.price * sq : item.price;
+        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.basis,'data-basis')+'</td><td>'+P('$'+f(item.price),'data-rate')+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
     });
-    h += '<tr class="subtotal-row"><td></td><td colspan="2">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
-    h += '<tr class="total-row"><td></td><td colspan="2">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
+    h += '<tr class="subtotal-row"><td></td><td colspan="3">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
+    h += '<tr class="total-row"><td></td><td colspan="3">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
     h += '</tbody></table>';
     h += '<div class="notes-section"><h3>Labor Estimate Notes</h3>';
     notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
     h += '</div>';
     if (disc) { h += '<div class="unforeseen-box"><h4>UNFORESEEN CONDITIONS CLAUSE</h4><p>'+E(disc)+'</p></div>'; }
     h += sigHTML();
-    h += '<div class="footer"><p>Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
+    h += '<div class="footer"><p>'+brand.name+' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
     openDoc(h);
 }
 
 // ========== MATERIALS ESTIMATE ==========
 function generateMaterials() {
+    var brand = getBrand();
     var sq = gn('sqft'), mk = gn('materialsMarkup'), items = getMatItems(), notes = getNotes();
-    var sub = 0; items.forEach(function(i){ sub += i.price; });
+    var sub = 0; items.forEach(function(i){ sub += (parseFloat(i.qty) || 1) * i.price; });
     var ma = sub * (mk/100), mt = sub + ma;
-    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.price; });
+    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
     var grand = labTot + mt;
     var ad = gv('areaDesc') || '[Area]';
     var sn = gv('supplierNote');
-    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Materials Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS('#27ae60')+'</style></head><body>';
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Materials Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS(brand)+'</style></head><body>';
     h += toolbar('ESTIMATE B &mdash; MATERIALS');
-    h += '<div class="header">'+co()+'<div class="badge">ESTIMATE B<br><small>MATERIAL COSTS</small></div></div>';
+    h += '<div class="header">'+co(brand)+'<div class="badge">ESTIMATE B<br><small>MATERIAL COSTS</small></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
     if (sn) { h += '<div class="supplier-note"><h4>MATERIAL SUPPLIER NOTE</h4><p>'+E(sn)+'</p></div>'; }
     h += '<table><thead><tr><th style="width:30px">#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
     items.forEach(function(item, i){
-        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty)+'</td><td>'+E('$'+f(item.price))+'</td><td><strong>'+P('$'+f(item.price),'data-line-total')+'</strong></td></tr>';
+        var qtyNum = parseFloat(item.qty) || 1;
+        var lineTotal = qtyNum * item.price;
+        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty,'data-qty')+'</td><td>'+P('$'+f(item.price),'data-unit-price')+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
     });
     h += '<tr class="subtotal-row"><td></td><td colspan="3">MATERIALS SUBTOTAL</td><td><span data-subtotal>$'+f(sub)+'</span></td></tr>';
     h += '<tr class="markup-row"><td></td><td colspan="3"><strong>Contractor Markup (<span data-editable data-markup-pct>'+mk+'</span>%)</strong></td><td><span data-markup-amt>$'+f(ma)+'</span></td></tr>';
@@ -825,7 +1369,7 @@ function generateMaterials() {
     notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
     h += '</div>';
     h += sigHTML();
-    h += '<div class="footer"><p>Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
+    h += '<div class="footer"><p>'+brand.name+' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
     openDoc(h);
 }
@@ -833,13 +1377,14 @@ function generateMaterials() {
 // ========== CHANGE ORDER ==========
 function generateChangeOrder() {
     var sq = gn('sqft'), mk = gn('materialsMarkup')/100;
-    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.price; });
-    var mitems = getMatItems(), matSub = 0; mitems.forEach(function(i){ matSub += i.price; });
+    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
+    var mitems = getMatItems(), matSub = 0; mitems.forEach(function(i){ matSub += (parseFloat(i.qty) || 1) * i.price; });
     var matTot = matSub + (matSub * mk), orig = labTot + matTot;
     var disc = gv('disclaimer');
-    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Change Order - '+(gv('clientName')||'Client')+'</title><style>'+docCSS('#c0392b')+'</style></head><body>';
+    var brand = getBrand();
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Change Order - '+(gv('clientName')||'Client')+'</title><style>'+docCSS(brand)+'</style></head><body>';
     h += toolbar('CHANGE ORDER');
-    h += '<div class="header">'+co()+'<div class="badge">CHANGE ORDER<br><small>SCOPE AMENDMENT</small></div></div>';
+    h += '<div class="header">'+co(brand)+'<div class="badge">CHANGE ORDER<br><small>SCOPE AMENDMENT</small></div></div>';
     h += '<div class="info-grid-3"><div class="info-box hl"><label>Change Order #</label><div class="value">'+E('CO-001')+'</div></div><div class="info-box"><label>Date Issued</label><div class="value">'+E(fd(new Date().toISOString().split('T')[0]))+'</div></div><div class="info-box"><label>Response Required By</label><div class="value">'+E('3 Business Days')+'</div></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div></div>';
     h += '<div class="ref"><h4>Reference &mdash; Original Estimate</h4><p><strong>Original Date:</strong> '+fd(gv('estimateDate'))+'</p><p><strong>Original Amount:</strong> Labor $'+f(labTot)+' + Materials $'+f(matTot)+' = <strong>$'+f(orig)+'</strong></p><p><strong>Clause:</strong> '+E(disc || 'Unforeseen Conditions')+'</p></div>';
@@ -865,7 +1410,7 @@ function generateChangeOrder() {
     h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>APPROVED WITH MODIFICATIONS</strong><small>Proceed with modifications: '+E('______________________________')+'</small></div></div>';
     h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>DECLINED</strong><small>I decline. Contractor will restore area to safe condition.</small></div></div></div>';
     h += sigHTML();
-    h += '<div class="footer"><p>Change Order &mdash; '+(gv('companyName')||'[Company]')+' &nbsp;|&nbsp; Licensed GC &mdash; Nebraska &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
+    h += '<div class="footer"><p>Change Order &mdash; '+brand.name+' &nbsp;|&nbsp; Licensed GC &mdash; Nebraska &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
     h += docJS() + '</body></html>';
     openDoc(h);
 }

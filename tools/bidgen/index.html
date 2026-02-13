@@ -114,6 +114,24 @@
         .pl-empty { color: #555; font-size: 12px; text-align: center; padding: 20px; }
         .pl-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #2a3a5c; border-top-color: #3498db; border-radius: 50%; animation: plspin 0.6s linear infinite; margin-right: 6px; vertical-align: middle; }
         @keyframes plspin { to { transform: rotate(360deg); } }
+        .cat-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+        .cat-tab { background: #1a2744; border: 1px solid #2a3a5c; color: #7f8c8d; padding: 7px 16px; border-radius: 6px 6px 0 0; font-size: 12px; cursor: pointer; font-weight: 600; border-bottom: none; }
+        .cat-tab.active { background: #0f1a33; color: #3498db; border-color: #3498db; border-bottom: 1px solid #0f1a33; }
+        .cat-tab:hover:not(.active) { color: #eee; }
+        .cat-form { display: flex; flex-direction: column; gap: 8px; }
+        .cat-form-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .cat-input-full { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 14px; color: #eee; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .cat-input-full:focus, .cat-input-sm:focus, .cat-textarea:focus { outline: none; border-color: #3498db; }
+        .cat-input-sm { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px; color: #eee; font-size: 12px; min-width: 80px; flex: 1; }
+        .cat-add-btn { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .cat-add-btn:hover { filter: brightness(1.15); }
+        .cat-textarea { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 6px; padding: 12px 14px; color: #eee; font-size: 12px; font-family: monospace; width: 100%; box-sizing: border-box; min-height: 120px; resize: vertical; line-height: 1.5; }
+        .pl-item .pl-actions { display: flex; gap: 4px; }
+        .pl-item .pl-edit, .pl-item .pl-del { background: none; border: 1px solid #2a3a5c; color: #7f8c8d; padding: 3px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; }
+        .pl-item .pl-edit:hover { border-color: #3498db; color: #3498db; }
+        .pl-item .pl-del:hover { border-color: #e74c3c; color: #e74c3c; }
+        .pl-item .pl-hist { font-size: 9px; color: #555; margin-top: 2px; }
+        .cat-panel { min-height: 60px; }
         /* PIN login overlay */
         #loginOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e; z-index: 99999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: #16213e; border: 1px solid #2a3a5c; border-radius: 12px; padding: 40px; text-align: center; max-width: 400px; width: 90%; }
@@ -174,21 +192,102 @@
     </div>
 
     <div class="price-lookup" id="priceLookup">
-        <h3><span class="pl-dot online" id="plDot"></span> Price Lookup — Live Store Prices</h3>
-        <div class="pl-search-row">
-            <input type="text" id="plQuery" placeholder="Search products (e.g. vinyl plank flooring, wax ring, 12/2 romex...)" onkeydown="if(event.key==='Enter')plSearch()">
-            <select id="plStore">
-                <option value="">All Stores</option>
-                <option value="menards">Menards</option>
-                <option value="home depot">Home Depot</option>
-                <option value="lowes">Lowe's</option>
-                <option value="amazon">Amazon</option>
-            </select>
-            <button id="plSearchBtn" onclick="plSearch()">Search Prices</button>
+        <h3>Material Catalog</h3>
+        <div class="cat-tabs">
+            <button class="cat-tab active" onclick="catSwitchTab('browse')">Browse</button>
+            <button class="cat-tab" onclick="catSwitchTab('add')">+ Add Item</button>
+            <button class="cat-tab" onclick="catSwitchTab('import')">Paste Import</button>
         </div>
-        <div class="pl-status" id="plStatus">Powered by Bing Shopping &mdash; works on any device, no setup needed</div>
-        <div class="pl-results" id="plResults">
-            <div class="pl-empty">Search for products to see live store pricing. Results are added to your catalog.</div>
+        <!-- Browse Tab -->
+        <div class="cat-panel" id="catBrowse">
+            <div class="pl-search-row">
+                <input type="text" id="catFilter" placeholder="Filter catalog... (type to search your saved items)" oninput="catRenderList()">
+                <select id="catSort" onchange="catRenderList()">
+                    <option value="recent">Recent</option>
+                    <option value="alpha">A-Z</option>
+                    <option value="price-low">Price: Low</option>
+                    <option value="price-high">Price: High</option>
+                    <option value="most-used">Most Used</option>
+                </select>
+            </div>
+            <div class="pl-status" id="catStatus">Your saved materials &mdash; synced to cloud via Firebase</div>
+            <div class="pl-results" id="catList">
+                <div class="pl-empty">No items in catalog yet. Add items using the tabs above.</div>
+            </div>
+        </div>
+        <!-- Add Item Tab -->
+        <div class="cat-panel" id="catAdd" style="display:none">
+            <div class="cat-form">
+                <input type="text" id="catNewDesc" placeholder="Item description (e.g. 1/2 in. x 10 ft. PEX Pipe)" class="cat-input-full">
+                <div class="cat-form-row">
+                    <input type="text" id="catNewPrice" placeholder="Price ($)" class="cat-input-sm" onkeydown="if(event.key==='Enter')catAddItem()">
+                    <input type="text" id="catNewQty" placeholder="Qty (1)" class="cat-input-sm" value="1">
+                    <select id="catNewStore" class="cat-input-sm">
+                        <option value="Manual">Store...</option>
+                        <option value="Menards">Menards</option>
+                        <option value="Home Depot">Home Depot</option>
+                        <option value="Lowes">Lowes</option>
+                        <option value="Amazon">Amazon</option>
+                        <option value="Walmart">Walmart</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <button class="cat-add-btn" onclick="catAddItem()">+ Add to Catalog</button>
+                </div>
+            </div>
+            <div class="pl-status" id="catAddStatus">Add materials you use regularly. Prices are tracked over time.</div>
+        </div>
+        <!-- Paste Import Tab -->
+        <div class="cat-panel" id="catImport" style="display:none">
+            <div class="cat-form">
+                <textarea id="catPasteArea" class="cat-textarea" placeholder="Paste items here — one per line. Formats accepted:&#10;&#10;  Wax Ring  $4.99&#10;  12/2 Romex 250ft | 89.99 | Menards&#10;  PEX Pipe, 0.50, Home Depot&#10;&#10;Tip: Copy a list from any store website or receipt and paste it here."></textarea>
+                <div class="cat-form-row">
+                    <select id="catImportStore" class="cat-input-sm">
+                        <option value="">Store (optional)</option>
+                        <option value="Menards">Menards</option>
+                        <option value="Home Depot">Home Depot</option>
+                        <option value="Lowes">Lowes</option>
+                        <option value="Amazon">Amazon</option>
+                    </select>
+                    <button class="cat-add-btn" onclick="catImportPaste()">Import Pasted Items</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-top:6px;padding-top:10px;border-top:1px solid #2a3a5c">
+                    <label class="cat-add-btn" style="background:linear-gradient(135deg,#3498db,#2980b9);cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+                        <span>Upload CSV File</span>
+                        <input type="file" id="catCsvFile" accept=".csv,.txt,.tsv" style="display:none" onchange="catImportCSV(this)">
+                    </label>
+                    <span style="font-size:11px;color:#7f8c8d">Accepts .csv files (description, price, store)</span>
+                </div>
+            </div>
+            <div class="pl-status" id="catImportStatus">Paste product lists, upload CSV files, or use the AI prompt below.</div>
+            <div style="margin-top:12px;background:#1a2744;border:1px solid #2a3a5c;border-radius:8px;padding:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="color:#f39c12;font-size:12px;font-weight:600">AI Prompt Template — Copy &amp; paste to DeepSeek / ChatGPT</span>
+                    <button onclick="catCopyPrompt()" style="background:#2a3a5c;color:#eee;border:none;padding:4px 12px;border-radius:4px;font-size:11px;cursor:pointer">Copy Prompt</button>
+                </div>
+                <div id="catAiPrompt" style="font-size:11px;color:#aaa;font-family:monospace;white-space:pre-wrap;line-height:1.5;max-height:120px;overflow-y:auto;background:#0f1a33;padding:10px;border-radius:6px">I need a list of common materials and current retail prices for a TRADE_TYPE project. Format each item on its own line like this:
+
+Item Description | $Price | Store Name
+
+For example:
+1/2 in. x 10 ft. PEX-A Pipe | $3.98 | Home Depot
+Wax Ring for Toilet | $4.27 | Menards
+12/2 NM-B Romex Wire 250ft | $89.97 | Lowes
+
+Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic current US retail prices. Include items from Menards, Home Depot, Lowes, and Amazon. Focus on: FOCUS_AREA</div>
+                <div class="cat-form-row" style="margin-top:8px">
+                    <select id="catPromptTrade" class="cat-input-sm" onchange="catUpdatePrompt()">
+                        <option value="plumbing">Plumbing</option>
+                        <option value="electrical">Electrical</option>
+                        <option value="HVAC">HVAC</option>
+                        <option value="general handyman">General Handyman</option>
+                        <option value="flooring">Flooring</option>
+                        <option value="drywall">Drywall</option>
+                        <option value="painting">Painting</option>
+                        <option value="roofing">Roofing</option>
+                    </select>
+                    <input type="text" id="catPromptFocus" class="cat-input-sm" placeholder="Focus area (e.g. bathroom rough-in, panel upgrade...)" value="common repairs and installs" oninput="catUpdatePrompt()">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -679,6 +778,7 @@ function loadCatalog() {
         _catalog.labor = d.labor || {};
         _catalog.materials = d.materials || {};
         updateCatalogBar();
+        if (document.getElementById('catList')) catRenderList();
     });
     if (settingsRef) {
         settingsRef.once('value').then(snap => {
@@ -919,149 +1019,271 @@ function predictiveFill() {
     });
 }
 
-// ========== PRICE LOOKUP (CLIENT-SIDE, NO SERVER NEEDED) ==========
-// Uses CORS proxies to fetch Bing Shopping results directly from the browser.
-// Falls back between multiple proxies for reliability.
-const CORS_PROXIES = [
-    url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-    url => 'https://corsproxy.io/?' + encodeURIComponent(url),
-    url => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
-];
-let _corsProxyIdx = 0;
+// ========== MATERIAL CATALOG MANAGER ==========
+// A clean, reliable inventory catalog. No flaky web scraping.
+// Add items manually, paste from store websites, browse & manage your catalog.
 
-function plFetchViaCors(url) {
-    // Try each CORS proxy in order; rotate on failure
-    const startIdx = _corsProxyIdx;
-    function attempt(idx) {
-        const proxyUrl = CORS_PROXIES[idx](url);
-        return fetch(proxyUrl).then(r => {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            _corsProxyIdx = idx; // remember which one worked
-            return r.text();
-        }).catch(err => {
-            const next = (idx + 1) % CORS_PROXIES.length;
-            if (next === startIdx) throw new Error('All CORS proxies failed: ' + err.message);
-            return attempt(next);
-        });
-    }
-    return attempt(startIdx);
+function catSwitchTab(tab) {
+    const tabs = document.querySelectorAll('.cat-tab');
+    const panels = document.querySelectorAll('.cat-panel');
+    const tabMap = { browse: 0, add: 1, import: 2 };
+    const panelMap = { browse: 'catBrowse', add: 'catAdd', import: 'catImport' };
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.style.display = 'none');
+    if (tabs[tabMap[tab]]) tabs[tabMap[tab]].classList.add('active');
+    document.getElementById(panelMap[tab]).style.display = '';
+    if (tab === 'browse') catRenderList();
 }
 
-function plParseBingShopping(html) {
-    // Parse Bing Shopping product cards from raw HTML
-    // Structure: <span title="PRODUCT NAME">...</span></div> ... <div class="br-price">$XX.XX</div> ... <span class="br-offSlrTxt">Store</span>
-    const results = [];
-    const seen = new Set();
-    const cardRx = /<span\s+title="([^"]{5,300})"[^>]*>[^<]*<\/span>\s*<\/div>[\s\S]*?<div\s+class="br-price">\s*\$([\d,]+\.?\d*)\s*<\/div>[\s\S]*?(?:<span\s+class="br-offSlrTxt">([^<]{2,60})<\/span>)?/g;
-    let m;
-    while ((m = cardRx.exec(html)) !== null) {
-        const name = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").trim();
-        const priceStr = m[2].replace(/,/g, '');
-        const seller = m[3] ? m[3].replace(/&amp;/g, '&').trim() : '';
-        const price = parseFloat(priceStr);
-        if (isNaN(price) || price < 0.01 || price > 100000) continue;
-        const key = name.toLowerCase().substring(0, 60);
-        if (seen.has(key)) continue;
-        seen.add(key);
-        results.push({ desc: name, price: price, source: seller || 'Bing Shopping' });
+function catGetMaterials() {
+    if (!_catalog || !_catalog.materials) return [];
+    const items = [];
+    Object.keys(_catalog.materials).forEach(k => {
+        const v = _catalog.materials[k];
+        if (!v || !v.desc) return;
+        items.push({ key: 'materials/' + k, ...v });
+    });
+    return items;
+}
+
+function catRenderList() {
+    const listEl = document.getElementById('catList');
+    const statusEl = document.getElementById('catStatus');
+    const filter = (document.getElementById('catFilter').value || '').toLowerCase().trim();
+    const sort = document.getElementById('catSort').value;
+
+    let items = catGetMaterials();
+
+    // Filter
+    if (filter) {
+        items = items.filter(i => (i.desc || '').toLowerCase().includes(filter) || (i.source || '').toLowerCase().includes(filter));
     }
-    // Fallback: broader title + price pattern if few results
-    if (results.length < 3) {
-        const fbRx = /title="([^"]{10,200})"(?:(?!title=").){0,800}\$([\d,]+\.\d{2})/gs;
-        while ((m = fbRx.exec(html)) !== null) {
-            const name = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim();
-            if (/search for|sign in|menu|filter|sort/i.test(name)) continue;
-            const price = parseFloat(m[2].replace(/,/g, ''));
-            if (isNaN(price) || price < 0.50 || price > 100000) continue;
-            const key = name.toLowerCase().substring(0, 60);
-            if (seen.has(key)) continue;
-            seen.add(key);
-            results.push({ desc: name, price: price, source: 'Bing Shopping' });
+
+    // Sort
+    if (sort === 'alpha') items.sort((a, b) => (a.desc || '').localeCompare(b.desc || ''));
+    else if (sort === 'price-low') items.sort((a, b) => (a.price || 0) - (b.price || 0));
+    else if (sort === 'price-high') items.sort((a, b) => (b.price || 0) - (a.price || 0));
+    else if (sort === 'most-used') items.sort((a, b) => (b.useCount || 0) - (a.useCount || 0));
+    else items.sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0));
+
+    statusEl.innerHTML = '<strong>' + items.length + '</strong> items' + (filter ? ' matching "' + escHtml(filter) + '"' : '') + ' &mdash; synced to Firebase';
+
+    if (items.length === 0) {
+        listEl.innerHTML = '<div class="pl-empty">' + (filter ? 'No items match your filter.' : 'No items in catalog yet. Use the "+ Add Item" or "Paste Import" tabs above.') + '</div>';
+        return;
+    }
+
+    listEl.innerHTML = '';
+    items.slice(0, 50).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'pl-item';
+        const priceStr = '$' + (item.price || 0).toFixed(2);
+        const ago = item.lastUsed ? catTimeAgo(item.lastUsed) : '';
+        const histLen = (item.history || []).length;
+        div.innerHTML = '<div style="flex:1;min-width:0">'
+            + '<span class="pl-name">' + escHtml(item.desc) + '</span>'
+            + (ago ? '<div class="pl-hist">' + escHtml(ago) + (histLen > 1 ? ' &middot; ' + histLen + ' price updates' : '') + '</div>' : '')
+            + '</div>'
+            + '<span class="pl-price">' + priceStr + '</span>'
+            + (item.source ? '<span class="pl-src">' + escHtml(item.source) + '</span>' : '')
+            + '<div class="pl-actions">'
+            + '<button class="pl-add" title="Add to current bid">+ Bid</button>'
+            + '<button class="pl-edit" title="Edit price">Edit</button>'
+            + '<button class="pl-del" title="Delete item">X</button>'
+            + '</div>';
+        div.querySelector('.pl-add').addEventListener('click', function() {
+            addMatRow(item.desc, item.qty || '1', (item.price || 0).toFixed(2));
+            this.textContent = 'Added!';
+            this.style.background = '#2a3a5c';
+            setTimeout(() => { this.textContent = '+ Bid'; this.style.background = ''; }, 1500);
+        });
+        div.querySelector('.pl-edit').addEventListener('click', function() {
+            const newPrice = prompt('New price for "' + item.desc + '":', (item.price || 0).toFixed(2));
+            if (!newPrice) return;
+            const p = parseFloat(newPrice.replace(/[^0-9.]/g, ''));
+            if (isNaN(p) || p <= 0) { alert('Invalid price'); return; }
+            catSaveItem({ desc: item.desc, price: p, source: item.source || 'Manual', qty: item.qty || '1' });
+            catRenderList();
+        });
+        div.querySelector('.pl-del').addEventListener('click', function() {
+            if (!confirm('Delete "' + item.desc + '" from catalog?')) return;
+            if (catalogRef) catalogRef.child(item.key).remove();
+            catRenderList();
+        });
+        listEl.appendChild(div);
+    });
+    if (items.length > 50) {
+        listEl.innerHTML += '<div class="pl-empty">Showing first 50 of ' + items.length + ' items. Use the filter to narrow down.</div>';
+    }
+}
+
+function catTimeAgo(ts) {
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return days + 'd ago';
+    const months = Math.floor(days / 30);
+    return months + 'mo ago';
+}
+
+function catAddItem() {
+    const desc = document.getElementById('catNewDesc').value.trim();
+    const priceStr = document.getElementById('catNewPrice').value.trim();
+    const qty = document.getElementById('catNewQty').value.trim() || '1';
+    const store = document.getElementById('catNewStore').value;
+
+    if (!desc) { document.getElementById('catNewDesc').focus(); return; }
+    if (!priceStr) { document.getElementById('catNewPrice').focus(); return; }
+    const price = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+    if (isNaN(price) || price <= 0) { alert('Enter a valid price'); document.getElementById('catNewPrice').focus(); return; }
+
+    catSaveItem({ desc, price, source: store, qty });
+
+    document.getElementById('catAddStatus').innerHTML = 'Added <strong>' + escHtml(desc) + '</strong> at $' + price.toFixed(2) + ' to catalog!';
+    document.getElementById('catNewDesc').value = '';
+    document.getElementById('catNewPrice').value = '';
+    document.getElementById('catNewDesc').focus();
+    updateCatalogBar();
+}
+
+function catImportPaste() {
+    const raw = document.getElementById('catPasteArea').value.trim();
+    if (!raw) { document.getElementById('catPasteArea').focus(); return; }
+    const store = document.getElementById('catImportStore').value || 'Import';
+    const statusEl = document.getElementById('catImportStatus');
+
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 2);
+    let imported = 0;
+
+    lines.forEach(line => {
+        // Try to parse: "description  $price" or "description | price | store" or "description, price, store"
+        let desc = '', price = 0, lineStore = store;
+
+        // Pattern 1: pipe-separated (desc | price | store)
+        if (line.includes('|')) {
+            const parts = line.split('|').map(p => p.trim());
+            desc = parts[0] || '';
+            const priceMatch = (parts[1] || '').match(/([\d,]+\.?\d{0,2})/);
+            if (priceMatch) price = parseFloat(priceMatch[1].replace(/,/g, ''));
+            if (parts[2]) lineStore = parts[2];
         }
-    }
-    return results.slice(0, 25);
-}
-
-function plSearch() {
-    const q = document.getElementById('plQuery').value.trim();
-    if (!q) { document.getElementById('plQuery').focus(); return; }
-
-    const store = document.getElementById('plStore').value;
-    const btn = document.getElementById('plSearchBtn');
-    const statusEl = document.getElementById('plStatus');
-    const resultsEl = document.getElementById('plResults');
-
-    btn.disabled = true;
-    btn.textContent = 'Searching...';
-    statusEl.innerHTML = '<span class="pl-spinner"></span> Searching ' + (store || 'all stores') + ' for "' + escHtml(q) + '"...';
-    resultsEl.innerHTML = '';
-
-    const searchQ = store ? q + ' ' + store : q;
-    const bingUrl = 'https://www.bing.com/shop?q=' + encodeURIComponent(searchQ);
-
-    plFetchViaCors(bingUrl)
-        .then(html => {
-            const items = plParseBingShopping(html);
-            btn.disabled = false;
-            btn.textContent = 'Search Prices';
-
-            // Apply store filter if selected
-            let filtered = items;
-            if (store) {
-                const sf = store.toLowerCase();
-                const storeMatches = items.filter(i => i.source.toLowerCase().includes(sf));
-                if (storeMatches.length > 0) filtered = storeMatches;
-            }
-
-            if (filtered.length === 0) {
-                statusEl.innerHTML = 'No results found for "' + escHtml(q) + '". Try different search terms.';
-                resultsEl.innerHTML = '<div class="pl-empty">No products found. Try a different search term.</div>';
-                return;
-            }
-            statusEl.innerHTML = 'Found <strong>' + filtered.length + '</strong> products via Bing Shopping';
-            resultsEl.innerHTML = '';
-            filtered.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'pl-item';
-                const priceStr = '$' + item.price.toFixed(2);
-                div.innerHTML = '<span class="pl-name">' + escHtml(item.desc) + '</span>'
-                    + '<span class="pl-price">' + priceStr + '</span>'
-                    + '<span class="pl-src">' + escHtml(item.source) + '</span>'
-                    + '<button class="pl-add">+ Catalog</button>';
-                div.querySelector('.pl-add').addEventListener('click', function() {
-                    plAddToCatalog(item);
-                    this.textContent = 'Added!';
-                    this.style.background = '#2a3a5c';
-                    this.disabled = true;
-                });
-                resultsEl.appendChild(div);
+        // Pattern 2: comma-separated (desc, price, store)
+        else if ((line.match(/,/g) || []).length >= 1) {
+            const parts = line.split(',').map(p => p.trim());
+            // Find which part has the price
+            let priceIdx = -1;
+            parts.forEach((p, i) => {
+                if (i > 0 && /^\$?[\d,]+\.?\d{0,2}$/.test(p.replace(/\$/g, ''))) priceIdx = i;
             });
-        })
-        .catch(err => {
-            btn.disabled = false;
-            btn.textContent = 'Search Prices';
-            statusEl.innerHTML = 'Error: ' + err.message;
-            resultsEl.innerHTML = '<div class="pl-empty">Search failed. Check your internet connection and try again.</div>';
-        });
+            if (priceIdx > 0) {
+                desc = parts.slice(0, priceIdx).join(', ');
+                price = parseFloat(parts[priceIdx].replace(/[^0-9.]/g, ''));
+                if (parts[priceIdx + 1]) lineStore = parts[priceIdx + 1];
+            }
+        }
+        // Pattern 3: description followed by $price somewhere in the line
+        if (!desc || !price) {
+            const m = line.match(/^(.+?)\s+\$?([\d,]+\.\d{2})\s*(.*)$/);
+            if (m) {
+                desc = m[1].replace(/[\|,\-]+$/, '').trim();
+                price = parseFloat(m[2].replace(/,/g, ''));
+                if (m[3] && m[3].length > 1) lineStore = m[3].trim();
+            }
+        }
+        // Pattern 4: just a dollar amount anywhere
+        if (!desc || !price) {
+            const pm = line.match(/\$([\d,]+\.?\d{0,2})/);
+            if (pm) {
+                price = parseFloat(pm[1].replace(/,/g, ''));
+                desc = line.replace(/\$[\d,]+\.?\d{0,2}/, '').replace(/[\|,]+/g, ' ').trim();
+            }
+        }
+
+        if (desc && price > 0 && desc.length >= 2) {
+            catSaveItem({ desc, price, source: lineStore, qty: '1' });
+            imported++;
+        }
+    });
+
+    if (imported > 0) {
+        statusEl.innerHTML = 'Imported <strong>' + imported + '</strong> items to catalog!';
+        document.getElementById('catPasteArea').value = '';
+        updateCatalogBar();
+    } else {
+        statusEl.innerHTML = 'Could not parse any items. Make sure each line has a description and a price (e.g. "Wax Ring $4.99").';
+    }
 }
 
-function plAddToCatalog(item) {
+function catImportCSV(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('catImportStatus');
+    statusEl.innerHTML = '<span class="pl-spinner"></span> Reading ' + escHtml(file.name) + '...';
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result || '';
+        // Put CSV content into the paste area and trigger import
+        document.getElementById('catPasteArea').value = text;
+        catImportPaste();
+        input.value = ''; // reset file input
+    };
+    reader.onerror = function() {
+        statusEl.innerHTML = 'Error reading file. Try again.';
+    };
+    reader.readAsText(file);
+}
+
+function catUpdatePrompt() {
+    const trade = document.getElementById('catPromptTrade').value;
+    const focus = document.getElementById('catPromptFocus').value || 'common repairs and installs';
+    const template = 'I need a list of common materials and current retail prices for a ' + trade + ' project. Format each item on its own line like this:\n\nItem Description | $Price | Store Name\n\nFor example:\n1/2 in. x 10 ft. PEX-A Pipe | $3.98 | Home Depot\nWax Ring for Toilet | $4.27 | Menards\n12/2 NM-B Romex Wire 250ft | $89.97 | Lowes\n\nPlease give me 20-30 items commonly used in ' + trade + ' work, with realistic current US retail prices. Include items from Menards, Home Depot, Lowes, and Amazon. Focus on: ' + focus;
+    document.getElementById('catAiPrompt').textContent = template;
+}
+
+function catCopyPrompt() {
+    const text = document.getElementById('catAiPrompt').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        btn.textContent = 'Copied!';
+        btn.style.background = '#27ae60';
+        setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.style.background = '#2a3a5c'; }, 2000);
+    }).catch(() => {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const btn = event.target;
+        btn.textContent = 'Copied!';
+        btn.style.background = '#27ae60';
+        setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.style.background = '#2a3a5c'; }, 2000);
+    });
+}
+
+function catSaveItem(item) {
     if (!catalogRef || !item.desc || !item.price) return;
-    const key = 'materials/' + sanitizeKey(item.desc);
+    const sKey = sanitizeKey(item.desc);
+    const fbPath = 'materials/' + sKey;
     const now = Date.now();
-    const existing = (_catalog && _catalog[key]) || {};
+    const existing = (_catalog && _catalog.materials && _catalog.materials[sKey]) || {};
     const history = existing.history || [];
-    history.push({ price: parseFloat(item.price), date: now, job: 'price-lookup:' + (item.source || 'web') });
+    history.push({ price: parseFloat(item.price), date: now, job: (item.source || 'manual') });
     if (history.length > 20) history.splice(0, history.length - 20);
-    catalogRef.child(key).set({
+    catalogRef.child(fbPath).set({
         desc: item.desc,
         price: parseFloat(item.price),
-        qty: '1',
+        qty: item.qty || '1',
         lastUsed: now,
         firstSeen: existing.firstSeen || now,
         useCount: (existing.useCount || 0) + 1,
         history: history,
-        source: item.source || 'web',
+        source: item.source || 'Manual',
         model: item.model || ''
     });
     updateCatalogBar();

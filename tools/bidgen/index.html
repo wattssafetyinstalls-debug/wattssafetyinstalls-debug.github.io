@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bid Document Generator</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
@@ -65,18 +68,62 @@
         .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px; }
         .add-row-btn:hover { border-color: #3498db; color: #3498db; }
         .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
+        /* PIN login overlay */
+        #loginOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e; z-index: 99999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: #16213e; border: 1px solid #2a3a5c; border-radius: 12px; padding: 40px; text-align: center; max-width: 400px; width: 90%; }
+        .login-box h2 { color: #3498db; font-size: 22px; margin-bottom: 8px; }
+        .login-box p { color: #7f8c8d; font-size: 13px; margin-bottom: 24px; }
+        .login-box input { background: #0f1a33; border: 2px solid #2a3a5c; border-radius: 8px; padding: 14px 18px; color: #eee; font-size: 24px; text-align: center; letter-spacing: 8px; width: 200px; font-family: monospace; }
+        .login-box input:focus { outline: none; border-color: #3498db; }
+        .login-box .login-btn { display: block; width: 100%; margin-top: 16px; padding: 14px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .login-box .login-btn:hover { background: #2980b9; }
+        .login-box .login-error { color: #e74c3c; font-size: 13px; margin-top: 12px; min-height: 20px; }
+        .login-box .login-hint { color: #555; font-size: 11px; margin-top: 16px; }
+        /* Sync status bar */
+        .sync-bar { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .sync-bar .sync-status { display: flex; align-items: center; gap: 8px; }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .sync-dot.online { background: #27ae60; }
+        .sync-dot.offline { background: #e74c3c; }
+        .sync-dot.syncing { background: #f39c12; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .sync-bar .sync-label { color: #7f8c8d; }
+        .sync-bar .sync-device { color: #555; font-size: 11px; }
+        .sync-bar .logout-btn { background: none; border: 1px solid #2a3a5c; color: #7f8c8d; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .sync-bar .logout-btn:hover { border-color: #e74c3c; color: #e74c3c; }
     </style>
 </head>
 <body>
-<div class="container">
+
+<!-- PIN LOGIN OVERLAY -->
+<div id="loginOverlay">
+    <div class="login-box">
+        <h2>Bid Generator</h2>
+        <p>Enter your PIN to access your synced workspace</p>
+        <input type="password" id="pinInput" maxlength="6" placeholder="----" autofocus>
+        <button class="login-btn" id="loginBtn" onclick="attemptLogin()">Unlock</button>
+        <div class="login-error" id="loginError"></div>
+        <div class="login-hint" id="loginHint">First time? Enter a new 4-6 digit PIN to create your workspace.</div>
+    </div>
+</div>
+
+<!-- MAIN APP (hidden until login) -->
+<div class="container" id="mainApp" style="display:none;">
     <h1>Bid Document Generator</h1>
     <p class="subtitle">Fill in the details below, then generate your Labor Estimate, Materials Estimate, or Change Order. All generated docs are editable with e-signature pads.</p>
+
+    <!-- SYNC STATUS BAR -->
+    <div class="sync-bar">
+        <div class="sync-status"><span class="sync-dot online" id="syncDot"></span><span class="sync-label" id="syncLabel">Connected to cloud</span></div>
+        <span class="sync-device" id="syncDevice"></span>
+        <button class="logout-btn" onclick="logout()">Lock</button>
+    </div>
 
     <div class="instructions">
         <h3>How to Use</h3>
         <ol>
             <li><strong>Select your trade type</strong> (Section 2) &mdash; scope, materials, and disclaimers auto-populate.</li>
-            <li><strong>Fill in your company info</strong> (Section 1) &mdash; saves automatically.</li>
+            <li><strong>Fill in your company info</strong> (Section 1) &mdash; saves automatically to cloud.</li>
             <li><strong>Fill in the job details</strong> (Section 2) &mdash; client name, address, unit, date.</li>
             <li><strong>Adjust labor line items &amp; materials</strong> (Section 3) &mdash; add, remove, or edit rows.</li>
             <li><strong>Click a button</strong> to open the document in a new tab.</li>
@@ -88,7 +135,7 @@
 
     <!-- SECTION 1 -->
     <div class="card">
-        <h2><span class="icon">1</span> Your Company Info <span class="saved-indicator" id="companySaved">Saved</span></h2>
+        <h2><span class="icon">1</span> Your Company Info <span class="saved-indicator" id="companySaved">Synced</span></h2>
         <div class="form-grid">
             <div class="form-group full"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Smith General Contracting LLC"></div>
             <div class="form-group"><label>License Number</label><input type="text" id="licenseNum" placeholder="NE License #"></div>
@@ -122,7 +169,7 @@
             <div class="form-group full"><label>Area Description (e.g. "Bathroom, Second Floor" or "Living Room &amp; Hallway")</label><input type="text" id="areaDesc" placeholder="e.g. Bathroom, Second Floor"></div>
         </div>
         <div class="saved-jobs" style="margin-top:16px;">
-            <label style="font-size:11px; text-transform:uppercase; color:#7f8c8d; letter-spacing:0.5px;">Saved Jobs</label>
+            <label style="font-size:11px; text-transform:uppercase; color:#7f8c8d; letter-spacing:0.5px;">Saved Jobs (synced across devices)</label>
             <select id="savedJobsSelect"><option value="">-- Select a saved job --</option></select>
             <div class="job-actions">
                 <button class="btn btn-save" onclick="saveJob()">Save Current Job</button>
@@ -170,7 +217,119 @@
 
 <script>
 // =====================================================================
-// TRADE PRESETS — scope, labor items, materials, disclaimers per trade
+// FIREBASE CONFIG & INIT
+// =====================================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c",
+    measurementId: "G-011LE4CZEF"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let userPIN = null;
+let dbRef = null; // will be db.ref('users/<hashed_pin>')
+let companyRef = null;
+let jobsRef = null;
+let _suppressSync = false; // prevent loops when loading from cloud
+
+// =====================================================================
+// SIMPLE PIN HASHING (not crypto-grade, just obfuscation for DB path)
+// =====================================================================
+function hashPIN(pin) {
+    let h = 0;
+    for (let i = 0; i < pin.length; i++) {
+        h = ((h << 5) - h) + pin.charCodeAt(i);
+        h |= 0;
+    }
+    return 'u' + Math.abs(h).toString(36);
+}
+
+// =====================================================================
+// LOGIN / AUTH
+// =====================================================================
+document.getElementById('pinInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') attemptLogin();
+});
+
+function attemptLogin() {
+    const pin = document.getElementById('pinInput').value.trim();
+    if (pin.length < 4) {
+        document.getElementById('loginError').textContent = 'PIN must be at least 4 digits.';
+        return;
+    }
+    const hashed = hashPIN(pin);
+    dbRef = db.ref('users/' + hashed);
+    companyRef = dbRef.child('company');
+    jobsRef = dbRef.child('jobs');
+
+    // Check if this PIN/workspace exists
+    dbRef.child('created').once('value').then(snap => {
+        if (snap.exists()) {
+            // Existing workspace — load it
+            userPIN = pin;
+            sessionStorage.setItem('bid_pin', pin);
+            showApp();
+        } else {
+            // New workspace — create it
+            if (!confirm('This PIN has no saved data yet. Create a new workspace with PIN "' + pin + '"?')) return;
+            dbRef.child('created').set(Date.now()).then(() => {
+                userPIN = pin;
+                sessionStorage.setItem('bid_pin', pin);
+                showApp();
+            });
+        }
+    }).catch(err => {
+        document.getElementById('loginError').textContent = 'Connection error. Check your internet.';
+        console.error(err);
+    });
+}
+
+function logout() {
+    sessionStorage.removeItem('bid_pin');
+    location.reload();
+}
+
+function showApp() {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('syncDevice').textContent = 'PIN: ' + userPIN.charAt(0) + '***';
+    initApp();
+}
+
+// Auto-login if session still active
+window.addEventListener('DOMContentLoaded', () => {
+    const savedPin = sessionStorage.getItem('bid_pin');
+    if (savedPin) {
+        document.getElementById('pinInput').value = savedPin;
+        attemptLogin();
+    }
+});
+
+// =====================================================================
+// SYNC STATUS HELPERS
+// =====================================================================
+function setSyncStatus(state, label) {
+    const dot = document.getElementById('syncDot');
+    const lbl = document.getElementById('syncLabel');
+    dot.className = 'sync-dot ' + state;
+    lbl.textContent = label;
+}
+
+let _syncTimer = null;
+function flashSync() {
+    setSyncStatus('syncing', 'Syncing...');
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(() => setSyncStatus('online', 'Connected to cloud'), 1200);
+}
+
+// =====================================================================
+// TRADE PRESETS
 // =====================================================================
 const TRADES = {
     flooring: {
@@ -266,15 +425,7 @@ const TRADES = {
     general: {
         label: 'General / Remodel',
         areaDesc: 'Unit Interior',
-        scope: [
-            'Demolition and removal of existing materials',
-            'Structural inspection and repair as needed',
-            'Rough carpentry and framing',
-            'Finish carpentry and trim installation',
-            'Material procurement and coordination',
-            'Debris removal, hauling, and disposal',
-            'Final cleanup and punch list'
-        ],
+        scope: ['Demolition and removal of existing materials','Structural inspection and repair as needed','Rough carpentry and framing','Finish carpentry and trim installation','Material procurement and coordination','Debris removal, hauling, and disposal','Final cleanup and punch list'],
         labor: [
             { desc: 'Demolition & Removal', basis: 'per sq ft', price: 3.00 },
             { desc: 'Framing / Structural Repair', basis: 'fixed', price: 300 },
@@ -296,24 +447,12 @@ const TRADES = {
         ],
         supplierNote: '',
         disclaimer: 'Concealed conditions behind walls, above ceilings, or beneath floors cannot be fully assessed until demolition is underway. This includes but is not limited to: structural damage, mold, pest damage, non-code-compliant wiring or plumbing, and asbestos-containing materials. Contractor shall provide immediate written notice upon discovery. Work shall cease until a written Change Order is executed by both parties.',
-        notes: [
-            'Specialty subcontractors (plumbing, electrical, HVAC) quoted separately if needed.',
-            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
-            'All work performed per Nebraska building code and manufacturer specifications.'
-        ]
+        notes: ['Specialty subcontractors (plumbing, electrical, HVAC) quoted separately if needed.','Markup covers procurement time, vehicle/fuel, handling, and warranty administration.','All work performed per Nebraska building code and manufacturer specifications.']
     },
     plumbing: {
         label: 'Plumbing',
         areaDesc: 'Bathroom / Kitchen',
-        scope: [
-            'Shut off water supply and drain lines',
-            'Removal of existing fixtures as needed',
-            'Pipe repair, replacement, or rerouting',
-            'Installation of new fixtures and trim',
-            'Pressure testing and leak check',
-            'Drywall / access panel patching (if applicable)',
-            'Cleanup and debris removal'
-        ],
+        scope: ['Shut off water supply and drain lines','Removal of existing fixtures as needed','Pipe repair, replacement, or rerouting','Installation of new fixtures and trim','Pressure testing and leak check','Drywall / access panel patching (if applicable)','Cleanup and debris removal'],
         labor: [
             { desc: 'Fixture Removal & Disposal', basis: 'per fixture', price: 75 },
             { desc: 'Pipe Repair / Replacement', basis: 'per hour', price: 85 },
@@ -333,24 +472,12 @@ const TRADES = {
         ],
         supplierNote: '',
         disclaimer: 'Plumbing systems concealed within walls, floors, and ceilings cannot be fully assessed until access is gained. Conditions including corroded pipes, non-code-compliant connections, galvanic corrosion, root intrusion, or deteriorated drain lines may be discovered during work. Contractor shall provide immediate written notice. Work shall cease until a written Change Order is executed by both parties.',
-        notes: [
-            'Fixtures to be selected and approved by client prior to purchase unless specified.',
-            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
-            'Permits pulled if required by local jurisdiction.'
-        ]
+        notes: ['Fixtures to be selected and approved by client prior to purchase unless specified.','Markup covers procurement time, vehicle/fuel, handling, and warranty administration.','Permits pulled if required by local jurisdiction.']
     },
     electrical: {
         label: 'Electrical',
         areaDesc: 'Unit Interior',
-        scope: [
-            'Circuit identification and testing',
-            'Removal of existing fixtures / devices as needed',
-            'Wire repair, replacement, or new runs',
-            'Installation of new fixtures, outlets, and switches',
-            'Panel inspection and breaker work (if applicable)',
-            'Testing and verification of all circuits',
-            'Patching of access points and cleanup'
-        ],
+        scope: ['Circuit identification and testing','Removal of existing fixtures / devices as needed','Wire repair, replacement, or new runs','Installation of new fixtures, outlets, and switches','Panel inspection and breaker work (if applicable)','Testing and verification of all circuits','Patching of access points and cleanup'],
         labor: [
             { desc: 'Circuit Testing & Identification', basis: '1 lot', price: 60 },
             { desc: 'Fixture / Device Removal', basis: 'per unit', price: 25 },
@@ -371,11 +498,7 @@ const TRADES = {
         ],
         supplierNote: '',
         disclaimer: 'Electrical systems concealed within walls, ceilings, and floors cannot be fully assessed until access is gained. Conditions including aluminum wiring, knob-and-tube wiring, non-code-compliant connections, overloaded circuits, or deteriorated insulation may be discovered. Contractor shall provide immediate written notice. Work shall cease until a written Change Order is executed by both parties. All electrical work performed per NEC and local code.',
-        notes: [
-            'Light fixtures and specialty devices to be selected by client unless specified.',
-            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
-            'Permits pulled if required by local jurisdiction.'
-        ]
+        notes: ['Light fixtures and specialty devices to be selected by client unless specified.','Markup covers procurement time, vehicle/fuel, handling, and warranty administration.','Permits pulled if required by local jurisdiction.']
     },
     custom: {
         label: 'Custom',
@@ -393,49 +516,82 @@ const TRADES = {
         ],
         supplierNote: '',
         disclaimer: 'Concealed conditions not visible prior to commencement of work may require additional scope. Contractor shall provide immediate written notice upon discovery. Work shall cease until a written Change Order is executed by both parties.',
-        notes: [
-            'Markup covers procurement time, vehicle/fuel, handling, and warranty administration.',
-            'All work performed per applicable building codes.'
-        ]
+        notes: ['Markup covers procurement time, vehicle/fuel, handling, and warranty administration.','All work performed per applicable building codes.']
     }
 };
 
-// ========== LAUNCHER LOGIC ==========
-const companyFields = ['companyName', 'licenseNum', 'phone', 'email', 'companyAddress'];
-window.addEventListener('DOMContentLoaded', () => {
-    companyFields.forEach(id => { const s = localStorage.getItem('bid_' + id); if (s) document.getElementById(id).value = s; });
-    if (!document.getElementById('estimateDate').value) document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
-    loadSavedJobsList();
-    onTradeChange(); // populate defaults
-});
-companyFields.forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-        localStorage.setItem('bid_' + id, document.getElementById(id).value);
-        const ind = document.getElementById('companySaved'); ind.classList.add('show'); setTimeout(() => ind.classList.remove('show'), 2000);
+// =====================================================================
+// APP INIT — load from Firebase
+// =====================================================================
+function initApp() {
+    if (!document.getElementById('estimateDate').value) {
+        document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Load company info from Firebase
+    companyRef.once('value').then(snap => {
+        const data = snap.val();
+        if (data) {
+            _suppressSync = true;
+            companyFields.forEach(id => {
+                if (data[id]) document.getElementById(id).value = data[id];
+            });
+            _suppressSync = false;
+        }
     });
-});
+
+    // Load saved jobs from Firebase and listen for changes
+    jobsRef.on('value', snap => {
+        const data = snap.val() || {};
+        _cloudJobs = data;
+        loadSavedJobsList();
+    });
+
+    // Set up company field auto-save to Firebase
+    companyFields.forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            if (_suppressSync) return;
+            const obj = {};
+            companyFields.forEach(fid => { obj[fid] = document.getElementById(fid).value; });
+            companyRef.set(obj);
+            flashSync();
+            const ind = document.getElementById('companySaved');
+            ind.classList.add('show');
+            setTimeout(() => ind.classList.remove('show'), 2000);
+        });
+    });
+
+    // Default trade
+    onTradeChange();
+
+    // Monitor connection
+    db.ref('.info/connected').on('value', snap => {
+        if (snap.val() === true) {
+            setSyncStatus('online', 'Connected to cloud');
+        } else {
+            setSyncStatus('offline', 'Offline — changes will sync when reconnected');
+        }
+    });
+}
+
+const companyFields = ['companyName', 'licenseNum', 'phone', 'email', 'companyAddress'];
+let _cloudJobs = {};
 
 // ========== TRADE CHANGE ==========
 function onTradeChange() {
     const t = document.getElementById('tradeType').value;
     const preset = TRADES[t];
-    // Update badge
     const badge = document.getElementById('tradeBadge');
     badge.textContent = preset.label;
     badge.className = 'trade-badge ' + t;
-    // Populate area desc if empty or if it matches a known preset default
     const adEl = document.getElementById('areaDesc');
     const knownDefaults = Object.values(TRADES).map(p => p.areaDesc);
     if (!adEl.value || knownDefaults.includes(adEl.value)) adEl.value = preset.areaDesc;
-    // Populate labor items
     document.getElementById('laborItemsContainer').innerHTML = '';
     preset.labor.forEach(li => addLaborRow(li.desc, li.basis, li.price));
-    // Populate material items
     document.getElementById('matItemsContainer').innerHTML = '';
     preset.materials.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
-    // Supplier note
     document.getElementById('supplierNote').value = preset.supplierNote;
-    // Disclaimer
     document.getElementById('disclaimer').value = preset.disclaimer;
 }
 
@@ -475,59 +631,61 @@ function getMatItems() {
         return { desc: inputs[0].value, qty: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
     }).filter(i => i.desc);
 }
-function getScope() {
-    const t = document.getElementById('tradeType').value;
-    return TRADES[t].scope;
-}
-function getNotes() {
-    const t = document.getElementById('tradeType').value;
-    return TRADES[t].notes;
-}
+function getScope() { return TRADES[document.getElementById('tradeType').value].scope; }
+function getNotes() { return TRADES[document.getElementById('tradeType').value].notes; }
 
-// ========== SAVED JOBS ==========
-function getSavedJobs() { return JSON.parse(localStorage.getItem('bid_saved_jobs') || '{}'); }
+// ========== SAVED JOBS (FIREBASE) ==========
 function loadSavedJobsList() {
-    const jobs = getSavedJobs(), sel = document.getElementById('savedJobsSelect');
+    const sel = document.getElementById('savedJobsSelect');
     sel.innerHTML = '<option value="">-- Select a saved job --</option>';
-    Object.keys(jobs).sort().forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; sel.appendChild(o); });
+    Object.keys(_cloudJobs).sort().forEach(n => {
+        const o = document.createElement('option');
+        o.value = n; o.textContent = n; sel.appendChild(o);
+    });
 }
 function saveJob() {
     const c = gv('clientName'), x = gv('complexName'), u = gv('unitNum');
-    const name = prompt('Save job as:', (c+' - '+x+' '+u).trim() || 'New Job'); if (!name) return;
-    const jobs = getSavedJobs();
-    jobs[name] = {
+    const name = prompt('Save job as:', (c+' - '+x+' '+u).trim() || 'New Job');
+    if (!name) return;
+    const jobData = {
         tradeType: gv('tradeType'), clientName: c, complexName: x, unitNum: u,
         jobCity: gv('jobCity'), sqft: gv('sqft'), areaDesc: gv('areaDesc'),
         estimateDate: gv('estimateDate'), materialsMarkup: gv('materialsMarkup'),
         supplierNote: gv('supplierNote'), disclaimer: gv('disclaimer'),
-        laborItems: getLaborItems(), matItems: getMatItems()
+        laborItems: getLaborItems(), matItems: getMatItems(),
+        savedAt: Date.now()
     };
-    localStorage.setItem('bid_saved_jobs', JSON.stringify(jobs)); loadSavedJobsList();
-    document.getElementById('savedJobsSelect').value = name; alert('Job saved: ' + name);
+    jobsRef.child(name).set(jobData).then(() => {
+        flashSync();
+        document.getElementById('savedJobsSelect').value = name;
+        alert('Job saved & synced: ' + name);
+    });
 }
 function loadJob() {
     const n = document.getElementById('savedJobsSelect').value;
     if (!n) { alert('Select a job first.'); return; }
-    const j = getSavedJobs()[n]; if (!j) return;
+    const j = _cloudJobs[n]; if (!j) return;
     ['tradeType','clientName','complexName','unitNum','jobCity','sqft','areaDesc','estimateDate','materialsMarkup','supplierNote','disclaimer'].forEach(k => {
         const e = document.getElementById(k); if (e && j[k] !== undefined) e.value = j[k];
     });
-    // Update badge
     const badge = document.getElementById('tradeBadge');
     const preset = TRADES[j.tradeType] || TRADES.custom;
     badge.textContent = preset.label; badge.className = 'trade-badge ' + (j.tradeType || 'custom');
-    // Load labor rows
     if (j.laborItems) {
         document.getElementById('laborItemsContainer').innerHTML = '';
         j.laborItems.forEach(li => addLaborRow(li.desc, li.basis, li.price));
     }
-    // Load mat rows
     if (j.matItems) {
         document.getElementById('matItemsContainer').innerHTML = '';
         j.matItems.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
     }
 }
-function deleteJob() { const n = document.getElementById('savedJobsSelect').value; if (!n) { alert('Select a job first.'); return; } if (!confirm('Delete "'+n+'"?')) return; const j = getSavedJobs(); delete j[n]; localStorage.setItem('bid_saved_jobs', JSON.stringify(j)); loadSavedJobsList(); }
+function deleteJob() {
+    const n = document.getElementById('savedJobsSelect').value;
+    if (!n) { alert('Select a job first.'); return; }
+    if (!confirm('Delete "'+n+'"?')) return;
+    jobsRef.child(n).remove().then(() => { flashSync(); });
+}
 function clearForm() {
     ['clientName','complexName','unitNum','jobCity','areaDesc','supplierNote'].forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('sqft').value = 48;
@@ -613,11 +771,9 @@ function generateLabor() {
     h += toolbar('ESTIMATE A &mdash; LABOR');
     h += '<div class="header">'+co()+'<div class="badge">ESTIMATE A<br><small>LABOR COSTS</small></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
-    // Scope
     h += '<div class="scope"><h3>Scope of Work &mdash; '+E(sq)+' sq ft '+E(ad)+'</h3><ul>';
     scope.forEach(function(s){ h += '<li>'+E(s)+'</li>'; });
     h += '</ul></div>';
-    // Labor table
     h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Total</th></tr></thead><tbody>';
     items.forEach(function(item, i){
         h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.basis)+'</td><td><strong>'+P('$'+f(item.price),'data-line-total')+'</strong></td></tr>';
@@ -625,14 +781,10 @@ function generateLabor() {
     h += '<tr class="subtotal-row"><td></td><td colspan="2">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
     h += '<tr class="total-row"><td></td><td colspan="2">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
     h += '</tbody></table>';
-    // Notes
     h += '<div class="notes-section"><h3>Labor Estimate Notes</h3>';
     notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
     h += '</div>';
-    // Disclaimer
-    if (disc) {
-        h += '<div class="unforeseen-box"><h4>UNFORESEEN CONDITIONS CLAUSE</h4><p>'+E(disc)+'</p></div>';
-    }
+    if (disc) { h += '<div class="unforeseen-box"><h4>UNFORESEEN CONDITIONS CLAUSE</h4><p>'+E(disc)+'</p></div>'; }
     h += sigHTML();
     h += '<div class="footer"><p>Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
@@ -644,7 +796,6 @@ function generateMaterials() {
     var sq = gn('sqft'), mk = gn('materialsMarkup'), items = getMatItems(), notes = getNotes();
     var sub = 0; items.forEach(function(i){ sub += i.price; });
     var ma = sub * (mk/100), mt = sub + ma;
-    // Labor total for combined
     var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.price; });
     var grand = labTot + mt;
     var ad = gv('areaDesc') || '[Area]';
@@ -653,11 +804,7 @@ function generateMaterials() {
     h += toolbar('ESTIMATE B &mdash; MATERIALS');
     h += '<div class="header">'+co()+'<div class="badge">ESTIMATE B<br><small>MATERIAL COSTS</small></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
-    // Supplier note
-    if (sn) {
-        h += '<div class="supplier-note"><h4>MATERIAL SUPPLIER NOTE</h4><p>'+E(sn)+'</p></div>';
-    }
-    // Materials table
+    if (sn) { h += '<div class="supplier-note"><h4>MATERIAL SUPPLIER NOTE</h4><p>'+E(sn)+'</p></div>'; }
     h += '<table><thead><tr><th style="width:30px">#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
     items.forEach(function(item, i){
         h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty)+'</td><td>'+E('$'+f(item.price))+'</td><td><strong>'+P('$'+f(item.price),'data-line-total')+'</strong></td></tr>';
@@ -666,7 +813,6 @@ function generateMaterials() {
     h += '<tr class="markup-row"><td></td><td colspan="3"><strong>Contractor Markup (<span data-editable data-markup-pct>'+mk+'</span>%)</strong></td><td><span data-markup-amt>$'+f(ma)+'</span></td></tr>';
     h += '<tr class="total-row"><td></td><td colspan="3">TOTAL MATERIALS &mdash; ESTIMATE B</td><td><span data-mat-total>$'+f(mt)+'</span></td></tr>';
     h += '</tbody></table>';
-    // Combined
     h += '<div class="combined"><h3>Combined Project Total</h3><table>';
     h += '<tr><td>Estimate A &mdash; Labor</td><td><span data-combined-labor>$'+f(labTot)+'</span></td></tr>';
     h += '<tr><td>Estimate B &mdash; Materials</td><td><span data-combined-mat>$'+f(mt)+'</span></td></tr>';
@@ -674,7 +820,6 @@ function generateMaterials() {
     h += '<tr class="grand"><td>TOTAL PROJECT PRICE</td><td><span data-grand-total>$'+f(grand)+'</span></td></tr>';
     h += '<tr class="psf"><td>Per Square Foot (<span data-sqft>'+sq+'</span> sq ft)</td><td><span data-per-sqft>$'+f(grand/sq)+' /sq ft</span></td></tr>';
     h += '</table></div>';
-    // Notes
     h += '<div class="notes-section"><h3>Materials Notes</h3>';
     notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
     h += '</div>';

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Integration Setup</title>
     <meta name="robots" content="noindex, nofollow">
-    <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -183,30 +182,40 @@ const atpPatterns = [
 let tokenClient;
 let gapiInited = false;
 
-// Initialize Google API
+// Initialize Google API (modern approach)
 function initGoogleApi() {
-    console.log('Initializing Google API...');
+    console.log('Initializing Google API with modern GIS...');
     
     try {
-        gapi.load('client', () => {
-            console.log('GAPI client loaded, initializing...');
-            
-            gapi.client.init({
-                apiKey: API_KEY,
-                clientId: CLIENT_ID,
-                scope: SCOPES.join(' ')
-            }).then(() => {
-                gapiInited = true;
-                console.log('✅ Google API initialized successfully');
-                updateAuthStatus();
-                showNotification('✅ Google API ready', 'success');
-            }, (error) => {
-                console.error('❌ Error initializing Google API:', error);
-                console.error('Error details:', JSON.stringify(error, null, 2));
-                const errorMessage = error.error?.message || error.message || JSON.stringify(error);
-                showNotification(`❌ Google API Error: ${errorMessage}`, 'error');
+        // Load Google API client library separately
+        const script = document.createElement('script');
+        script.src = 'https://apis.google.com/js/api.js';
+        script.onload = () => {
+            console.log('GAPI script loaded, initializing...');
+            gapi.load('client', () => {
+                console.log('GAPI client loaded, initializing...');
+                
+                gapi.client.init({
+                    apiKey: API_KEY,
+                    discoveryDocs: [
+                        'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
+                        'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'
+                    ]
+                }).then(() => {
+                    gapiInited = true;
+                    console.log('✅ Google API initialized successfully');
+                    updateAuthStatus();
+                    showNotification('✅ Google API ready', 'success');
+                }, (error) => {
+                    console.error('❌ Error initializing Google API:', error);
+                    console.error('Error details:', JSON.stringify(error, null, 2));
+                    const errorMessage = error.error?.message || error.message || JSON.stringify(error);
+                    showNotification(`❌ Google API Error: ${errorMessage}`, 'error');
+                });
             });
-        });
+        };
+        document.head.appendChild(script);
+        
     } catch (error) {
         console.error('❌ Failed to load GAPI:', error);
         showNotification('❌ Failed to load Google API library', 'error');
@@ -296,21 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Wait for Google APIs to load
     setTimeout(() => {
-        console.log('Checking GAPI availability...');
-        console.log('typeof gapi:', typeof gapi);
+        console.log('Checking Google Identity Services availability...');
         console.log('typeof google:', typeof google);
         
-        if (typeof gapi !== 'undefined') {
-            console.log('✅ GAPI found, initializing...');
-            gapi.load('client', () => {
-                initGoogleApi();
-            });
-        } else {
-            console.error('❌ Google API (gapi) not loaded');
-            showNotification('❌ Google API failed to load - check internet connection', 'error');
-        }
-        
-        // Initialize OAuth2
+        // Initialize OAuth2 with modern GIS
         if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
             console.log('✅ Google Identity Services found, initializing token client...');
             initTokenClient();
@@ -319,9 +317,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('❌ Google Identity Services failed to load', 'error');
         }
         
+        // Initialize Google API client separately
+        initGoogleApi();
+        
         // Check existing authentication
         updateAuthStatus();
-    }, 2000); // Increased wait time
+    }, 2000);
 });
 
 // Placeholder functions for scanning (to be implemented)

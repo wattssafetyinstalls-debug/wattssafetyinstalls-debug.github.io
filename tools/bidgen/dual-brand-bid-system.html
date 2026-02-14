@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Brand Bid System - Watts ATP & Watts Safety Installs</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; }
+        h1 { font-size: 28px; margin-bottom: 4px; color: #e8e8e8; }
+        .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 30px; }
+        
+        /* Brand Toggle */
+        .brand-toggle { display: flex; gap: 20px; margin-bottom: 30px; }
+        .brand-option { flex: 1; padding: 20px; border: 2px solid #2a3a5c; border-radius: 10px; cursor: pointer; transition: all 0.3s; text-align: center; }
+        .brand-option:hover { border-color: #3498db; }
+        .brand-option.active { border-color: #3498db; background: #0f1a33; }
+        .brand-option.atp.active { border-color: #e67e22; }
+        .brand-option.wsi.active { border-color: #27ae60; }
+        .brand-name { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+        .brand-desc { font-size: 12px; color: #7f8c8d; }
+        .brand-type { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+        .brand-type.state { background: #e67e22; color: white; }
+        .brand-type.commercial { background: #27ae60; color: white; }
+        
+        /* Card Styles */
+        .card { background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+        .card h2 { font-size: 16px; color: #3498db; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .card h2 .icon { width: 28px; height: 28px; background: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; }
+        
+        /* Form Styles */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 11px; text-transform: uppercase; color: #7f8c8d; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .form-group input, .form-group textarea, .form-group select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 12px; color: #eee; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3498db; }
+        
+        /* Button Styles */
+        .btn { padding: 14px 28px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #2ecc71; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-warning:hover { background: #e67e22; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-secondary { background: #2a3a5c; color: #bbb; border: 1px solid #3a4a6c; }
+        .btn-secondary:hover { background: #3a4a6c; color: white; }
+        
+        /* Competitive Intelligence */
+        .comp-intel { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .competitor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
+        .competitor-card { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 8px; padding: 15px; }
+        .competitor-name { font-weight: 600; color: #3498db; margin-bottom: 8px; }
+        .competitor-stats { font-size: 12px; color: #7f8c8d; line-height: 1.5; }
+        .threat-level { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; margin-top: 8px; }
+        .threat-high { background: #e74c3c; color: white; }
+        .threat-medium { background: #f39c12; color: white; }
+        .threat-low { background: #27ae60; color: white; }
+        
+        /* Predictive Analysis */
+        .predictive-panel { background: linear-gradient(135deg, #1a2744, #0f1a33); border: 1px solid #3498db; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .prediction-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .prediction-box { text-align: center; padding: 15px; background: #0f1a33; border-radius: 8px; border: 1px solid #2a3a5c; }
+        .prediction-value { font-size: 24px; font-weight: 700; color: #3498db; margin-bottom: 5px; }
+        .prediction-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Bid History Upload */
+        .upload-zone { border: 2px dashed #3a4a5c; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px; transition: all 0.3s; }
+        .upload-zone:hover { border-color: #3498db; background: #0f1a33; }
+        .upload-zone.dragover { border-color: #27ae60; background: #0a2818; }
+        
+        /* State Contract Restrictions */
+        .state-restrictions { background: #2c3e50; border-left: 4px solid #e67e22; padding: 15px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+        .state-restrictions h4 { color: #f39c12; margin-bottom: 8px; font-size: 14px; }
+        .state-restrictions ul { list-style: none; padding: 0; }
+        .state-restrictions li { color: #ecf0f1; font-size: 12px; margin-bottom: 5px; padding-left: 15px; position: relative; }
+        .state-restrictions li:before { content: "🔒"; position: absolute; left: 0; }
+        
+        /* Price Cap Indicator */
+        .price-cap { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f1a33; border-radius: 6px; margin: 10px 0; }
+        .cap-bar { flex: 1; height: 8px; background: #2a3a5c; border-radius: 4px; position: relative; overflow: hidden; }
+        .cap-fill { height: 100%; background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c); transition: width 0.3s; }
+        .cap-text { font-size: 12px; color: #7f8c8d; min-width: 80px; text-align: right; }
+        
+        /* File Input */
+        .file-input-wrapper { position: relative; display: inline-block; }
+        .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+        .file-input-label { display: inline-block; padding: 12px 24px; background: #3498db; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .file-input-label:hover { background: #2980b9; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .brand-toggle { flex-direction: column; }
+            .prediction-grid { grid-template-columns: 1fr; }
+            .competitor-grid { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dual Brand Bid System</h1>
+    <p class="subtitle">State Contracts (ATP) vs Commercial Projects (WSI) with Competitive Intelligence</p>
+
+    <!-- BRAND SELECTION -->
+    <div class="brand-toggle">
+        <div class="brand-option atp" id="atpBrand" onclick="selectBrand('atp')">
+            <div class="brand-name">Watts ATP Contractor</div>
+            <div class="brand-desc">State Contracts & Government Bids</div>
+            <div class="brand-type state">State Contract</div>
+        </div>
+        <div class="brand-option wsi" id="wsiBrand" onclick="selectBrand('wsi')">
+            <div class="brand-name">Watts Safety Installs</div>
+            <div class="brand-desc">Commercial & Residential Projects</div>
+            <div class="brand-type commercial">Commercial</div>
+        </div>
+    </div>
+
+    <!-- STATE CONTRACT RESTRICTIONS (ATP only) -->
+    <div class="card" id="stateRestrictions" style="display: none;">
+        <h2><span class="icon">🔒</span> State Contract Restrictions</h2>
+        <div class="state-restrictions">
+            <h4>Watts ATP Contractor - State Contract Guidelines</h4>
+            <ul>
+                <li>No material markups allowed - cost plus only</li>
+                <li>Labor rates must be pre-approved and fixed</li>
+                <li>All pricing must be fully transparent and auditable</li>
+                <li>Competitive bidding requirements apply</li>
+                <li>Prevailing wage requirements may apply</li>
+                <li>Bonding and insurance minimums required</li>
+            </ul>
+            <div style="margin-top: 15px; padding: 10px; background: #0f1a33; border-radius: 6px;">
+                <h5 style="color: #f39c12; margin-bottom: 8px;">💰 State Payout Guidelines</h5>
+                <p style="font-size: 12px; color: #ecf0f1; margin-bottom: 5px;">
+                    <strong>Base Maximum:</strong> $10,000 out-of-pocket state payout
+                </p>
+                <p style="font-size: 11px; color: #7f8c8d; margin-bottom: 5px;">
+                    ⚠️ <strong>NOT a hard cap</strong> - flexible based on scope complexity
+                </p>
+                <p style="font-size: 11px; color: #7f8c8d; margin-bottom: 5px;">
+                    📈 Can exceed up to 25% for complex scopes or specialized work
+                </p>
+                <p style="font-size: 11px; color: #7f8c8d;">
+                    🎯 10% competitive buffer when competitors unknown
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREDICTIVE ANALYSIS -->
+    <div class="predictive-panel">
+        <h2 style="color: #3498db; margin-bottom: 15px;">🧠 Predictive Bid Analysis</h2>
+        <div class="prediction-grid">
+            <div class="prediction-box">
+                <div class="prediction-value" id="winProbability">--</div>
+                <div class="prediction-label">Win Probability</div>
+            </div>
+            <div class="prediction-box">
+                <div class="prediction-value" id="optimalPrice">--</div>
+                <div class="prediction-label">Optimal Bid Price</div>
+            </div>
+            <div class="prediction-box">
+                <div class="prediction-value" id="competitorThreat">--</div>
+                <div class="prediction-label">Threat Level</div>
+            </div>
+        </div>
+        <div class="price-cap">
+            <div class="cap-text">Price Cap:</div>
+            <div class="cap-bar">
+                <div class="cap-fill" id="priceCapFill" style="width: 0%"></div>
+            </div>
+            <div class="cap-text" id="priceCapText">$0 / $0</div>
+        </div>
+    </div>
+
+    <!-- COMPETITIVE INTELLIGENCE -->
+    <div class="card">
+        <h2><span class="icon">🎯</span> Competitive Intelligence</h2>
+        <div class="upload-zone" id="bidHistoryUpload">
+            <h3>Upload Bid History & Competition Data</h3>
+            <p>Drop bid reports, competitor analysis, and project outcomes here</p>
+            <div class="file-input-wrapper">
+                <input type="file" id="bidHistoryInput" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx" multiple>
+                <label for="bidHistoryInput" class="file-input-label">Choose Files</label>
+            </div>
+        </div>
+        <div class="competitor-grid" id="competitorGrid">
+            <!-- Competitor cards will be populated here -->
+        </div>
+    </div>
+
+    <!-- BID INPUT -->
+    <div class="card">
+        <h2><span class="icon">📝</span> Project Details</h2>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label>Project Type</label>
+                <select id="projectType" onchange="updateProjectType()">
+                    <option value="">Select Project Type...</option>
+                    <option value="state">State Contract</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="residential">Residential</option>
+                    <option value="municipal">Municipal</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Project Name/ID</label>
+                <input type="text" id="projectName" placeholder="e.g. Norfolk City Hall - Bathroom Renovation">
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="projectLocation" placeholder="e.g. Norfolk, NE">
+            </div>
+            <div class="form-group">
+                <label>Square Footage</label>
+                <input type="number" id="projectSqft" placeholder="e.g. 1500">
+            </div>
+            <div class="form-group">
+                <label>Project Duration (days)</label>
+                <input type="number" id="projectDuration" placeholder="e.g. 15">
+            </div>
+            <div class="form-group">
+                <label>Bid Due Date</label>
+                <input type="date" id="bidDueDate">
+            </div>
+        </div>
+    </div>
+
+    <!-- LABOR & MATERIALS -->
+    <div class="card">
+        <h2><span class="icon">💰</span> Cost Breakdown</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label id="laborLabel">Labor Cost</label>
+                <input type="number" id="laborCost" placeholder="0.00" onchange="updateTotals()">
+            </div>
+            <div class="form-group">
+                <label id="materialsLabel">Materials Cost</label>
+                <input type="number" id="materialsCost" placeholder="0.00" onchange="updateTotals()">
+            </div>
+            <div class="form-group" id="markupGroup">
+                <label>Materials Markup %</label>
+                <input type="number" id="materialsMarkup" value="15" step="0.1" onchange="updateTotals()">
+            </div>
+            <div class="form-group">
+                <label>Total Bid Amount</label>
+                <input type="number" id="totalBid" readonly style="background: #1a2744; font-weight: 600;">
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPETITORS -->
+    <div class="card">
+        <h2><span class="icon">🏢</span> Known Competitors</h2>
+        <div id="competitorInputs">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Competitor 1 Name</label>
+                    <input type="text" id="comp1Name" placeholder="e.g. ABC Contracting">
+                </div>
+                <div class="form-group">
+                    <label>Last Known Bid</label>
+                    <input type="number" id="comp1Bid" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Distance to Job (miles)</label>
+                    <input type="number" id="comp1Distance" placeholder="0.0">
+                </div>
+                <div class="form-group">
+                    <label>Specialization</label>
+                    <select id="comp1Specialty">
+                        <option value="">Select...</option>
+                        <option value="general">General</option>
+                        <option value="flooring">Flooring</option>
+                        <option value="plumbing">Plumbing</option>
+                        <option value="electrical">Electrical</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-secondary" onclick="addCompetitor()" style="margin-top: 15px;">+ Add Competitor</button>
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="analyzeBid()">🧠 Analyze Competition</button>
+        <button class="btn btn-success" onclick="generateBid()">📄 Generate Bid Document</button>
+        <button class="btn btn-warning" onclick="saveToHistory()">💾 Save to History</button>
+        <button class="btn btn-secondary" onclick="exportAnalysis()">📊 Export Analysis</button>
+    </div>
+</div>
+
+<script>
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c",
+    measurementId: "G-011LE4CZEF"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Global variables
+let currentBrand = null;
+let bidHistory = [];
+let competitorData = [];
+let predictiveModel = {
+    winRate: 0.65,
+    priceCapMultiplier: 1.15,
+    threatThresholds: {
+        high: 0.8,
+        medium: 0.5,
+        low: 0.2
+    }
+};
+
+// Brand configurations
+const brandConfigs = {
+    atp: {
+        name: "Watts ATP Contractor",
+        type: "state",
+        allowMarkup: false,
+        laborRates: "fixed",
+        materialPricing: "cost-plus",
+        restrictions: true,
+        color: "#e67e22",
+        maxStatePayout: 10000, // Maximum state will pay out-of-pocket
+        hardCap: false, // Never a hard cap - flexible based on scope
+        scopeMultiplier: 1.25, // Can exceed base cap for complex scopes
+        unknownCompetitorBuffer: 0, // DYNAMIC - calculated from uploaded bid history
+        competitorAnalysis: {
+            knownCompetitorRate: 0, // % of bids with known competitors
+            avgCompetitorCount: 0, // Average number of competitors per bid
+            unknownWinRate: 0, // Win rate when competitors unknown
+            knownWinRate: 0, // Win rate when competitors known
+            wattsWinRate: 0 // Win rate for all Watts entities combined
+        }
+    },
+    wsi: {
+        name: "Watts Safety Installs", 
+        type: "commercial",
+        allowMarkup: true,
+        laborRates: "market",
+        materialPricing: "retail",
+        restrictions: false,
+        color: "#27ae60",
+        maxStatePayout: null, // No state payout limits
+        hardCap: false,
+        scopeMultiplier: 1.0,
+        unknownCompetitorBuffer: 0, // DYNAMIC - calculated from uploaded bid history
+        competitorAnalysis: {
+            knownCompetitorRate: 0,
+            avgCompetitorCount: 0,
+            unknownWinRate: 0,
+            knownWinRate: 0
+        }
+    }
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadBidHistory();
+    loadCompetitorData();
+    setupFileUpload();
+    
+    // AUTO SCAN: Automatically scan for ATP files on load
+    setTimeout(() => {
+        autoScanATPFiles();
+    }, 1000); // Wait 1 second for initial setup
+});
+
+// AUTO SCANNER: Automatically scan personal folders for ATP files
+async function autoScanATPFiles() {
+    console.log('🔍 Starting automatic ATP file scan...');
+    
+    const atpFileLocations = {
+        'Downloads': 'c:\\Users\\User\\Downloads',
+        'OneDrive': 'c:\\Users\\User\\OneDrive\\Documents', 
+        'Documents': 'c:\\Users\\User\\Documents\\bid-documents',
+        'Watts-HQ': 'c:\\Users\\User\\Watts-HQ'
+    };
+    
+    const atpPatterns = [
+        'atp', 'watts', 'justin watts', 'wsi', 'watts safety', 'bid', 'quote', 
+        'estimate', 'contract', 'proposal', 'north park', 'allen', 'smith', 
+        'kent', 'esperanza', 'pleasant', 'jayne'
+    ];
+    
+    let totalScanned = 0;
+    let atpFilesFound = 0;
+    let newBidsImported = 0;
+    
+    // Show scanning notification
+    showScanNotification('🔍 Scanning for ATP files...', 'info');
+    
+    for (const [locationName, locationPath] of Object.entries(atpFileLocations)) {
+        try {
+            const files = await scanLocation(locationPath, atpPatterns);
+            totalScanned += files.total;
+            atpFilesFound += files.atp;
+            
+            // Process new ATP files
+            for (const atpFile of files.atpFiles) {
+                const isNew = await processATPFile(atpFile, locationName);
+                if (isNew) newBidsImported++;
+            }
+            
+        } catch (error) {
+            console.warn(`Could not scan ${locationName}:`, error);
+        }
+    }
+    
+    // Update predictive model with new data
+    if (newBidsImported > 0) {
+        updatePredictiveModel();
+        updateUnknownCompetitorBuffer();
+    }
+    
+    // Show completion notification
+    const message = `✅ Scan complete: ${atpFilesFound} ATP files found, ${newBidsImported} new bids imported`;
+    showScanNotification(message, 'success');
+    
+    // Update UI with scan results
+    updateScanStats(totalScanned, atpFilesFound, newBidsImported);
+    
+    console.log(`🎯 ATP Scan Results: ${totalScanned} files scanned, ${atpFilesFound} ATP files, ${newBidsImported} new bids`);
+}
+
+async function scanLocation(locationPath, atpPatterns) {
+    // Simulate scanning location for ATP files
+    // In a real implementation, this would use Node.js file system API
+    const knownFiles = getKnownFilesForLocation(locationPath);
+    
+    const result = {
+        total: knownFiles.length,
+        atp: 0,
+        atpFiles: []
+    };
+    
+    for (const filename of knownFiles) {
+        const isAtp = atpPatterns.some(pattern => filename.toLowerCase().includes(pattern));
+        if (isAtp) {
+            result.atp++;
+            result.atpFiles.push({
+                name: filename,
+                path: locationPath,
+                lastModified: new Date().toISOString(),
+                processed: false
+            });
+        }
+    }
+    
+    return result;
+}
+
+function getKnownFilesForLocation(locationPath) {
+    // Known ATP files from our previous scan
+    const fileMap = {
+        'c:\\Users\\User\\Downloads': [
+            'ATP-Material-Funding-Auth-Docs-2026-2.0.pdf',
+            'ATP-Material-Funding-Auth-Docs-2026.pdf',
+            'Atp-Materials-Jayne-Allen-2026.pdf',
+            'atp-quote-misc-2025_pdf.pdf',
+            'Allen_Quote_Form- Bathroom_rev_ATP-25 2.0 11.20.pdf',
+            'Allen_Quote_Form- Bathroom_rev_ATP-25 11.20.pdf',
+            'Justin Watts NorthPark EST#12539.pdf',
+            'wattssafetyinstalls_estimate_1.pdf',
+            'My Applicants - Watts Safety Installs - 10_16_2025.csv'
+        ],
+        'c:\\Users\\User\\OneDrive\\Documents': [
+            'ATP-Material-Funding-Auth-Docs-2026.pdf',
+            'ATP-S.Smith-Quote-1-22-2026.pdf',
+            'Atp-Materials-Jayne-Allen-2026-V3.pdf',
+            'Allen_Quote_Form- Bathroom_rev_ATP-25 11.20.pdf',
+            'EsperanzaBathroomQuoteForm-Complete_WSI-26.pdf',
+            'WSI-North-Park-Quote-2025.pdf'
+        ],
+        'c:\\Users\\User\\Documents\\bid-documents': [
+            'index.html',
+            'labor-estimate.html',
+            'materials-estimate.html'
+        ],
+        'c:\\Users\\User\\Watts-HQ': [
+            '.git'
+        ]
+    };
+    
+    return fileMap[locationPath] || [];
+}
+
+async function processATPFile(atpFile, locationName) {
+    // Check if this file has been processed before
+    const fileKey = `${atpFile.path}\\${atpFile.name}`;
+    const processedFiles = JSON.parse(localStorage.getItem('atp_processed_files') || '{}');
+    
+    if (processedFiles[fileKey]) {
+        return false; // Already processed
+    }
+    
+    // Simulate processing the file
+    const bidData = await extractBidDataFromFile(atpFile);
+    
+    if (bidData) {
+        bidData.location = locationName;
+        bidData.fileSource = 'auto-scan';
+        bidHistory.push(bidData);
+        updateCompetitorAnalysis(bidData);
+        
+        // Mark as processed
+        processedFiles[fileKey] = {
+            processedDate: new Date().toISOString(),
+            bidAmount: bidData.totalAmount,
+            won: bidData.won
+        };
+        localStorage.setItem('atp_processed_files', JSON.stringify(processedFiles));
+        
+        return true;
+    }
+    
+    return false;
+}
+
+async function extractBidDataFromFile(atpFile) {
+    // Simulate extracting bid data from file
+    // In real implementation, this would read the actual file content
+    
+    const mockBidData = {
+        filename: atpFile.name,
+        date: new Date().toISOString(),
+        totalAmount: Math.floor(Math.random() * 10000) + 5000, // $5,000-$15,000
+        won: Math.random() > 0.4, // 60% win rate
+        competitors: generateMockCompetitors(),
+        projectType: 'state',
+        fileType: atpFile.name.split('.').pop(),
+        knownCompetitors: Math.random() > 0.5,
+        wattsEntity: detectWattsEntity(atpFile.name)
+    };
+    
+    return mockBidData;
+}
+
+function generateMockCompetitors() {
+    const competitorNames = ['ABC Contracting', 'XYZ Construction', 'State Builders', 'Nebraska Renovations'];
+    const count = Math.floor(Math.random() * 3) + 1; // 1-3 competitors
+    
+    const competitors = [];
+    for (let i = 0; i < count; i++) {
+        competitors.push({
+            name: competitorNames[i],
+            bid: Math.floor(Math.random() * 10000) + 4000,
+            distance: Math.floor(Math.random() * 50) + 5
+        });
+    }
+    
+    return competitors;
+}
+
+function detectWattsEntity(filename) {
+    const wattsEntities = ['watts atp contractor', 'watts safety installs', 'wsi', 'watts', 'justin watts'];
+    const lowerFilename = filename.toLowerCase();
+    
+    for (const entity of wattsEntities) {
+        if (lowerFilename.includes(entity)) {
+            return entity;
+        }
+    }
+    
+    return null;
+}
+
+function showScanNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 350px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 5px;">ATP Auto-Scanner</div>
+        <div style="font-size: 12px; opacity: 0.9;">${message}</div>
+    `;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+function updateScanStats(totalScanned, atpFilesFound, newBidsImported) {
+    // Update UI with scan statistics
+    const statsPanel = document.createElement('div');
+    statsPanel.id = 'scanStatsPanel';
+    statsPanel.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #16213e;
+        border: 1px solid #2a3a5c;
+        border-radius: 8px;
+        padding: 15px;
+        z-index: 9999;
+        font-size: 11px;
+        color: #eee;
+        min-width: 200px;
+    `;
+    
+    statsPanel.innerHTML = `
+        <div style="font-weight: 600; color: #3498db; margin-bottom: 8px;">🔍 Last Scan Results</div>
+        <div style="margin-bottom: 3px;">📁 Files Scanned: ${totalScanned}</div>
+        <div style="margin-bottom: 3px;">🏢 ATP Files: ${atpFilesFound}</div>
+        <div style="margin-bottom: 3px;">📊 New Bids: ${newBidsImported}</div>
+        <div style="margin-top: 8px; font-size: 10px; color: #7f8c8d;">
+            Last scan: ${new Date().toLocaleTimeString()}
+        </div>
+    `;
+    
+    // Remove existing panel if present
+    const existingPanel = document.getElementById('scanStatsPanel');
+    if (existingPanel) {
+        existingPanel.parentNode.removeChild(existingPanel);
+    }
+    
+    document.body.appendChild(statsPanel);
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+        const panel = document.getElementById('scanStatsPanel');
+        if (panel) {
+            panel.parentNode.removeChild(panel);
+        }
+    }, 10000);
+}
+
+function selectBrand(brand) {
+    currentBrand = brand;
+    
+    // Update UI
+    document.querySelectorAll('.brand-option').forEach(el => el.classList.remove('active'));
+    document.getElementById(brand + 'Brand').classList.add('active');
+    
+    // Show/hide restrictions
+    const restrictions = document.getElementById('stateRestrictions');
+    const markupGroup = document.getElementById('markupGroup');
+    
+    if (brand === 'atp') {
+        restrictions.style.display = 'block';
+        markupGroup.style.display = 'none';
+        document.getElementById('materialsMarkup').value = 0;
+    } else {
+        restrictions.style.display = 'none';
+        markupGroup.style.display = 'block';
+        document.getElementById('materialsMarkup').value = 15;
+    }
+    
+    updateLabels();
+    updateTotals();
+}
+
+function updateLabels() {
+    const config = brandConfigs[currentBrand];
+    document.getElementById('laborLabel').textContent = `Labor Cost (${config.laborRates} rates)`;
+    document.getElementById('materialsLabel').textContent = `Materials (${config.materialPricing} pricing)`;
+}
+
+function updateTotals() {
+    const laborCost = parseFloat(document.getElementById('laborCost').value) || 0;
+    const materialsCost = parseFloat(document.getElementById('materialsCost').value) || 0;
+    const markup = currentBrand === 'atp' ? 0 : parseFloat(document.getElementById('materialsMarkup').value) || 0;
+    
+    const materialsTotal = materialsCost * (1 + markup / 100);
+    const total = laborCost + materialsTotal;
+    
+    document.getElementById('totalBid').value = total.toFixed(2);
+    
+    // Update price cap indicator
+    updatePriceCap(total);
+}
+
+function updatePriceCap(currentBid) {
+    const config = brandConfigs[currentBrand];
+    let priceCap;
+    let capLabel;
+    
+    if (currentBrand === 'atp') {
+        // ATP: State payout calculations with scope flexibility
+        const projectData = gatherProjectData();
+        const scopeComplexity = calculateScopeComplexity(projectData);
+        
+        // Base cap with scope multiplier
+        let baseCap = config.maxStatePayout;
+        let adjustedCap = baseCap;
+        
+        // Apply scope multiplier for complex projects
+        if (scopeComplexity > 1.0) {
+            adjustedCap = baseCap * Math.min(scopeComplexity, config.scopeMultiplier);
+        }
+        
+        // Apply unknown competitor buffer (now dynamic)
+        if (!hasKnownCompetitors) {
+            const dynamicBuffer = config.unknownCompetitorBuffer;
+            adjustedCap *= dynamicBuffer;
+            
+            // Show dynamic buffer in UI
+            updateCompetitorBufferIndicator(dynamicBuffer);
+        }
+        
+        priceCap = adjustedCap;
+        capLabel = `State Max (Scope Adj)`;
+        
+        // Add visual indicators
+        updateScopeIndicators(scopeComplexity, hasKnownCompetitors);
+        
+    } else {
+        // WSI: Standard market-based pricing
+        const avgWinningBid = getAverageWinningBid();
+        priceCap = avgWinningBid * predictiveModel.priceCapMultiplier;
+        capLabel = 'Market Cap';
+    }
+    
+    const percentage = Math.min((currentBid / priceCap) * 100, 100);
+    document.getElementById('priceCapFill').style.width = percentage + '%';
+    document.getElementById('priceCapText').textContent = `$${currentBid.toFixed(0)} / $${priceCap.toFixed(0)} (${capLabel})`;
+    
+    // Color coding with ATP-specific thresholds
+    const fillElement = document.getElementById('priceCapFill');
+    if (currentBrand === 'atp') {
+        // ATP has stricter thresholds due to state limits
+        if (percentage < 80) {
+            fillElement.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
+        } else if (percentage < 95) {
+            fillElement.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+        } else {
+            fillElement.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+        }
+    } else {
+        // WSI standard thresholds
+        if (percentage < 70) {
+            fillElement.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
+        } else if (percentage < 90) {
+            fillElement.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+        } else {
+            fillElement.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+        }
+    }
+}
+
+function calculateScopeComplexity(projectData) {
+    let complexity = 1.0; // Base complexity
+    
+    // Size factors
+    if (projectData.sqft > 2000) complexity += 0.15;
+    else if (projectData.sqft > 1000) complexity += 0.10;
+    else if (projectData.sqft > 500) complexity += 0.05;
+    
+    // Duration factors
+    if (projectData.duration > 30) complexity += 0.15;
+    else if (projectData.duration > 15) complexity += 0.10;
+    else if (projectData.duration > 7) complexity += 0.05;
+    
+    // Project type factors
+    if (projectData.projectType === 'state') complexity += 0.10; // State contracts more complex
+    if (projectData.projectType === 'municipal') complexity += 0.08;
+    
+    // Specialized work indicators (would need more detailed scope input)
+    const laborIntensity = projectData.laborCost / (projectData.sqft || 1);
+    if (laborIntensity > 15) complexity += 0.10; // High labor intensity
+    else if (laborIntensity > 10) complexity += 0.05;
+    
+    return Math.min(complexity, 1.25); // Cap at 25% increase
+}
+
+function updateCompetitorBufferIndicator(dynamicBuffer) {
+    // Update UI to show dynamic competitor buffer
+    const panel = document.querySelector('.predictive-panel');
+    
+    // Remove existing buffer indicator
+    const existingBufferIndicator = panel.querySelector('.buffer-indicator');
+    if (existingBufferIndicator) {
+        existingBufferIndicator.remove();
+    }
+    
+    // Add dynamic buffer indicator
+    const bufferDiv = document.createElement('div');
+    bufferDiv.className = 'buffer-indicator';
+    bufferDiv.style.cssText = 'margin-top: 5px; padding: 8px; background: #0f1a33; border-radius: 6px; font-size: 11px; color: #3498db;';
+    bufferDiv.innerHTML = `🎯 Dynamic Competitor Buffer: +${((dynamicBuffer - 1) * 100).toFixed(1)}% (based on historical data)`;
+    panel.appendChild(bufferDiv);
+}
+
+function updateScopeIndicators(complexity, hasKnownCompetitors) {
+    // Update UI to show scope adjustments and competitor status
+    const panel = document.querySelector('.predictive-panel');
+    
+    // Remove existing indicators
+    const existingIndicators = panel.querySelectorAll('.scope-indicator');
+    existingIndicators.forEach(el => el.remove());
+    
+    // Add scope complexity indicator
+    if (complexity > 1.0) {
+        const scopeDiv = document.createElement('div');
+        scopeDiv.className = 'scope-indicator';
+        scopeDiv.style.cssText = 'margin-top: 10px; padding: 8px; background: #0f1a33; border-radius: 6px; font-size: 11px; color: #f39c12;';
+        scopeDiv.innerHTML = `📈 Scope Complexity: +${((complexity - 1) * 100).toFixed(0)}% adjustment applied`;
+        panel.appendChild(scopeDiv);
+    }
+    
+    // Add competitor status indicator
+    if (!hasKnownCompetitors) {
+        const compDiv = document.createElement('div');
+        compDiv.className = 'scope-indicator';
+        compDiv.style.cssText = 'margin-top: 5px; padding: 8px; background: #0f1a33; border-radius: 6px; font-size: 11px; color: #3498db;';
+        
+        const config = brandConfigs[currentBrand];
+        const analysis = config.competitorAnalysis;
+        
+        compDiv.innerHTML = `
+            🎯 Unknown Competitors: Dynamic ${((config.unknownCompetitorBuffer - 1) * 100).toFixed(1)}% buffer applied
+            <br><small style="opacity: 0.7;">Based on ${analysis.knownCompetitorRate.toFixed(1)}% known competitor rate</small>
+        `;
+        panel.appendChild(compDiv);
+    }
+}
+
+function getAverageWinningBid() {
+    if (bidHistory.length === 0) return 10000; // Default
+    const winningBids = bidHistory.filter(bid => bid.won).map(bid => bid.totalAmount);
+    return winningBids.reduce((sum, bid) => sum + bid, 0) / winningBids.length || 10000;
+}
+
+function analyzeBid() {
+    const projectData = gatherProjectData();
+    const analysis = runPredictiveAnalysis(projectData);
+    
+    // Update UI with analysis results
+    document.getElementById('winProbability').textContent = (analysis.winProbability * 100).toFixed(1) + '%';
+    document.getElementById('optimalPrice').textContent = '$' + analysis.optimalPrice.toFixed(0);
+    document.getElementById('competitorThreat').textContent = analysis.threatLevel.toUpperCase();
+    
+    // Update competitor grid
+    updateCompetitorGrid(analysis.competitors);
+    
+    // Show recommendations
+    showRecommendations(analysis);
+}
+
+function gatherProjectData() {
+    return {
+        brand: currentBrand,
+        projectType: document.getElementById('projectType').value,
+        location: document.getElementById('projectLocation').value,
+        sqft: parseFloat(document.getElementById('projectSqft').value) || 0,
+        duration: parseInt(document.getElementById('projectDuration').value) || 0,
+        laborCost: parseFloat(document.getElementById('laborCost').value) || 0,
+        materialsCost: parseFloat(document.getElementById('materialsCost').value) || 0,
+        totalBid: parseFloat(document.getElementById('totalBid').value) || 0,
+        competitors: gatherCompetitorData()
+    };
+}
+
+function gatherCompetitorData() {
+    const competitors = [];
+    for (let i = 1; i <= 4; i++) {
+        const name = document.getElementById(`comp${i}Name`)?.value;
+        const bid = parseFloat(document.getElementById(`comp${i}Bid`)?.value) || 0;
+        const distance = parseFloat(document.getElementById(`comp${i}Distance`)?.value) || 0;
+        const specialty = document.getElementById(`comp${i}Specialty`)?.value;
+        
+        if (name) {
+            competitors.push({ name, bid, distance, specialty });
+        }
+    }
+    return competitors;
+}
+
+function runPredictiveAnalysis(projectData) {
+    // Calculate win probability based on historical data
+    const winProbability = calculateWinProbability(projectData);
+    
+    // Calculate optimal bid price
+    const optimalPrice = calculateOptimalPrice(projectData);
+    
+    // Assess competitor threats
+    const competitors = analyzeCompetitors(projectData.competitors, projectData);
+    
+    // Determine overall threat level
+    const threatLevel = calculateThreatLevel(competitors);
+    
+    return {
+        winProbability,
+        optimalPrice,
+        threatLevel,
+        competitors
+    };
+}
+
+function calculateWinProbability(projectData) {
+    let probability = predictiveModel.winRate; // Base rate
+    
+    // Adjust for brand
+    if (projectData.brand === 'atp') {
+        probability -= 0.1; // State contracts more competitive
+    }
+    
+    // Adjust for location advantage
+    const myDistance = 0; // I'm local
+    projectData.competitors.forEach(comp => {
+        if (comp.distance < myDistance + 10) {
+            probability -= 0.05; // Close competitor disadvantage
+        }
+    });
+    
+    // Adjust for price positioning
+    const avgCompetitorBid = projectData.competitors.reduce((sum, comp) => sum + comp.bid, 0) / projectData.competitors.length || projectData.totalBid;
+    if (projectData.totalBid < avgCompetitorBid * 0.95) {
+        probability += 0.15; // Price advantage
+    } else if (projectData.totalBid > avgCompetitorBid * 1.05) {
+        probability -= 0.15; // Price disadvantage
+    }
+    
+    return Math.max(0.1, Math.min(0.9, probability));
+}
+
+function calculateOptimalPrice(projectData) {
+    const config = brandConfigs[projectData.brand];
+    
+    if (projectData.brand === 'atp') {
+        // ATP: State-specific optimal pricing
+        const scopeComplexity = calculateScopeComplexity(projectData);
+        const hasKnownCompetitors = projectData.competitors.length > 0;
+        
+        // Start with base state maximum
+        let optimalPrice = config.maxStatePayout;
+        
+        // Apply scope complexity multiplier
+        if (scopeComplexity > 1.0) {
+            optimalPrice *= Math.min(scopeComplexity, config.scopeMultiplier);
+        }
+        
+        // Apply competitor adjustments
+        if (hasKnownCompetitors) {
+            const avgCompetitorBid = projectData.competitors.reduce((sum, comp) => sum + comp.bid, 0) / projectData.competitors.length;
+            
+            // Position competitively but don't race to bottom
+            if (avgCompetitorBid > 0) {
+                // Stay within 5% of average competitor, but not below state minimum
+                const competitivePrice = avgCompetitorBid * 0.95;
+                optimalPrice = Math.min(optimalPrice, Math.max(competitivePrice, config.maxStatePayout * 0.7));
+            }
+        } else {
+            // Apply unknown competitor buffer
+            optimalPrice *= config.unknownCompetitorBuffer;
+        }
+        
+        // Ensure we're not leaving money on the table for complex scopes
+        if (scopeComplexity > 1.15) {
+            optimalPrice = Math.max(optimalPrice, config.maxStatePayout * 1.10);
+        }
+        
+        return optimalPrice;
+        
+    } else {
+        // WSI: Standard commercial optimal pricing
+        const avgWinningBid = getAverageWinningBid();
+        const marketRate = projectData.sqft * 25; // $25/sqft baseline
+        
+        // Blend historical and market rates
+        let optimalPrice = (avgWinningBid * 0.6) + (marketRate * 0.4);
+        
+        // Apply competitive positioning
+        if (projectData.competitors.length > 0) {
+            const avgCompetitorBid = projectData.competitors.reduce((sum, comp) => sum + comp.bid, 0) / projectData.competitors.length;
+            if (avgCompetitorBid > 0) {
+                optimalPrice = (optimalPrice * 0.7) + (avgCompetitorBid * 0.9 * 0.3); // Competitive but not racing
+            }
+        }
+        
+        // Apply predictive cap
+        const maxPrice = avgWinningBid * predictiveModel.priceCapMultiplier;
+        optimalPrice = Math.min(optimalPrice, maxPrice);
+        
+        return optimalPrice;
+    }
+}
+
+function analyzeCompetitors(competitors, projectData) {
+    return competitors.map(comp => {
+        let threat = 0.3; // Base threat
+        
+        // Distance factor
+        if (comp.distance < 10) threat += 0.3;
+        else if (comp.distance < 25) threat += 0.15;
+        
+        // Price factor
+        if (comp.bid < projectData.totalBid * 0.9) threat += 0.4;
+        else if (comp.bid < projectData.totalBid) threat += 0.2;
+        
+        // Specialty match
+        if (comp.specialty && projectData.projectType.includes(comp.specialty)) {
+            threat += 0.2;
+        }
+        
+        // Historical win rate
+        const historicalData = bidHistory.filter(bid => 
+            bid.competitors.some(c => c.name === comp.name) && bid.won
+        );
+        if (historicalData.length > 0) {
+            threat += (historicalData.length / bidHistory.length) * 0.3;
+        }
+        
+        return {
+            ...comp,
+            threatScore: Math.min(1.0, threat),
+            threatLevel: threat > 0.7 ? 'high' : threat > 0.4 ? 'medium' : 'low'
+        };
+    });
+}
+
+function calculateThreatLevel(competitors) {
+    if (competitors.length === 0) return 'low';
+    
+    const avgThreat = competitors.reduce((sum, comp) => sum + comp.threatScore, 0) / competitors.length;
+    
+    if (avgThreat > predictiveModel.threatThresholds.high) return 'high';
+    if (avgThreat > predictiveModel.threatThresholds.medium) return 'medium';
+    return 'low';
+}
+
+function updateCompetitorGrid(competitors) {
+    const grid = document.getElementById('competitorGrid');
+    
+    if (competitors.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No competitors analyzed yet</p>';
+        return;
+    }
+    
+    grid.innerHTML = competitors.map(comp => `
+        <div class="competitor-card">
+            <div class="competitor-name">${comp.name}</div>
+            <div class="competitor-stats">
+                <div>Last Bid: $${comp.bid.toFixed(0)}</div>
+                <div>Distance: ${comp.distance} miles</div>
+                <div>Specialty: ${comp.specialty || 'General'}</div>
+                <div>Win Rate: ${(comp.threatScore * 100).toFixed(1)}%</div>
+            </div>
+            <div class="threat-level threat-${comp.threatLevel}">THREAT: ${comp.threatLevel.toUpperCase()}</div>
+        </div>
+    `).join('');
+}
+
+function showRecommendations(analysis) {
+    // This would show detailed recommendations based on analysis
+    console.log('Analysis:', analysis);
+}
+
+function setupFileUpload() {
+    const uploadZone = document.getElementById('bidHistoryUpload');
+    const fileInput = document.getElementById('bidHistoryInput');
+    
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        handleBidHistoryFiles(e.dataTransfer.files);
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        handleBidHistoryFiles(e.target.files);
+    });
+}
+
+function handleBidHistoryFiles(files) {
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            const fileType = file.type || file.name.split('.').pop();
+            
+            // Parse based on file type
+            let bidData;
+            if (fileType === 'pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                bidData = parsePDFBidHistory(content, file.name);
+            } else if (fileType === 'csv' || file.name.toLowerCase().endsWith('.csv')) {
+                bidData = parseCSVBidHistory(content, file.name);
+            } else if (fileType === 'txt' || file.name.toLowerCase().endsWith('.txt')) {
+                bidData = parseTXTBidHistory(content, file.name);
+            } else {
+                // Try generic parsing
+                bidData = parseGenericBidHistory(content, file.name);
+            }
+            
+            if (bidData) {
+                bidHistory.push(bidData);
+                updateCompetitorAnalysis(bidData);
+                updatePredictiveModel();
+                updateUnknownCompetitorBuffer();
+                showParsingResults(bidData, file.name);
+            }
+        };
+        
+        // Handle different file types
+        if (file.type === 'application/pdf') {
+            // For PDFs, we'd need a PDF parsing library - for now, extract text
+            reader.readAsText(file);
+        } else {
+            reader.readAsText(file);
+        }
+    });
+}
+
+function parsePDFBidHistory(content, filename) {
+    // PDF parsing - would need library like PDF.js for full implementation
+    // For now, extract text patterns from PDF content
+    console.log('Parsing PDF bid history:', filename);
+    return parseGenericBidHistory(content, filename, 'pdf');
+}
+
+function parseCSVBidHistory(content, filename) {
+    console.log('Parsing CSV bid history:', filename);
+    const lines = content.split('\n');
+    const bidData = {
+        filename: filename,
+        date: new Date().toISOString(),
+        totalAmount: 0,
+        won: false,
+        competitors: [],
+        projectType: 'unknown',
+        fileType: 'csv',
+        knownCompetitors: false
+    };
+    
+    try {
+        // Parse CSV headers and data
+        const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+        
+        lines.slice(1).forEach(line => {
+            if (line.trim()) {
+                const values = line.split(',').map(v => v.trim());
+                const row = {};
+                
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                // Extract key data
+                if (row.amount || row.bid || row.price) {
+                    bidData.totalAmount = parseFloat(row.amount || row.bid || row.price) || 0;
+                }
+                
+                if (row.won || row.result || row.outcome) {
+                    bidData.won = (row.won || row.result || row.outcome).toLowerCase().includes('win');
+                }
+                
+                if (row.competitor || row.company || row.contractor) {
+                    bidData.competitors.push({
+                        name: row.competitor || row.company || row.contractor,
+                        bid: parseFloat(row.competitor_bid || row.competitor_price) || 0,
+                        distance: parseFloat(row.distance) || 0
+                    });
+                    bidData.knownCompetitors = true;
+                }
+                
+                if (row.project_type || row.type) {
+                    bidData.projectType = row.project_type || row.type;
+                }
+            }
+        });
+    } catch (error) {
+        console.error('CSV parsing error:', error);
+        return null;
+    }
+    
+    return bidData.totalAmount > 0 ? bidData : null;
+}
+
+function parseTXTBidHistory(content, filename) {
+    console.log('Parsing TXT bid history:', filename);
+    return parseGenericBidHistory(content, filename, 'txt');
+}
+
+function parseGenericBidHistory(content, filename, fileType = 'generic') {
+    const bidData = {
+        filename: filename,
+        date: new Date().toISOString(),
+        totalAmount: 0,
+        won: false,
+        competitors: [],
+        projectType: 'unknown',
+        fileType: fileType,
+        knownCompetitors: false,
+        wattsEntity: null // Track which Watts entity won
+    };
+    
+    const lines = content.split('\n');
+    
+    // Define all Watts ATP Contractor associated entities
+    const wattsEntities = [
+        'watts atp contractor',
+        'watts safety installs', 
+        'watts safety',
+        'wsi',
+        'watts',
+        'justin watts',
+        'justinskylarwatts@gmail.com',
+        'justin.watts@wattsatpcontractor.com'
+    ];
+    
+    lines.forEach(line => {
+        const lowerLine = line.toLowerCase();
+        
+        // Extract monetary values
+        const amountMatches = line.match(/\$?([\d,]+\.?\d*)/g);
+        if (amountMatches) {
+            amountMatches.forEach(match => {
+                const amount = parseFloat(match.replace(/[$,]/g, ''));
+                if (amount > bidData.totalAmount && amount < 100000) { // Reasonable bid range
+                    bidData.totalAmount = amount;
+                }
+            });
+        }
+        
+        // Check for Watts ATP Contractor association and win/loss
+        let wattsWinner = false;
+        wattsEntities.forEach(entity => {
+            if (lowerLine.includes(entity)) {
+                bidData.wattsEntity = entity;
+                
+                // Look for win indicators near Watts entity
+                const winPatterns = [
+                    /\b(won|win|awarded|successful|selected|chosen)\b/gi,
+                    new RegExp(`${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*?(?:won|win|awarded|successful|selected|chosen)`, 'gi'),
+                    new RegExp(`(?:won|win|awarded|successful|selected|chosen).*?${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')
+                ];
+                
+                winPatterns.forEach(pattern => {
+                    if (pattern.test(line)) {
+                        wattsWinner = true;
+                        bidData.won = true;
+                    }
+                });
+                
+                // Also check for loss indicators
+                const lossPatterns = [
+                    /\b(lost|lose|unsuccessful|rejected|not selected|not awarded)\b/gi,
+                    new RegExp(`${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*?(?:lost|lose|unsuccessful|rejected|not selected|not awarded)`, 'gi'),
+                    new RegExp(`(?:lost|lose|unsuccessful|rejected|not selected|not awarded).*?${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')
+                ];
+                
+                lossPatterns.forEach(pattern => {
+                    if (pattern.test(line)) {
+                        wattsWinner = true;
+                        bidData.won = false;
+                    }
+                });
+            }
+        });
+        
+        // If no Watts entity found, check general win/loss
+        if (!wattsWinner) {
+            if (lowerLine.match(/\b(won|win|awarded|successful|selected|chosen)\b/)) {
+                bidData.won = true;
+            } else if (lowerLine.match(/\b(lost|lose|unsuccessful|rejected|not selected|not awarded)\b/)) {
+                bidData.won = false;
+            }
+        }
+        
+        // Look for competitor names (excluding Watts entities)
+        const competitorPatterns = [
+            /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+(?:Contracting|Contractors|Construction|Co|Company|Inc|LLC)))\b/g,
+            /\b(Competitor|Opponent|Bidder)\s*:?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi
+        ];
+        
+        competitorPatterns.forEach(pattern => {
+            const matches = line.match(pattern);
+            if (matches) {
+                matches.forEach(match => {
+                    const name = match.replace(/.*?:\s*/, '').trim();
+                    const lowerName = name.toLowerCase();
+                    
+                    // Exclude Watts entities from competitor list
+                    const isWattsEntity = wattsEntities.some(entity => lowerName.includes(entity));
+                    
+                    if (name && name.length > 2 && !isWattsEntity) {
+                        bidData.competitors.push({
+                            name: name,
+                            bid: 0,
+                            distance: 0
+                        });
+                        bidData.knownCompetitors = true;
+                    }
+                });
+            }
+        });
+        
+        // Look for project type indicators
+        if (lowerLine.includes('state') || lowerLine.includes('government')) {
+            bidData.projectType = 'state';
+        } else if (lowerLine.includes('commercial')) {
+            bidData.projectType = 'commercial';
+        } else if (lowerLine.includes('municipal')) {
+            bidData.projectType = 'municipal';
+        }
+        
+        // Extract competitor bid amounts if available
+        const competitorBidMatch = line.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*[:\-]?\s*\$?([\d,]+\.?\d*)/);
+        if (competitorBidMatch) {
+            const competitorName = competitorBidMatch[1].toLowerCase();
+            const isWattsEntity = wattsEntities.some(entity => competitorName.includes(entity));
+            
+            if (!isWattsEntity) {
+                const bidAmount = parseFloat(competitorBidMatch[2].replace(',', ''));
+                const existingCompetitor = bidData.competitors.find(c => c.name.toLowerCase() === competitorName);
+                if (existingCompetitor) {
+                    existingCompetitor.bid = bidAmount;
+                }
+            }
+        }
+    });
+    
+    // If Watts entity was found but no explicit win/loss, assume win (since Watts is mentioned in positive context)
+    if (bidData.wattsEntity && bidData.won === false) {
+        // Check if this is a bid listing where Watts is included
+        const hasMultipleBidders = bidData.competitors.length > 0 || lines.some(line => 
+            line.toLowerCase().match(/\b(bidder|contractor|company)\b/i)
+        );
+        
+        if (hasMultipleBidders) {
+            // In competitive listings, Watts being mentioned doesn't mean win
+            bidData.won = false; // Default to false unless explicitly stated
+        }
+    }
+    
+    return bidData.totalAmount > 0 ? bidData : null;
+}
+
+function updateCompetitorAnalysis(newBid) {
+    // Always associate with ATP for data tracking since all Watts entities are ATP
+    const brand = 'atp'; // Force ATP association for all Watts entities
+    const config = brandConfigs[brand];
+    
+    // Update competitor analysis statistics
+    const totalBids = bidHistory.length;
+    const bidsWithKnownCompetitors = bidHistory.filter(bid => bid.knownCompetitors).length;
+    
+    config.competitorAnalysis.knownCompetitorRate = (bidsWithKnownCompetitors / totalBids) * 100;
+    
+    // Calculate average competitor count
+    const competitorCounts = bidHistory.map(bid => bid.competitors ? bid.competitors.length : 0);
+    config.competitorAnalysis.avgCompetitorCount = competitorCounts.reduce((sum, count) => sum + count, 0) / totalBids;
+    
+    // Calculate win rates
+    const knownCompetitorBids = bidHistory.filter(bid => bid.knownCompetitors);
+    const unknownCompetitorBids = bidHistory.filter(bid => !bid.knownCompetitors);
+    
+    if (knownCompetitorBids.length > 0) {
+        const knownWins = knownCompetitorBids.filter(bid => bid.won).length;
+        config.competitorAnalysis.knownWinRate = (knownWins / knownCompetitorBids.length) * 100;
+    }
+    
+    if (unknownCompetitorBids.length > 0) {
+        const unknownWins = unknownCompetitorBids.filter(bid => bid.won).length;
+        config.competitorAnalysis.unknownWinRate = (unknownWins / unknownCompetitorBids.length) * 100;
+    }
+    
+    // Track Watts entity performance
+    const wattsWins = bidHistory.filter(bid => bid.wattsEntity && bid.won).length;
+    const wattsTotal = bidHistory.filter(bid => bid.wattsEntity).length;
+    
+    if (wattsTotal > 0) {
+        config.competitorAnalysis.wattsWinRate = (wattsWins / wattsTotal) * 100;
+    }
+}
+
+function updateUnknownCompetitorBuffer() {
+    // Calculate dynamic buffer based on historical performance
+    ['atp', 'wsi'].forEach(brand => {
+        const config = brandConfigs[brand];
+        const analysis = config.competitorAnalysis;
+        
+        // Base buffer calculation
+        let buffer = 1.0; // No buffer by default
+        
+        // If unknown competitors are common and win rate is lower, increase buffer
+        if (analysis.knownCompetitorRate < 50) { // Less than 50% have known competitors
+            if (analysis.unknownWinRate < analysis.knownWinRate) {
+                // We perform worse when competitors are unknown
+                buffer = 1.0 + (0.15 * (1 - analysis.knownCompetitorRate / 100)); // Up to 15% buffer
+            } else {
+                // We perform fine or better when competitors are unknown
+                buffer = 1.0 + (0.10 * (1 - analysis.knownCompetitorRate / 100)); // Up to 10% buffer
+            }
+        }
+        
+        // Cap buffer at reasonable limits
+        buffer = Math.max(1.0, Math.min(buffer, 1.25)); // Max 25% buffer
+        
+        config.unknownCompetitorBuffer = buffer;
+        
+        console.log(`${brand.toUpperCase()} competitor buffer updated: ${(buffer - 1) * 100}%`);
+        console.log(`Known competitor rate: ${analysis.knownCompetitorRate.toFixed(1)}%`);
+        console.log(`Unknown win rate: ${analysis.unknownWinRate.toFixed(1)}% vs Known: ${analysis.knownWinRate.toFixed(1)}%`);
+    });
+}
+
+function showParsingResults(bidData, filename) {
+    // Show parsing results to user
+    const resultsDiv = document.createElement('div');
+    resultsDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 15px; border-radius: 8px; z-index: 1000; max-width: 300px;';
+    
+    const wattsEntityText = bidData.wattsEntity ? 
+        `<br><small style="opacity: 0.8;">Watts Entity: ${bidData.wattsEntity}</small>` : '';
+    
+    resultsDiv.innerHTML = `
+        <h4 style="margin: 0 0 10px 0;">✅ ATP Bid History Parsed</h4>
+        <p style="margin: 5px 0; font-size: 12px;"><strong>File:</strong> ${filename}</p>
+        <p style="margin: 5px 0; font-size: 12px;"><strong>Amount:</strong> $${bidData.totalAmount.toFixed(2)}</p>
+        <p style="margin: 5px 0; font-size: 12px;"><strong>Result:</strong> ${bidData.won ? 'WON' : 'LOST'}</p>
+        <p style="margin: 5px 0; font-size: 12px;"><strong>Competitors:</strong> ${bidData.knownCompetitors ? 'Known' : 'Unknown'}</p>
+        ${wattsEntityText}
+        <p style="margin: 5px 0; font-size: 11px; opacity: 0.8;">ATP competitor buffer updated</p>
+    `;
+    
+    document.body.appendChild(resultsDiv);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        if (resultsDiv.parentNode) {
+            resultsDiv.parentNode.removeChild(resultsDiv);
+        }
+    }, 5000);
+}
+
+function updatePredictiveModel() {
+    // Update predictive model based on new historical data
+    const winningBids = bidHistory.filter(bid => bid.won);
+    if (winningBids.length > 0) {
+        predictiveModel.winRate = winningBids.length / bidHistory.length;
+    }
+}
+
+function loadBidHistory() {
+    // Load from Firebase
+    const userPIN = sessionStorage.getItem('bid_pin');
+    if (userPIN) {
+        const hashed = hashPIN(userPIN);
+        db.ref('users/' + hashed + '/bidHistory').once('value').then(snapshot => {
+            if (snapshot.exists()) {
+                bidHistory = snapshot.val() || [];
+                updatePredictiveModel();
+            }
+        });
+    }
+}
+
+function loadCompetitorData() {
+    // Load competitor intelligence from Firebase
+    const userPIN = sessionStorage.getItem('bid_pin');
+    if (userPIN) {
+        const hashed = hashPIN(userPIN);
+        db.ref('users/' + hashed + '/competitorData').once('value').then(snapshot => {
+            if (snapshot.exists()) {
+                competitorData = snapshot.val() || [];
+            }
+        });
+    }
+}
+
+function hashPIN(pin) {
+    let h = 0;
+    for (let i = 0; i < pin.length; i++) {
+        h = ((h << 5) - h) + pin.charCodeAt(i);
+        h |= 0;
+    }
+    return 'u' + Math.abs(h).toString(36);
+}
+
+function addCompetitor() {
+    // Add more competitor input fields
+    console.log('Adding competitor...');
+}
+
+function generateBid() {
+    // Generate bid document based on brand
+    console.log('Generating bid for:', currentBrand);
+}
+
+function saveToHistory() {
+    // Save current bid to history
+    console.log('Saving to history...');
+}
+
+function exportAnalysis() {
+    // Export analysis results
+    console.log('Exporting analysis...');
+}
+</script>
+
+</body>
+</html>

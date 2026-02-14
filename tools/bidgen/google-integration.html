@@ -185,36 +185,58 @@ let gapiInited = false;
 
 // Initialize Google API
 function initGoogleApi() {
-    gapi.load('client', () => {
-        gapi.client.init({
-            apiKey: API_KEY,
-            clientId: CLIENT_ID,
-            scope: SCOPES.join(' '),
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest', 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest']
-        }).then(() => {
-            gapiInited = true;
-            console.log('Google API initialized');
-            updateAuthStatus();
-        }, (error) => {
-            console.error('Error initializing Google API:', error);
-            showNotification('❌ Failed to initialize Google API', 'error');
+    console.log('Initializing Google API...');
+    
+    try {
+        gapi.load('client', () => {
+            console.log('GAPI client loaded, initializing...');
+            
+            gapi.client.init({
+                apiKey: API_KEY,
+                clientId: CLIENT_ID,
+                scope: SCOPES.join(' '),
+                discoveryDocs: [
+                    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
+                    'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'
+                ]
+            }).then(() => {
+                gapiInited = true;
+                console.log('✅ Google API initialized successfully');
+                updateAuthStatus();
+                showNotification('✅ Google API ready', 'success');
+            }, (error) => {
+                console.error('❌ Error initializing Google API:', error);
+                showNotification(`❌ Google API Error: ${error.error?.message || 'Unknown error'}`, 'error');
+            });
         });
-    });
+    } catch (error) {
+        console.error('❌ Failed to load GAPI:', error);
+        showNotification('❌ Failed to load Google API library', 'error');
+    }
 }
 
 // Initialize OAuth2 token client
 function initTokenClient() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES.join(' '),
-        callback: (tokenResponse) => {
-            if (tokenResponse && tokenResponse.access_token) {
-                handleAuthSuccess(tokenResponse);
-            } else {
-                showNotification('❌ Authentication failed', 'error');
+    console.log('Initializing OAuth token client...');
+    
+    try {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: CLIENT_ID,
+            scope: SCOPES.join(' '),
+            callback: (tokenResponse) => {
+                console.log('Token response received:', tokenResponse);
+                if (tokenResponse && tokenResponse.access_token) {
+                    handleAuthSuccess(tokenResponse);
+                } else {
+                    showNotification('❌ Authentication failed - no token received', 'error');
+                }
             }
-        }
-    });
+        });
+        console.log('✅ Token client initialized');
+    } catch (error) {
+        console.error('❌ Failed to initialize token client:', error);
+        showNotification('❌ Failed to initialize OAuth client', 'error');
+    }
 }
 
 // Handle successful authentication
@@ -272,28 +294,36 @@ function showNotification(message, type = 'info') {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Page loaded, checking Google APIs...');
+    
     // Wait for Google APIs to load
     setTimeout(() => {
+        console.log('Checking GAPI availability...');
+        console.log('typeof gapi:', typeof gapi);
+        console.log('typeof google:', typeof google);
+        
         if (typeof gapi !== 'undefined') {
+            console.log('✅ GAPI found, initializing...');
             gapi.load('client', () => {
                 initGoogleApi();
             });
         } else {
-            console.error('Google API failed to load');
-            showNotification('❌ Google API failed to load', 'error');
+            console.error('❌ Google API (gapi) not loaded');
+            showNotification('❌ Google API failed to load - check internet connection', 'error');
         }
         
         // Initialize OAuth2
         if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+            console.log('✅ Google Identity Services found, initializing token client...');
             initTokenClient();
         } else {
-            console.error('Google Identity Services failed to load');
+            console.error('❌ Google Identity Services not loaded');
             showNotification('❌ Google Identity Services failed to load', 'error');
         }
         
         // Check existing authentication
         updateAuthStatus();
-    }, 1000);
+    }, 2000); // Increased wait time
 });
 
 // Placeholder functions for scanning (to be implemented)

@@ -194,11 +194,7 @@ function initGoogleApi() {
             gapi.client.init({
                 apiKey: API_KEY,
                 clientId: CLIENT_ID,
-                scope: SCOPES.join(' '),
-                discoveryDocs: [
-                    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
-                    'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'
-                ]
+                scope: SCOPES.join(' ')
             }).then(() => {
                 gapiInited = true;
                 console.log('✅ Google API initialized successfully');
@@ -206,7 +202,9 @@ function initGoogleApi() {
                 showNotification('✅ Google API ready', 'success');
             }, (error) => {
                 console.error('❌ Error initializing Google API:', error);
-                showNotification(`❌ Google API Error: ${error.error?.message || 'Unknown error'}`, 'error');
+                console.error('Error details:', JSON.stringify(error, null, 2));
+                const errorMessage = error.error?.message || error.message || JSON.stringify(error);
+                showNotification(`❌ Google API Error: ${errorMessage}`, 'error');
             });
         });
     } catch (error) {

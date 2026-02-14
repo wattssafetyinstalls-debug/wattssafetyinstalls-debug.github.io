@@ -79,6 +79,9 @@
             <button class="btn btn-google" onclick="authenticateGoogle()">
                 🔗 Connect Google Account
             </button>
+            <button class="btn btn-secondary" onclick="forceShowServices()" style="margin-left: 10px;">
+                🔄 Show Services (Debug)
+            </button>
             <div class="auth-status" id="authStatus">
                 <p style="color: #7f8c8d;">Not connected</p>
             </div>
@@ -233,6 +236,7 @@ function initTokenClient() {
             callback: (tokenResponse) => {
                 console.log('Token response received:', tokenResponse);
                 if (tokenResponse && tokenResponse.access_token) {
+                    console.log('Calling handleAuthSuccess...');
                     handleAuthSuccess(tokenResponse);
                 } else {
                     showNotification('❌ Authentication failed - no token received', 'error');
@@ -248,6 +252,8 @@ function initTokenClient() {
 
 // Handle successful authentication
 function handleAuthSuccess(tokenResponse) {
+    console.log('handleAuthSuccess called with:', tokenResponse);
+    
     // Store token securely
     localStorage.setItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY, JSON.stringify(tokenResponse));
     
@@ -256,13 +262,44 @@ function handleAuthSuccess(tokenResponse) {
     showNotification('✅ Successfully connected to Google account!', 'success');
     
     // Show the services card with scan buttons
-    document.getElementById('servicesCard').style.display = 'block';
+    console.log('Showing services card...');
+    const servicesCard = document.getElementById('servicesCard');
+    if (servicesCard) {
+        servicesCard.style.display = 'block';
+        console.log('Services card displayed');
+    } else {
+        console.error('Services card not found!');
+    }
     
     // Enable scan buttons
-    document.getElementById('driveStatus').textContent = 'Connected';
-    document.getElementById('driveStatus').className = 'service-status status-connected';
-    document.getElementById('gmailStatus').textContent = 'Connected';
-    document.getElementById('gmailStatus').className = 'service-status status-connected';
+    const driveStatus = document.getElementById('driveStatus');
+    const gmailStatus = document.getElementById('gmailStatus');
+    
+    if (driveStatus) {
+        driveStatus.textContent = 'Connected';
+        driveStatus.className = 'service-status status-connected';
+    }
+    
+    if (gmailStatus) {
+        gmailStatus.textContent = 'Connected';
+        gmailStatus.className = 'service-status status-connected';
+    }
+    
+    console.log('Authentication success handling complete');
+}
+
+// Debug function to force show services
+function forceShowServices() {
+    console.log('Force showing services card...');
+    const servicesCard = document.getElementById('servicesCard');
+    if (servicesCard) {
+        servicesCard.style.display = 'block';
+        console.log('Services card forced to display');
+        showNotification('🔄 Services card forced to show (debug)', 'info');
+    } else {
+        console.error('Services card element not found!');
+        showNotification('❌ Services card element not found!', 'error');
+    }
 }
 
 // Update authentication status

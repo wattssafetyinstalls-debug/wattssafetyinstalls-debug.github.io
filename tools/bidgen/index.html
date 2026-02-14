@@ -183,12 +183,32 @@
         <button class="logout-btn" onclick="logout()">Lock</button>
     </div>
 
-    <div class="catalog-bar" id="catalogBar" style="display:none;">
-        <span class="cb-stat">Catalog: <span class="cb-num" id="cbLaborCount">0</span> labor</span>
-        <span class="cb-stat"><span class="cb-num" id="cbMatCount">0</span> materials</span>
-        <span class="cb-stat"><span class="cb-num" id="cbJobCount">0</span> past jobs</span>
-        <span class="cb-inflation">Inflation %/yr <input type="number" id="inflationRate" value="3.2" step="0.1" min="0" max="20" onchange="saveInflationRate()"></span>
-        <button class="predict-btn" onclick="predictiveFill()">&#9889; Smart Fill from History</button>
+    <div class="catalog-bar" id="catalogBar">
+        <div class="catalog-item">
+            <div class="catalog-icon">&#x1F4C9;</div>
+            <div class="catalog-label">Market Rate Analysis</div>
+            <input type="number" id="marketRate" placeholder="25.00" step="0.01" onchange="updateMarketRates()">
+        </div>
+        <div class="catalog-item">
+            <div class="catalog-icon">&#x1F4C8;</div>
+            <div class="catalog-label">Inflation %/yr</div>
+            <input type="number" id="inflationRate" placeholder="3.2" step="0.1" onchange="saveInflationRate()">
+        </div>
+        <div class="catalog-item">
+            <div class="catalog-icon">&#x1F50D;</div>
+            <div class="catalog-label">Smart Fill from History</div>
+            <button class="predict-btn" onclick="predictiveFill()">&#9889; Smart Fill from History</button>
+        </div>
+        <div class="catalog-item">
+            <div class="catalog-icon">&#x1F680;</div>
+            <div class="catalog-label">Enhanced ATP Generator</div>
+            <button class="predict-btn" onclick="window.open('/tools/bidgen/dual-brand-bid-system.html', '_blank')" style="background: #e67e22;">&#x1F3E2; Enhanced ATP</button>
+        </div>
+        <div class="catalog-item">
+            <div class="catalog-icon">&#x1F517;</div>
+            <div class="catalog-label">Google Integration</div>
+            <button class="predict-btn" onclick="window.open('/tools/bidgen/google-integration.html', '_blank')" style="background: #4285f4;">&#x2601; Google Scan</button>
+        </div>
     </div>
 
     <div class="price-lookup" id="priceLookup">
@@ -799,7 +819,8 @@ function updateCatalogBar() {
     document.getElementById('cbLaborCount').textContent = lc;
     document.getElementById('cbMatCount').textContent = mc;
     document.getElementById('cbJobCount').textContent = jc;
-    document.getElementById('catalogBar').style.display = (lc + mc + jc > 0) ? 'flex' : 'none';
+    // ALWAYS show catalog bar now - it has the Enhanced ATP and Google buttons
+    document.getElementById('catalogBar').style.display = 'flex';
 }
 
 function saveInflationRate() {

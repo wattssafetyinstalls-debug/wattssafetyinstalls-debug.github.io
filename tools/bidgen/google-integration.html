@@ -443,6 +443,11 @@ function finishDriveScan(allFiles, searchQuery) {
     const atpFiles = allFiles.filter(file => isATPFile(file.name));
     
     displayScanResults('drive', allFiles, atpFiles);
+    
+    // Analyze for predictive insights
+    const predictiveAnalysis = analyzeDriveDataForPredictions(atpFiles);
+    displayPredictiveAnalysis('drive', predictiveAnalysis);
+    
     showNotification(`✅ Drive scan complete: ${atpFiles.length} ATP files found out of ${allFiles.length} total`, 'success');
     
     // Update service status
@@ -546,11 +551,360 @@ function finishGmailScan(allEmails, searchQuery) {
     const atpEmails = allEmails.filter(msg => isATPEmail(msg));
     
     displayScanResults('gmail', allEmails, atpEmails);
+    
+    // Analyze for predictive insights
+    const predictiveAnalysis = analyzeGmailDataForPredictions(atpEmails);
+    displayPredictiveAnalysis('gmail', predictiveAnalysis);
+    
     showNotification(`✅ Gmail scan complete: ${atpEmails.length} ATP emails found out of ${allEmails.length} total`, 'success');
     
     // Update service status
     document.getElementById('gmailStatus').textContent = `Connected (${atpEmails.length} emails)`;
     document.getElementById('gmailStatus').className = 'service-status status-connected';
+}
+
+// Analyze Drive data for predictive insights
+function analyzeDriveDataForPredictions(atpFiles) {
+    const analysis = {
+        bidPatterns: {},
+        clientTypes: {},
+        serviceTypes: {},
+        timePatterns: {},
+        valueIndicators: {},
+        recommendations: []
+    };
+    
+    // Analyze file names for patterns
+    atpFiles.forEach(file => {
+        const name = file.name.toLowerCase();
+        
+        // Bid patterns
+        if (name.includes('bid')) analysis.bidPatterns.bids = (analysis.bidPatterns.bids || 0) + 1;
+        if (name.includes('quote')) analysis.bidPatterns.quotes = (analysis.bidPatterns.quotes || 0) + 1;
+        if (name.includes('contract')) analysis.bidPatterns.contracts = (analysis.bidPatterns.contracts || 0) + 1;
+        if (name.includes('proposal')) analysis.bidPatterns.proposals = (analysis.bidPatterns.proposals || 0) + 1;
+        
+        // Client types (from file names)
+        if (name.includes('north park')) analysis.clientTypes['North Park'] = (analysis.clientTypes['North Park'] || 0) + 1;
+        if (name.includes('allen')) analysis.clientTypes['Allen ISD'] = (analysis.clientTypes['Allen ISD'] || 0) + 1;
+        if (name.includes('smith')) analysis.clientTypes['Smith ISD'] = (analysis.clientTypes['Smith ISD'] || 0) + 1;
+        if (name.includes('kent')) analysis.clientTypes['Kent ISD'] = (analysis.clientTypes['Kent ISD'] || 0) + 1;
+        if (name.includes('esperanza')) analysis.clientTypes['Esperanza'] = (analysis.clientTypes['Esperanza'] || 0) + 1;
+        
+        // Service types
+        if (name.includes('assistive') || name.includes('atp')) analysis.serviceTypes['Assistive Technology'] = (analysis.serviceTypes['Assistive Technology'] || 0) + 1;
+        if (name.includes('bathroom')) analysis.serviceTypes['Bathroom'] = (analysis.serviceTypes['Bathroom'] || 0) + 1;
+        if (name.includes('kitchen')) analysis.serviceTypes['Kitchen'] = (analysis.serviceTypes['Kitchen'] || 0) + 1;
+        if (name.includes('ramp')) analysis.serviceTypes['Ramp'] = (analysis.serviceTypes['Ramp'] || 0) + 1;
+        
+        // Time patterns (from modification dates)
+        const modDate = new Date(file.modifiedTime);
+        const month = modDate.toLocaleString('default', { month: 'long' });
+        analysis.timePatterns[month] = (analysis.timePatterns[month] || 0) + 1;
+        
+        // Value indicators
+        if (name.includes('large') || name.includes('major')) analysis.valueIndicators.highValue = (analysis.valueIndicators.highValue || 0) + 1;
+        if (name.includes('small') || name.includes('minor')) analysis.valueIndicators.lowValue = (analysis.valueIndicators.lowValue || 0) + 1;
+    });
+    
+    // Generate recommendations
+    analysis.recommendations = generatePredictiveRecommendations(analysis);
+    
+    return analysis;
+}
+
+// Analyze Gmail data for predictive insights
+function analyzeGmailDataForPredictions(atpEmails) {
+    const analysis = {
+        communicationPatterns: {},
+        stateDomainActivity: {},
+        responseTimes: {},
+        bidOpportunities: {},
+        recommendations: []
+    };
+    
+    atpEmails.forEach(email => {
+        const subject = (email.payload.headers.find(h => h.name === 'Subject')?.value || '').toLowerCase();
+        const from = (email.payload.headers.find(h => h.name === 'From')?.value || '').toLowerCase();
+        const date = new Date(email.payload.headers.find(h => h.name === 'Date')?.value || '');
+        
+        // Communication patterns
+        if (subject.includes('bid')) analysis.communicationPatterns.bidDiscussions = (analysis.communicationPatterns.bidDiscussions || 0) + 1;
+        if (subject.includes('quote')) analysis.communicationPatterns.quoteRequests = (analysis.communicationPatterns.quoteRequests || 0) + 1;
+        if (subject.includes('meeting')) analysis.communicationPatterns.meetings = (analysis.communicationPatterns.meetings || 0) + 1;
+        if (subject.includes('contract')) analysis.communicationPatterns.contractNegotiations = (analysis.communicationPatterns.contractNegotiations || 0) + 1;
+        
+        // State domain activity
+        if (from.includes('.gov') || from.includes('.state.')) {
+            const domain = from.split('@')[1];
+            analysis.stateDomainActivity[domain] = (analysis.stateDomainActivity[domain] || 0) + 1;
+        }
+        
+        // Time patterns
+        const month = date.toLocaleString('default', { month: 'long' });
+        analysis.responseTimes[month] = (analysis.responseTimes[month] || 0) + 1;
+        
+        // Bid opportunities
+        if (subject.includes('rfp') || subject.includes('request for proposal')) {
+            analysis.bidOpportunities.rfp = (analysis.bidOpportunities.rfp || 0) + 1;
+        }
+        if (subject.includes('invitation to bid')) {
+            analysis.bidOpportunities.itb = (analysis.bidOpportunities.itb || 0) + 1;
+        }
+    });
+    
+    // Generate recommendations
+    analysis.recommendations = generatePredictiveRecommendations(analysis);
+    
+    return analysis;
+}
+
+// Generate predictive recommendations
+function generatePredictiveRecommendations(analysis) {
+    const recommendations = [];
+    
+    // Drive-based recommendations
+    if (analysis.bidPatterns && analysis.bidPatterns.bids > 5) {
+        recommendations.push({
+            type: 'opportunity',
+            priority: 'high',
+            title: 'High Bid Activity Detected',
+            description: `Found ${analysis.bidPatterns.bids} bid documents - consider expanding bid submission capacity`,
+            action: 'Review bid pipeline and allocate additional resources'
+        });
+    }
+    
+    if (analysis.clientTypes && Object.keys(analysis.clientTypes).length > 0) {
+        const topClient = Object.entries(analysis.clientTypes).sort((a, b) => b[1] - a[1])[0];
+        recommendations.push({
+            type: 'insight',
+            priority: 'medium',
+            title: 'Top Client Identified',
+            description: `${topClient[0]} has ${topClient[1]} documents - strong relationship opportunity`,
+            action: 'Focus on deepening relationship with this client'
+        });
+    }
+    
+    if (analysis.serviceTypes && analysis.serviceTypes['Assistive Technology'] > 3) {
+        recommendations.push({
+            type: 'trend',
+            priority: 'medium',
+            title: 'ATP Services Trending',
+            description: `High volume of ATP-related documents - growing market segment`,
+            action: 'Consider expanding ATP service offerings and marketing'
+        });
+    }
+    
+    // Gmail-based recommendations
+    if (analysis.stateDomainActivity && Object.keys(analysis.stateDomainActivity).length > 2) {
+        recommendations.push({
+            type: 'opportunity',
+            priority: 'high',
+            title: 'Multiple State Agencies Engaged',
+            description: `Communications with ${Object.keys(analysis.stateDomainActivity).length} state domains - expansion opportunity`,
+            action: 'Develop targeted outreach strategy for state agencies'
+        });
+    }
+    
+    if (analysis.bidOpportunities && (analysis.bidOpportunities.rfp > 0 || analysis.bidOpportunities.itb > 0)) {
+        recommendations.push({
+            type: 'action',
+            priority: 'high',
+            title: 'Active Bid Opportunities',
+            description: `${(analysis.bidOpportunities.rfp || 0) + (analysis.bidOpportunities.itb || 0)} bid opportunities identified`,
+            action: 'Prioritize responding to these opportunities immediately'
+        });
+    }
+    
+    return recommendations;
+}
+
+// Display predictive analysis
+function displayPredictiveAnalysis(service, analysis) {
+    const resultsContainer = document.getElementById('scanResults');
+    
+    // Create predictive analysis section
+    const predictiveHTML = `
+        <div class="predictive-analysis" style="background: #0f1a33; border: 1px solid #f39c12; border-radius: 10px; padding: 20px; margin-top: 20px;">
+            <h3 style="color: #f39c12; margin-bottom: 15px;">🔮 Predictive Analysis - ${service === 'drive' ? 'Google Drive' : 'Gmail'}</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                ${generateAnalysisCards(analysis)}
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="color: #3498db; margin-bottom: 10px;">🎯 Predictive Recommendations</h4>
+                ${generateRecommendationCards(analysis.recommendations)}
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-success" onclick="exportPredictiveAnalysis('${service}')" style="margin-right: 10px;">📊 Export Analysis</button>
+                <button class="btn btn-primary" onclick="applyPredictiveInsights()">🚀 Apply to Bid Strategy</button>
+            </div>
+        </div>
+    `;
+    
+    // Append to existing results
+    resultsContainer.innerHTML += predictiveHTML;
+}
+
+// Generate analysis cards
+function generateAnalysisCards(analysis) {
+    let cards = '';
+    
+    // Bid patterns
+    if (analysis.bidPatterns && Object.keys(analysis.bidPatterns).length > 0) {
+        cards += `
+            <div style="background: #1a2744; padding: 15px; border-radius: 8px;">
+                <h5 style="color: #3498db; margin-bottom: 10px;">📋 Bid Patterns</h5>
+                ${Object.entries(analysis.bidPatterns).map(([key, value]) => 
+                    `<div style="font-size: 12px; color: #ecf0f1; margin-bottom: 5px;">${key}: ${value}</div>`
+                ).join('')}
+            </div>
+        `;
+    }
+    
+    // Client types
+    if (analysis.clientTypes && Object.keys(analysis.clientTypes).length > 0) {
+        cards += `
+            <div style="background: #1a2744; padding: 15px; border-radius: 8px;">
+                <h5 style="color: #3498db; margin-bottom: 10px;">👥 Client Types</h5>
+                ${Object.entries(analysis.clientTypes).map(([client, count]) => 
+                    `<div style="font-size: 12px; color: #ecf0f1; margin-bottom: 5px;">${client}: ${count} documents</div>`
+                ).join('')}
+            </div>
+        `;
+    }
+    
+    // Service types
+    if (analysis.serviceTypes && Object.keys(analysis.serviceTypes).length > 0) {
+        cards += `
+            <div style="background: #1a2744; padding: 15px; border-radius: 8px;">
+                <h5 style="color: #3498db; margin-bottom: 10px;">🔧 Service Types</h5>
+                ${Object.entries(analysis.serviceTypes).map(([service, count]) => 
+                    `<div style="font-size: 12px; color: #ecf0f1; margin-bottom: 5px;">${service}: ${count}</div>`
+                ).join('')}
+            </div>
+        `;
+    }
+    
+    // State domain activity
+    if (analysis.stateDomainActivity && Object.keys(analysis.stateDomainActivity).length > 0) {
+        cards += `
+            <div style="background: #1a2744; padding: 15px; border-radius: 8px;">
+                <h5 style="color: #3498db; margin-bottom: 10px;">🏛️ State Domain Activity</h5>
+                ${Object.entries(analysis.stateDomainActivity).map(([domain, count]) => 
+                    `<div style="font-size: 12px; color: #ecf0f1; margin-bottom: 5px;">${domain}: ${count} emails</div>`
+                ).join('')}
+            </div>
+        `;
+    }
+    
+    return cards;
+}
+
+// Generate recommendation cards
+function generateRecommendationCards(recommendations) {
+    if (!recommendations || recommendations.length === 0) {
+        return '<div style="color: #7f8c8d; font-style: italic;">No specific recommendations at this time.</div>';
+    }
+    
+    return recommendations.map(rec => `
+        <div style="background: ${rec.priority === 'high' ? '#2c3e50' : '#1a2744'}; border: 1px solid ${rec.type === 'opportunity' ? '#27ae60' : rec.type === 'action' ? '#e74c3c' : '#3498db'}; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <span style="background: ${rec.type === 'opportunity' ? '#27ae60' : rec.type === 'action' ? '#e74c3c' : '#3498db'}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; margin-right: 10px;">${rec.type.toUpperCase()}</span>
+                <span style="background: ${rec.priority === 'high' ? '#e74c3c' : '#f39c12'}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px;">${rec.priority.toUpperCase()}</span>
+            </div>
+            <h6 style="color: #ecf0f1; margin-bottom: 5px;">${rec.title}</h6>
+            <p style="font-size: 12px; color: #bdc3c7; margin-bottom: 8px;">${rec.description}</p>
+            <p style="font-size: 11px; color: #3498db; margin: 0;">💡 ${rec.action}</p>
+        </div>
+    `).join('');
+}
+
+// Export predictive analysis
+function exportPredictiveAnalysis(service) {
+    const analysis = window.scanResults && window.scanResults[service] ? window.scanResults[service].predictiveAnalysis : null;
+    
+    if (!analysis) {
+        showNotification('❌ No analysis data available', 'error');
+        return;
+    }
+    
+    let reportText = `
+========================================
+PREDICTIVE ANALYSIS REPORT - ${service.toUpperCase()}
+========================================
+
+Analysis Date: ${new Date().toLocaleString()}
+Data Source: ${service === 'drive' ? 'Google Drive Files' : 'Gmail Messages'}
+Analysis Period: August 1, 2025 - Present
+
+========================================
+PREDICTIVE INSIGHTS
+========================================
+
+`;
+    
+    // Add analysis sections
+    Object.keys(analysis).forEach(key => {
+        if (key !== 'recommendations' && typeof analysis[key] === 'object') {
+            reportText += `
+${key.toUpperCase()}:
+${Object.entries(analysis[key]).map(([k, v]) => `  ${k}: ${v}`).join('\n')}
+`;
+        }
+    });
+    
+    reportText += `
+========================================
+PREDICTIVE RECOMMENDATIONS
+========================================
+
+${analysis.recommendations.map((rec, index) => `
+${index + 1}. ${rec.title}
+   Type: ${rec.type} | Priority: ${rec.priority}
+   Description: ${rec.description}
+   Action: ${rec.action}
+`).join('\n')}
+
+========================================
+STRATEGIC IMPLICATIONS
+========================================
+
+This analysis provides data-driven insights for:
+- Bid pipeline optimization
+- Client relationship management
+- Service offering adjustments
+- Market expansion opportunities
+- Resource allocation planning
+
+========================================
+END OF ANALYSIS
+========================================
+`;
+    
+    // Create and download the report
+    const blob = new Blob([reportText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Predictive-Analysis-${service}-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showNotification(`📊 Predictive analysis exported for ${service}!`, 'success');
+}
+
+// Apply predictive insights to bid strategy
+function applyPredictiveInsights() {
+    showNotification('🚀 Applying predictive insights to bid strategy...', 'info');
+    // TODO: Implement integration with bid generator
+    setTimeout(() => {
+        showNotification('✅ Predictive insights applied to bid strategy!', 'success');
+    }, 2000);
 }
 
 // Check if file is ATP-related

@@ -386,8 +386,8 @@ function scanDrive() {
     
     showNotification('🔍 Scanning Google Drive for ATP files...', 'info');
     
-    // Search for ATP-related files
-    const searchQuery = "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract' or name contains 'assistive' or name contains 'tech'";
+    // Search for ATP-related files modified since August 1st, 2025
+    const searchQuery = "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract' or name contains 'assistive' or name contains 'tech' and modifiedTime > '2025-08-01T00:00:00'";
     
     // Start with first batch
     scanDriveBatch(searchQuery, null, []);
@@ -458,8 +458,8 @@ function scanGmail() {
     
     showNotification('🔍 Scanning Gmail for ATP-related emails...', 'info');
     
-    // Search for ATP-related emails
-    const searchQuery = 'bid OR quote OR atp OR watts OR contract OR assistive OR tech OR (from:*.gov) OR (from:*.state.*.us)';
+    // Search for ATP-related emails since August 1st, 2025
+    const searchQuery = `bid OR quote OR atp OR watts OR contract OR assistive OR tech OR (from:*.gov) OR (from:*.state.*.us) after:2025/08/01`;
     
     // Start with first batch
     scanGmailBatch(searchQuery, null, []);

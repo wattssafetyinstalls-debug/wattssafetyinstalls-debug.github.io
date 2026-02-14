@@ -398,6 +398,77 @@ document.addEventListener('DOMContentLoaded', () => {
     autoImportLatestIntelligence();
 });
 
+// Brand selection - MAIN FUNCTION
+function selectBrand(brand) {
+    console.log(`🎯 Selected brand: ${brand}`);
+    currentBrand = brand;
+    
+    // Update UI
+    document.querySelectorAll('.brand-option').forEach(option => {
+        option.classList.remove('active');
+    });
+    document.getElementById(`${brand}Brand`).classList.add('active');
+    
+    // Show/hide state restrictions for ATP
+    const stateRestrictions = document.getElementById('stateRestrictions');
+    if (brand === 'atp') {
+        stateRestrictions.style.display = 'block';
+        console.log('🔒 State restrictions shown for ATP');
+    } else {
+        stateRestrictions.style.display = 'none';
+        console.log('🏢 Commercial mode for WSI');
+    }
+    
+    // Update form fields for brand
+    updateFormForBrand(brand);
+    
+    // Load brand-specific intelligence
+    loadBrandIntelligence(brand);
+    
+    // Update predictive model for brand
+    updatePredictiveModelForBrand(brand);
+}
+
+// Import Google Intelligence Data
+function importGoogleIntelligence(source) {
+    const statusDiv = document.getElementById('googleIntelStatus');
+    statusDiv.innerHTML = `🔄 Importing ${source} intelligence data...`;
+    statusDiv.style.color = '#f39c12';
+    
+    // Get stored Google scan results from localStorage
+    const storedResults = localStorage.getItem('googleScanResults');
+    if (!storedResults) {
+        statusDiv.innerHTML = `❌ No Google scan data found. Please run Google scans first.`;
+        statusDiv.style.color = '#e74c3c';
+        return;
+    }
+    
+    try {
+        const scanData = JSON.parse(storedResults);
+        const sourceData = scanData[source];
+        
+        if (!sourceData || !sourceData.atpItems || sourceData.atpItems.length === 0) {
+            statusDiv.innerHTML = `❌ No ${source} data found. Please scan ${source} first.`;
+            statusDiv.style.color = '#e74c3c';
+            return;
+        }
+        
+        // Process and integrate the data
+        processGoogleIntelligence(source, sourceData);
+        
+        statusDiv.innerHTML = `✅ Successfully imported ${sourceData.atpItems.length} items from ${source}`;
+        statusDiv.style.color = '#27ae60';
+        
+        // Update bid calculations with new intelligence
+        updateBidCalculationsWithIntelligence(sourceData);
+        
+    } catch (error) {
+        console.error('Error importing Google intelligence:', error);
+        statusDiv.innerHTML = `❌ Error importing ${source} data: ${error.message}`;
+        statusDiv.style.color = '#e74c3c';
+    }
+}
+
 // AUTO SCAN: Automatically scan Google Intelligence on load
 function autoScanGoogleIntelligence() {
     console.log('🔍 Starting automatic Google Intelligence scan...');

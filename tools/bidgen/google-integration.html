@@ -424,7 +424,7 @@ function scanGmail() {
     gapi.client.gmail.users.messages.list({
         userId: 'me',
         q: searchQuery,
-        maxResults: 50
+        maxResults: 20  // Reduced from 50 to avoid rate limiting
     }).then(function(response) {
         const messages = response.result.messages || [];
         
@@ -433,21 +433,34 @@ function scanGmail() {
             return;
         }
         
-        // Get message details
-        const messagePromises = messages.map(message => 
-            gapi.client.gmail.users.messages.get({
-                userId: 'me',
-                id: message.id,
-                format: 'metadata',
-                metadataHeaders: ['Subject', 'From', 'Date', 'To']
+        // Get message details with rate limiting
+        const messagePromises = messages.map((message, index) => 
+            new Promise((resolve) => {
+                // Add delay to avoid rate limiting (429 errors)
+                setTimeout(() => {
+                    gapi.client.gmail.users.messages.get({
+                        userId: 'me',
+                        id: message.id,
+                        format: 'metadata',
+                        metadataHeaders: ['Subject', 'From', 'Date', 'To']
+                    }).then(resolve).catch((error) => {
+                        console.error(`Error fetching message ${message.id}:`, error);
+                        resolve({ result: null, error: error });
+                    });
+                }, index * 200); // 200ms delay between each request
             })
         );
         
         Promise.all(messagePromises).then(function(messageDetails) {
-            const atpEmails = messageDetails.map(detail => detail.result).filter(msg => isATPEmail(msg));
+            // Filter out failed requests and null results
+            const validMessages = messageDetails
+                .filter(detail => detail.result && !detail.error)
+                .map(detail => detail.result);
             
-            displayScanResults('gmail', messageDetails.map(d => d.result), atpEmails);
-            showNotification(`✅ Gmail scan complete: ${atpEmails.length} ATP emails found`, 'success');
+            const atpEmails = validMessages.filter(msg => isATPEmail(msg));
+            
+            displayScanResults('gmail', validMessages, atpEmails);
+            showNotification(`✅ Gmail scan complete: ${atpEmails.length} ATP emails found out of ${validMessages.length} processed`, 'success');
             
             // Update service status
             document.getElementById('gmailStatus').textContent = `Connected (${atpEmails.length} emails)`;

@@ -635,18 +635,224 @@ let predictiveModel = {
     winRate: 0
 };
 
-// Brand selection
+// Brand selection - MAIN FUNCTION
 function selectBrand(brand) {
+    console.log(`🎯 Selected brand: ${brand}`);
     currentBrand = brand;
     
     // Update UI
     document.querySelectorAll('.brand-option').forEach(option => {
         option.classList.remove('active');
     });
-    event.target.closest('.brand-option').classList.add('active');
+    document.getElementById(`${brand}Brand`).classList.add('active');
     
-    // Update form fields based on brand
+    // Show/hide state restrictions for ATP
+    const stateRestrictions = document.getElementById('stateRestrictions');
+    if (brand === 'atp') {
+        stateRestrictions.style.display = 'block';
+        console.log('🔒 State restrictions shown for ATP');
+    } else {
+        stateRestrictions.style.display = 'none';
+        console.log('🏢 Commercial mode for WSI');
+    }
+    
+    // Update form fields for brand
     updateFormForBrand(brand);
+    
+    // Load brand-specific intelligence
+    loadBrandIntelligence(brand);
+    
+    // Update predictive model for brand
+    updatePredictiveModelForBrand(brand);
+}
+
+// Update form fields based on brand
+function updateFormForBrand(brand) {
+    const config = brandConfigs[brand];
+    const projectType = document.getElementById('projectType');
+    
+    // Update project type options
+    projectType.innerHTML = `
+        <option value="">Select Project Type...</option>
+        ${brand === 'atp' ? 
+            '<option value="state">State Contract</option><option value="municipal">Municipal</option>' :
+            '<option value="commercial">Commercial</option><option value="residential">Residential</option>'
+        }
+    `;
+    
+    // Update pricing guidance
+    updatePricingGuidance(brand);
+}
+
+// Load brand-specific intelligence
+function loadBrandIntelligence(brand) {
+    console.log(`📊 Loading intelligence for ${brandConfigs[brand].name}`);
+    
+    // Update Google Intelligence status
+    const statusDiv = document.getElementById('googleIntelStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = `🔄 Loading ${brandConfigs[brand].name} intelligence...`;
+        statusDiv.style.color = '#f39c12';
+    }
+    
+    // Get stored intelligence and filter for brand
+    const storedResults = localStorage.getItem('googleScanResults');
+    if (storedResults) {
+        try {
+            const scanData = JSON.parse(storedResults);
+            let brandIntel = {};
+            
+            // Filter intelligence for current brand
+            Object.keys(scanData).forEach(source => {
+                const sourceData = scanData[source];
+                if (sourceData && sourceData.intelligence) {
+                    brandIntel[source] = sourceData.intelligence;
+                }
+            });
+            
+            // Display brand-specific intelligence
+            displayBrandIntelligence(brand, brandIntel);
+            
+            if (statusDiv) {
+                const totalItems = Object.values(brandIntel).reduce((sum, intel) => sum + (intel.bidPatterns?.total || 0), 0);
+                statusDiv.innerHTML = `✅ ${brandConfigs[brand].name} intelligence loaded: ${totalItems} historical items`;
+                statusDiv.style.color = '#27ae60';
+            }
+            
+        } catch (error) {
+            console.error('Error loading brand intelligence:', error);
+            if (statusDiv) {
+                statusDiv.innerHTML = `❌ Error loading ${brand} intelligence`;
+                statusDiv.style.color = '#e74c3c';
+            }
+        }
+    } else {
+        if (statusDiv) {
+            statusDiv.innerHTML = `❌ No intelligence data found. <button onclick="autoScanGoogleIntelligence()" style="background: #3498db; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Scan Now</button>`;
+            statusDiv.style.color = '#e74c3c';
+        }
+    }
+}
+
+// Display brand-specific intelligence
+function displayBrandIntelligence(brand, intel) {
+    const grid = document.getElementById('competitorGrid');
+    if (!grid) return;
+    
+    // Clear existing data
+    grid.innerHTML = '';
+    
+    // Add brand header
+    const brandHeader = document.createElement('div');
+    brandHeader.className = 'competitor-card';
+    brandHeader.style.cssText = `border-left: 4px solid ${brandConfigs[brand].color};`;
+    brandHeader.innerHTML = `
+        <h4 style="color: ${brandConfigs[brand].color}; margin-bottom: 10px;">🎯 ${brandConfigs[brand].name} Intelligence</h4>
+        <div style="font-size: 12px; color: #ecf0f1;">
+            <div><strong>Brand Type:</strong> ${brand === 'atp' ? 'State Contracts' : 'Commercial Projects'}</div>
+            <div><strong>Pricing Model:</strong> ${brand === 'atp' ? 'Cost Plus (No Markup)' : 'Market-Based (Markup Allowed)'}</div>
+            <div><strong>Restrictions:</strong> ${brand === 'atp' ? 'State Contract Rules Apply' : 'Commercial Flexibility'}</div>
+        </div>
+    `;
+    grid.appendChild(brandHeader);
+    
+    // Add intelligence from each source
+    Object.entries(intel).forEach(([source, sourceIntel]) => {
+        if (sourceIntel.bidPatterns || sourceIntel.competitors) {
+            const intelCard = document.createElement('div');
+            intelCard.className = 'competitor-card';
+            intelCard.style.cssText = 'border-left: 4px solid #3498db;';
+            
+            intelCard.innerHTML = `
+                <h4 style="color: #3498db; margin-bottom: 10px;">📊 ${source.toUpperCase()} Intelligence</h4>
+                <div style="font-size: 12px; color: #ecf0f1; line-height: 1.4;">
+                    <div><strong>Total Bids:</strong> ${sourceIntel.bidPatterns?.total || 0}</div>
+                    <div><strong>Won:</strong> ${sourceIntel.bidPatterns?.won || 0}</div>
+                    <div><strong>Lost:</strong> ${sourceIntel.bidPatterns?.lost || 0}</div>
+                    ${sourceIntel.pricingInsights?.avgPrice ? `<div><strong>Avg Price:</strong> $${sourceIntel.pricingInsights.avgPrice.toLocaleString()}</div>` : ''}
+                    ${Object.keys(sourceIntel.competitors || {}).length > 0 ? `<div><strong>Top Competitor:</strong> ${Object.keys(sourceIntel.competitors)[0]}</div>` : ''}
+                </div>
+                <div style="margin-top: 10px;">
+                    ${(sourceIntel.recommendations || []).slice(0, 2).map(rec => `
+                        <div style="padding: 5px; background: #0f1a33; border-radius: 4px; font-size: 11px; margin-bottom: 5px;">
+                            <strong style="color: ${rec.type === 'warning' ? '#e74c3c' : rec.type === 'success' ? '#27ae60' : '#3498db'};">${rec.title}</strong>
+                            <div style="color: #7f8c8d;">${rec.description}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            grid.appendChild(intelCard);
+        }
+    });
+}
+
+// Update predictive model for brand
+function updatePredictiveModelForBrand(brand) {
+    const config = brandConfigs[brand];
+    
+    // Update predictive model with brand-specific parameters
+    if (brand === 'atp') {
+        predictiveModel.priceCapMultiplier = 1.15; // Conservative for state contracts
+        predictiveModel.winRate = config.competitorAnalysis.wattsWinRate || 0.65;
+    } else {
+        predictiveModel.priceCapMultiplier = 1.25; // More flexible for commercial
+        predictiveModel.winRate = config.competitorAnalysis.knownWinRate || 0.70;
+    }
+    
+    console.log(`🧠 Predictive model updated for ${brand}: win rate ${(predictiveModel.winRate * 100).toFixed(1)}%, cap multiplier ${predictiveModel.priceCapMultiplier}`);
+}
+
+// Update pricing guidance based on brand
+function updatePricingGuidance(brand) {
+    const config = brandConfigs[brand];
+    
+    // Find or create pricing guidance section
+    let pricingGuidance = document.getElementById('pricingGuidance');
+    if (!pricingGuidance) {
+        pricingGuidance = document.createElement('div');
+        pricingGuidance.id = 'pricingGuidance';
+        pricingGuidance.className = 'card';
+        pricingGuidance.innerHTML = `
+            <h2><span class="icon">💰</span> Pricing Guidance</h2>
+            <div id="pricingGuidanceContent"></div>
+        `;
+        
+        // Insert after project details card
+        const projectCard = document.querySelector('.card:nth-of-type(3)');
+        if (projectCard) {
+            projectCard.parentNode.insertBefore(pricingGuidance, projectCard.nextSibling);
+        }
+    }
+    
+    const content = document.getElementById('pricingGuidanceContent');
+    if (brand === 'atp') {
+        content.innerHTML = `
+            <div style="background: #0f1a33; border: 1px solid #e67e22; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #e67e22; margin-bottom: 10px;">🔒 State Contract Pricing Rules</h4>
+                <ul style="font-size: 12px; color: #ecf0f1; margin: 0; padding-left: 20px;">
+                    <li>No material markups allowed - cost plus pricing only</li>
+                    <li>Labor rates must be pre-approved and fixed</li>
+                    <li>Maximum state payout: $10,000 (flexible for complex scopes)</li>
+                    <li>Can exceed up to 25% for specialized work</li>
+                    <li>All pricing must be fully transparent and auditable</li>
+                </ul>
+            </div>
+        `;
+    } else {
+        content.innerHTML = `
+            <div style="background: #0f1a33; border: 1px solid #27ae60; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #27ae60; margin-bottom: 10px;">🏢 Commercial Pricing Strategy</h4>
+                <ul style="font-size: 12px; color: #ecf0f1; margin: 0; padding-left: 20px;">
+                    <li>Material markups allowed and recommended</li>
+                    <li>Market-based labor rates</li>
+                    <li>Retail pricing for materials</li>
+                    <li>Flexible pricing based on market conditions</li>
+                    <li>Profit margins typically 15-25%</li>
+                </ul>
+            </div>
+        `;
+    }
 }
         bidData.fileSource = 'auto-scan';
         bidHistory.push(bidData);

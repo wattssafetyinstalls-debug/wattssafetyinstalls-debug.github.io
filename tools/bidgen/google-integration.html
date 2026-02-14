@@ -92,19 +92,29 @@
     <div class="card" id="servicesCard" style="display: none;">
         <h2><span class="icon">📊</span> Connected Services</h2>
         <div class="service-grid">
-            <div class="service-card">
-                <div class="service-icon">📁</div>
-                <div class="service-name">Google Drive</div>
-                <div class="service-desc">Scan Drive for ATP documents, quotes, and bids</div>
-                <div class="service-status status-disconnected" id="driveStatus">Disconnected</div>
-                <button class="btn btn-primary" onclick="scanDrive()" style="margin-top: 10px;">🔍 Scan Drive</button>
+            <div class="service-item">
+                <div class="service-header">
+                    <h3>📁 Google Drive</h3>
+                    <p class="service-description">Scan Drive for ATP documents, quotes, and bids</p>
+                    <div class="service-status" id="driveStatus">Not Connected</div>
+                </div>
+                <button class="btn btn-primary" onclick="scanDrive()">🔍 Scan Drive</button>
             </div>
-            <div class="service-card">
-                <div class="service-icon">📧</div>
-                <div class="service-name">Gmail</div>
-                <div class="service-desc">Scan emails for bid communications and attachments</div>
-                <div class="service-status status-disconnected" id="gmailStatus">Disconnected</div>
-                <button class="btn btn-primary" onclick="scanGmail()" style="margin-top: 10px;">🔍 Scan Gmail</button>
+            <div class="service-item">
+                <div class="service-header">
+                    <h3>📧 Gmail</h3>
+                    <p class="service-description">Scan emails for bid communications and attachments</p>
+                    <div class="service-status" id="gmailStatus">Not Connected</div>
+                </div>
+                <button class="btn btn-primary" onclick="scanGmail()">🔍 Scan Gmail</button>
+            </div>
+            <div class="service-item">
+                <div class="service-header">
+                    <h3>📊 WSI Financials</h3>
+                    <p class="service-description">Analyze financial spreadsheets for business intelligence</p>
+                    <div class="service-status" id="financialsStatus">Not Connected</div>
+                </div>
+                <button class="btn btn-primary" onclick="scanFinancials()">🔍 Scan Financials</button>
             </div>
         </div>
     </div>
@@ -274,6 +284,7 @@ function handleAuthSuccess(tokenResponse) {
     // Enable scan buttons
     const driveStatus = document.getElementById('driveStatus');
     const gmailStatus = document.getElementById('gmailStatus');
+    const financialsStatus = document.getElementById('financialsStatus');
     
     if (driveStatus) {
         driveStatus.textContent = 'Connected';
@@ -283,6 +294,11 @@ function handleAuthSuccess(tokenResponse) {
     if (gmailStatus) {
         gmailStatus.textContent = 'Connected';
         gmailStatus.className = 'service-status status-connected';
+    }
+    
+    if (financialsStatus) {
+        financialsStatus.textContent = 'Connected';
+        financialsStatus.className = 'service-status status-connected';
     }
     
     console.log('Authentication success handling complete');
@@ -905,6 +921,206 @@ function applyPredictiveInsights() {
     setTimeout(() => {
         showNotification('✅ Predictive insights applied to bid strategy!', 'success');
     }, 2000);
+}
+
+// Scan WSI Financials for business intelligence
+function scanFinancials() {
+    if (!gapiInited) {
+        showNotification('⚠️ Google API not initialized', 'warning');
+        return;
+    }
+    
+    showNotification('📊 Scanning WSI Financial spreadsheets...', 'info');
+    
+    // Search for WSI financial spreadsheets
+    const searchQuery = "name contains 'wsi' or name contains 'financial' or name contains 'receipt' or name contains 'invoice' or name contains 'job' or name contains 'cost' or name contains 'expense' or name contains 'profit' or name contains 'revenue' and modifiedTime > '2025-08-01T00:00:00'";
+    
+    // Start with first batch
+    scanFinancialsBatch(searchQuery, null, []);
+}
+
+// Function to scan financials in batches
+function scanFinancialsBatch(searchQuery, pageToken, allFinancials) {
+    const requestParams = {
+        q: searchQuery,
+        fields: 'files(id, name, mimeType, size, modifiedTime, webViewLink), nextPageToken',
+        pageSize: 100
+    };
+    
+    if (pageToken) {
+        requestParams.pageToken = pageToken;
+    }
+    
+    gapi.client.drive.files.list(requestParams).then(function(response) {
+        const files = response.result.files || [];
+        const nextPageToken = response.result.nextPageToken;
+        
+        if (files.length === 0 && !pageToken) {
+            showNotification('📊 No WSI financial files found', 'info');
+            return;
+        }
+        
+        showNotification(`📊 Found ${files.length} financial files in this batch...`, 'info');
+        
+        // Add to all financials collection
+        allFinancials = allFinancials.concat(files);
+        
+        // Show progress
+        showNotification(`📊 Processed ${allFinancials.length} financial files so far...`, 'info');
+        
+        // Continue to next batch or finish
+        if (nextPageToken && allFinancials.length < 500) {
+            setTimeout(() => {
+                scanFinancialsBatch(searchQuery, nextPageToken, allFinancials);
+            }, 500);
+        } else {
+            // Finished scanning
+            finishFinancialsScan(allFinancials, searchQuery);
+        }
+        
+    }).catch(function(error) {
+        console.error('Financials scan error:', error);
+        showNotification('❌ Failed to scan WSI Financials', 'error');
+    });
+}
+
+// Finish financials scan and show results
+function finishFinancialsScan(allFinancials, searchQuery) {
+    const wsiFinancials = allFinancials.filter(file => isWSIFinancial(file.name));
+    
+    displayScanResults('financials', allFinancials, wsiFinancials);
+    
+    // Analyze for predictive insights
+    const predictiveAnalysis = analyzeFinancialsForPredictions(wsiFinancials);
+    displayPredictiveAnalysis('financials', predictiveAnalysis);
+    
+    showNotification(`✅ Financials scan complete: ${wsiFinancials.length} WSI financial files found out of ${allFinancials.length} total`, 'success');
+    
+    // Update service status
+    document.getElementById('financialsStatus').textContent = `Connected (${wsiFinancials.length} files)`;
+    document.getElementById('financialsStatus').className = 'service-status status-connected';
+}
+
+// Check if file is WSI financial-related
+function isWSIFinancial(filename) {
+    const financialPatterns = [
+        'wsi', 'watts safety', 'financial', 'receipt', 'invoice', 'job', 'cost', 
+        'expense', 'profit', 'revenue', 'budget', 'payroll', 'material', 'labor',
+        'bid cost', 'project cost', 'overhead', 'margin', 'markup'
+    ];
+    
+    const lowerFilename = filename.toLowerCase();
+    return financialPatterns.some(pattern => lowerFilename.includes(pattern.toLowerCase()));
+}
+
+// Analyze financials data for predictive insights
+function analyzeFinancialsForPredictions(financialFiles) {
+    const analysis = {
+        financialPatterns: {},
+        jobTypes: {},
+        costCategories: {},
+        profitMargins: {},
+        revenueTrends: {},
+        recommendations: []
+    };
+    
+    // Analyze file names for financial patterns
+    financialFiles.forEach(file => {
+        const name = file.name.toLowerCase();
+        
+        // Financial document types
+        if (name.includes('receipt')) analysis.financialPatterns.receipts = (analysis.financialPatterns.receipts || 0) + 1;
+        if (name.includes('invoice')) analysis.financialPatterns.invoices = (analysis.financialPatterns.invoices || 0) + 1;
+        if (name.includes('expense')) analysis.financialPatterns.expenses = (analysis.financialPatterns.expenses || 0) + 1;
+        if (name.includes('profit')) analysis.financialPatterns.profitReports = (analysis.financialPatterns.profitReports || 0) + 1;
+        if (name.includes('revenue')) analysis.financialPatterns.revenueReports = (analysis.financialPatterns.revenueReports || 0) + 1;
+        
+        // Job types
+        if (name.includes('bathroom')) analysis.jobTypes.bathroom = (analysis.jobTypes.bathroom || 0) + 1;
+        if (name.includes('kitchen')) analysis.jobTypes.kitchen = (analysis.jobTypes.kitchen || 0) + 1;
+        if (name.includes('ramp')) analysis.jobTypes.ramp = (analysis.jobTypes.ramp || 0) + 1;
+        if (name.includes('lift')) analysis.jobTypes.lift = (analysis.jobTypes.lift || 0) + 1;
+        if (name.includes('assistive')) analysis.jobTypes.assistiveTech = (analysis.jobTypes.assistiveTech || 0) + 1;
+        
+        // Cost categories
+        if (name.includes('material')) analysis.costCategories.materials = (analysis.costCategories.materials || 0) + 1;
+        if (name.includes('labor')) analysis.costCategories.labor = (analysis.costCategories.labor || 0) + 1;
+        if (name.includes('overhead')) analysis.costCategories.overhead = (analysis.costCategories.overhead || 0) + 1;
+        if (name.includes('equipment')) analysis.costCategories.equipment = (analysis.costCategories.equipment || 0) + 1;
+        
+        // Profit indicators
+        if (name.includes('margin') || name.includes('markup')) analysis.profitMargins.highMargin = (analysis.profitMargins.highMargin || 0) + 1;
+        if (name.includes('loss') || name.includes('deficit')) analysis.profitMargins.lowMargin = (analysis.profitMargins.lowMargin || 0) + 1;
+        
+        // Time patterns (from modification dates)
+        const modDate = new Date(file.modifiedTime);
+        const month = modDate.toLocaleString('default', { month: 'long' });
+        analysis.revenueTrends[month] = (analysis.revenueTrends[month] || 0) + 1;
+    });
+    
+    // Generate recommendations
+    analysis.recommendations = generateFinancialRecommendations(analysis);
+    
+    return analysis;
+}
+
+// Generate financial recommendations
+function generateFinancialRecommendations(analysis) {
+    const recommendations = [];
+    
+    // High volume recommendations
+    if (analysis.financialPatterns.receipts > 20) {
+        recommendations.push({
+            type: 'insight',
+            priority: 'medium',
+            title: 'High Receipt Volume',
+            description: `Found ${analysis.financialPatterns.receipts} receipt files - consider automated expense tracking`,
+            action: 'Implement digital receipt management system'
+        });
+    }
+    
+    if (analysis.jobTypes.bathroom > 5) {
+        recommendations.push({
+            type: 'opportunity',
+            priority: 'high',
+            title: 'Bathroom Jobs Trending',
+            description: `${analysis.jobTypes.bathroom} bathroom-related financial files - strong market segment`,
+            action: 'Focus marketing on bathroom accessibility services'
+        });
+    }
+    
+    if (analysis.costCategories.materials > 10) {
+        recommendations.push({
+            type: 'trend',
+            priority: 'medium',
+            title: 'Material Cost Tracking',
+            description: `High volume of material cost tracking - good cost control practices`,
+            action: 'Consider bulk purchasing discounts for common materials'
+        });
+    }
+    
+    if (analysis.profitMargins.lowMargin > 2) {
+        recommendations.push({
+            type: 'action',
+            priority: 'high',
+            title: 'Margin Concerns Detected',
+            description: `${analysis.profitMargins.lowMargin} files indicate margin issues - review pricing strategy`,
+            action: 'Analyze low-margin projects and adjust pricing models'
+        });
+    }
+    
+    if (analysis.revenueTrends && Object.keys(analysis.revenueTrends).length > 0) {
+        const topMonth = Object.entries(analysis.revenueTrends).sort((a, b) => b[1] - a[1])[0];
+        recommendations.push({
+            type: 'insight',
+            priority: 'medium',
+            title: 'Peak Business Month',
+            description: `${topMonth[0]} shows highest activity - seasonal pattern detected`,
+            action: 'Plan resource allocation around peak business periods'
+        });
+    }
+    
+    return recommendations;
 }
 
 // Check if file is ATP-related

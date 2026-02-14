@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced ATP Generator</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 600px; text-align: center; padding: 40px; }
+        .card { background: #16213e; border: 1px solid #2a3a5c; border-radius: 15px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        h1 { font-size: 32px; margin-bottom: 20px; color: #e67e22; }
+        .subtitle { color: #7f8c8d; font-size: 16px; margin-bottom: 30px; }
+        .btn { padding: 16px 32px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px; margin: 10px; }
+        .btn-primary { background: #e67e22; color: white; }
+        .btn-primary:hover { background: #d35400; transform: translateY(-2px); }
+        .btn-secondary { background: #3498db; color: white; }
+        .btn-secondary:hover { background: #2980b9; transform: translateY(-2px); }
+        .features { text-align: left; margin: 30px 0; }
+        .feature { margin: 15px 0; padding: 15px; background: #0f1a33; border-radius: 8px; border-left: 4px solid #e67e22; }
+        .feature h3 { color: #e67e22; margin-bottom: 8px; }
+        .feature p { color: #bdc3c7; font-size: 14px; }
+        .countdown { color: #f39c12; font-size: 18px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>🏢 Enhanced ATP Generator</h1>
+        <p class="subtitle">Advanced dual-brand bid system with predictive intelligence</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🔍 Auto-Scanning</h3>
+                <p>Automatically scans local folders for ATP files on page load</p>
+            </div>
+            <div class="feature">
+                <h3>🏢 Dual Brands</h3>
+                <p>Watts ATP Contractor (state contracts) + Watts Safety Installs (commercial)</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Predictive Intelligence</h3>
+                <p>Dynamic competitor buffers, market analysis, win rate tracking</p>
+            </div>
+            <div class="feature">
+                <h3>⚖️ State Compliance</h3>
+                <p>$10,000 max payout with scope-based flexibility, no material markups</p>
+            </div>
+        </div>
+        
+        <div class="countdown" id="countdown">Opening Enhanced ATP Generator...</div>
+        
+        <button class="btn btn-primary" onclick="openEnhancedATP()">
+            🚀 Launch Enhanced ATP Generator
+        </button>
+        
+        <button class="btn btn-secondary" onclick="openGoogleIntegration()">
+            ☁️ Google Drive Integration
+        </button>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #2a3a5c;">
+            <p style="color: #7f8c8d; font-size: 12px;">
+                Return to <a href="/tools/bidgen/" style="color: #3498db;">Original Bid Generator</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+let countdown = 5;
+const countdownEl = document.getElementById('countdown');
+
+const timer = setInterval(() => {
+    countdown--;
+    if (countdown > 0) {
+        countdownEl.textContent = `Opening Enhanced ATP Generator in ${countdown} seconds...`;
+    } else {
+        clearInterval(timer);
+        openEnhancedATP();
+    }
+}, 1000);
+
+function openEnhancedATP() {
+    window.open('/tools/bidgen/dual-brand-bid-system.html', '_blank');
+    countdownEl.textContent = 'Enhanced ATP Generator opened in new tab!';
+}
+
+function openGoogleIntegration() {
+    window.open('/tools/bidgen/google-integration.html', '_blank');
+}
+</script>
+
+</body>
+</html>

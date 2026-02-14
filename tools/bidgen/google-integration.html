@@ -416,8 +416,8 @@ function scanDrive() {
     
     showNotification('🔍 Scanning Google Drive for ATP files...', 'info');
     
-    // Search for ATP-related files modified since August 1st, 2025
-    const searchQuery = "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract' or name contains 'assistive' or name contains 'tech' and modifiedTime > '2025-08-01T00:00:00'";
+    // Use broader search to avoid permission issues
+    const searchQuery = "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract' or name contains 'assistive' or name contains 'tech'";
     
     // Start with first batch
     scanDriveBatch(searchQuery, null, []);
@@ -493,8 +493,8 @@ function scanGmail() {
     
     showNotification('🔍 Scanning Gmail for ATP-related emails...', 'info');
     
-    // Search for ATP-related emails since August 1st, 2025
-    const searchQuery = `bid OR quote OR atp OR watts OR contract OR assistive OR tech OR (from:*.gov) OR (from:*.state.*.us) after:2025/08/01`;
+    // Use broader search to avoid permission issues
+    const searchQuery = 'bid OR quote OR atp OR watts OR contract OR assistive OR tech OR (from:*.gov) OR (from:*.state.*.us)';
     
     // Start with first batch
     scanGmailBatch(searchQuery, null, []);
@@ -946,8 +946,8 @@ function scanFinancials() {
     
     showNotification('📊 Scanning WSI Financial spreadsheets...', 'info');
     
-    // Search for WSI financial spreadsheets
-    const searchQuery = "name contains 'wsi' or name contains 'financial' or name contains 'receipt' or name contains 'invoice' or name contains 'job' or name contains 'cost' or name contains 'expense' or name contains 'profit' or name contains 'revenue' and modifiedTime > '2025-08-01T00:00:00'";
+    // Use broader search to avoid permission issues
+    const searchQuery = "name contains 'wsi' or name contains 'financial' or name contains 'receipt' or name contains 'invoice' or name contains 'job' or name contains 'cost' or name contains 'expense' or name contains 'profit' or name contains 'revenue'";
     
     // Start with first batch
     scanFinancialsBatch(searchQuery, null, []);
@@ -1146,8 +1146,8 @@ function scanWaveAccounting() {
     
     showNotification('🌊 Scanning Wave Accounting exports...', 'info');
     
-    // Search for Wave Accounting export files
-    const searchQuery = "name contains 'wave' or name contains 'accounting' or name contains 'export' or name contains 'transaction' or name contains 'receipt' or name contains 'invoice' or name contains 'csv' or name contains 'xlsx' or name contains 'journal' and modifiedTime > '2025-08-01T00:00:00'";
+    // Use broader search to avoid permission issues
+    const searchQuery = "name contains 'wave' or name contains 'accounting' or name contains 'export' or name contains 'transaction' or name contains 'receipt' or name contains 'invoice' or name contains 'csv' or name contains 'xlsx' or name contains 'journal'";
     
     // Start with first batch
     scanWaveBatch(searchQuery, null, []);

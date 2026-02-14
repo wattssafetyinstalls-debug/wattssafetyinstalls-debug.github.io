@@ -392,144 +392,262 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFileUpload();
     
     // AUTO SCAN: Automatically scan for ATP files on load
-    setTimeout(() => {
-        autoScanATPFiles();
-    }, 1000); // Wait 1 second for initial setup
+    autoScanGoogleIntelligence();
+    
+    // AUTO IMPORT: Automatically import latest intelligence
+    autoImportLatestIntelligence();
 });
 
-// AUTO SCANNER: Automatically scan personal folders for ATP files
-async function autoScanATPFiles() {
-    console.log('🔍 Starting automatic ATP file scan...');
+// AUTO SCAN: Automatically scan Google Intelligence on load
+function autoScanGoogleIntelligence() {
+    console.log('🔍 Starting automatic Google Intelligence scan...');
     
-    const atpFileLocations = {
-        'Downloads': 'c:\\Users\\User\\Downloads',
-        'OneDrive': 'c:\\Users\\User\\OneDrive\\Documents', 
-        'Documents': 'c:\\Users\\User\\Documents\\bid-documents',
-        'Watts-HQ': 'c:\\Users\\User\\Watts-HQ'
-    };
+    // Check if we have recent scan data (less than 24 hours old)
+    const lastScan = localStorage.getItem('lastGoogleScan');
+    const now = new Date().getTime();
     
-    const atpPatterns = [
-        'atp', 'watts', 'justin watts', 'wsi', 'watts safety', 'bid', 'quote', 
-        'estimate', 'contract', 'proposal', 'north park', 'allen', 'smith', 
-        'kent', 'esperanza', 'pleasant', 'jayne'
-    ];
+    if (lastScan && (now - parseInt(lastScan)) < 24 * 60 * 60 * 1000) {
+        console.log('📊 Using recent scan data (less than 24 hours old)');
+        autoImportLatestIntelligence();
+        return;
+    }
     
-    let totalScanned = 0;
-    let atpFilesFound = 0;
-    let newBidsImported = 0;
+    // Open Google scanner in background tab
+    const scannerWindow = window.open('google-integration.html', '_blank', 'width=800,height=600');
     
-    // Show scanning notification
-    showScanNotification('🔍 Scanning for ATP files...', 'info');
-    
-    for (const [locationName, locationPath] of Object.entries(atpFileLocations)) {
+    // Listen for scan completion
+    const checkScanComplete = setInterval(() => {
         try {
-            const files = await scanLocation(locationPath, atpPatterns);
-            totalScanned += files.total;
-            atpFilesFound += files.atp;
-            
-            // Process new ATP files
-            for (const atpFile of files.atpFiles) {
-                const isNew = await processATPFile(atpFile, locationName);
-                if (isNew) newBidsImported++;
+            if (scannerWindow.closed) {
+                clearInterval(checkScanComplete);
+                console.log('🔄 Scanner closed, checking for new data...');
+                setTimeout(autoImportLatestIntelligence, 2000);
+            } else {
+                // Check if scan is complete
+                const scanResults = scannerWindow.window.scanResults;
+                if (scanResults && Object.keys(scanResults).length > 0) {
+                    clearInterval(checkScanComplete);
+                    scannerWindow.close();
+                    console.log('✅ Scan completed, importing data...');
+                    setTimeout(autoImportLatestIntelligence, 1000);
+                }
             }
-            
-        } catch (error) {
-            console.warn(`Could not scan ${locationName}:`, error);
+        } catch (e) {
+            // Cross-origin error, scanner might be closed
+            clearInterval(checkScanComplete);
+            setTimeout(autoImportLatestIntelligence, 3000);
+        }
+    }, 2000);
+    
+    // Auto-close after 5 minutes if stuck
+    setTimeout(() => {
+        if (!scannerWindow.closed) {
+            scannerWindow.close();
+            clearInterval(checkScanComplete);
+        }
+    }, 5 * 60 * 1000);
+}
+
+// AUTO IMPORT: Automatically import latest intelligence
+function autoImportLatestIntelligence() {
+    console.log('📥 Auto-importing latest Google Intelligence...');
+    
+    const statusDiv = document.getElementById('googleIntelStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = '🔄 Auto-importing intelligence data...';
+        statusDiv.style.color = '#f39c12';
+    }
+    
+    // Get stored Google scan results from localStorage
+    const storedResults = localStorage.getItem('googleScanResults');
+    if (!storedResults) {
+        console.log('❌ No Google scan data found');
+        if (statusDiv) {
+            statusDiv.innerHTML = '❌ No scan data found. <button onclick="autoScanGoogleIntelligence()" style="background: #3498db; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Scan Now</button>';
+            statusDiv.style.color = '#e74c3c';
+        }
+        return;
+    }
+    
+    try {
+        const scanData = JSON.parse(storedResults);
+        let totalImported = 0;
+        let sourcesImported = [];
+        
+        // Import all available sources
+        ['drive', 'gmail', 'financials', 'wave'].forEach(source => {
+            const sourceData = scanData[source];
+            if (sourceData && sourceData.atpItems && sourceData.atpItems.length > 0) {
+                processGoogleIntelligence(source, sourceData);
+                totalImported += sourceData.atpItems.length;
+                sourcesImported.push(source);
+                
+                // Update bid calculations with intelligence
+                updateBidCalculationsWithIntelligence(sourceData);
+            }
+        });
+        
+        // Update last scan time
+        localStorage.setItem('lastGoogleScan', new Date().getTime().toString());
+        
+        // Update status
+        if (statusDiv) {
+            statusDiv.innerHTML = `✅ Auto-imported ${totalImported} items from ${sourcesImported.join(', ')} at ${new Date().toLocaleTimeString()}`;
+            statusDiv.style.color = '#27ae60';
+        }
+        
+        console.log(`✅ Auto-import complete: ${totalImported} items from ${sourcesImported.join(', ')}`);
+        
+        // Show notification
+        showAutoImportNotification(totalImported, sourcesImported);
+        
+    } catch (error) {
+        console.error('Error auto-importing Google intelligence:', error);
+        if (statusDiv) {
+            statusDiv.innerHTML = `❌ Auto-import error: ${error.message}`;
+            statusDiv.style.color = '#e74c3c';
         }
     }
-    
-    // Update predictive model with new data
-    if (newBidsImported > 0) {
-        updatePredictiveModel();
-        updateUnknownCompetitorBuffer();
-    }
-    
-    // Show completion notification
-    const message = `✅ Scan complete: ${atpFilesFound} ATP files found, ${newBidsImported} new bids imported`;
-    showScanNotification(message, 'success');
-    
-    // Update UI with scan results
-    updateScanStats(totalScanned, atpFilesFound, newBidsImported);
-    
-    console.log(`🎯 ATP Scan Results: ${totalScanned} files scanned, ${atpFilesFound} ATP files, ${newBidsImported} new bids`);
 }
 
-async function scanLocation(locationPath, atpPatterns) {
-    // Simulate scanning location for ATP files
-    // In a real implementation, this would use Node.js file system API
-    const knownFiles = getKnownFilesForLocation(locationPath);
+// Show auto-import notification
+function showAutoImportNotification(totalItems, sources) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #27ae60;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-size: 14px;
+    `;
     
-    const result = {
-        total: knownFiles.length,
-        atp: 0,
-        atpFiles: []
-    };
+    notification.innerHTML = `
+        <div style="font-weight: bold; margin-bottom: 5px;">🚀 Auto-Import Complete</div>
+        <div>Successfully imported ${totalItems} intelligence items from:</div>
+        <div style="margin-top: 5px; font-size: 12px;">
+            ${sources.map(source => {
+                const icons = {drive: '📁', gmail: '📧', financials: '📊', wave: '🌊'};
+                return `${icons[source]} ${source.charAt(0).toUpperCase() + source.slice(1)}`;
+            }).join(' | ')}
+        </div>
+        <div style="margin-top: 8px; font-size: 11px; opacity: 0.8;">
+            Data refreshed at ${new Date().toLocaleTimeString()}
+        </div>
+    `;
     
-    for (const filename of knownFiles) {
-        const isAtp = atpPatterns.some(pattern => filename.toLowerCase().includes(pattern));
-        if (isAtp) {
-            result.atp++;
-            result.atpFiles.push({
-                name: filename,
-                path: locationPath,
-                lastModified: new Date().toISOString(),
-                processed: false
-            });
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
         }
-    }
-    
-    return result;
+    }, 5000);
 }
 
-function getKnownFilesForLocation(locationPath) {
-    // Known ATP files from our previous scan
-    const fileMap = {
-        'c:\\Users\\User\\Downloads': [
-            'ATP-Material-Funding-Auth-Docs-2026-2.0.pdf',
-            'ATP-Material-Funding-Auth-Docs-2026.pdf',
-            'Atp-Materials-Jayne-Allen-2026.pdf',
-            'atp-quote-misc-2025_pdf.pdf',
-            'Allen_Quote_Form- Bathroom_rev_ATP-25 2.0 11.20.pdf',
-            'Allen_Quote_Form- Bathroom_rev_ATP-25 11.20.pdf',
-            'Justin Watts NorthPark EST#12539.pdf',
-            'wattssafetyinstalls_estimate_1.pdf',
-            'My Applicants - Watts Safety Installs - 10_16_2025.csv'
-        ],
-        'c:\\Users\\User\\OneDrive\\Documents': [
-            'ATP-Material-Funding-Auth-Docs-2026.pdf',
-            'ATP-S.Smith-Quote-1-22-2026.pdf',
-            'Atp-Materials-Jayne-Allen-2026-V3.pdf',
-            'Allen_Quote_Form- Bathroom_rev_ATP-25 11.20.pdf',
-            'EsperanzaBathroomQuoteForm-Complete_WSI-26.pdf',
-            'WSI-North-Park-Quote-2025.pdf'
-        ],
-        'c:\\Users\\User\\Documents\\bid-documents': [
-            'index.html',
-            'labor-estimate.html',
-            'materials-estimate.html'
-        ],
-        'c:\\Users\\User\\Watts-HQ': [
-            '.git'
-        ]
-    };
-    
-    return fileMap[locationPath] || [];
+// AUTO REFRESH: Set up periodic refresh
+function setupAutoRefresh() {
+    // Refresh every 6 hours
+    setInterval(() => {
+        console.log('🔄 Scheduled auto-refresh...');
+        autoScanGoogleIntelligence();
+    }, 6 * 60 * 60 * 1000);
 }
 
-async function processATPFile(atpFile, locationName) {
-    // Check if this file has been processed before
-    const fileKey = `${atpFile.path}\\${atpFile.name}`;
-    const processedFiles = JSON.parse(localStorage.getItem('atp_processed_files') || '{}');
+// Initialize auto-refresh
+setupAutoRefresh();
+
+// Legacy auto-scan function (kept for compatibility)
+function autoScanForATPFiles() {
+    console.log('🔍 Legacy auto-scan function called, redirecting to new system...');
+    autoScanGoogleIntelligence();
+}
+
+// Show scan notification
+function showScanNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-size: 14px;
+    `;
     
-    if (processedFiles[fileKey]) {
-        return false; // Already processed
-    }
+    notification.innerHTML = message;
+    document.body.appendChild(notification);
     
-    // Simulate processing the file
-    const bidData = await extractBidDataFromFile(atpFile);
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+
+// Update scan statistics
+function updateScanStats(total, atp, newBids) {
+    const totalScanned = document.getElementById('totalScanned');
+    const atpFound = document.getElementById('atpFound');
+    const newBidsImported = document.getElementById('imported');
     
-    if (bidData) {
-        bidData.location = locationName;
+    if (totalScanned) totalScanned.textContent = total;
+    if (atpFound) atpFound.textContent = atp;
+    if (newBidsImported) newBidsImported.textContent = newBids;
+}
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDfqFcaBPTp-2PVUP3pbhaG4NEv7ujr57s",
+    authDomain: "wattsatpcontractor.firebaseapp.com",
+    databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
+    projectId: "wattsatpcontractor",
+    storageBucket: "wattsatpcontractor.appspot.com",
+    messagingSenderId: "1059217531358"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Variables
+let currentBrand = '';
+let bidHistory = [];
+let predictiveModel = {
+    avgTotalCost: 0,
+    avgLaborCost: 0,
+    avgMaterialCost: 0,
+    avgDuration: 0,
+    winRate: 0
+};
+
+// Brand selection
+function selectBrand(brand) {
+    currentBrand = brand;
+    
+    // Update UI
+    document.querySelectorAll('.brand-option').forEach(option => {
+        option.classList.remove('active');
+    });
+    event.target.closest('.brand-option').classList.add('active');
+    
+    // Update form fields based on brand
+    updateFormForBrand(brand);
+}
         bidData.fileSource = 'auto-scan';
         bidHistory.push(bidData);
         updateCompetitorAnalysis(bidData);

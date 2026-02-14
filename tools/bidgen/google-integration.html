@@ -298,13 +298,180 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Placeholder functions for scanning (to be implemented)
 function scanDrive() {
+    if (!gapiInited) {
+        showNotification('⚠️ Google API not initialized', 'warning');
+        return;
+    }
+    
     showNotification('🔍 Scanning Google Drive for ATP files...', 'info');
-    // TODO: Implement Drive scanning logic
+    
+    // Search for ATP-related files
+    const searchQuery = "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract' or name contains 'assistive' or name contains 'tech'";
+    
+    gapi.client.drive.files.list({
+        q: searchQuery,
+        fields: 'files(id, name, mimeType, size, modifiedTime, webViewLink)',
+        pageSize: 100
+    }).then(function(response) {
+        const files = response.result.files;
+        const atpFiles = files.filter(file => isATPFile(file.name));
+        
+        displayScanResults('drive', files, atpFiles);
+        showNotification(`✅ Drive scan complete: ${atpFiles.length} ATP files found`, 'success');
+        
+        // Update service status
+        document.getElementById('driveStatus').textContent = `Connected (${atpFiles.length} files)`;
+        document.getElementById('driveStatus').className = 'service-status status-connected';
+        
+    }).catch(function(error) {
+        console.error('Drive scan error:', error);
+        showNotification('❌ Failed to scan Google Drive', 'error');
+    });
 }
 
 function scanGmail() {
+    if (!gapiInited) {
+        showNotification('⚠️ Google API not initialized', 'warning');
+        return;
+    }
+    
     showNotification('🔍 Scanning Gmail for ATP-related emails...', 'info');
-    // TODO: Implement Gmail scanning logic
+    
+    // Search for ATP-related emails
+    const searchQuery = 'bid OR quote OR atp OR watts OR contract OR assistive OR tech OR (from:*.gov) OR (from:*.state.*.us)';
+    
+    gapi.client.gmail.users.messages.list({
+        userId: 'me',
+        q: searchQuery,
+        maxResults: 50
+    }).then(function(response) {
+        const messages = response.result.messages || [];
+        
+        if (messages.length === 0) {
+            showNotification('📧 No ATP-related emails found', 'info');
+            return;
+        }
+        
+        // Get message details
+        const messagePromises = messages.map(message => 
+            gapi.client.gmail.users.messages.get({
+                userId: 'me',
+                id: message.id,
+                format: 'metadata',
+                metadataHeaders: ['Subject', 'From', 'Date', 'To']
+            })
+        );
+        
+        Promise.all(messagePromises).then(function(messageDetails) {
+            const atpEmails = messageDetails.map(detail => detail.result).filter(msg => isATPEmail(msg));
+            
+            displayScanResults('gmail', messageDetails.map(d => d.result), atpEmails);
+            showNotification(`✅ Gmail scan complete: ${atpEmails.length} ATP emails found`, 'success');
+            
+            // Update service status
+            document.getElementById('gmailStatus').textContent = `Connected (${atpEmails.length} emails)`;
+            document.getElementById('gmailStatus').className = 'service-status status-connected';
+            
+        }).catch(function(error) {
+            console.error('Gmail message details error:', error);
+            showNotification('❌ Failed to get email details', 'error');
+        });
+        
+    }).catch(function(error) {
+        console.error('Gmail scan error:', error);
+        showNotification('❌ Failed to scan Gmail', 'error');
+    });
+}
+
+// Check if file is ATP-related
+function isATPFile(filename) {
+    const atpPatterns = [
+        'atp', 'watts', 'justin watts', 'wsi', 'watts safety', 'bid', 'quote', 
+        'estimate', 'contract', 'proposal', 'assistive', 'tech', 'assistive technology',
+        'north park', 'allen', 'smith', 'kent', 'esperanza', 'pleasant', 'jayne'
+    ];
+    
+    const lowerFilename = filename.toLowerCase();
+    return atpPatterns.some(pattern => lowerFilename.includes(pattern.toLowerCase()));
+}
+
+// Check if email is ATP-related
+function isATPEmail(message) {
+    const headers = message.payload.headers;
+    const subject = headers.find(h => h.name === 'Subject')?.value || '';
+    const from = headers.find(h => h.name === 'From')?.value || '';
+    
+    const atpPatterns = [
+        'atp', 'watts', 'justin watts', 'wsi', 'watts safety', 'bid', 'quote', 
+        'estimate', 'contract', 'proposal', 'assistive', 'tech', 'assistive technology',
+        'north park', 'allen', 'smith', 'kent', 'esperanza', 'pleasant', 'jayne'
+    ];
+    
+    const stateDomainPattern = /@(.*\.)?(gov|state\..*\.us)$/;
+    
+    const lowerSubject = subject.toLowerCase();
+    const lowerFrom = from.toLowerCase();
+    
+    return atpPatterns.some(pattern => 
+        lowerSubject.includes(pattern.toLowerCase()) || lowerFrom.includes(pattern.toLowerCase())
+    ) || stateDomainPattern.test(lowerFrom);
+}
+
+// Display scan results
+function displayScanResults(service, allItems, atpItems) {
+    const resultsContainer = document.getElementById('scanResults');
+    const resultsHTML = atpItems.map(item => {
+        if (service === 'drive') {
+            return `
+                <div class="result-item atp">
+                    <div>
+                        <strong>📄 ${item.name}</strong>
+                        <br><small>${item.mimeType} • ${formatFileSize(item.size)} • ${new Date(item.modifiedTime).toLocaleDateString()}</small>
+                    </div>
+                    <button class="btn btn-primary" onclick="viewFile('${item.id}', '${item.name}')">View</button>
+                </div>
+            `;
+        } else if (service === 'gmail') {
+            const subject = item.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject';
+            const from = item.payload.headers.find(h => h.name === 'From')?.value || 'Unknown';
+            const date = item.payload.headers.find(h => h.name === 'Date')?.value || '';
+            
+            return `
+                <div class="result-item atp">
+                    <div>
+                        <strong>📧 ${subject}</strong>
+                        <br><small>From: ${from} • ${new Date(date).toLocaleDateString()}</small>
+                    </div>
+                    <button class="btn btn-primary" onclick="viewEmail('${item.id}')">View</button>
+                </div>
+            `;
+        }
+    }).join('');
+    
+    resultsContainer.innerHTML = resultsHTML || '<div class="result-item other">No ATP items found</div>';
+    
+    // Store results for import
+    window.scanResults = window.scanResults || {};
+    window.scanResults[service] = atpItems;
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// View file
+function viewFile(fileId, filename) {
+    window.open(`https://drive.google.com/file/d/${fileId}/view`, '_blank');
+}
+
+// View email
+function viewEmail(messageId) {
+    window.open(`https://mail.google.com/#inbox/${messageId}`, '_blank');
 }
 
 function importAllResults() {

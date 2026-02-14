@@ -461,42 +461,108 @@ function isATPEmail(message) {
     ) || stateDomainPattern.test(lowerFrom);
 }
 
-// Display scan results
+// Display scan results with comprehensive report
 function displayScanResults(service, allItems, atpItems) {
     const resultsContainer = document.getElementById('scanResults');
-    const resultsHTML = atpItems.map(item => {
+    
+    // Create summary report
+    const summaryHTML = `
+        <div class="scan-summary" style="background: #0f1a33; border: 1px solid #3498db; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+            <h3 style="color: #3498db; margin-bottom: 15px;">📊 Scan Report - ${service === 'drive' ? 'Google Drive' : 'Gmail'}</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: #1a2744; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold; color: #3498db;">${allItems.length}</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">Total Items Scanned</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #1a2744; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold; color: #27ae60;">${atpItems.length}</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">ATP Items Found</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #1a2744; border-radius: 8px;">
+                    <div style="font-size: 24px; font-weight: bold; color: #f39c12;">${Math.round((atpItems.length / allItems.length) * 100) || 0}%</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">Match Rate</div>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding: 10px; background: #16213e; border-radius: 5px;">
+                <div style="font-size: 12px; color: #7f8c8d;">Scan completed at: ${new Date().toLocaleString()}</div>
+                <div style="font-size: 12px; color: #7f8c8d;">Search terms: atp, watts, bid, quote, contract, assistive, tech, state domains</div>
+            </div>
+        </div>
+    `;
+    
+    // Create detailed results
+    const resultsHTML = atpItems.map((item, index) => {
         if (service === 'drive') {
             return `
-                <div class="result-item atp">
-                    <div>
-                        <strong>📄 ${item.name}</strong>
-                        <br><small>${item.mimeType} • ${formatFileSize(item.size)} • ${new Date(item.modifiedTime).toLocaleDateString()}</small>
+                <div class="result-item atp" style="background: #1a2744; border: 1px solid #27ae60; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">📄 ${item.name}</div>
+                        <div style="font-size: 12px; color: #7f8c8d; line-height: 1.4;">
+                            <div>Type: ${item.mimeType}</div>
+                            <div>Size: ${formatFileSize(item.size)}</div>
+                            <div>Modified: ${new Date(item.modifiedTime).toLocaleDateString()}</div>
+                            <div>ID: ${item.id}</div>
+                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="viewFile('${item.id}', '${item.name}')">View</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="background: #27ae60; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px;">ATP MATCH</span>
+                        <button class="btn btn-primary" onclick="viewFile('${item.id}', '${item.name}')" style="padding: 8px 16px; font-size: 12px;">View</button>
+                    </div>
                 </div>
             `;
         } else if (service === 'gmail') {
             const subject = item.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject';
             const from = item.payload.headers.find(h => h.name === 'From')?.value || 'Unknown';
             const date = item.payload.headers.find(h => h.name === 'Date')?.value || '';
+            const to = item.payload.headers.find(h => h.name === 'To')?.value || '';
             
             return `
-                <div class="result-item atp">
-                    <div>
-                        <strong>📧 ${subject}</strong>
-                        <br><small>From: ${from} • ${new Date(date).toLocaleDateString()}</small>
+                <div class="result-item atp" style="background: #1a2744; border: 1px solid #27ae60; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">📧 ${subject}</div>
+                        <div style="font-size: 12px; color: #7f8c8d; line-height: 1.4;">
+                            <div>From: ${from}</div>
+                            <div>To: ${to}</div>
+                            <div>Date: ${new Date(date).toLocaleDateString()}</div>
+                            <div>ID: ${item.id}</div>
+                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="viewEmail('${item.id}')">View</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="background: #27ae60; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px;">ATP MATCH</span>
+                        <button class="btn btn-primary" onclick="viewEmail('${item.id}')" style="padding: 8px 16px; font-size: 12px;">View</button>
+                    </div>
                 </div>
             `;
         }
     }).join('');
     
-    resultsContainer.innerHTML = resultsHTML || '<div class="result-item other">No ATP items found</div>';
+    // Combine summary and results
+    const fullHTML = summaryHTML + 
+        (resultsHTML || '<div class="result-item other" style="background: #1a2744; border: 1px solid #e74c3c; border-radius: 8px; padding: 15px; margin-bottom: 10px;">❌ No ATP items found</div>') +
+        `
+        <div style="margin-top: 20px; text-align: center;">
+            <button class="btn btn-success" onclick="exportResults()" style="margin-right: 10px;">📊 Export Report</button>
+            <button class="btn btn-primary" onclick="importAllResults()">🚀 Import to Bid Generator</button>
+        </div>
+    `;
     
-    // Store results for import
+    resultsContainer.innerHTML = fullHTML;
+    
+    // Store results for export
     window.scanResults = window.scanResults || {};
-    window.scanResults[service] = atpItems;
+    window.scanResults[service] = {
+        allItems: allItems,
+        atpItems: atpItems,
+        scanTime: new Date().toISOString(),
+        summary: {
+            total: allItems.length,
+            atpMatches: atpItems.length,
+            matchRate: Math.round((atpItems.length / allItems.length) * 100) || 0
+        }
+    };
+    
+    // Show detailed notification
+    showNotification(`📊 Scan Complete! Found ${atpItems.length} ATP items out of ${allItems.length} total (${Math.round((atpItems.length / allItems.length) * 100) || 0}% match rate)`, 'success');
 }
 
 // Format file size
@@ -524,8 +590,147 @@ function importAllResults() {
 }
 
 function exportResults() {
-    showNotification('📊 Exporting scan results...', 'info');
-    // TODO: Implement export logic
+    const scanResults = window.scanResults || {};
+    const reportData = {
+        scanDate: new Date().toISOString(),
+        summary: {
+            totalDriveFiles: scanResults.drive?.summary?.total || 0,
+            atpDriveFiles: scanResults.drive?.summary?.atpMatches || 0,
+            totalGmailMessages: scanResults.gmail?.summary?.total || 0,
+            atpGmailMessages: scanResults.gmail?.summary?.atpMatches || 0,
+            overallMatchRate: 0
+        },
+        driveResults: scanResults.drive?.atpItems || [],
+        gmailResults: scanResults.gmail?.atpItems || []
+    };
+    
+    // Calculate overall match rate
+    const totalItems = reportData.summary.totalDriveFiles + reportData.summary.totalGmailMessages;
+    const totalAtpItems = reportData.summary.atpDriveFiles + reportData.summary.atpGmailMessages;
+    reportData.summary.overallMatchRate = totalItems > 0 ? Math.round((totalAtpItems / totalItems) * 100) : 0;
+    
+    // Create detailed report
+    let reportText = `
+========================================
+ATP BID GENERATOR - GOOGLE SCAN REPORT
+========================================
+
+Scan Date: ${new Date(reportData.scanDate).toLocaleString()}
+Scan Duration: Real-time scan of Google Drive and Gmail
+
+========================================
+EXECUTIVE SUMMARY
+========================================
+
+Google Drive:
+- Total files scanned: ${reportData.summary.totalDriveFiles}
+- ATP-related files found: ${reportData.summary.atpDriveFiles}
+- Drive match rate: ${scanResults.drive?.summary?.matchRate || 0}%
+
+Gmail:
+- Total messages scanned: ${reportData.summary.totalGmailMessages}
+- ATP-related messages found: ${reportData.summary.atpGmailMessages}
+- Gmail match rate: ${scanResults.gmail?.summary?.matchRate || 0}%
+
+Overall:
+- Total items scanned: ${totalItems}
+- Total ATP items found: ${totalAtpItems}
+- Overall match rate: ${reportData.summary.overallMatchRate}%
+
+========================================
+DETAILED RESULTS - GOOGLE DRIVE
+========================================
+`;
+
+    // Add Drive results
+    if (reportData.driveResults.length > 0) {
+        reportData.driveResults.forEach((file, index) => {
+            reportText += `
+${index + 1}. ${file.name}
+   Type: ${file.mimeType}
+   Size: ${formatFileSize(file.size)}
+   Modified: ${new Date(file.modifiedTime).toLocaleString()}
+   ID: ${file.id}
+   Link: https://drive.google.com/file/d/${file.id}/view
+`;
+        });
+    } else {
+        reportText += "\nNo ATP-related files found in Google Drive.\n";
+    }
+
+    reportText += `
+========================================
+DETAILED RESULTS - GMAIL
+========================================
+`;
+
+    // Add Gmail results
+    if (reportData.gmailResults.length > 0) {
+        reportData.gmailResults.forEach((email, index) => {
+            const subject = email.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject';
+            const from = email.payload.headers.find(h => h.name === 'From')?.value || 'Unknown';
+            const date = email.payload.headers.find(h => h.name === 'Date')?.value || '';
+            const to = email.payload.headers.find(h => h.name === 'To')?.value || '';
+            
+            reportText += `
+${index + 1}. ${subject}
+   From: ${from}
+   To: ${to}
+   Date: ${new Date(date).toLocaleString()}
+   ID: ${email.id}
+   Link: https://mail.google.com/#inbox/${email.id}
+`;
+        });
+    } else {
+        reportText += "\nNo ATP-related messages found in Gmail.\n";
+    }
+
+    reportText += `
+========================================
+SEARCH CRITERIA
+========================================
+
+Search Terms Used:
+- atp, watts, justin watts, wsi, watts safety
+- bid, quote, estimate, contract, proposal
+- assistive, tech, assistive technology
+- north park, allen, smith, kent, esperanza, pleasant, jayne
+- State domain emails: *@*.gov and *@*.state.*.us
+
+File Types Searched:
+- All file types in Google Drive
+- All email messages in Gmail
+
+Permissions:
+- Read-only access only
+- No files or emails were modified
+
+========================================
+RECOMMENDATIONS
+========================================
+
+1. Review the ${totalAtpItems} ATP-related items found
+2. Import relevant items to the bid generator
+3. Consider setting up automated scans for future bids
+4. Review state domain communications for opportunities
+
+========================================
+END OF REPORT
+========================================
+`;
+
+    // Create and download the report
+    const blob = new Blob([reportText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ATP-Scan-Report-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showNotification(`📊 Report exported! ${totalAtpItems} ATP items found`, 'success');
 }
 </script>
 

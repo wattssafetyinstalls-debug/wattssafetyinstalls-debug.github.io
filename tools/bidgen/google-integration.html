@@ -116,6 +116,14 @@
                 </div>
                 <button class="btn btn-primary" onclick="scanFinancials()">🔍 Scan Financials</button>
             </div>
+            <div class="service-item">
+                <div class="service-header">
+                    <h3>🌊 Wave Accounting</h3>
+                    <p class="service-description">Import Wave exports with receipt images and detailed transactions</p>
+                    <div class="service-status" id="waveStatus">Not Connected</div>
+                </div>
+                <button class="btn btn-primary" onclick="scanWaveAccounting()">🔍 Scan Wave</button>
+            </div>
         </div>
     </div>
 
@@ -285,6 +293,7 @@ function handleAuthSuccess(tokenResponse) {
     const driveStatus = document.getElementById('driveStatus');
     const gmailStatus = document.getElementById('gmailStatus');
     const financialsStatus = document.getElementById('financialsStatus');
+    const waveStatus = document.getElementById('waveStatus');
     
     if (driveStatus) {
         driveStatus.textContent = 'Connected';
@@ -299,6 +308,11 @@ function handleAuthSuccess(tokenResponse) {
     if (financialsStatus) {
         financialsStatus.textContent = 'Connected';
         financialsStatus.className = 'service-status status-connected';
+    }
+    
+    if (waveStatus) {
+        waveStatus.textContent = 'Connected';
+        waveStatus.className = 'service-status status-connected';
     }
     
     console.log('Authentication success handling complete');
@@ -1117,6 +1131,233 @@ function generateFinancialRecommendations(analysis) {
             title: 'Peak Business Month',
             description: `${topMonth[0]} shows highest activity - seasonal pattern detected`,
             action: 'Plan resource allocation around peak business periods'
+        });
+    }
+    
+    return recommendations;
+}
+
+// Scan Wave Accounting exports for detailed financial intelligence
+function scanWaveAccounting() {
+    if (!gapiInited) {
+        showNotification('⚠️ Google API not initialized', 'warning');
+        return;
+    }
+    
+    showNotification('🌊 Scanning Wave Accounting exports...', 'info');
+    
+    // Search for Wave Accounting export files
+    const searchQuery = "name contains 'wave' or name contains 'accounting' or name contains 'export' or name contains 'transaction' or name contains 'receipt' or name contains 'invoice' or name contains 'csv' or name contains 'xlsx' or name contains 'journal' and modifiedTime > '2025-08-01T00:00:00'";
+    
+    // Start with first batch
+    scanWaveBatch(searchQuery, null, []);
+}
+
+// Function to scan Wave files in batches
+function scanWaveBatch(searchQuery, pageToken, allWaveFiles) {
+    const requestParams = {
+        q: searchQuery,
+        fields: 'files(id, name, mimeType, size, modifiedTime, webViewLink), nextPageToken',
+        pageSize: 100
+    };
+    
+    if (pageToken) {
+        requestParams.pageToken = pageToken;
+    }
+    
+    gapi.client.drive.files.list(requestParams).then(function(response) {
+        const files = response.result.files || [];
+        const nextPageToken = response.result.nextPageToken;
+        
+        if (files.length === 0 && !pageToken) {
+            showNotification('🌊 No Wave Accounting files found', 'info');
+            return;
+        }
+        
+        showNotification(`🌊 Found ${files.length} Wave files in this batch...`, 'info');
+        
+        // Add to all Wave files collection
+        allWaveFiles = allWaveFiles.concat(files);
+        
+        // Show progress
+        showNotification(`🌊 Processed ${allWaveFiles.length} Wave files so far...`, 'info');
+        
+        // Continue to next batch or finish
+        if (nextPageToken && allWaveFiles.length < 500) {
+            setTimeout(() => {
+                scanWaveBatch(searchQuery, nextPageToken, allWaveFiles);
+            }, 500);
+        } else {
+            // Finished scanning
+            finishWaveScan(allWaveFiles, searchQuery);
+        }
+        
+    }).catch(function(error) {
+        console.error('Wave scan error:', error);
+        showNotification('❌ Failed to scan Wave Accounting', 'error');
+    });
+}
+
+// Finish Wave scan and show results
+function finishWaveScan(allWaveFiles, searchQuery) {
+    const waveExports = allWaveFiles.filter(file => isWaveExport(file.name));
+    
+    displayScanResults('wave', allWaveFiles, waveExports);
+    
+    // Analyze for predictive insights
+    const predictiveAnalysis = analyzeWaveDataForPredictions(waveExports);
+    displayPredictiveAnalysis('wave', predictiveAnalysis);
+    
+    showNotification(`✅ Wave scan complete: ${waveExports.length} Wave export files found out of ${allWaveFiles.length} total`, 'success');
+    
+    // Update service status
+    document.getElementById('waveStatus').textContent = `Connected (${waveExports.length} files)`;
+    document.getElementById('waveStatus').className = 'service-status status-connected';
+}
+
+// Check if file is Wave Accounting export
+function isWaveExport(filename) {
+    const wavePatterns = [
+        'wave', 'accounting', 'export', 'transaction', 'receipt', 'invoice', 
+        'csv', 'xlsx', 'journal', 'ledger', 'trial balance', 'profit & loss',
+        'balance sheet', 'cash flow', 'accounts payable', 'accounts receivable',
+        'expense report', 'vendor', 'customer', 'payment'
+    ];
+    
+    const lowerFilename = filename.toLowerCase();
+    return wavePatterns.some(pattern => lowerFilename.includes(pattern.toLowerCase()));
+}
+
+// Analyze Wave data for predictive insights
+function analyzeWaveDataForPredictions(waveFiles) {
+    const analysis = {
+        transactionTypes: {},
+        expenseCategories: {},
+        incomeSources: {},
+        vendorPatterns: {},
+        customerPatterns: {},
+        receiptActivity: {},
+        cashFlow: {},
+        recommendations: []
+    };
+    
+    // Analyze file names for Wave patterns
+    waveFiles.forEach(file => {
+        const name = file.name.toLowerCase();
+        
+        // Transaction types
+        if (name.includes('invoice')) analysis.transactionTypes.invoices = (analysis.transactionTypes.invoices || 0) + 1;
+        if (name.includes('receipt')) analysis.transactionTypes.receipts = (analysis.transactionTypes.receipts || 0) + 1;
+        if (name.includes('payment')) analysis.transactionTypes.payments = (analysis.transactionTypes.payments || 0) + 1;
+        if (name.includes('expense')) analysis.transactionTypes.expenses = (analysis.transactionTypes.expenses || 0) + 1;
+        if (name.includes('journal')) analysis.transactionTypes.journal = (analysis.transactionTypes.journal || 0) + 1;
+        
+        // Expense categories
+        if (name.includes('material')) analysis.expenseCategories.materials = (analysis.expenseCategories.materials || 0) + 1;
+        if (name.includes('labor')) analysis.expenseCategories.labor = (analysis.expenseCategories.labor || 0) + 1;
+        if (name.includes('equipment')) analysis.expenseCategories.equipment = (analysis.expenseCategories.equipment || 0) + 1;
+        if (name.includes('travel')) analysis.expenseCategories.travel = (analysis.expenseCategories.travel || 0) + 1;
+        if (name.includes('office')) analysis.expenseCategories.office = (analysis.expenseCategories.office || 0) + 1;
+        
+        // Income sources
+        if (name.includes('customer')) analysis.incomeSources.customers = (analysis.incomeSources.customers || 0) + 1;
+        if (name.includes('client')) analysis.incomeSources.clients = (analysis.incomeSources.clients || 0) + 1;
+        if (name.includes('project')) analysis.incomeSources.projects = (analysis.incomeSources.projects || 0) + 1;
+        
+        // Vendor patterns
+        if (name.includes('vendor')) analysis.vendorPatterns.suppliers = (analysis.vendorPatterns.suppliers || 0) + 1;
+        if (name.includes('supplier')) analysis.vendorPatterns.suppliers = (analysis.vendorPatterns.suppliers || 0) + 1;
+        if (name.includes('contractor')) analysis.vendorPatterns.contractors = (analysis.vendorPatterns.contractors || 0) + 1;
+        
+        // Receipt activity (indicates expense tracking quality)
+        if (name.includes('receipt')) analysis.receiptActivity.highTracking = (analysis.receiptActivity.highTracking || 0) + 1;
+        if (name.includes('expense report')) analysis.receiptActivity.detailedReporting = (analysis.receiptActivity.detailedReporting || 0) + 1;
+        
+        // Cash flow indicators
+        if (name.includes('cash flow')) analysis.cashFlow.reports = (analysis.cashFlow.reports || 0) + 1;
+        if (name.includes('balance sheet')) analysis.cashFlow.balanceSheets = (analysis.cashFlow.balanceSheets || 0) + 1;
+        if (name.includes('profit & loss')) analysis.cashFlow.profitLoss = (analysis.cashFlow.profitLoss || 0) + 1;
+        
+        // Time patterns (from modification dates)
+        const modDate = new Date(file.modifiedTime);
+        const month = modDate.toLocaleString('default', { month: 'long' });
+        analysis.cashFlow[month] = (analysis.cashFlow[month] || 0) + 1;
+    });
+    
+    // Generate recommendations
+    analysis.recommendations = generateWaveRecommendations(analysis);
+    
+    return analysis;
+}
+
+// Generate Wave Accounting recommendations
+function generateWaveRecommendations(analysis) {
+    const recommendations = [];
+    
+    // High receipt activity indicates good expense tracking
+    if (analysis.receiptActivity.highTracking > 15) {
+        recommendations.push({
+            type: 'insight',
+            priority: 'medium',
+            title: 'Excellent Expense Tracking',
+            description: `Found ${analysis.receiptActivity.highTracking} receipt files - outstanding expense documentation`,
+            action: 'Maintain current expense tracking practices for tax optimization'
+        });
+    }
+    
+    // Customer income patterns
+    if (analysis.incomeSources.customers > 10) {
+        recommendations.push({
+            type: 'opportunity',
+            priority: 'high',
+            title: 'Strong Customer Base',
+            description: `${analysis.incomeSources.customers} customer-related files - diverse revenue streams`,
+            action: 'Develop customer retention programs and upselling strategies'
+        });
+    }
+    
+    // Vendor management insights
+    if (analysis.vendorPatterns.suppliers > 8) {
+        recommendations.push({
+            type: 'trend',
+            priority: 'medium',
+            title: 'Broad Supplier Network',
+            description: `${analysis.vendorPatterns.suppliers} supplier files - good procurement diversity`,
+            action: 'Negotiate bulk discounts with top suppliers for cost reduction'
+        });
+    }
+    
+    // Cash flow reporting quality
+    if (analysis.cashFlow.reports > 5) {
+        recommendations.push({
+            type: 'insight',
+            priority: 'high',
+            title: 'Advanced Financial Reporting',
+            description: `Multiple cash flow and financial reports - sophisticated financial management`,
+            action: 'Use cash flow insights for strategic planning and investment decisions'
+        });
+    }
+    
+    // Expense category analysis
+    if (analysis.expenseCategories.materials > 10) {
+        recommendations.push({
+            type: 'action',
+            priority: 'medium',
+            title: 'Material Cost Optimization',
+            description: `High volume of material expense tracking - opportunity for cost control`,
+            action: 'Analyze material cost trends and negotiate better supplier terms'
+        });
+    }
+    
+    // Transaction volume insights
+    const totalTransactions = Object.values(analysis.transactionTypes).reduce((sum, count) => sum + count, 0);
+    if (totalTransactions > 50) {
+        recommendations.push({
+            type: 'insight',
+            priority: 'medium',
+            title: 'High Transaction Volume',
+            description: `${totalTransactions} transaction files - active business operations`,
+            action: 'Consider automating transaction processing for efficiency gains'
         });
     }
     

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Integration - Local Version</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 800px; text-align: center; padding: 40px; }
+        .card { background: #16213e; border: 1px solid #2a3a5c; border-radius: 15px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        h1 { font-size: 32px; margin-bottom: 20px; color: #4285f4; }
+        .subtitle { color: #7f8c8d; font-size: 16px; margin-bottom: 30px; }
+        .btn { padding: 16px 32px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px; margin: 10px; }
+        .btn-google { background: #4285f4; color: white; }
+        .btn-google:hover { background: #3367d6; transform: translateY(-2px); }
+        .btn-local { background: #e67e22; color: white; }
+        .btn-local:hover { background: #d35400; transform: translateY(-2px); }
+        .instructions { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: left; }
+        .instructions h3 { color: #f39c12; margin-bottom: 15px; }
+        .instructions ol { color: #bdc3c7; line-height: 1.8; margin-left: 20px; }
+        .instructions li { margin-bottom: 8px; }
+        .warning { background: #e74c3c; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .success { background: #27ae60; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>🔐 Google Integration Setup</h1>
+        <p class="subtitle">Connect Google Drive and Gmail to scan for ATP files</p>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> The Google OAuth is configured for localhost only. 
+            You must run this locally to connect your Google account.
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 How to Use Google Integration</h3>
+            <ol>
+                <li><strong>Download this file</strong> to your computer</li>
+                <li><strong>Start a local server</strong> in the bidgen folder</li>
+                <li><strong>Open the local version</strong> in your browser</li>
+                <li><strong>Connect Google Account</strong> - this will work locally</li>
+                <li><strong>Scan Drive & Gmail</strong> for ATP files</li>
+                <li><strong>Import results</strong> to your enhanced bid generator</li>
+            </ol>
+        </div>
+        
+        <button class="btn btn-local" onclick="downloadLocalVersion()">
+            📥 Download Local Version
+        </button>
+        
+        <button class="btn btn-google" onclick="showLocalInstructions()">
+            🖥️ Run Locally
+        </button>
+        
+        <div id="localInstructions" style="display: none; margin-top: 30px; text-align: left; background: #0f1a33; padding: 20px; border-radius: 10px;">
+            <h3 style="color: #f39c12; margin-bottom: 15px;">🖥️ Local Setup Instructions</h3>
+            <div style="color: #bdc3c7; line-height: 1.8;">
+                <p><strong>Option 1: Python Server (Recommended)</strong></p>
+                <code style="background: #2a3a5c; padding: 10px; border-radius: 5px; display: block; margin: 10px 0;">
+                    cd c:\Users\User\my-website\tools\bidgen<br>
+                    python -m http.server 3000
+                </code>
+                <p>Then open: <code style="background: #2a3a5c; padding: 5px; border-radius: 3px;">http://localhost:3000/google-integration.html</code></p>
+                
+                <p style="margin-top: 20px;"><strong>Option 2: VS Code Live Server</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Open the bidgen folder in VS Code</li>
+                    <li>Install "Live Server" extension</li>
+                    <li>Right-click google-integration.html</li>
+                    <li>Choose "Open with Live Server"</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="success" style="margin-top: 20px;">
+            <strong>✅ Why Local Only?</strong><br>
+            Google OAuth requires exact redirect URIs for security. Your credentials are configured for localhost:3000 to keep them secure and separate from your public website.
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #2a3a5c;">
+            <p style="color: #7f8c8d; font-size: 12px;">
+                Once connected locally, you can export the scan results and import them into your live bid generator.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function downloadLocalVersion() {
+    const link = document.createElement('a');
+    link.href = '/tools/bidgen/google-integration.html';
+    link.download = 'google-integration.html';
+    link.click();
+}
+
+function showLocalInstructions() {
+    const instructions = document.getElementById('localInstructions');
+    instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+
+</body>
+</html>

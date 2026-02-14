@@ -184,6 +184,21 @@
     <!-- COMPETITIVE INTELLIGENCE -->
     <div class="card">
         <h2><span class="icon">🎯</span> Competitive Intelligence</h2>
+        
+        <!-- Google Intelligence Integration -->
+        <div class="comp-intel" style="margin-bottom: 20px;">
+            <h3 style="color: #3498db; margin-bottom: 15px;">🔍 Google Intelligence Data</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <button class="btn btn-primary" onclick="importGoogleIntelligence('drive')">📁 Import Drive Data</button>
+                <button class="btn btn-primary" onclick="importGoogleIntelligence('gmail')">📧 Import Gmail Data</button>
+                <button class="btn btn-primary" onclick="importGoogleIntelligence('financials')">📊 Import Financials</button>
+                <button class="btn btn-primary" onclick="importGoogleIntelligence('wave')">🌊 Import Wave Data</button>
+            </div>
+            <div id="googleIntelStatus" style="padding: 10px; background: #0f1a33; border-radius: 6px; font-size: 12px; color: #7f8c8d;">
+                Click above to import intelligence data from Google scans
+            </div>
+        </div>
+        
         <div class="upload-zone" id="bidHistoryUpload">
             <h3>Upload Bid History & Competition Data</h3>
             <p>Drop bid reports, competitor analysis, and project outcomes here</p>
@@ -1501,19 +1516,6 @@ function loadBidHistory() {
     }
 }
 
-function loadCompetitorData() {
-    // Load competitor intelligence from Firebase
-    const userPIN = sessionStorage.getItem('bid_pin');
-    if (userPIN) {
-        const hashed = hashPIN(userPIN);
-        db.ref('users/' + hashed + '/competitorData').once('value').then(snapshot => {
-            if (snapshot.exists()) {
-                competitorData = snapshot.val() || [];
-            }
-        });
-    }
-}
-
 function hashPIN(pin) {
     let h = 0;
     for (let i = 0; i < pin.length; i++) {
@@ -1541,6 +1543,272 @@ function saveToHistory() {
 function exportAnalysis() {
     // Export analysis results
     console.log('Exporting analysis...');
+}
+
+// Import Google Intelligence Data
+function importGoogleIntelligence(source) {
+    const statusDiv = document.getElementById('googleIntelStatus');
+    statusDiv.innerHTML = `🔄 Importing ${source} intelligence data...`;
+    statusDiv.style.color = '#f39c12';
+    
+    // Get stored Google scan results from localStorage
+    const storedResults = localStorage.getItem('googleScanResults');
+    if (!storedResults) {
+        statusDiv.innerHTML = `❌ No Google scan data found. Please run Google scans first.`;
+        statusDiv.style.color = '#e74c3c';
+        return;
+    }
+    
+    try {
+        const scanData = JSON.parse(storedResults);
+        const sourceData = scanData[source];
+        
+        if (!sourceData || !sourceData.atpItems || sourceData.atpItems.length === 0) {
+            statusDiv.innerHTML = `❌ No ${source} data found. Please scan ${source} first.`;
+            statusDiv.style.color = '#e74c3c';
+            return;
+        }
+        
+        // Process and integrate the data
+        processGoogleIntelligence(source, sourceData);
+        
+        statusDiv.innerHTML = `✅ Successfully imported ${sourceData.atpItems.length} items from ${source}`;
+        statusDiv.style.color = '#27ae60';
+        
+        // Update bid calculations with new intelligence
+        updateBidCalculationsWithIntelligence(sourceData);
+        
+    } catch (error) {
+        console.error('Error importing Google intelligence:', error);
+        statusDiv.innerHTML = `❌ Error importing ${source} data: ${error.message}`;
+        statusDiv.style.color = '#e74c3c';
+    }
+}
+
+// Process Google Intelligence Data for Competitive Analysis
+function processGoogleIntelligence(source, data) {
+    const userPIN = sessionStorage.getItem('bid_pin');
+    if (!userPIN) return;
+    
+    const hashed = hashPIN(userPIN);
+    const intelRef = db.ref(`googleIntelligence/${hashed}/${source}`);
+    
+    // Extract competitive intelligence
+    const competitiveIntel = extractCompetitiveIntelligence(source, data);
+    
+    // Store in Firebase
+    intelRef.set({
+        imported: new Date().toISOString(),
+        totalItems: data.allItems.length,
+        atpItems: data.atpItems.length,
+        matchRate: data.summary.matchRate,
+        intelligence: competitiveIntel,
+        predictiveAnalysis: data.predictiveAnalysis || null
+    });
+    
+    // Update UI with intelligence
+    displayCompetitiveIntelligence(source, competitiveIntel);
+}
+
+// Extract Competitive Intelligence from Google Data
+function extractCompetitiveIntelligence(source, data) {
+    const intel = {
+        competitors: {},
+        bidPatterns: {},
+        clientTypes: {},
+        serviceTypes: {},
+        pricingInsights: {},
+        recommendations: []
+    };
+    
+    // Analyze ATP items for competitive intelligence
+    data.atpItems.forEach(item => {
+        const name = item.name.toLowerCase();
+        
+        // Extract competitor names
+        const competitorPatterns = ['vs ', 'compared to', 'competitor', 'opponent', 'rival'];
+        competitorPatterns.forEach(pattern => {
+            const match = name.match(new RegExp(`${pattern}([^\\s]+)`, 'i'));
+            if (match) {
+                const competitor = match[1].trim();
+                intel.competitors[competitor] = (intel.competitors[competitor] || 0) + 1;
+            }
+        });
+        
+        // Extract bid patterns
+        if (name.includes('won')) intel.bidPatterns.won = (intel.bidPatterns.won || 0) + 1;
+        if (name.includes('lost')) intel.bidPatterns.lost = (intel.bidPatterns.lost || 0) + 1;
+        if (name.includes('bid')) intel.bidPatterns.total = (intel.bidPatterns.total || 0) + 1;
+        
+        // Extract client types
+        if (name.includes('north park')) intel.clientTypes['North Park'] = (intel.clientTypes['North Park'] || 0) + 1;
+        if (name.includes('allen')) intel.clientTypes['Allen ISD'] = (intel.clientTypes['Allen ISD'] || 0) + 1;
+        if (name.includes('smith')) intel.clientTypes['Smith ISD'] = (intel.clientTypes['Smith ISD'] || 0) + 1;
+        if (name.includes('kent')) intel.clientTypes['Kent ISD'] = (intel.clientTypes['Kent ISD'] || 0) + 1;
+        
+        // Extract service types
+        if (name.includes('bathroom')) intel.serviceTypes.bathroom = (intel.serviceTypes.bathroom || 0) + 1;
+        if (name.includes('kitchen')) intel.serviceTypes.kitchen = (intel.serviceTypes.kitchen || 0) + 1;
+        if (name.includes('ramp')) intel.serviceTypes.ramp = (intel.serviceTypes.ramp || 0) + 1;
+        if (name.includes('assistive')) intel.serviceTypes.assistiveTech = (intel.serviceTypes.assistiveTech || 0) + 1;
+        
+        // Extract pricing insights
+        const priceMatch = name.match(/\$([0-9,]+)/);
+        if (priceMatch) {
+            const price = parseInt(priceMatch[1].replace(',', ''));
+            if (!intel.pricingInsights.avgPrice) intel.pricingInsights.avgPrice = 0;
+            if (!intel.pricingInsights.priceCount) intel.pricingInsights.priceCount = 0;
+            intel.pricingInsights.avgPrice += price;
+            intel.pricingInsights.priceCount++;
+        }
+    });
+    
+    // Calculate average price
+    if (intel.pricingInsights.priceCount > 0) {
+        intel.pricingInsights.avgPrice /= intel.pricingInsights.priceCount;
+    }
+    
+    // Generate recommendations
+    intel.recommendations = generateCompetitiveRecommendations(intel);
+    
+    return intel;
+}
+
+// Generate Competitive Recommendations
+function generateCompetitiveRecommendations(intel) {
+    const recommendations = [];
+    
+    // Win rate analysis
+    if (intel.bidPatterns.total > 0) {
+        const winRate = (intel.bidPatterns.won || 0) / intel.bidPatterns.total;
+        if (winRate < 0.3) {
+            recommendations.push({
+                type: 'warning',
+                title: 'Low Win Rate Detected',
+                description: `Win rate is ${(winRate * 100).toFixed(1)}% - consider pricing strategy review`,
+                priority: 'high'
+            });
+        } else if (winRate > 0.7) {
+            recommendations.push({
+                type: 'success',
+                title: 'Excellent Win Rate',
+                description: `Win rate is ${(winRate * 100).toFixed(1)}% - current strategy is working`,
+                priority: 'low'
+            });
+        }
+    }
+    
+    // Competitor analysis
+    const topCompetitor = Object.entries(intel.competitors).sort((a, b) => b[1] - a[1])[0];
+    if (topCompetitor && topCompetitor[1] > 3) {
+        recommendations.push({
+            type: 'info',
+            title: 'Frequent Competitor',
+            description: `${topCompetitor[0]} appears in ${topCompetitor[1]} bids - monitor their strategy`,
+            priority: 'medium'
+        });
+    }
+    
+    // Client focus
+    const topClient = Object.entries(intel.clientTypes).sort((a, b) => b[1] - a[1])[0];
+    if (topClient) {
+        recommendations.push({
+            type: 'opportunity',
+            title: 'Top Client Opportunity',
+            description: `${topClient[0]} has ${topClient[1]} projects - strong relationship potential`,
+            priority: 'medium'
+        });
+    }
+    
+    return recommendations;
+}
+
+// Display Competitive Intelligence in UI
+function displayCompetitiveIntelligence(source, intel) {
+    const grid = document.getElementById('competitorGrid');
+    
+    // Create intelligence card
+    const intelCard = document.createElement('div');
+    intelCard.className = 'competitor-card';
+    intelCard.style.cssText = 'border-left: 4px solid #3498db;';
+    
+    intelCard.innerHTML = `
+        <h4 style="color: #3498db; margin-bottom: 10px;">📊 ${source.toUpperCase()} Intelligence</h4>
+        <div style="font-size: 12px; color: #ecf0f1; line-height: 1.4;">
+            <div><strong>Total Items:</strong> ${intel.bidPatterns.total || 0}</div>
+            <div><strong>Won:</strong> ${intel.bidPatterns.won || 0}</div>
+            <div><strong>Lost:</strong> ${intel.bidPatterns.lost || 0}</div>
+            ${intel.pricingInsights.avgPrice ? `<div><strong>Avg Price:</strong> $${intel.pricingInsights.avgPrice.toLocaleString()}</div>` : ''}
+            ${Object.keys(intel.competitors).length > 0 ? `<div><strong>Top Competitor:</strong> ${Object.keys(intel.competitors)[0]}</div>` : ''}
+        </div>
+        <div style="margin-top: 10px;">
+            ${intel.recommendations.slice(0, 2).map(rec => `
+                <div style="padding: 5px; background: #0f1a33; border-radius: 4px; font-size: 11px; margin-bottom: 5px;">
+                    <strong style="color: ${rec.type === 'warning' ? '#e74c3c' : rec.type === 'success' ? '#27ae60' : '#3498db'};">${rec.title}</strong>
+                    <div style="color: #7f8c8d;">${rec.description}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    grid.appendChild(intelCard);
+}
+
+// Update Bid Calculations with Intelligence
+function updateBidCalculationsWithIntelligence(data) {
+    // Apply intelligence to current bid calculations
+    const projectData = getCurrentProjectData();
+    if (!projectData) return;
+    
+    // Adjust pricing based on historical data
+    if (data.intelligence && data.intelligence.pricingInsights.avgPrice) {
+        const historicalAvg = data.intelligence.pricingInsights.avgPrice;
+        const currentBid = projectData.totalCost || 0;
+        
+        // Suggest price adjustment
+        const suggestedPrice = historicalAvg * 0.95; // 5% below historical average
+        
+        // Update UI with suggestion
+        const panel = document.querySelector('.predictive-panel');
+        if (panel) {
+            const priceSuggestion = document.createElement('div');
+            priceSuggestion.className = 'price-suggestion';
+            priceSuggestion.style.cssText = 'margin-top: 10px; padding: 10px; background: #0f1a33; border-left: 4px solid #f39c12; border-radius: 6px; font-size: 12px; color: #f39c12;';
+            priceSuggestion.innerHTML = `
+                <strong>💡 Intelligence-Based Pricing Suggestion:</strong><br>
+                Historical avg: $${historicalAvg.toLocaleString()}<br>
+                Suggested bid: $${suggestedPrice.toLocaleString()} (5% below avg)<br>
+                Current bid: $${currentBid.toLocaleString()}
+            `;
+            panel.appendChild(priceSuggestion);
+        }
+    }
+    
+    // Update competitor buffer based on win rate
+    if (data.intelligence && data.intelligence.bidPatterns.total > 0) {
+        const winRate = (data.intelligence.bidPatterns.won || 0) / data.intelligence.bidPatterns.total;
+        let bufferMultiplier = 1.0;
+        
+        if (winRate < 0.3) bufferMultiplier = 1.15; // Increase buffer if low win rate
+        else if (winRate > 0.7) bufferMultiplier = 0.95; // Reduce buffer if high win rate
+        
+        // Apply to calculation
+        updateCompetitorBufferIndicator(bufferMultiplier);
+    }
+}
+
+// Get current project data from form
+function getCurrentProjectData() {
+    // Extract current form data
+    const formData = {
+        totalCost: parseFloat(document.getElementById('totalCost')?.value || 0),
+        projectType: document.querySelector('input[name="projectType"]:checked')?.value,
+        duration: parseInt(document.getElementById('duration')?.value || 1),
+        sqft: parseFloat(document.getElementById('sqft')?.value || 0),
+        laborCost: parseFloat(document.getElementById('laborCost')?.value || 0)
+    };
+    
+    return formData.totalCost > 0 ? formData : null;
 }
 </script>
 

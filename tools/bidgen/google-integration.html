@@ -933,10 +933,19 @@ END OF ANALYSIS
 // Apply predictive insights to bid strategy
 function applyPredictiveInsights() {
     showNotification('🚀 Applying predictive insights to bid strategy...', 'info');
-    // TODO: Implement integration with bid generator
-    setTimeout(() => {
-        showNotification('✅ Predictive insights applied to bid strategy!', 'success');
-    }, 2000);
+    
+    // Save all scan results to localStorage for bid generator access
+    if (window.scanResults) {
+        localStorage.setItem('googleScanResults', JSON.stringify(window.scanResults));
+        showNotification('✅ Intelligence data saved for bid generator!', 'success');
+        
+        // Open bid generator in new tab
+        setTimeout(() => {
+            window.open('dual-brand-bid-system.html', '_blank');
+        }, 1000);
+    } else {
+        showNotification('❌ No scan data available to apply', 'error');
+    }
 }
 
 // Handle WSI Financials file upload

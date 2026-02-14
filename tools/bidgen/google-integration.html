@@ -111,18 +111,20 @@
             <div class="service-item">
                 <div class="service-header">
                     <h3>📊 WSI Financials</h3>
-                    <p class="service-description">Analyze financial spreadsheets for business intelligence</p>
+                    <p class="service-description">Upload WSI financial spreadsheets for business intelligence</p>
                     <div class="service-status" id="financialsStatus">Not Connected</div>
                 </div>
-                <button class="btn btn-primary" onclick="scanFinancials()">🔍 Scan Financials</button>
+                <input type="file" id="financialsFileInput" multiple accept=".csv,.xlsx,.xls,.pdf" style="display: none;" onchange="handleFinancialsUpload(event)">
+                <button class="btn btn-primary" onclick="document.getElementById('financialsFileInput').click()">� Upload Financials</button>
             </div>
             <div class="service-item">
                 <div class="service-header">
                     <h3>🌊 Wave Accounting</h3>
-                    <p class="service-description">Import Wave exports with receipt images and detailed transactions</p>
+                    <p class="service-description">Upload Wave exports with receipt images and detailed transactions</p>
                     <div class="service-status" id="waveStatus">Not Connected</div>
                 </div>
-                <button class="btn btn-primary" onclick="scanWaveAccounting()">🔍 Scan Wave</button>
+                <input type="file" id="waveFileInput" multiple accept=".csv,.xlsx,.xls,.pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleWaveUpload(event)">
+                <button class="btn btn-primary" onclick="document.getElementById('waveFileInput').click()">� Upload Wave Files</button>
             </div>
         </div>
     </div>
@@ -937,6 +939,82 @@ function applyPredictiveInsights() {
     }, 2000);
 }
 
+// Handle WSI Financials file upload
+function handleFinancialsUpload(event) {
+    const files = Array.from(event.target.files);
+    
+    if (files.length === 0) {
+        showNotification('❌ No files selected', 'error');
+        return;
+    }
+    
+    showNotification(`📊 Processing ${files.length} WSI financial files...`, 'info');
+    
+    // Process uploaded files
+    const financialFiles = files.map(file => ({
+        id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: new Date(file.lastModified).toISOString(),
+        isLocal: true
+    }));
+    
+    // Filter for WSI-related files
+    const wsiFinancials = financialFiles.filter(file => isWSIFinancial(file.name));
+    
+    // Display results
+    displayScanResults('financials', financialFiles, wsiFinancials);
+    
+    // Analyze for predictive insights
+    const predictiveAnalysis = analyzeFinancialsForPredictions(wsiFinancials);
+    displayPredictiveAnalysis('financials', predictiveAnalysis);
+    
+    // Update service status
+    document.getElementById('financialsStatus').textContent = `Connected (${wsiFinancials.length} files)`;
+    document.getElementById('financialsStatus').className = 'service-status status-connected';
+    
+    showNotification(`✅ Financials upload complete: ${wsiFinancials.length} WSI files found out of ${files.length} total`, 'success');
+}
+
+// Handle Wave Accounting file upload
+function handleWaveUpload(event) {
+    const files = Array.from(event.target.files);
+    
+    if (files.length === 0) {
+        showNotification('❌ No files selected', 'error');
+        return;
+    }
+    
+    showNotification(`🌊 Processing ${files.length} Wave Accounting files...`, 'info');
+    
+    // Process uploaded files
+    const waveFiles = files.map(file => ({
+        id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: new Date(file.lastModified).toISOString(),
+        isLocal: true
+    }));
+    
+    // Filter for Wave-related files
+    const waveExports = waveFiles.filter(file => isWaveExport(file.name));
+    
+    // Display results
+    displayScanResults('wave', waveFiles, waveExports);
+    
+    // Analyze for predictive insights
+    const predictiveAnalysis = analyzeWaveDataForPredictions(waveExports);
+    displayPredictiveAnalysis('wave', predictiveAnalysis);
+    
+    // Update service status
+    document.getElementById('waveStatus').textContent = `Connected (${waveExports.length} files)`;
+    document.getElementById('waveStatus').className = 'service-status status-connected';
+    
+    showNotification(`✅ Wave upload complete: ${waveExports.length} Wave files found out of ${files.length} total`, 'success');
+}
+
 // Scan WSI Financials for business intelligence
 function scanFinancials() {
     if (!gapiInited) {
@@ -1405,7 +1483,7 @@ function displayScanResults(service, allItems, atpItems) {
     // Create summary report
     const summaryHTML = `
         <div class="scan-summary" style="background: #0f1a33; border: 1px solid #3498db; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
-            <h3 style="color: #3498db; margin-bottom: 15px;">📊 Scan Report - ${service === 'drive' ? 'Google Drive' : 'Gmail'}</h3>
+            <h3 style="color: #3498db; margin-bottom: 15px;">📊 Scan Report - ${service === 'drive' ? 'Google Drive' : service === 'gmail' ? 'Gmail' : service === 'financials' ? 'WSI Financials' : 'Wave Accounting'}</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                 <div style="text-align: center; padding: 15px; background: #1a2744; border-radius: 8px;">
                     <div style="font-size: 24px; font-weight: bold; color: #3498db;">${allItems.length}</div>
@@ -1423,35 +1501,41 @@ function displayScanResults(service, allItems, atpItems) {
             <div style="margin-top: 15px; padding: 10px; background: #16213e; border-radius: 5px;">
                 <div style="font-size: 12px; color: #7f8c8d;">Scan completed at: ${new Date().toLocaleString()}</div>
                 <div style="font-size: 12px; color: #7f8c8d;">Search terms: atp, watts, bid, quote, contract, assistive, tech, state domains</div>
+                ${allItems.some(item => item.isLocal) ? '<div style="font-size: 12px; color: #27ae60;">✅ Local file upload processed</div>' : ''}
             </div>
         </div>
     `;
     
     // Create detailed results
     const resultsHTML = atpItems.map((item, index) => {
-        if (service === 'drive') {
+        if (service === 'drive' || service === 'financials' || service === 'wave') {
+            const isLocal = item.isLocal || false;
+            const size = item.size || 0;
+            const modifiedTime = item.modifiedTime || item.lastModified || new Date().toISOString();
+            
             return `
                 <div class="result-item atp" style="background: #1a2744; border: 1px solid #27ae60; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
                     <div style="flex: 1;">
                         <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">📄 ${item.name}</div>
                         <div style="font-size: 12px; color: #7f8c8d; line-height: 1.4;">
-                            <div>Type: ${item.mimeType}</div>
-                            <div>Size: ${formatFileSize(item.size)}</div>
-                            <div>Modified: ${new Date(item.modifiedTime).toLocaleDateString()}</div>
+                            <div>Type: ${item.type || item.mimeType || 'Unknown'}</div>
+                            <div>Size: ${formatFileSize(size)}</div>
+                            <div>Modified: ${new Date(modifiedTime).toLocaleDateString()}</div>
                             <div>ID: ${item.id}</div>
+                            ${isLocal ? '<div style="color: #27ae60;">✅ Local Upload</div>' : ''}
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <span style="background: #27ae60; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px;">ATP MATCH</span>
-                        <button class="btn btn-primary" onclick="viewFile('${item.id}', '${item.name}')" style="padding: 8px 16px; font-size: 12px;">View</button>
+                        <button class="btn btn-primary" onclick="viewFile('${item.id}', '${item.name}')" style="padding: 8px 16px; font-size: 12px;">${isLocal ? '📁 Open' : 'View'}</button>
                     </div>
                 </div>
             `;
         } else if (service === 'gmail') {
-            const subject = item.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject';
-            const from = item.payload.headers.find(h => h.name === 'From')?.value || 'Unknown';
-            const date = item.payload.headers.find(h => h.name === 'Date')?.value || '';
-            const to = item.payload.headers.find(h => h.name === 'To')?.value || '';
+            const subject = item.payload?.headers?.find(h => h.name === 'Subject')?.value || item.subject || 'No Subject';
+            const from = item.payload?.headers?.find(h => h.name === 'From')?.value || item.from || 'Unknown';
+            const date = item.payload?.headers?.find(h => h.name === 'Date')?.value || item.date || '';
+            const to = item.payload?.headers?.find(h => h.name === 'To')?.value || item.to || '';
             
             return `
                 <div class="result-item atp" style="background: #1a2744; border: 1px solid #27ae60; border-radius: 8px; padding: 15px; margin-bottom: 10px;">

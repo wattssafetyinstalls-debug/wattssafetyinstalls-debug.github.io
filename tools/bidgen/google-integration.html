@@ -156,6 +156,12 @@
 const CLIENT_ID = '1059217531358-84phisns4u8mt67v7g9aumksfqt69glj.apps.googleusercontent.com'; // Public identifier
 const API_KEY = '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'; // Sensitive - stored locally only
 
+// OAuth 2.0 Scopes (read-only permissions only)
+const SCOPES = [
+    'https://www.googleapis.com/auth/drive.readonly',
+    'https://www.googleapis.com/auth/gmail.readonly'
+];
+
 // Additional security measures
 const SECURITY_CONFIG = {
     // Store tokens in localStorage (not in code)
@@ -187,14 +193,16 @@ function initGoogleApi() {
         }).then(() => {
             gapiInited = true;
             console.log('Google API initialized');
+            updateAuthStatus();
         }, (error) => {
             console.error('Error initializing Google API:', error);
+            showNotification('❌ Failed to initialize Google API', 'error');
         });
     });
 }
 
-// Authentication
-function authenticateGoogle() {
+// Initialize OAuth2 token client
+function initTokenClient() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES.join(' '),
@@ -202,285 +210,99 @@ function authenticateGoogle() {
             if (tokenResponse && tokenResponse.access_token) {
                 handleAuthSuccess(tokenResponse);
             } else {
-                handleAuthError();
+                showNotification('❌ Authentication failed', 'error');
             }
         }
     });
+}
+
+// Handle successful authentication
+function handleAuthSuccess(tokenResponse) {
+    // Store token securely
+    localStorage.setItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY, JSON.stringify(tokenResponse));
     
+    // Update UI
+    updateAuthStatus();
+    showNotification('✅ Successfully connected to Google account!', 'success');
+    
+    // Enable scan buttons
+    document.getElementById('driveStatus').textContent = 'Connected';
+    document.getElementById('driveStatus').className = 'service-status status-connected';
+    document.getElementById('gmailStatus').textContent = 'Connected';
+    document.getElementById('gmailStatus').className = 'service-status status-connected';
+}
+
+// Update authentication status
+function updateAuthStatus() {
+    const token = localStorage.getItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY);
+    const authStatus = document.getElementById('authStatus');
+    
+    if (token) {
+        authStatus.innerHTML = '✅ Connected to Google account';
+        authStatus.style.color = '#27ae60';
+    } else {
+        authStatus.innerHTML = '❌ Not connected';
+        authStatus.style.color = '#e74c3c';
+    }
+}
+
+// Authentication
+function authenticateGoogle() {
+    if (!tokenClient) {
+        initTokenClient();
+    }
+    
+    // Request OAuth token
     tokenClient.requestAccessToken();
 }
 
-function handleAuthSuccess(tokenResponse) {
-    // Store token securely in localStorage (not in code)
-    localStorage.setItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY, tokenResponse.access_token);
-    
-    // Set up auto-refresh
-    if (tokenResponse.expires_in) {
-        setTimeout(() => refreshToken(), (tokenResponse.expires_in - SECURITY_CONFIG.TOKEN_REFRESH_BUFFER) / 1000);
-    }
-    
-    // Update UI
-    document.getElementById('authStatus').innerHTML = `
-        <p style="color: #27ae60;">✅ Connected to Google</p>
-        <p style="font-size: 11px; color: #7f8c8d;">Access token expires in ${Math.floor(tokenResponse.expires_in / 60)} minutes</p>
-    `;
-    
-    // Show services
-    document.getElementById('servicesCard').style.display = 'block';
-    
-    // Initialize Google API
-    if (!gapiInited) {
-        initGoogleApi();
-    }
-    
-    showNotification('✅ Successfully connected to Google account!', 'success');
-}
-
-function handleAuthError() {
-    document.getElementById('authStatus').innerHTML = `
-        <p style="color: #e74c3c;">❌ Authentication failed</p>
-        <p style="font-size: 11px; color: #7f8c8d;">Please check your Google account settings</p>
-    `;
-    
-    showNotification('❌ Failed to connect to Google account', 'error');
-}
-
-function refreshToken() {
-    // Auto-refresh token before expiry
-    const refreshToken = localStorage.getItem('google_refresh_token');
-    if (refreshToken) {
-        // Implement token refresh logic here
-        console.log('Refreshing Google access token...');
-    }
-}
-
-// Google Drive Scanner
-async function scanDrive() {
-    if (!gapiInited) {
-        showNotification('⚠️ Google API not initialized', 'warning');
-        return;
-    }
-    
-    showProgressCard('Scanning Google Drive...');
-    
-    try {
-        const response = await gapi.client.drive.files.list({
-            q: "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract'",
-            fields: 'files(id, name, mimeType, size, modifiedTime)',
-            pageSize: 1000
-        });
-        
-        const files = response.result.files;
-        const atpFiles = files.filter(file => isATPFile(file.name));
-        
-        updateScanResults('drive', files, atpFiles);
-        updateServiceStatus('drive', 'connected');
-        
-        showNotification(`✅ Drive scan complete: ${atpFiles.length} ATP files found`, 'success');
-        
-    } catch (error) {
-        console.error('Drive scan error:', error);
-        showNotification('❌ Failed to scan Google Drive', 'error');
-    } finally {
-        hideProgressCard();
-    }
-}
-
-// Gmail Scanner
-async function scanGmail() {
-    if (!gapiInited) {
-        showNotification('⚠️ Google API not initialized', 'warning');
-        return;
-    }
-    
-    showProgressCard('Scanning Gmail...');
-    
-    try {
-        // Search for ATP-related emails
-        const query = atpPatterns.map(pattern => `subject:${pattern}`).join(' OR ');
-        
-        const response = await gapi.client.gmail.users.messages.list({
-            userId: 'me',
-            q: query,
-            maxResults: 50
-        });
-        
-        const messages = response.result.messages || [];
-        const atpMessages = [];
-        
-        for (const message of messages.slice(0, 10)) { // Limit to first 10 for demo
-            try {
-                const messageDetail = await gapi.client.gmail.users.messages.get({
-                    userId: 'me',
-                    id: message.id,
-                    format: 'metadata'
-                });
-                
-                const headers = messageDetail.result.payload.headers;
-                const subject = headers.find(h => h.name === 'Subject')?.value || '';
-                const from = headers.find(h => h.name === 'From')?.value || '';
-                const date = headers.find(h => h.name === 'Date')?.value || '';
-                
-                if (isATPFile(subject) || isATPFile(from)) {
-                    atpMessages.push({
-                        id: message.id,
-                        subject: subject,
-                        from: from,
-                        date: date,
-                        snippet: messageDetail.result.snippet
-                    });
-                }
-            } catch (error) {
-                console.warn('Error fetching message:', error);
-            }
-        }
-        
-        updateScanResults('gmail', messages, atpMessages);
-        updateServiceStatus('gmail', 'connected');
-        
-        showNotification(`✅ Gmail scan complete: ${atpMessages.length} ATP emails found`, 'success');
-        
-    } catch (error) {
-        console.error('Gmail scan error:', error);
-        showNotification('❌ Failed to scan Gmail', 'error');
-    } finally {
-        hideProgressCard();
-    }
-}
-
-function isATPFile(text) {
-    const lowerText = text.toLowerCase();
-    return atpPatterns.some(pattern => lowerText.includes(pattern));
-}
-
-function updateScanResults(source, allItems, atpItems) {
-    const resultsCard = document.getElementById('resultsCard');
-    const scanResults = document.getElementById('scanResults');
-    
-    resultsCard.style.display = 'block';
-    
-    // Update stats
-    document.getElementById('totalScanned').textContent = allItems.length;
-    document.getElementById('atpFound').textContent = atpItems.length;
-    document.getElementById('newBids').textContent = Math.floor(atpItems.length * 0.3); // Estimate new bids
-    document.getElementById('imported').textContent = '0';
-    
-    // Display results
-    const resultsHtml = atpItems.map(item => {
-        if (source === 'drive') {
-            return `
-                <div class="result-item atp">
-                    <div>
-                        <strong>📁 ${item.name}</strong>
-                        <br><small>${(item.size / 1024).toFixed(1)} KB • ${new Date(item.modifiedTime).toLocaleDateString()}</small>
-                    </div>
-                    <span class="service-status status-pending">Drive</span>
-                </div>
-            `;
-        } else {
-            return `
-                <div class="result-item atp">
-                    <div>
-                        <strong>📧 ${item.subject}</strong>
-                        <br><small>${item.from} • ${new Date(item.date).toLocaleDateString()}</small>
-                    </div>
-                    <span class="service-status status-pending">Gmail</span>
-                </div>
-            `;
-        }
-    }).join('');
-    
-    scanResults.innerHTML = resultsHtml || '<p style="color: #7f8c8d; text-align: center;">No ATP items found</p>';
-}
-
-function updateServiceStatus(service, status) {
-    const statusElement = document.getElementById(`${service}Status`);
-    statusElement.className = `service-status status-${status}`;
-    statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-}
-
-function showProgressCard(message) {
-    const progressCard = document.getElementById('progressCard');
-    const progressText = document.getElementById('progressText');
-    
-    progressCard.style.display = 'block';
-    progressText.textContent = message;
-    
-    // Start progress animation
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-        progress += Math.random() * 10;
-        if (progress > 90) {
-            clearInterval(progressInterval);
-            progress = 90;
-        }
-        document.getElementById('progressFill').style.width = progress + '%';
-    }, 200);
-}
-
-function hideProgressCard() {
-    setTimeout(() => {
-        document.getElementById('progressCard').style.display = 'none';
-        document.getElementById('progressFill').style.width = '0%';
-    }, 500);
-}
-
+// Show notification
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = 'notification';
-    notification.style.background = type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db';
-    notification.innerHTML = message;
-    
+    notification.style.background = type === 'error' ? '#e74c3c' : type === 'success' ? '#27ae60' : '#3498db';
+    notification.textContent = message;
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
+        notification.remove();
     }, 5000);
-}
-
-function importAllResults() {
-    showNotification('🚀 Importing ATP items to bid generator...', 'info');
-    
-    // Simulate import process
-    setTimeout(() => {
-        const imported = document.getElementById('atpFound').textContent;
-        document.getElementById('imported').textContent = imported;
-        showNotification(`✅ Successfully imported ${imported} ATP items!`, 'success');
-    }, 2000);
-}
-
-function exportResults() {
-    showNotification('📊 Exporting scan results...', 'info');
-    
-    // Simulate export
-    setTimeout(() => {
-        showNotification('✅ Results exported successfully!', 'success');
-    }, 1500);
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // Check for existing token
-    const token = localStorage.getItem('google_access_token');
-    if (token) {
-        // Token exists, try to use it
-        document.getElementById('authStatus').innerHTML = `
-            <p style="color: #27ae60;">✅ Previously connected</p>
-            <p style="font-size: 11px; color: #7f8c8d;">Token found, checking validity...</p>
-        `;
-        
-        // Initialize API and check token
-        setTimeout(() => {
-            if (!gapiInited) {
-                initGoogleApi();
-            }
-            // Would check token expiry here
-            document.getElementById('servicesCard').style.display = 'block';
-        }, 1000);
+    // Load Google APIs
+    gapi.load('client', initGoogleApi);
+    
+    // Initialize OAuth2
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+        initTokenClient();
     }
+    
+    // Check existing authentication
+    updateAuthStatus();
 });
+
+// Placeholder functions for scanning (to be implemented)
+function scanDrive() {
+    showNotification('🔍 Scanning Google Drive for ATP files...', 'info');
+    // TODO: Implement Drive scanning logic
+}
+
+function scanGmail() {
+    showNotification('🔍 Scanning Gmail for ATP-related emails...', 'info');
+    // TODO: Implement Gmail scanning logic
+}
+
+function importAllResults() {
+    showNotification('🚀 Importing ATP items to bid generator...', 'info');
+    // TODO: Implement import logic
+}
+
+function exportResults() {
+    showNotification('📊 Exporting scan results...', 'info');
+    // TODO: Implement export logic
+}
 </script>
 
 </body>

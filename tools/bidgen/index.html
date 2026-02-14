@@ -155,6 +155,14 @@
         .sync-bar .sync-device { color: #555; font-size: 11px; }
         .sync-bar .logout-btn { background: none; border: 1px solid #2a3a5c; color: #7f8c8d; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; }
         .sync-bar .logout-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+        
+        /* CTA Buttons */
+        .cta-buttons { display: flex; flex-direction: column; gap: 8px; }
+        .cta-btn { padding: 10px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-width: 140px; }
+        .cta-btn.enhanced-atp { background: #e67e22; color: white; }
+        .cta-btn.enhanced-atp:hover { background: #d35400; transform: translateY(-1px); }
+        .cta-btn.google-scan { background: #4285f4; color: white; }
+        .cta-btn.google-scan:hover { background: #3367d6; transform: translateY(-1px); }
     </style>
 </head>
 <body>
@@ -173,8 +181,20 @@
 
 <!-- MAIN APP (hidden until login) -->
 <div class="container" id="mainApp" style="display:none;">
-    <h1>Bid Document Generator</h1>
-    <p class="subtitle">Fill in the details below, then generate your Labor Estimate, Materials Estimate, or Change Order. All generated docs are editable with e-signature pads.</p>
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+        <div>
+            <h1>Bid Document Generator</h1>
+            <p class="subtitle">Fill in the details below, then generate your Labor Estimate, Materials Estimate, or Change Order. All generated docs are editable with e-signature pads.</p>
+        </div>
+        <div class="cta-buttons">
+            <button class="cta-btn enhanced-atp" onclick="window.open('/tools/bidgen/dual-brand-bid-system.html', '_blank')">
+                🏢 Enhanced ATP
+            </button>
+            <button class="cta-btn google-scan" onclick="window.open('/tools/bidgen/google-integration.html', '_blank')">
+                ☁️ Google Scan
+            </button>
+        </div>
+    </div>
 
     <!-- SYNC STATUS BAR -->
     <div class="sync-bar">
@@ -198,16 +218,6 @@
             <div class="catalog-icon">&#x1F50D;</div>
             <div class="catalog-label">Smart Fill from History</div>
             <button class="predict-btn" onclick="predictiveFill()">&#9889; Smart Fill from History</button>
-        </div>
-        <div class="catalog-item">
-            <div class="catalog-icon">&#x1F680;</div>
-            <div class="catalog-label">Enhanced ATP Generator</div>
-            <button class="predict-btn" onclick="window.open('/tools/bidgen/dual-brand-bid-system.html', '_blank')" style="background: #e67e22;">&#x1F3E2; Enhanced ATP</button>
-        </div>
-        <div class="catalog-item">
-            <div class="catalog-icon">&#x1F517;</div>
-            <div class="catalog-label">Google Integration</div>
-            <button class="predict-btn" onclick="window.open('/tools/bidgen/google-integration.html', '_blank')" style="background: #4285f4;">&#x2601; Google Scan</button>
         </div>
     </div>
 

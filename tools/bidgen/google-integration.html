@@ -255,6 +255,9 @@ function handleAuthSuccess(tokenResponse) {
     updateAuthStatus();
     showNotification('✅ Successfully connected to Google account!', 'success');
     
+    // Show the services card with scan buttons
+    document.getElementById('servicesCard').style.display = 'block';
+    
     // Enable scan buttons
     document.getElementById('driveStatus').textContent = 'Connected';
     document.getElementById('driveStatus').className = 'service-status status-connected';
@@ -270,9 +273,21 @@ function updateAuthStatus() {
     if (token) {
         authStatus.innerHTML = '✅ Connected to Google account';
         authStatus.style.color = '#27ae60';
+        
+        // Show services card if already authenticated
+        document.getElementById('servicesCard').style.display = 'block';
+        
+        // Update service statuses
+        document.getElementById('driveStatus').textContent = 'Connected';
+        document.getElementById('driveStatus').className = 'service-status status-connected';
+        document.getElementById('gmailStatus').textContent = 'Connected';
+        document.getElementById('gmailStatus').className = 'service-status status-connected';
     } else {
         authStatus.innerHTML = '❌ Not connected';
         authStatus.style.color = '#e74c3c';
+        
+        // Hide services card if not authenticated
+        document.getElementById('servicesCard').style.display = 'none';
     }
 }
 

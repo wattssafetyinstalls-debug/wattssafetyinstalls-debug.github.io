@@ -1545,6 +1545,42 @@ function exportAnalysis() {
     console.log('Exporting analysis...');
 }
 
+function loadCompetitorData() {
+    // Load competitor intelligence from Firebase
+    const userPIN = sessionStorage.getItem('bid_pin');
+    if (userPIN) {
+        const hashed = hashPIN(userPIN);
+        db.ref(`competitors/${hashed}`).once('value').then(snapshot => {
+            const data = snapshot.val() || {};
+            displayCompetitorData(data);
+        });
+    }
+}
+
+function displayCompetitorData(data) {
+    // Display competitor data in the UI
+    const grid = document.getElementById('competitorGrid');
+    if (!grid) return;
+    
+    // Clear existing data
+    grid.innerHTML = '';
+    
+    // Add competitor cards
+    Object.entries(data).forEach(([name, info]) => {
+        const card = document.createElement('div');
+        card.className = 'competitor-card';
+        card.innerHTML = `
+            <h4 style="color: #e74c3c; margin-bottom: 10px;">${name}</h4>
+            <div style="font-size: 12px; color: #ecf0f1;">
+                <div>Win Rate: ${info.winRate || 'N/A'}%</div>
+                <div>Avg Bid: $${(info.avgBid || 0).toLocaleString()}</div>
+                <div>Projects: ${info.projectCount || 0}</div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
 // Import Google Intelligence Data
 function importGoogleIntelligence(source) {
     const statusDiv = document.getElementById('googleIntelStatus');

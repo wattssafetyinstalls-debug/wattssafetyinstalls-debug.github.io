@@ -6,6 +6,7 @@
     <title>Google Integration Setup</title>
     <meta name="robots" content="noindex, nofollow">
     <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
@@ -271,16 +272,28 @@ function showNotification(message, type = 'info') {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // Load Google APIs
-    gapi.load('client', initGoogleApi);
-    
-    // Initialize OAuth2
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-        initTokenClient();
-    }
-    
-    // Check existing authentication
-    updateAuthStatus();
+    // Wait for Google APIs to load
+    setTimeout(() => {
+        if (typeof gapi !== 'undefined') {
+            gapi.load('client', () => {
+                initGoogleApi();
+            });
+        } else {
+            console.error('Google API failed to load');
+            showNotification('❌ Google API failed to load', 'error');
+        }
+        
+        // Initialize OAuth2
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+            initTokenClient();
+        } else {
+            console.error('Google Identity Services failed to load');
+            showNotification('❌ Google Identity Services failed to load', 'error');
+        }
+        
+        // Check existing authentication
+        updateAuthStatus();
+    }, 1000);
 });
 
 // Placeholder functions for scanning (to be implemented)

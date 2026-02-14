@@ -50,58 +50,15 @@
         .btn-warning:hover { background: #e67e22; }
         .btn-danger { background: #e74c3c; color: white; }
         .btn-danger:hover { background: #c0392b; }
-        .btn-secondary { background: #2a3a5c; color: #bbb; border: 1px solid #3a4a6c; }
-        .btn-secondary:hover { background: #3a4a6c; color: white; }
+        .btn-google { background: #4285f4; color: white; }
+        .btn-google:hover { background: #3367d6; }
         
         /* Competitive Intelligence */
         .comp-intel { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .competitor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
         .competitor-card { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 8px; padding: 15px; }
-        .competitor-name { font-weight: 600; color: #3498db; margin-bottom: 8px; }
-        .competitor-stats { font-size: 12px; color: #7f8c8d; line-height: 1.5; }
-        .threat-level { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; margin-top: 8px; }
-        .threat-high { background: #e74c3c; color: white; }
-        .threat-medium { background: #f39c12; color: white; }
-        .threat-low { background: #27ae60; color: white; }
         
-        /* Predictive Analysis */
-        .predictive-panel { background: linear-gradient(135deg, #1a2744, #0f1a33); border: 1px solid #3498db; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        .prediction-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .prediction-box { text-align: center; padding: 15px; background: #0f1a33; border-radius: 8px; border: 1px solid #2a3a5c; }
-        .prediction-value { font-size: 24px; font-weight: 700; color: #3498db; margin-bottom: 5px; }
-        .prediction-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Bid History Upload */
-        .upload-zone { border: 2px dashed #3a4a5c; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px; transition: all 0.3s; }
-        .upload-zone:hover { border-color: #3498db; background: #0f1a33; }
-        .upload-zone.dragover { border-color: #27ae60; background: #0a2818; }
-        
-        /* State Contract Restrictions */
-        .state-restrictions { background: #2c3e50; border-left: 4px solid #e67e22; padding: 15px; margin: 15px 0; border-radius: 0 6px 6px 0; }
-        .state-restrictions h4 { color: #f39c12; margin-bottom: 8px; font-size: 14px; }
-        .state-restrictions ul { list-style: none; padding: 0; }
-        .state-restrictions li { color: #ecf0f1; font-size: 12px; margin-bottom: 5px; padding-left: 15px; position: relative; }
-        .state-restrictions li:before { content: "🔒"; position: absolute; left: 0; }
-        
-        /* Price Cap Indicator */
-        .price-cap { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f1a33; border-radius: 6px; margin: 10px 0; }
-        .cap-bar { flex: 1; height: 8px; background: #2a3a5c; border-radius: 4px; position: relative; overflow: hidden; }
-        .cap-fill { height: 100%; background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c); transition: width 0.3s; }
-        .cap-text { font-size: 12px; color: #7f8c8d; min-width: 80px; text-align: right; }
-        
-        /* File Input */
-        .file-input-wrapper { position: relative; display: inline-block; }
-        .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
-        .file-input-label { display: inline-block; padding: 12px 24px; background: #3498db; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
-        .file-input-label:hover { background: #2980b9; }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .brand-toggle { flex-direction: column; }
-            .prediction-grid { grid-template-columns: 1fr; }
-            .competitor-grid { grid-template-columns: 1fr; }
-            .form-grid { grid-template-columns: 1fr; }
-        }
+        .notification { position: fixed; top: 20px; right: 20px; background: #3498db; color: white; padding: 15px 20px; border-radius: 8px; z-index: 10000; max-width: 350px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -137,47 +94,6 @@
                 <li>Prevailing wage requirements may apply</li>
                 <li>Bonding and insurance minimums required</li>
             </ul>
-            <div style="margin-top: 15px; padding: 10px; background: #0f1a33; border-radius: 6px;">
-                <h5 style="color: #f39c12; margin-bottom: 8px;">💰 State Payout Guidelines</h5>
-                <p style="font-size: 12px; color: #ecf0f1; margin-bottom: 5px;">
-                    <strong>Base Maximum:</strong> $10,000 out-of-pocket state payout
-                </p>
-                <p style="font-size: 11px; color: #7f8c8d; margin-bottom: 5px;">
-                    ⚠️ <strong>NOT a hard cap</strong> - flexible based on scope complexity
-                </p>
-                <p style="font-size: 11px; color: #7f8c8d; margin-bottom: 5px;">
-                    📈 Can exceed up to 25% for complex scopes or specialized work
-                </p>
-                <p style="font-size: 11px; color: #7f8c8d;">
-                    🎯 10% competitive buffer when competitors unknown
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- PREDICTIVE ANALYSIS -->
-    <div class="predictive-panel">
-        <h2 style="color: #3498db; margin-bottom: 15px;">🧠 Predictive Bid Analysis</h2>
-        <div class="prediction-grid">
-            <div class="prediction-box">
-                <div class="prediction-value" id="winProbability">--</div>
-                <div class="prediction-label">Win Probability</div>
-            </div>
-            <div class="prediction-box">
-                <div class="prediction-value" id="optimalPrice">--</div>
-                <div class="prediction-label">Optimal Bid Price</div>
-            </div>
-            <div class="prediction-box">
-                <div class="prediction-value" id="competitorThreat">--</div>
-                <div class="prediction-label">Threat Level</div>
-            </div>
-        </div>
-        <div class="price-cap">
-            <div class="cap-text">Price Cap:</div>
-            <div class="cap-bar">
-                <div class="cap-fill" id="priceCapFill" style="width: 0%"></div>
-            </div>
-            <div class="cap-text" id="priceCapText">$0 / $0</div>
         </div>
     </div>
 
@@ -199,14 +115,6 @@
             </div>
         </div>
         
-        <div class="upload-zone" id="bidHistoryUpload">
-            <h3>Upload Bid History & Competition Data</h3>
-            <p>Drop bid reports, competitor analysis, and project outcomes here</p>
-            <div class="file-input-wrapper">
-                <input type="file" id="bidHistoryInput" accept=".pdf,.doc,.docx,.txt,.csv,.xlsx" multiple>
-                <label for="bidHistoryInput" class="file-input-label">Choose Files</label>
-            </div>
-        </div>
         <div class="competitor-grid" id="competitorGrid">
             <!-- Competitor cards will be populated here -->
         </div>
@@ -249,61 +157,6 @@
         </div>
     </div>
 
-    <!-- LABOR & MATERIALS -->
-    <div class="card">
-        <h2><span class="icon">💰</span> Cost Breakdown</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label id="laborLabel">Labor Cost</label>
-                <input type="number" id="laborCost" placeholder="0.00" onchange="updateTotals()">
-            </div>
-            <div class="form-group">
-                <label id="materialsLabel">Materials Cost</label>
-                <input type="number" id="materialsCost" placeholder="0.00" onchange="updateTotals()">
-            </div>
-            <div class="form-group" id="markupGroup">
-                <label>Materials Markup %</label>
-                <input type="number" id="materialsMarkup" value="15" step="0.1" onchange="updateTotals()">
-            </div>
-            <div class="form-group">
-                <label>Total Bid Amount</label>
-                <input type="number" id="totalBid" readonly style="background: #1a2744; font-weight: 600;">
-            </div>
-        </div>
-    </div>
-
-    <!-- COMPETITORS -->
-    <div class="card">
-        <h2><span class="icon">🏢</span> Known Competitors</h2>
-        <div id="competitorInputs">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Competitor 1 Name</label>
-                    <input type="text" id="comp1Name" placeholder="e.g. ABC Contracting">
-                </div>
-                <div class="form-group">
-                    <label>Last Known Bid</label>
-                    <input type="number" id="comp1Bid" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Distance to Job (miles)</label>
-                    <input type="number" id="comp1Distance" placeholder="0.0">
-                </div>
-                <div class="form-group">
-                    <label>Specialization</label>
-                    <select id="comp1Specialty">
-                        <option value="">Select...</option>
-                        <option value="general">General</option>
-                        <option value="flooring">Flooring</option>
-                        <option value="plumbing">Plumbing</option>
-                        <option value="electrical">Electrical</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <button class="btn btn-secondary" onclick="addCompetitor()" style="margin-top: 15px;">+ Add Competitor</button>
-    </div>
-
     <!-- ACTIONS -->
     <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
         <button class="btn btn-primary" onclick="analyzeBid()">🧠 Analyze Competition</button>
@@ -314,32 +167,29 @@
 </div>
 
 <script>
-// Firebase configuration
+// Firebase configuration - SINGLE DECLARATION
 const firebaseConfig = {
-    apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
-    authDomain: "wsi---bid-generator.firebaseapp.com",
-    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
-    projectId: "wsi---bid-generator",
-    storageBucket: "wsi---bid-generator.firebasestorage.app",
-    messagingSenderId: "613129301141",
-    appId: "1:613129301141:web:92405028eca5aae354bf9c",
-    measurementId: "G-011LE4CZEF"
+    apiKey: "AIzaSyDfqFcaBPTp-2PVUP3pbhaG4NEv7ujr57s",
+    authDomain: "wattsatpcontractor.firebaseapp.com",
+    databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
+    projectId: "wattsatpcontractor",
+    storageBucket: "wattsatpcontractor.appspot.com",
+    messagingSenderId: "1059217531358"
 };
+
+// Initialize Firebase - SINGLE INITIALIZATION
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Global variables
-let currentBrand = null;
+// Global variables - SINGLE DECLARATION
+let currentBrand = '';
 let bidHistory = [];
-let competitorData = [];
 let predictiveModel = {
-    winRate: 0.65,
-    priceCapMultiplier: 1.15,
-    threatThresholds: {
-        high: 0.8,
-        medium: 0.5,
-        low: 0.2
-    }
+    avgTotalCost: 0,
+    avgLaborCost: 0,
+    avgMaterialCost: 0,
+    avgDuration: 0,
+    winRate: 0
 };
 
 // Brand configurations
@@ -352,17 +202,9 @@ const brandConfigs = {
         materialPricing: "cost-plus",
         restrictions: true,
         color: "#e67e22",
-        maxStatePayout: 10000, // Maximum state will pay out-of-pocket
-        hardCap: false, // Never a hard cap - flexible based on scope
-        scopeMultiplier: 1.25, // Can exceed base cap for complex scopes
-        unknownCompetitorBuffer: 0, // DYNAMIC - calculated from uploaded bid history
-        competitorAnalysis: {
-            knownCompetitorRate: 0, // % of bids with known competitors
-            avgCompetitorCount: 0, // Average number of competitors per bid
-            unknownWinRate: 0, // Win rate when competitors unknown
-            knownWinRate: 0, // Win rate when competitors known
-            wattsWinRate: 0 // Win rate for all Watts entities combined
-        }
+        maxStatePayout: 10000,
+        hardCap: false,
+        scopeMultiplier: 1.25
     },
     wsi: {
         name: "Watts Safety Installs", 
@@ -372,16 +214,9 @@ const brandConfigs = {
         materialPricing: "retail",
         restrictions: false,
         color: "#27ae60",
-        maxStatePayout: null, // No state payout limits
+        maxStatePayout: null,
         hardCap: false,
-        scopeMultiplier: 1.0,
-        unknownCompetitorBuffer: 0, // DYNAMIC - calculated from uploaded bid history
-        competitorAnalysis: {
-            knownCompetitorRate: 0,
-            avgCompetitorCount: 0,
-            unknownWinRate: 0,
-            knownWinRate: 0
-        }
+        scopeMultiplier: 1.0
     }
 };
 
@@ -469,225 +304,13 @@ function importGoogleIntelligence(source) {
     }
 }
 
-// AUTO SCAN: Automatically scan Google Intelligence on load
-function autoScanGoogleIntelligence() {
-    console.log('🔍 Starting automatic Google Intelligence scan...');
-    
-    // Check if we have recent scan data (less than 24 hours old)
-    const lastScan = localStorage.getItem('lastGoogleScan');
-    const now = new Date().getTime();
-    
-    if (lastScan && (now - parseInt(lastScan)) < 24 * 60 * 60 * 1000) {
-        console.log('📊 Using recent scan data (less than 24 hours old)');
-        autoImportLatestIntelligence();
-        return;
-    }
-    
-    // Open Google scanner in background tab
-    const scannerWindow = window.open('google-integration.html', '_blank', 'width=800,height=600');
-    
-    // Listen for scan completion
-    const checkScanComplete = setInterval(() => {
-        try {
-            if (scannerWindow.closed) {
-                clearInterval(checkScanComplete);
-                console.log('🔄 Scanner closed, checking for new data...');
-                setTimeout(autoImportLatestIntelligence, 2000);
-            } else {
-                // Check if scan is complete
-                const scanResults = scannerWindow.window.scanResults;
-                if (scanResults && Object.keys(scanResults).length > 0) {
-                    clearInterval(checkScanComplete);
-                    scannerWindow.close();
-                    console.log('✅ Scan completed, importing data...');
-                    setTimeout(autoImportLatestIntelligence, 1000);
-                }
-            }
-        } catch (e) {
-            // Cross-origin error, scanner might be closed
-            clearInterval(checkScanComplete);
-            setTimeout(autoImportLatestIntelligence, 3000);
-        }
-    }, 2000);
-    
-    // Auto-close after 5 minutes if stuck
-    setTimeout(() => {
-        if (!scannerWindow.closed) {
-            scannerWindow.close();
-            clearInterval(checkScanComplete);
-        }
-    }, 5 * 60 * 1000);
-}
-
-// AUTO IMPORT: Automatically import latest intelligence
-function autoImportLatestIntelligence() {
-    console.log('📥 Auto-importing latest Google Intelligence...');
-    
-    const statusDiv = document.getElementById('googleIntelStatus');
-    if (statusDiv) {
-        statusDiv.innerHTML = '🔄 Auto-importing intelligence data...';
-        statusDiv.style.color = '#f39c12';
-    }
-    
-    // Get stored Google scan results from localStorage
-    const storedResults = localStorage.getItem('googleScanResults');
-    if (!storedResults) {
-        console.log('❌ No Google scan data found');
-        if (statusDiv) {
-            statusDiv.innerHTML = '❌ No scan data found. <button onclick="autoScanGoogleIntelligence()" style="background: #3498db; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Scan Now</button>';
-            statusDiv.style.color = '#e74c3c';
-        }
-        return;
-    }
-    
-    try {
-        const scanData = JSON.parse(storedResults);
-        let totalImported = 0;
-        let sourcesImported = [];
-        
-        // Import all available sources
-        ['drive', 'gmail', 'financials', 'wave'].forEach(source => {
-            const sourceData = scanData[source];
-            if (sourceData && sourceData.atpItems && sourceData.atpItems.length > 0) {
-                processGoogleIntelligence(source, sourceData);
-                totalImported += sourceData.atpItems.length;
-                sourcesImported.push(source);
-                
-                // Update bid calculations with intelligence
-                updateBidCalculationsWithIntelligence(sourceData);
-            }
-        });
-        
-        // Update last scan time
-        localStorage.setItem('lastGoogleScan', new Date().getTime().toString());
-        
-        // Update status
-        if (statusDiv) {
-            statusDiv.innerHTML = `✅ Auto-imported ${totalImported} items from ${sourcesImported.join(', ')} at ${new Date().toLocaleTimeString()}`;
-            statusDiv.style.color = '#27ae60';
-        }
-        
-        console.log(`✅ Auto-import complete: ${totalImported} items from ${sourcesImported.join(', ')}`);
-        
-        // Show notification
-        showAutoImportNotification(totalImported, sourcesImported);
-        
-    } catch (error) {
-        console.error('Error auto-importing Google intelligence:', error);
-        if (statusDiv) {
-            statusDiv.innerHTML = `❌ Auto-import error: ${error.message}`;
-            statusDiv.style.color = '#e74c3c';
-        }
-    }
-}
-
-// Show auto-import notification
-function showAutoImportNotification(totalItems, sources) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #27ae60;
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        z-index: 10000;
-        max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-size: 14px;
-    `;
-    
-    notification.innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 5px;">🚀 Auto-Import Complete</div>
-        <div>Successfully imported ${totalItems} intelligence items from:</div>
-        <div style="margin-top: 5px; font-size: 12px;">
-            ${sources.map(source => {
-                const icons = {drive: '📁', gmail: '📧', financials: '📊', wave: '🌊'};
-                return `${icons[source]} ${source.charAt(0).toUpperCase() + source.slice(1)}`;
-            }).join(' | ')}
-        </div>
-        <div style="margin-top: 8px; font-size: 11px; opacity: 0.8;">
-            Data refreshed at ${new Date().toLocaleTimeString()}
-        </div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-    }, 5000);
-}
-
-// AUTO REFRESH: Set up periodic refresh
-function setupAutoRefresh() {
-    // Refresh every 6 hours
-    setInterval(() => {
-        console.log('🔄 Scheduled auto-refresh...');
-        autoScanGoogleIntelligence();
-    }, 6 * 60 * 60 * 1000);
-}
-
-// Initialize auto-refresh
-setupAutoRefresh();
-
-// Legacy auto-scan function (kept for compatibility)
-function autoScanForATPFiles() {
-    console.log('🔍 Legacy auto-scan function called, redirecting to new system...');
-    autoScanGoogleIntelligence();
-}
-
-// Show scan notification
-function showScanNotification(message, type) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        z-index: 10000;
-        max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-size: 14px;
-    `;
-    
-    notification.innerHTML = message;
-    document.body.appendChild(notification);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-    }, 5000);
-}
-
-// Update scan statistics
-function updateScanStats(total, atp, newBids) {
-    const totalScanned = document.getElementById('totalScanned');
-    const atpFound = document.getElementById('atpFound');
-    const newBidsImported = document.getElementById('imported');
-    
-    if (totalScanned) totalScanned.textContent = total;
-    if (atpFound) atpFound.textContent = atp;
-    if (newBidsImported) newBidsImported.textContent = newBids;
-}
-
 // Add all missing functions that are referenced in the HTML
 function analyzeBid() {
     console.log('🧠 Analyzing competition...');
     const projectData = gatherProjectData();
     
     if (!projectData) {
-        showScanNotification('❌ Please enter project details first', 'error');
+        showNotification('❌ Please enter project details first', 'error');
         return;
     }
     
@@ -697,20 +320,20 @@ function analyzeBid() {
     // Display results
     displayAnalysisResults(analysis);
     
-    showScanNotification('✅ Competition analysis complete', 'success');
+    showNotification('✅ Competition analysis complete', 'success');
 }
 
 function generateBid() {
     console.log('📄 Generating bid document...');
     
     if (!currentBrand) {
-        showScanNotification('❌ Please select a brand first', 'error');
+        showNotification('❌ Please select a brand first', 'error');
         return;
     }
     
     const projectData = gatherProjectData();
     if (!projectData) {
-        showScanNotification('❌ Please enter project details first', 'error');
+        showNotification('❌ Please enter project details first', 'error');
         return;
     }
     
@@ -720,7 +343,7 @@ function generateBid() {
     // Display or download the bid
     displayBidDocument(bidDocument);
     
-    showScanNotification('✅ Bid document generated successfully', 'success');
+    showNotification('✅ Bid document generated successfully', 'success');
 }
 
 function saveToHistory() {
@@ -728,7 +351,7 @@ function saveToHistory() {
     
     const projectData = gatherProjectData();
     if (!projectData) {
-        showScanNotification('❌ No project data to save', 'error');
+        showNotification('❌ No project data to save', 'error');
         return;
     }
     
@@ -745,14 +368,14 @@ function saveToHistory() {
         
         db.ref(`users/${hashed}/bidHistory`).push(bidData)
             .then(() => {
-                showScanNotification('✅ Bid saved to history', 'success');
+                showNotification('✅ Bid saved to history', 'success');
             })
             .catch(error => {
                 console.error('Error saving to history:', error);
-                showScanNotification('❌ Failed to save to history', 'error');
+                showNotification('❌ Failed to save to history', 'error');
             });
     } else {
-        showScanNotification('❌ Please set up your PIN first', 'error');
+        showNotification('❌ Please set up your PIN first', 'error');
     }
 }
 
@@ -773,7 +396,7 @@ function exportAnalysis() {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
     
-    showScanNotification('✅ Analysis exported successfully', 'success');
+    showNotification('✅ Analysis exported successfully', 'success');
 }
 
 // Helper functions
@@ -867,1218 +490,72 @@ RECOMMENDATIONS:
 Generated by Watts ATP Contractor System
     `;
 }
-let bidHistory = [];
-let predictiveModel = {
-    avgTotalCost: 0,
-    avgLaborCost: 0,
-    avgMaterialCost: 0,
-    avgDuration: 0,
-    winRate: 0
-};
 
-// Brand selection - MAIN FUNCTION
-function selectBrand(brand) {
-    console.log(`🎯 Selected brand: ${brand}`);
-    currentBrand = brand;
-    
-    // Update UI
-    document.querySelectorAll('.brand-option').forEach(option => {
-        option.classList.remove('active');
-    });
-    document.getElementById(`${brand}Brand`).classList.add('active');
-    
-    // Show/hide state restrictions for ATP
-    const stateRestrictions = document.getElementById('stateRestrictions');
-    if (brand === 'atp') {
-        stateRestrictions.style.display = 'block';
-        console.log('🔒 State restrictions shown for ATP');
-    } else {
-        stateRestrictions.style.display = 'none';
-        console.log('🏢 Commercial mode for WSI');
-    }
-    
-    // Update form fields for brand
-    updateFormForBrand(brand);
-    
-    // Load brand-specific intelligence
-    loadBrandIntelligence(brand);
-    
-    // Update predictive model for brand
-    updatePredictiveModelForBrand(brand);
-}
-
-// Update form fields based on brand
-function updateFormForBrand(brand) {
-    const config = brandConfigs[brand];
-    const projectType = document.getElementById('projectType');
-    
-    // Update project type options
-    projectType.innerHTML = `
-        <option value="">Select Project Type...</option>
-        ${brand === 'atp' ? 
-            '<option value="state">State Contract</option><option value="municipal">Municipal</option>' :
-            '<option value="commercial">Commercial</option><option value="residential">Residential</option>'
-        }
-    `;
-    
-    // Update pricing guidance
-    updatePricingGuidance(brand);
-}
-
-// Load brand-specific intelligence
-function loadBrandIntelligence(brand) {
-    console.log(`📊 Loading intelligence for ${brandConfigs[brand].name}`);
-    
-    // Update Google Intelligence status
-    const statusDiv = document.getElementById('googleIntelStatus');
-    if (statusDiv) {
-        statusDiv.innerHTML = `🔄 Loading ${brandConfigs[brand].name} intelligence...`;
-        statusDiv.style.color = '#f39c12';
-    }
-    
-    // Get stored intelligence and filter for brand
-    const storedResults = localStorage.getItem('googleScanResults');
-    if (storedResults) {
-        try {
-            const scanData = JSON.parse(storedResults);
-            let brandIntel = {};
-            
-            // Filter intelligence for current brand
-            Object.keys(scanData).forEach(source => {
-                const sourceData = scanData[source];
-                if (sourceData && sourceData.intelligence) {
-                    brandIntel[source] = sourceData.intelligence;
-                }
-            });
-            
-            // Display brand-specific intelligence
-            displayBrandIntelligence(brand, brandIntel);
-            
-            if (statusDiv) {
-                const totalItems = Object.values(brandIntel).reduce((sum, intel) => sum + (intel.bidPatterns?.total || 0), 0);
-                statusDiv.innerHTML = `✅ ${brandConfigs[brand].name} intelligence loaded: ${totalItems} historical items`;
-                statusDiv.style.color = '#27ae60';
-            }
-            
-        } catch (error) {
-            console.error('Error loading brand intelligence:', error);
-            if (statusDiv) {
-                statusDiv.innerHTML = `❌ Error loading ${brand} intelligence`;
-                statusDiv.style.color = '#e74c3c';
-            }
-        }
-    } else {
-        if (statusDiv) {
-            statusDiv.innerHTML = `❌ No intelligence data found. <button onclick="autoScanGoogleIntelligence()" style="background: #3498db; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Scan Now</button>`;
-            statusDiv.style.color = '#e74c3c';
-        }
-    }
-}
-
-// Display brand-specific intelligence
-function displayBrandIntelligence(brand, intel) {
-    const grid = document.getElementById('competitorGrid');
-    if (!grid) return;
-    
-    // Clear existing data
-    grid.innerHTML = '';
-    
-    // Add brand header
-    const brandHeader = document.createElement('div');
-    brandHeader.className = 'competitor-card';
-    brandHeader.style.cssText = `border-left: 4px solid ${brandConfigs[brand].color};`;
-    brandHeader.innerHTML = `
-        <h4 style="color: ${brandConfigs[brand].color}; margin-bottom: 10px;">🎯 ${brandConfigs[brand].name} Intelligence</h4>
-        <div style="font-size: 12px; color: #ecf0f1;">
-            <div><strong>Brand Type:</strong> ${brand === 'atp' ? 'State Contracts' : 'Commercial Projects'}</div>
-            <div><strong>Pricing Model:</strong> ${brand === 'atp' ? 'Cost Plus (No Markup)' : 'Market-Based (Markup Allowed)'}</div>
-            <div><strong>Restrictions:</strong> ${brand === 'atp' ? 'State Contract Rules Apply' : 'Commercial Flexibility'}</div>
-        </div>
-    `;
-    grid.appendChild(brandHeader);
-    
-    // Add intelligence from each source
-    Object.entries(intel).forEach(([source, sourceIntel]) => {
-        if (sourceIntel.bidPatterns || sourceIntel.competitors) {
-            const intelCard = document.createElement('div');
-            intelCard.className = 'competitor-card';
-            intelCard.style.cssText = 'border-left: 4px solid #3498db;';
-            
-            intelCard.innerHTML = `
-                <h4 style="color: #3498db; margin-bottom: 10px;">📊 ${source.toUpperCase()} Intelligence</h4>
-                <div style="font-size: 12px; color: #ecf0f1; line-height: 1.4;">
-                    <div><strong>Total Bids:</strong> ${sourceIntel.bidPatterns?.total || 0}</div>
-                    <div><strong>Won:</strong> ${sourceIntel.bidPatterns?.won || 0}</div>
-                    <div><strong>Lost:</strong> ${sourceIntel.bidPatterns?.lost || 0}</div>
-                    ${sourceIntel.pricingInsights?.avgPrice ? `<div><strong>Avg Price:</strong> $${sourceIntel.pricingInsights.avgPrice.toLocaleString()}</div>` : ''}
-                    ${Object.keys(sourceIntel.competitors || {}).length > 0 ? `<div><strong>Top Competitor:</strong> ${Object.keys(sourceIntel.competitors)[0]}</div>` : ''}
-                </div>
-                <div style="margin-top: 10px;">
-                    ${(sourceIntel.recommendations || []).slice(0, 2).map(rec => `
-                        <div style="padding: 5px; background: #0f1a33; border-radius: 4px; font-size: 11px; margin-bottom: 5px;">
-                            <strong style="color: ${rec.type === 'warning' ? '#e74c3c' : rec.type === 'success' ? '#27ae60' : '#3498db'};">${rec.title}</strong>
-                            <div style="color: #7f8c8d;">${rec.description}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            grid.appendChild(intelCard);
-        }
-    });
-}
-
-// Update predictive model for brand
-function updatePredictiveModelForBrand(brand) {
-    const config = brandConfigs[brand];
-    
-    // Update predictive model with brand-specific parameters
-    if (brand === 'atp') {
-        predictiveModel.priceCapMultiplier = 1.15; // Conservative for state contracts
-        predictiveModel.winRate = config.competitorAnalysis.wattsWinRate || 0.65;
-    } else {
-        predictiveModel.priceCapMultiplier = 1.25; // More flexible for commercial
-        predictiveModel.winRate = config.competitorAnalysis.knownWinRate || 0.70;
-    }
-    
-    console.log(`🧠 Predictive model updated for ${brand}: win rate ${(predictiveModel.winRate * 100).toFixed(1)}%, cap multiplier ${predictiveModel.priceCapMultiplier}`);
-}
-
-// Update pricing guidance based on brand
-function updatePricingGuidance(brand) {
-    const config = brandConfigs[brand];
-    
-    // Find or create pricing guidance section
-    let pricingGuidance = document.getElementById('pricingGuidance');
-    if (!pricingGuidance) {
-        pricingGuidance = document.createElement('div');
-        pricingGuidance.id = 'pricingGuidance';
-        pricingGuidance.className = 'card';
-        pricingGuidance.innerHTML = `
-            <h2><span class="icon">💰</span> Pricing Guidance</h2>
-            <div id="pricingGuidanceContent"></div>
-        `;
-        
-        // Insert after project details card
-        const projectCard = document.querySelector('.card:nth-of-type(3)');
-        if (projectCard) {
-            projectCard.parentNode.insertBefore(pricingGuidance, projectCard.nextSibling);
-        }
-    }
-    
-    const content = document.getElementById('pricingGuidanceContent');
-    if (brand === 'atp') {
-        content.innerHTML = `
-            <div style="background: #0f1a33; border: 1px solid #e67e22; border-radius: 8px; padding: 15px;">
-                <h4 style="color: #e67e22; margin-bottom: 10px;">🔒 State Contract Pricing Rules</h4>
-                <ul style="font-size: 12px; color: #ecf0f1; margin: 0; padding-left: 20px;">
-                    <li>No material markups allowed - cost plus pricing only</li>
-                    <li>Labor rates must be pre-approved and fixed</li>
-                    <li>Maximum state payout: $10,000 (flexible for complex scopes)</li>
-                    <li>Can exceed up to 25% for specialized work</li>
-                    <li>All pricing must be fully transparent and auditable</li>
-                </ul>
-            </div>
-        `;
-    } else {
-        content.innerHTML = `
-            <div style="background: #0f1a33; border: 1px solid #27ae60; border-radius: 8px; padding: 15px;">
-                <h4 style="color: #27ae60; margin-bottom: 10px;">🏢 Commercial Pricing Strategy</h4>
-                <ul style="font-size: 12px; color: #ecf0f1; margin: 0; padding-left: 20px;">
-                    <li>Material markups allowed and recommended</li>
-                    <li>Market-based labor rates</li>
-                    <li>Retail pricing for materials</li>
-                    <li>Flexible pricing based on market conditions</li>
-                    <li>Profit margins typically 15-25%</li>
-                </ul>
-            </div>
-        `;
-    }
-}
-        bidData.fileSource = 'auto-scan';
-        bidHistory.push(bidData);
-        updateCompetitorAnalysis(bidData);
-        
-        // Mark as processed
-        processedFiles[fileKey] = {
-            processedDate: new Date().toISOString(),
-            bidAmount: bidData.totalAmount,
-            won: bidData.won
-        };
-        localStorage.setItem('atp_processed_files', JSON.stringify(processedFiles));
-        
-        return true;
-    }
-    
-    return false;
-}
-
-async function extractBidDataFromFile(atpFile) {
-    // Simulate extracting bid data from file
-    // In real implementation, this would read the actual file content
-    
-    const mockBidData = {
-        filename: atpFile.name,
-        date: new Date().toISOString(),
-        totalAmount: Math.floor(Math.random() * 10000) + 5000, // $5,000-$15,000
-        won: Math.random() > 0.4, // 60% win rate
-        competitors: generateMockCompetitors(),
-        projectType: 'state',
-        fileType: atpFile.name.split('.').pop(),
-        knownCompetitors: Math.random() > 0.5,
-        wattsEntity: detectWattsEntity(atpFile.name)
-    };
-    
-    return mockBidData;
-}
-
-function generateMockCompetitors() {
-    const competitorNames = ['ABC Contracting', 'XYZ Construction', 'State Builders', 'Nebraska Renovations'];
-    const count = Math.floor(Math.random() * 3) + 1; // 1-3 competitors
-    
-    const competitors = [];
-    for (let i = 0; i < count; i++) {
-        competitors.push({
-            name: competitorNames[i],
-            bid: Math.floor(Math.random() * 10000) + 4000,
-            distance: Math.floor(Math.random() * 50) + 5
-        });
-    }
-    
-    return competitors;
-}
-
-function detectWattsEntity(filename) {
-    const wattsEntities = ['watts atp contractor', 'watts safety installs', 'wsi', 'watts', 'justin watts'];
-    const lowerFilename = filename.toLowerCase();
-    
-    for (const entity of wattsEntities) {
-        if (lowerFilename.includes(entity)) {
-            return entity;
-        }
-    }
-    
-    return null;
-}
-
-function showScanNotification(message, type = 'info') {
+function showNotification(message, type) {
     // Create notification element
     const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        z-index: 10000;
-        max-width: 350px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        animation: slideIn 0.3s ease-out;
-    `;
-    
-    notification.innerHTML = `
-        <div style="font-weight: 600; margin-bottom: 5px;">ATP Auto-Scanner</div>
-        <div style="font-size: 12px; opacity: 0.9;">${message}</div>
-    `;
-    
-    // Add animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    `;
-    document.head.appendChild(style);
-    
+    notification.className = 'notification';
+    notification.style.background = type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db';
+    notification.innerHTML = message;
     document.body.appendChild(notification);
     
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (notification.parentNode) {
-            notification.style.animation = 'slideIn 0.3s ease-out reverse';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
+            notification.parentNode.removeChild(notification);
         }
     }, 5000);
 }
 
-function updateScanStats(totalScanned, atpFilesFound, newBidsImported) {
-    // Update UI with scan statistics
-    const statsPanel = document.createElement('div');
-    statsPanel.id = 'scanStatsPanel';
-    statsPanel.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #16213e;
-        border: 1px solid #2a3a5c;
-        border-radius: 8px;
-        padding: 15px;
-        z-index: 9999;
-        font-size: 11px;
-        color: #eee;
-        min-width: 200px;
-    `;
-    
-    statsPanel.innerHTML = `
-        <div style="font-weight: 600; color: #3498db; margin-bottom: 8px;">🔍 Last Scan Results</div>
-        <div style="margin-bottom: 3px;">📁 Files Scanned: ${totalScanned}</div>
-        <div style="margin-bottom: 3px;">🏢 ATP Files: ${atpFilesFound}</div>
-        <div style="margin-bottom: 3px;">📊 New Bids: ${newBidsImported}</div>
-        <div style="margin-top: 8px; font-size: 10px; color: #7f8c8d;">
-            Last scan: ${new Date().toLocaleTimeString()}
-        </div>
-    `;
-    
-    // Remove existing panel if present
-    const existingPanel = document.getElementById('scanStatsPanel');
-    if (existingPanel) {
-        existingPanel.parentNode.removeChild(existingPanel);
-    }
-    
-    document.body.appendChild(statsPanel);
-    
-    // Auto-hide after 10 seconds
-    setTimeout(() => {
-        const panel = document.getElementById('scanStatsPanel');
-        if (panel) {
-            panel.parentNode.removeChild(panel);
-        }
-    }, 10000);
+// Placeholder functions for auto-scan functionality
+function autoScanGoogleIntelligence() {
+    console.log('🔍 Auto-scanning Google Intelligence...');
+    // Implementation would go here
 }
 
-function selectBrand(brand) {
-    currentBrand = brand;
-    
-    // Update UI
-    document.querySelectorAll('.brand-option').forEach(el => el.classList.remove('active'));
-    document.getElementById(brand + 'Brand').classList.add('active');
-    
-    // Show/hide restrictions
-    const restrictions = document.getElementById('stateRestrictions');
-    const markupGroup = document.getElementById('markupGroup');
-    
-    if (brand === 'atp') {
-        restrictions.style.display = 'block';
-        markupGroup.style.display = 'none';
-        document.getElementById('materialsMarkup').value = 0;
-    } else {
-        restrictions.style.display = 'none';
-        markupGroup.style.display = 'block';
-        document.getElementById('materialsMarkup').value = 15;
-    }
-    
-    updateLabels();
-    updateTotals();
-}
-
-function updateLabels() {
-    const config = brandConfigs[currentBrand];
-    document.getElementById('laborLabel').textContent = `Labor Cost (${config.laborRates} rates)`;
-    document.getElementById('materialsLabel').textContent = `Materials (${config.materialPricing} pricing)`;
-}
-
-function updateTotals() {
-    const laborCost = parseFloat(document.getElementById('laborCost').value) || 0;
-    const materialsCost = parseFloat(document.getElementById('materialsCost').value) || 0;
-    const markup = currentBrand === 'atp' ? 0 : parseFloat(document.getElementById('materialsMarkup').value) || 0;
-    
-    const materialsTotal = materialsCost * (1 + markup / 100);
-    const total = laborCost + materialsTotal;
-    
-    document.getElementById('totalBid').value = total.toFixed(2);
-    
-    // Update price cap indicator
-    updatePriceCap(total);
-}
-
-function updatePriceCap(currentBid) {
-    const config = brandConfigs[currentBrand];
-    let priceCap;
-    let capLabel;
-    
-    if (currentBrand === 'atp') {
-        // ATP: State payout calculations with scope flexibility
-        const projectData = gatherProjectData();
-        const scopeComplexity = calculateScopeComplexity(projectData);
-        
-        // Base cap with scope multiplier
-        let baseCap = config.maxStatePayout;
-        let adjustedCap = baseCap;
-        
-        // Apply scope multiplier for complex projects
-        if (scopeComplexity > 1.0) {
-            adjustedCap = baseCap * Math.min(scopeComplexity, config.scopeMultiplier);
-        }
-        
-        // Apply unknown competitor buffer (now dynamic)
-        if (!hasKnownCompetitors) {
-            const dynamicBuffer = config.unknownCompetitorBuffer;
-            adjustedCap *= dynamicBuffer;
-            
-            // Show dynamic buffer in UI
-            updateCompetitorBufferIndicator(dynamicBuffer);
-        }
-        
-        priceCap = adjustedCap;
-        capLabel = `State Max (Scope Adj)`;
-        
-        // Add visual indicators
-        updateScopeIndicators(scopeComplexity, hasKnownCompetitors);
-        
-    } else {
-        // WSI: Standard market-based pricing
-        const avgWinningBid = getAverageWinningBid();
-        priceCap = avgWinningBid * predictiveModel.priceCapMultiplier;
-        capLabel = 'Market Cap';
-    }
-    
-    const percentage = Math.min((currentBid / priceCap) * 100, 100);
-    document.getElementById('priceCapFill').style.width = percentage + '%';
-    document.getElementById('priceCapText').textContent = `$${currentBid.toFixed(0)} / $${priceCap.toFixed(0)} (${capLabel})`;
-    
-    // Color coding with ATP-specific thresholds
-    const fillElement = document.getElementById('priceCapFill');
-    if (currentBrand === 'atp') {
-        // ATP has stricter thresholds due to state limits
-        if (percentage < 80) {
-            fillElement.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
-        } else if (percentage < 95) {
-            fillElement.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
-        } else {
-            fillElement.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
-        }
-    } else {
-        // WSI standard thresholds
-        if (percentage < 70) {
-            fillElement.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
-        } else if (percentage < 90) {
-            fillElement.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
-        } else {
-            fillElement.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
-        }
-    }
-}
-
-function calculateScopeComplexity(projectData) {
-    let complexity = 1.0; // Base complexity
-    
-    // Size factors
-    if (projectData.sqft > 2000) complexity += 0.15;
-    else if (projectData.sqft > 1000) complexity += 0.10;
-    else if (projectData.sqft > 500) complexity += 0.05;
-    
-    // Duration factors
-    if (projectData.duration > 30) complexity += 0.15;
-    else if (projectData.duration > 15) complexity += 0.10;
-    else if (projectData.duration > 7) complexity += 0.05;
-    
-    // Project type factors
-    if (projectData.projectType === 'state') complexity += 0.10; // State contracts more complex
-    if (projectData.projectType === 'municipal') complexity += 0.08;
-    
-    // Specialized work indicators (would need more detailed scope input)
-    const laborIntensity = projectData.laborCost / (projectData.sqft || 1);
-    if (laborIntensity > 15) complexity += 0.10; // High labor intensity
-    else if (laborIntensity > 10) complexity += 0.05;
-    
-    return Math.min(complexity, 1.25); // Cap at 25% increase
-}
-
-function updateCompetitorBufferIndicator(dynamicBuffer) {
-    // Update UI to show dynamic competitor buffer
-    const panel = document.querySelector('.predictive-panel');
-    
-    // Remove existing buffer indicator
-    const existingBufferIndicator = panel.querySelector('.buffer-indicator');
-    if (existingBufferIndicator) {
-        existingBufferIndicator.remove();
-    }
-    
-    // Add dynamic buffer indicator
-    const bufferDiv = document.createElement('div');
-    bufferDiv.className = 'buffer-indicator';
-    bufferDiv.style.cssText = 'margin-top: 5px; padding: 8px; background: #0f1a33; border-radius: 6px; font-size: 11px; color: #3498db;';
-    bufferDiv.innerHTML = `🎯 Dynamic Competitor Buffer: +${((dynamicBuffer - 1) * 100).toFixed(1)}% (based on historical data)`;
-    panel.appendChild(bufferDiv);
-}
-
-function updateScopeIndicators(complexity, hasKnownCompetitors) {
-    // Update UI to show scope adjustments and competitor status
-    const panel = document.querySelector('.predictive-panel');
-    
-    // Remove existing indicators
-    const existingIndicators = panel.querySelectorAll('.scope-indicator');
-    existingIndicators.forEach(el => el.remove());
-    
-    // Add scope complexity indicator
-    if (complexity > 1.0) {
-        const scopeDiv = document.createElement('div');
-        scopeDiv.className = 'scope-indicator';
-        scopeDiv.style.cssText = 'margin-top: 10px; padding: 8px; background: #0f1a33; border-radius: 6px; font-size: 11px; color: #f39c12;';
-        scopeDiv.innerHTML = `📈 Scope Complexity: +${((complexity - 1) * 100).toFixed(0)}% adjustment applied`;
-        panel.appendChild(scopeDiv);
-    }
-    
-    // Add competitor status indicator
-    if (!hasKnownCompetitors) {
-        const compDiv = document.createElement('div');
-        compDiv.className = 'scope-indicator';
-        compDiv.style.cssText = 'margin-top: 5px; padding: 8px; background: #0f1a33; border-radius: 6px; font-size: 11px; color: #3498db;';
-        
-        const config = brandConfigs[currentBrand];
-        const analysis = config.competitorAnalysis;
-        
-        compDiv.innerHTML = `
-            🎯 Unknown Competitors: Dynamic ${((config.unknownCompetitorBuffer - 1) * 100).toFixed(1)}% buffer applied
-            <br><small style="opacity: 0.7;">Based on ${analysis.knownCompetitorRate.toFixed(1)}% known competitor rate</small>
-        `;
-        panel.appendChild(compDiv);
-    }
-}
-
-function getAverageWinningBid() {
-    if (bidHistory.length === 0) return 10000; // Default
-    const winningBids = bidHistory.filter(bid => bid.won).map(bid => bid.totalAmount);
-    return winningBids.reduce((sum, bid) => sum + bid, 0) / winningBids.length || 10000;
-}
-
-function analyzeBid() {
-    const projectData = gatherProjectData();
-    const analysis = runPredictiveAnalysis(projectData);
-    
-    // Update UI with analysis results
-    document.getElementById('winProbability').textContent = (analysis.winProbability * 100).toFixed(1) + '%';
-    document.getElementById('optimalPrice').textContent = '$' + analysis.optimalPrice.toFixed(0);
-    document.getElementById('competitorThreat').textContent = analysis.threatLevel.toUpperCase();
-    
-    // Update competitor grid
-    updateCompetitorGrid(analysis.competitors);
-    
-    // Show recommendations
-    showRecommendations(analysis);
-}
-
-function gatherProjectData() {
-    return {
-        brand: currentBrand,
-        projectType: document.getElementById('projectType').value,
-        location: document.getElementById('projectLocation').value,
-        sqft: parseFloat(document.getElementById('projectSqft').value) || 0,
-        duration: parseInt(document.getElementById('projectDuration').value) || 0,
-        laborCost: parseFloat(document.getElementById('laborCost').value) || 0,
-        materialsCost: parseFloat(document.getElementById('materialsCost').value) || 0,
-        totalBid: parseFloat(document.getElementById('totalBid').value) || 0,
-        competitors: gatherCompetitorData()
-    };
-}
-
-function gatherCompetitorData() {
-    const competitors = [];
-    for (let i = 1; i <= 4; i++) {
-        const name = document.getElementById(`comp${i}Name`)?.value;
-        const bid = parseFloat(document.getElementById(`comp${i}Bid`)?.value) || 0;
-        const distance = parseFloat(document.getElementById(`comp${i}Distance`)?.value) || 0;
-        const specialty = document.getElementById(`comp${i}Specialty`)?.value;
-        
-        if (name) {
-            competitors.push({ name, bid, distance, specialty });
-        }
-    }
-    return competitors;
-}
-
-function runPredictiveAnalysis(projectData) {
-    // Calculate win probability based on historical data
-    const winProbability = calculateWinProbability(projectData);
-    
-    // Calculate optimal bid price
-    const optimalPrice = calculateOptimalPrice(projectData);
-    
-    // Assess competitor threats
-    const competitors = analyzeCompetitors(projectData.competitors, projectData);
-    
-    // Determine overall threat level
-    const threatLevel = calculateThreatLevel(competitors);
-    
-    return {
-        winProbability,
-        optimalPrice,
-        threatLevel,
-        competitors
-    };
-}
-
-function calculateWinProbability(projectData) {
-    let probability = predictiveModel.winRate; // Base rate
-    
-    // Adjust for brand
-    if (projectData.brand === 'atp') {
-        probability -= 0.1; // State contracts more competitive
-    }
-    
-    // Adjust for location advantage
-    const myDistance = 0; // I'm local
-    projectData.competitors.forEach(comp => {
-        if (comp.distance < myDistance + 10) {
-            probability -= 0.05; // Close competitor disadvantage
-        }
-    });
-    
-    // Adjust for price positioning
-    const avgCompetitorBid = projectData.competitors.reduce((sum, comp) => sum + comp.bid, 0) / projectData.competitors.length || projectData.totalBid;
-    if (projectData.totalBid < avgCompetitorBid * 0.95) {
-        probability += 0.15; // Price advantage
-    } else if (projectData.totalBid > avgCompetitorBid * 1.05) {
-        probability -= 0.15; // Price disadvantage
-    }
-    
-    return Math.max(0.1, Math.min(0.9, probability));
-}
-
-function calculateOptimalPrice(projectData) {
-    const config = brandConfigs[projectData.brand];
-    
-    if (projectData.brand === 'atp') {
-        // ATP: State-specific optimal pricing
-        const scopeComplexity = calculateScopeComplexity(projectData);
-        const hasKnownCompetitors = projectData.competitors.length > 0;
-        
-        // Start with base state maximum
-        let optimalPrice = config.maxStatePayout;
-        
-        // Apply scope complexity multiplier
-        if (scopeComplexity > 1.0) {
-            optimalPrice *= Math.min(scopeComplexity, config.scopeMultiplier);
-        }
-        
-        // Apply competitor adjustments
-        if (hasKnownCompetitors) {
-            const avgCompetitorBid = projectData.competitors.reduce((sum, comp) => sum + comp.bid, 0) / projectData.competitors.length;
-            
-            // Position competitively but don't race to bottom
-            if (avgCompetitorBid > 0) {
-                // Stay within 5% of average competitor, but not below state minimum
-                const competitivePrice = avgCompetitorBid * 0.95;
-                optimalPrice = Math.min(optimalPrice, Math.max(competitivePrice, config.maxStatePayout * 0.7));
-            }
-        } else {
-            // Apply unknown competitor buffer
-            optimalPrice *= config.unknownCompetitorBuffer;
-        }
-        
-        // Ensure we're not leaving money on the table for complex scopes
-        if (scopeComplexity > 1.15) {
-            optimalPrice = Math.max(optimalPrice, config.maxStatePayout * 1.10);
-        }
-        
-        return optimalPrice;
-        
-    } else {
-        // WSI: Standard commercial optimal pricing
-        const avgWinningBid = getAverageWinningBid();
-        const marketRate = projectData.sqft * 25; // $25/sqft baseline
-        
-        // Blend historical and market rates
-        let optimalPrice = (avgWinningBid * 0.6) + (marketRate * 0.4);
-        
-        // Apply competitive positioning
-        if (projectData.competitors.length > 0) {
-            const avgCompetitorBid = projectData.competitors.reduce((sum, comp) => sum + comp.bid, 0) / projectData.competitors.length;
-            if (avgCompetitorBid > 0) {
-                optimalPrice = (optimalPrice * 0.7) + (avgCompetitorBid * 0.9 * 0.3); // Competitive but not racing
-            }
-        }
-        
-        // Apply predictive cap
-        const maxPrice = avgWinningBid * predictiveModel.priceCapMultiplier;
-        optimalPrice = Math.min(optimalPrice, maxPrice);
-        
-        return optimalPrice;
-    }
-}
-
-function analyzeCompetitors(competitors, projectData) {
-    return competitors.map(comp => {
-        let threat = 0.3; // Base threat
-        
-        // Distance factor
-        if (comp.distance < 10) threat += 0.3;
-        else if (comp.distance < 25) threat += 0.15;
-        
-        // Price factor
-        if (comp.bid < projectData.totalBid * 0.9) threat += 0.4;
-        else if (comp.bid < projectData.totalBid) threat += 0.2;
-        
-        // Specialty match
-        if (comp.specialty && projectData.projectType.includes(comp.specialty)) {
-            threat += 0.2;
-        }
-        
-        // Historical win rate
-        const historicalData = bidHistory.filter(bid => 
-            bid.competitors.some(c => c.name === comp.name) && bid.won
-        );
-        if (historicalData.length > 0) {
-            threat += (historicalData.length / bidHistory.length) * 0.3;
-        }
-        
-        return {
-            ...comp,
-            threatScore: Math.min(1.0, threat),
-            threatLevel: threat > 0.7 ? 'high' : threat > 0.4 ? 'medium' : 'low'
-        };
-    });
-}
-
-function calculateThreatLevel(competitors) {
-    if (competitors.length === 0) return 'low';
-    
-    const avgThreat = competitors.reduce((sum, comp) => sum + comp.threatScore, 0) / competitors.length;
-    
-    if (avgThreat > predictiveModel.threatThresholds.high) return 'high';
-    if (avgThreat > predictiveModel.threatThresholds.medium) return 'medium';
-    return 'low';
-}
-
-function updateCompetitorGrid(competitors) {
-    const grid = document.getElementById('competitorGrid');
-    
-    if (competitors.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No competitors analyzed yet</p>';
-        return;
-    }
-    
-    grid.innerHTML = competitors.map(comp => `
-        <div class="competitor-card">
-            <div class="competitor-name">${comp.name}</div>
-            <div class="competitor-stats">
-                <div>Last Bid: $${comp.bid.toFixed(0)}</div>
-                <div>Distance: ${comp.distance} miles</div>
-                <div>Specialty: ${comp.specialty || 'General'}</div>
-                <div>Win Rate: ${(comp.threatScore * 100).toFixed(1)}%</div>
-            </div>
-            <div class="threat-level threat-${comp.threatLevel}">THREAT: ${comp.threatLevel.toUpperCase()}</div>
-        </div>
-    `).join('');
-}
-
-function showRecommendations(analysis) {
-    // This would show detailed recommendations based on analysis
-    console.log('Analysis:', analysis);
-}
-
-function setupFileUpload() {
-    const uploadZone = document.getElementById('bidHistoryUpload');
-    const fileInput = document.getElementById('bidHistoryInput');
-    
-    uploadZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadZone.classList.add('dragover');
-    });
-    
-    uploadZone.addEventListener('dragleave', () => {
-        uploadZone.classList.remove('dragover');
-    });
-    
-    uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('dragover');
-        handleBidHistoryFiles(e.dataTransfer.files);
-    });
-    
-    fileInput.addEventListener('change', (e) => {
-        handleBidHistoryFiles(e.target.files);
-    });
-}
-
-function handleBidHistoryFiles(files) {
-    Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const content = e.target.result;
-            const fileType = file.type || file.name.split('.').pop();
-            
-            // Parse based on file type
-            let bidData;
-            if (fileType === 'pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                bidData = parsePDFBidHistory(content, file.name);
-            } else if (fileType === 'csv' || file.name.toLowerCase().endsWith('.csv')) {
-                bidData = parseCSVBidHistory(content, file.name);
-            } else if (fileType === 'txt' || file.name.toLowerCase().endsWith('.txt')) {
-                bidData = parseTXTBidHistory(content, file.name);
-            } else {
-                // Try generic parsing
-                bidData = parseGenericBidHistory(content, file.name);
-            }
-            
-            if (bidData) {
-                bidHistory.push(bidData);
-                updateCompetitorAnalysis(bidData);
-                updatePredictiveModel();
-                updateUnknownCompetitorBuffer();
-                showParsingResults(bidData, file.name);
-            }
-        };
-        
-        // Handle different file types
-        if (file.type === 'application/pdf') {
-            // For PDFs, we'd need a PDF parsing library - for now, extract text
-            reader.readAsText(file);
-        } else {
-            reader.readAsText(file);
-        }
-    });
-}
-
-function parsePDFBidHistory(content, filename) {
-    // PDF parsing - would need library like PDF.js for full implementation
-    // For now, extract text patterns from PDF content
-    console.log('Parsing PDF bid history:', filename);
-    return parseGenericBidHistory(content, filename, 'pdf');
-}
-
-function parseCSVBidHistory(content, filename) {
-    console.log('Parsing CSV bid history:', filename);
-    const lines = content.split('\n');
-    const bidData = {
-        filename: filename,
-        date: new Date().toISOString(),
-        totalAmount: 0,
-        won: false,
-        competitors: [],
-        projectType: 'unknown',
-        fileType: 'csv',
-        knownCompetitors: false
-    };
-    
-    try {
-        // Parse CSV headers and data
-        const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
-        
-        lines.slice(1).forEach(line => {
-            if (line.trim()) {
-                const values = line.split(',').map(v => v.trim());
-                const row = {};
-                
-                headers.forEach((header, index) => {
-                    row[header] = values[index] || '';
-                });
-                
-                // Extract key data
-                if (row.amount || row.bid || row.price) {
-                    bidData.totalAmount = parseFloat(row.amount || row.bid || row.price) || 0;
-                }
-                
-                if (row.won || row.result || row.outcome) {
-                    bidData.won = (row.won || row.result || row.outcome).toLowerCase().includes('win');
-                }
-                
-                if (row.competitor || row.company || row.contractor) {
-                    bidData.competitors.push({
-                        name: row.competitor || row.company || row.contractor,
-                        bid: parseFloat(row.competitor_bid || row.competitor_price) || 0,
-                        distance: parseFloat(row.distance) || 0
-                    });
-                    bidData.knownCompetitors = true;
-                }
-                
-                if (row.project_type || row.type) {
-                    bidData.projectType = row.project_type || row.type;
-                }
-            }
-        });
-    } catch (error) {
-        console.error('CSV parsing error:', error);
-        return null;
-    }
-    
-    return bidData.totalAmount > 0 ? bidData : null;
-}
-
-function parseTXTBidHistory(content, filename) {
-    console.log('Parsing TXT bid history:', filename);
-    return parseGenericBidHistory(content, filename, 'txt');
-}
-
-function parseGenericBidHistory(content, filename, fileType = 'generic') {
-    const bidData = {
-        filename: filename,
-        date: new Date().toISOString(),
-        totalAmount: 0,
-        won: false,
-        competitors: [],
-        projectType: 'unknown',
-        fileType: fileType,
-        knownCompetitors: false,
-        wattsEntity: null // Track which Watts entity won
-    };
-    
-    const lines = content.split('\n');
-    
-    // Define all Watts ATP Contractor associated entities
-    const wattsEntities = [
-        'watts atp contractor',
-        'watts safety installs', 
-        'watts safety',
-        'wsi',
-        'watts',
-        'justin watts',
-        'justinskylarwatts@gmail.com',
-        'justin.watts@wattsatpcontractor.com'
-    ];
-    
-    lines.forEach(line => {
-        const lowerLine = line.toLowerCase();
-        
-        // Extract monetary values
-        const amountMatches = line.match(/\$?([\d,]+\.?\d*)/g);
-        if (amountMatches) {
-            amountMatches.forEach(match => {
-                const amount = parseFloat(match.replace(/[$,]/g, ''));
-                if (amount > bidData.totalAmount && amount < 100000) { // Reasonable bid range
-                    bidData.totalAmount = amount;
-                }
-            });
-        }
-        
-        // Check for Watts ATP Contractor association and win/loss
-        let wattsWinner = false;
-        wattsEntities.forEach(entity => {
-            if (lowerLine.includes(entity)) {
-                bidData.wattsEntity = entity;
-                
-                // Look for win indicators near Watts entity
-                const winPatterns = [
-                    /\b(won|win|awarded|successful|selected|chosen)\b/gi,
-                    new RegExp(`${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*?(?:won|win|awarded|successful|selected|chosen)`, 'gi'),
-                    new RegExp(`(?:won|win|awarded|successful|selected|chosen).*?${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')
-                ];
-                
-                winPatterns.forEach(pattern => {
-                    if (pattern.test(line)) {
-                        wattsWinner = true;
-                        bidData.won = true;
-                    }
-                });
-                
-                // Also check for loss indicators
-                const lossPatterns = [
-                    /\b(lost|lose|unsuccessful|rejected|not selected|not awarded)\b/gi,
-                    new RegExp(`${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*?(?:lost|lose|unsuccessful|rejected|not selected|not awarded)`, 'gi'),
-                    new RegExp(`(?:lost|lose|unsuccessful|rejected|not selected|not awarded).*?${entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')
-                ];
-                
-                lossPatterns.forEach(pattern => {
-                    if (pattern.test(line)) {
-                        wattsWinner = true;
-                        bidData.won = false;
-                    }
-                });
-            }
-        });
-        
-        // If no Watts entity found, check general win/loss
-        if (!wattsWinner) {
-            if (lowerLine.match(/\b(won|win|awarded|successful|selected|chosen)\b/)) {
-                bidData.won = true;
-            } else if (lowerLine.match(/\b(lost|lose|unsuccessful|rejected|not selected|not awarded)\b/)) {
-                bidData.won = false;
-            }
-        }
-        
-        // Look for competitor names (excluding Watts entities)
-        const competitorPatterns = [
-            /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+(?:Contracting|Contractors|Construction|Co|Company|Inc|LLC)))\b/g,
-            /\b(Competitor|Opponent|Bidder)\s*:?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi
-        ];
-        
-        competitorPatterns.forEach(pattern => {
-            const matches = line.match(pattern);
-            if (matches) {
-                matches.forEach(match => {
-                    const name = match.replace(/.*?:\s*/, '').trim();
-                    const lowerName = name.toLowerCase();
-                    
-                    // Exclude Watts entities from competitor list
-                    const isWattsEntity = wattsEntities.some(entity => lowerName.includes(entity));
-                    
-                    if (name && name.length > 2 && !isWattsEntity) {
-                        bidData.competitors.push({
-                            name: name,
-                            bid: 0,
-                            distance: 0
-                        });
-                        bidData.knownCompetitors = true;
-                    }
-                });
-            }
-        });
-        
-        // Look for project type indicators
-        if (lowerLine.includes('state') || lowerLine.includes('government')) {
-            bidData.projectType = 'state';
-        } else if (lowerLine.includes('commercial')) {
-            bidData.projectType = 'commercial';
-        } else if (lowerLine.includes('municipal')) {
-            bidData.projectType = 'municipal';
-        }
-        
-        // Extract competitor bid amounts if available
-        const competitorBidMatch = line.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*[:\-]?\s*\$?([\d,]+\.?\d*)/);
-        if (competitorBidMatch) {
-            const competitorName = competitorBidMatch[1].toLowerCase();
-            const isWattsEntity = wattsEntities.some(entity => competitorName.includes(entity));
-            
-            if (!isWattsEntity) {
-                const bidAmount = parseFloat(competitorBidMatch[2].replace(',', ''));
-                const existingCompetitor = bidData.competitors.find(c => c.name.toLowerCase() === competitorName);
-                if (existingCompetitor) {
-                    existingCompetitor.bid = bidAmount;
-                }
-            }
-        }
-    });
-    
-    // If Watts entity was found but no explicit win/loss, assume win (since Watts is mentioned in positive context)
-    if (bidData.wattsEntity && bidData.won === false) {
-        // Check if this is a bid listing where Watts is included
-        const hasMultipleBidders = bidData.competitors.length > 0 || lines.some(line => 
-            line.toLowerCase().match(/\b(bidder|contractor|company)\b/i)
-        );
-        
-        if (hasMultipleBidders) {
-            // In competitive listings, Watts being mentioned doesn't mean win
-            bidData.won = false; // Default to false unless explicitly stated
-        }
-    }
-    
-    return bidData.totalAmount > 0 ? bidData : null;
-}
-
-function updateCompetitorAnalysis(newBid) {
-    // Always associate with ATP for data tracking since all Watts entities are ATP
-    const brand = 'atp'; // Force ATP association for all Watts entities
-    const config = brandConfigs[brand];
-    
-    // Update competitor analysis statistics
-    const totalBids = bidHistory.length;
-    const bidsWithKnownCompetitors = bidHistory.filter(bid => bid.knownCompetitors).length;
-    
-    config.competitorAnalysis.knownCompetitorRate = (bidsWithKnownCompetitors / totalBids) * 100;
-    
-    // Calculate average competitor count
-    const competitorCounts = bidHistory.map(bid => bid.competitors ? bid.competitors.length : 0);
-    config.competitorAnalysis.avgCompetitorCount = competitorCounts.reduce((sum, count) => sum + count, 0) / totalBids;
-    
-    // Calculate win rates
-    const knownCompetitorBids = bidHistory.filter(bid => bid.knownCompetitors);
-    const unknownCompetitorBids = bidHistory.filter(bid => !bid.knownCompetitors);
-    
-    if (knownCompetitorBids.length > 0) {
-        const knownWins = knownCompetitorBids.filter(bid => bid.won).length;
-        config.competitorAnalysis.knownWinRate = (knownWins / knownCompetitorBids.length) * 100;
-    }
-    
-    if (unknownCompetitorBids.length > 0) {
-        const unknownWins = unknownCompetitorBids.filter(bid => bid.won).length;
-        config.competitorAnalysis.unknownWinRate = (unknownWins / unknownCompetitorBids.length) * 100;
-    }
-    
-    // Track Watts entity performance
-    const wattsWins = bidHistory.filter(bid => bid.wattsEntity && bid.won).length;
-    const wattsTotal = bidHistory.filter(bid => bid.wattsEntity).length;
-    
-    if (wattsTotal > 0) {
-        config.competitorAnalysis.wattsWinRate = (wattsWins / wattsTotal) * 100;
-    }
-}
-
-function updateUnknownCompetitorBuffer() {
-    // Calculate dynamic buffer based on historical performance
-    ['atp', 'wsi'].forEach(brand => {
-        const config = brandConfigs[brand];
-        const analysis = config.competitorAnalysis;
-        
-        // Base buffer calculation
-        let buffer = 1.0; // No buffer by default
-        
-        // If unknown competitors are common and win rate is lower, increase buffer
-        if (analysis.knownCompetitorRate < 50) { // Less than 50% have known competitors
-            if (analysis.unknownWinRate < analysis.knownWinRate) {
-                // We perform worse when competitors are unknown
-                buffer = 1.0 + (0.15 * (1 - analysis.knownCompetitorRate / 100)); // Up to 15% buffer
-            } else {
-                // We perform fine or better when competitors are unknown
-                buffer = 1.0 + (0.10 * (1 - analysis.knownCompetitorRate / 100)); // Up to 10% buffer
-            }
-        }
-        
-        // Cap buffer at reasonable limits
-        buffer = Math.max(1.0, Math.min(buffer, 1.25)); // Max 25% buffer
-        
-        config.unknownCompetitorBuffer = buffer;
-        
-        console.log(`${brand.toUpperCase()} competitor buffer updated: ${(buffer - 1) * 100}%`);
-        console.log(`Known competitor rate: ${analysis.knownCompetitorRate.toFixed(1)}%`);
-        console.log(`Unknown win rate: ${analysis.unknownWinRate.toFixed(1)}% vs Known: ${analysis.knownWinRate.toFixed(1)}%`);
-    });
-}
-
-function showParsingResults(bidData, filename) {
-    // Show parsing results to user
-    const resultsDiv = document.createElement('div');
-    resultsDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 15px; border-radius: 8px; z-index: 1000; max-width: 300px;';
-    
-    const wattsEntityText = bidData.wattsEntity ? 
-        `<br><small style="opacity: 0.8;">Watts Entity: ${bidData.wattsEntity}</small>` : '';
-    
-    resultsDiv.innerHTML = `
-        <h4 style="margin: 0 0 10px 0;">✅ ATP Bid History Parsed</h4>
-        <p style="margin: 5px 0; font-size: 12px;"><strong>File:</strong> ${filename}</p>
-        <p style="margin: 5px 0; font-size: 12px;"><strong>Amount:</strong> $${bidData.totalAmount.toFixed(2)}</p>
-        <p style="margin: 5px 0; font-size: 12px;"><strong>Result:</strong> ${bidData.won ? 'WON' : 'LOST'}</p>
-        <p style="margin: 5px 0; font-size: 12px;"><strong>Competitors:</strong> ${bidData.knownCompetitors ? 'Known' : 'Unknown'}</p>
-        ${wattsEntityText}
-        <p style="margin: 5px 0; font-size: 11px; opacity: 0.8;">ATP competitor buffer updated</p>
-    `;
-    
-    document.body.appendChild(resultsDiv);
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        if (resultsDiv.parentNode) {
-            resultsDiv.parentNode.removeChild(resultsDiv);
-        }
-    }, 5000);
-}
-
-function updatePredictiveModel() {
-    // Update predictive model based on new historical data
-    const winningBids = bidHistory.filter(bid => bid.won);
-    if (winningBids.length > 0) {
-        predictiveModel.winRate = winningBids.length / bidHistory.length;
-    }
+function autoImportLatestIntelligence() {
+    console.log('📥 Auto-importing latest intelligence...');
+    // Implementation would go here
 }
 
 function loadBidHistory() {
-    // Load from Firebase
-    const userPIN = sessionStorage.getItem('bid_pin');
-    if (userPIN) {
-        const hashed = hashPIN(userPIN);
-        db.ref('users/' + hashed + '/bidHistory').once('value').then(snapshot => {
-            if (snapshot.exists()) {
-                bidHistory = snapshot.val() || [];
-                updatePredictiveModel();
-            }
-        });
-    }
+    console.log('📋 Loading bid history...');
+    // Implementation would go here
+}
+
+function loadCompetitorData() {
+    console.log('🏢 Loading competitor data...');
+    // Implementation would go here
+}
+
+function setupFileUpload() {
+    console.log('📁 Setting up file upload...');
+    // Implementation would go here
+}
+
+function updateFormForBrand(brand) {
+    console.log(`🔄 Updating form for ${brand}...`);
+    // Implementation would go here
+}
+
+function loadBrandIntelligence(brand) {
+    console.log(`📊 Loading intelligence for ${brand}...`);
+    // Implementation would go here
+}
+
+function updatePredictiveModelForBrand(brand) {
+    console.log(`🧠 Updating predictive model for ${brand}...`);
+    // Implementation would go here
+}
+
+function processGoogleIntelligence(source, data) {
+    console.log(`🔄 Processing ${source} intelligence...`);
+    // Implementation would go here
+}
+
+function updateBidCalculationsWithIntelligence(data) {
+    console.log('💰 Updating bid calculations with intelligence...');
+    // Implementation would go here
 }
 
 function hashPIN(pin) {
@@ -2090,327 +567,6 @@ function hashPIN(pin) {
     return 'u' + Math.abs(h).toString(36);
 }
 
-function addCompetitor() {
-    // Add more competitor input fields
-    console.log('Adding competitor...');
-}
-
-function generateBid() {
-    // Generate bid document based on brand
-    console.log('Generating bid for:', currentBrand);
-}
-
-function saveToHistory() {
-    // Save current bid to history
-    console.log('Saving to history...');
-}
-
-function exportAnalysis() {
-    // Export analysis results
-    console.log('Exporting analysis...');
-}
-
-function loadCompetitorData() {
-    // Load competitor intelligence from Firebase
-    const userPIN = sessionStorage.getItem('bid_pin');
-    if (userPIN) {
-        const hashed = hashPIN(userPIN);
-        db.ref(`competitors/${hashed}`).once('value').then(snapshot => {
-            const data = snapshot.val() || {};
-            displayCompetitorData(data);
-        });
-    }
-}
-
-function displayCompetitorData(data) {
-    // Display competitor data in the UI
-    const grid = document.getElementById('competitorGrid');
-    if (!grid) return;
-    
-    // Clear existing data
-    grid.innerHTML = '';
-    
-    // Add competitor cards
-    Object.entries(data).forEach(([name, info]) => {
-        const card = document.createElement('div');
-        card.className = 'competitor-card';
-        card.innerHTML = `
-            <h4 style="color: #e74c3c; margin-bottom: 10px;">${name}</h4>
-            <div style="font-size: 12px; color: #ecf0f1;">
-                <div>Win Rate: ${info.winRate || 'N/A'}%</div>
-                <div>Avg Bid: $${(info.avgBid || 0).toLocaleString()}</div>
-                <div>Projects: ${info.projectCount || 0}</div>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-// Import Google Intelligence Data
-function importGoogleIntelligence(source) {
-    const statusDiv = document.getElementById('googleIntelStatus');
-    statusDiv.innerHTML = `🔄 Importing ${source} intelligence data...`;
-    statusDiv.style.color = '#f39c12';
-    
-    // Get stored Google scan results from localStorage
-    const storedResults = localStorage.getItem('googleScanResults');
-    if (!storedResults) {
-        statusDiv.innerHTML = `❌ No Google scan data found. Please run Google scans first.`;
-        statusDiv.style.color = '#e74c3c';
-        return;
-    }
-    
-    try {
-        const scanData = JSON.parse(storedResults);
-        const sourceData = scanData[source];
-        
-        if (!sourceData || !sourceData.atpItems || sourceData.atpItems.length === 0) {
-            statusDiv.innerHTML = `❌ No ${source} data found. Please scan ${source} first.`;
-            statusDiv.style.color = '#e74c3c';
-            return;
-        }
-        
-        // Process and integrate the data
-        processGoogleIntelligence(source, sourceData);
-        
-        statusDiv.innerHTML = `✅ Successfully imported ${sourceData.atpItems.length} items from ${source}`;
-        statusDiv.style.color = '#27ae60';
-        
-        // Update bid calculations with new intelligence
-        updateBidCalculationsWithIntelligence(sourceData);
-        
-    } catch (error) {
-        console.error('Error importing Google intelligence:', error);
-        statusDiv.innerHTML = `❌ Error importing ${source} data: ${error.message}`;
-        statusDiv.style.color = '#e74c3c';
-    }
-}
-
-// Process Google Intelligence Data for Competitive Analysis
-function processGoogleIntelligence(source, data) {
-    const userPIN = sessionStorage.getItem('bid_pin');
-    if (!userPIN) return;
-    
-    const hashed = hashPIN(userPIN);
-    const intelRef = db.ref(`googleIntelligence/${hashed}/${source}`);
-    
-    // Extract competitive intelligence
-    const competitiveIntel = extractCompetitiveIntelligence(source, data);
-    
-    // Store in Firebase
-    intelRef.set({
-        imported: new Date().toISOString(),
-        totalItems: data.allItems.length,
-        atpItems: data.atpItems.length,
-        matchRate: data.summary.matchRate,
-        intelligence: competitiveIntel,
-        predictiveAnalysis: data.predictiveAnalysis || null
-    });
-    
-    // Update UI with intelligence
-    displayCompetitiveIntelligence(source, competitiveIntel);
-}
-
-// Extract Competitive Intelligence from Google Data
-function extractCompetitiveIntelligence(source, data) {
-    const intel = {
-        competitors: {},
-        bidPatterns: {},
-        clientTypes: {},
-        serviceTypes: {},
-        pricingInsights: {},
-        recommendations: []
-    };
-    
-    // Analyze ATP items for competitive intelligence
-    data.atpItems.forEach(item => {
-        const name = item.name.toLowerCase();
-        
-        // Extract competitor names
-        const competitorPatterns = ['vs ', 'compared to', 'competitor', 'opponent', 'rival'];
-        competitorPatterns.forEach(pattern => {
-            const match = name.match(new RegExp(`${pattern}([^\\s]+)`, 'i'));
-            if (match) {
-                const competitor = match[1].trim();
-                intel.competitors[competitor] = (intel.competitors[competitor] || 0) + 1;
-            }
-        });
-        
-        // Extract bid patterns
-        if (name.includes('won')) intel.bidPatterns.won = (intel.bidPatterns.won || 0) + 1;
-        if (name.includes('lost')) intel.bidPatterns.lost = (intel.bidPatterns.lost || 0) + 1;
-        if (name.includes('bid')) intel.bidPatterns.total = (intel.bidPatterns.total || 0) + 1;
-        
-        // Extract client types
-        if (name.includes('north park')) intel.clientTypes['North Park'] = (intel.clientTypes['North Park'] || 0) + 1;
-        if (name.includes('allen')) intel.clientTypes['Allen ISD'] = (intel.clientTypes['Allen ISD'] || 0) + 1;
-        if (name.includes('smith')) intel.clientTypes['Smith ISD'] = (intel.clientTypes['Smith ISD'] || 0) + 1;
-        if (name.includes('kent')) intel.clientTypes['Kent ISD'] = (intel.clientTypes['Kent ISD'] || 0) + 1;
-        
-        // Extract service types
-        if (name.includes('bathroom')) intel.serviceTypes.bathroom = (intel.serviceTypes.bathroom || 0) + 1;
-        if (name.includes('kitchen')) intel.serviceTypes.kitchen = (intel.serviceTypes.kitchen || 0) + 1;
-        if (name.includes('ramp')) intel.serviceTypes.ramp = (intel.serviceTypes.ramp || 0) + 1;
-        if (name.includes('assistive')) intel.serviceTypes.assistiveTech = (intel.serviceTypes.assistiveTech || 0) + 1;
-        
-        // Extract pricing insights
-        const priceMatch = name.match(/\$([0-9,]+)/);
-        if (priceMatch) {
-            const price = parseInt(priceMatch[1].replace(',', ''));
-            if (!intel.pricingInsights.avgPrice) intel.pricingInsights.avgPrice = 0;
-            if (!intel.pricingInsights.priceCount) intel.pricingInsights.priceCount = 0;
-            intel.pricingInsights.avgPrice += price;
-            intel.pricingInsights.priceCount++;
-        }
-    });
-    
-    // Calculate average price
-    if (intel.pricingInsights.priceCount > 0) {
-        intel.pricingInsights.avgPrice /= intel.pricingInsights.priceCount;
-    }
-    
-    // Generate recommendations
-    intel.recommendations = generateCompetitiveRecommendations(intel);
-    
-    return intel;
-}
-
-// Generate Competitive Recommendations
-function generateCompetitiveRecommendations(intel) {
-    const recommendations = [];
-    
-    // Win rate analysis
-    if (intel.bidPatterns.total > 0) {
-        const winRate = (intel.bidPatterns.won || 0) / intel.bidPatterns.total;
-        if (winRate < 0.3) {
-            recommendations.push({
-                type: 'warning',
-                title: 'Low Win Rate Detected',
-                description: `Win rate is ${(winRate * 100).toFixed(1)}% - consider pricing strategy review`,
-                priority: 'high'
-            });
-        } else if (winRate > 0.7) {
-            recommendations.push({
-                type: 'success',
-                title: 'Excellent Win Rate',
-                description: `Win rate is ${(winRate * 100).toFixed(1)}% - current strategy is working`,
-                priority: 'low'
-            });
-        }
-    }
-    
-    // Competitor analysis
-    const topCompetitor = Object.entries(intel.competitors).sort((a, b) => b[1] - a[1])[0];
-    if (topCompetitor && topCompetitor[1] > 3) {
-        recommendations.push({
-            type: 'info',
-            title: 'Frequent Competitor',
-            description: `${topCompetitor[0]} appears in ${topCompetitor[1]} bids - monitor their strategy`,
-            priority: 'medium'
-        });
-    }
-    
-    // Client focus
-    const topClient = Object.entries(intel.clientTypes).sort((a, b) => b[1] - a[1])[0];
-    if (topClient) {
-        recommendations.push({
-            type: 'opportunity',
-            title: 'Top Client Opportunity',
-            description: `${topClient[0]} has ${topClient[1]} projects - strong relationship potential`,
-            priority: 'medium'
-        });
-    }
-    
-    return recommendations;
-}
-
-// Display Competitive Intelligence in UI
-function displayCompetitiveIntelligence(source, intel) {
-    const grid = document.getElementById('competitorGrid');
-    
-    // Create intelligence card
-    const intelCard = document.createElement('div');
-    intelCard.className = 'competitor-card';
-    intelCard.style.cssText = 'border-left: 4px solid #3498db;';
-    
-    intelCard.innerHTML = `
-        <h4 style="color: #3498db; margin-bottom: 10px;">📊 ${source.toUpperCase()} Intelligence</h4>
-        <div style="font-size: 12px; color: #ecf0f1; line-height: 1.4;">
-            <div><strong>Total Items:</strong> ${intel.bidPatterns.total || 0}</div>
-            <div><strong>Won:</strong> ${intel.bidPatterns.won || 0}</div>
-            <div><strong>Lost:</strong> ${intel.bidPatterns.lost || 0}</div>
-            ${intel.pricingInsights.avgPrice ? `<div><strong>Avg Price:</strong> $${intel.pricingInsights.avgPrice.toLocaleString()}</div>` : ''}
-            ${Object.keys(intel.competitors).length > 0 ? `<div><strong>Top Competitor:</strong> ${Object.keys(intel.competitors)[0]}</div>` : ''}
-        </div>
-        <div style="margin-top: 10px;">
-            ${intel.recommendations.slice(0, 2).map(rec => `
-                <div style="padding: 5px; background: #0f1a33; border-radius: 4px; font-size: 11px; margin-bottom: 5px;">
-                    <strong style="color: ${rec.type === 'warning' ? '#e74c3c' : rec.type === 'success' ? '#27ae60' : '#3498db'};">${rec.title}</strong>
-                    <div style="color: #7f8c8d;">${rec.description}</div>
-                </div>
-            `).join('')}
-        </div>
-    `;
-    
-    grid.appendChild(intelCard);
-}
-
-// Update Bid Calculations with Intelligence
-function updateBidCalculationsWithIntelligence(data) {
-    // Apply intelligence to current bid calculations
-    const projectData = getCurrentProjectData();
-    if (!projectData) return;
-    
-    // Adjust pricing based on historical data
-    if (data.intelligence && data.intelligence.pricingInsights.avgPrice) {
-        const historicalAvg = data.intelligence.pricingInsights.avgPrice;
-        const currentBid = projectData.totalCost || 0;
-        
-        // Suggest price adjustment
-        const suggestedPrice = historicalAvg * 0.95; // 5% below historical average
-        
-        // Update UI with suggestion
-        const panel = document.querySelector('.predictive-panel');
-        if (panel) {
-            const priceSuggestion = document.createElement('div');
-            priceSuggestion.className = 'price-suggestion';
-            priceSuggestion.style.cssText = 'margin-top: 10px; padding: 10px; background: #0f1a33; border-left: 4px solid #f39c12; border-radius: 6px; font-size: 12px; color: #f39c12;';
-            priceSuggestion.innerHTML = `
-                <strong>💡 Intelligence-Based Pricing Suggestion:</strong><br>
-                Historical avg: $${historicalAvg.toLocaleString()}<br>
-                Suggested bid: $${suggestedPrice.toLocaleString()} (5% below avg)<br>
-                Current bid: $${currentBid.toLocaleString()}
-            `;
-            panel.appendChild(priceSuggestion);
-        }
-    }
-    
-    // Update competitor buffer based on win rate
-    if (data.intelligence && data.intelligence.bidPatterns.total > 0) {
-        const winRate = (data.intelligence.bidPatterns.won || 0) / data.intelligence.bidPatterns.total;
-        let bufferMultiplier = 1.0;
-        
-        if (winRate < 0.3) bufferMultiplier = 1.15; // Increase buffer if low win rate
-        else if (winRate > 0.7) bufferMultiplier = 0.95; // Reduce buffer if high win rate
-        
-        // Apply to calculation
-        updateCompetitorBufferIndicator(bufferMultiplier);
-    }
-}
-
-// Get current project data from form
-function getCurrentProjectData() {
-    // Extract current form data
-    const formData = {
-        totalCost: parseFloat(document.getElementById('totalCost')?.value || 0),
-        projectType: document.querySelector('input[name="projectType"]:checked')?.value,
-        duration: parseInt(document.getElementById('duration')?.value || 1),
-        sqft: parseFloat(document.getElementById('sqft')?.value || 0),
-        laborCost: parseFloat(document.getElementById('laborCost')?.value || 0)
-    };
-    
-    return formData.totalCost > 0 ? formData : null;
-}
 </script>
 
 </body>

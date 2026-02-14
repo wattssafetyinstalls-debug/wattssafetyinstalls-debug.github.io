@@ -389,25 +389,65 @@ function scanDrive() {
     // Search for ATP-related files
     const searchQuery = "name contains 'bid' or name contains 'quote' or name contains 'atp' or name contains 'watts' or name contains 'contract' or name contains 'assistive' or name contains 'tech'";
     
-    gapi.client.drive.files.list({
+    // Start with first batch
+    scanDriveBatch(searchQuery, null, []);
+}
+
+// Function to scan Drive in batches to handle more files
+function scanDriveBatch(searchQuery, pageToken, allFiles) {
+    const requestParams = {
         q: searchQuery,
-        fields: 'files(id, name, mimeType, size, modifiedTime, webViewLink)',
-        pageSize: 100
-    }).then(function(response) {
-        const files = response.result.files;
-        const atpFiles = files.filter(file => isATPFile(file.name));
+        fields: 'files(id, name, mimeType, size, modifiedTime, webViewLink), nextPageToken',
+        pageSize: 100  // Maximum allowed per request
+    };
+    
+    if (pageToken) {
+        requestParams.pageToken = pageToken;
+    }
+    
+    gapi.client.drive.files.list(requestParams).then(function(response) {
+        const files = response.result.files || [];
+        const nextPageToken = response.result.nextPageToken;
         
-        displayScanResults('drive', files, atpFiles);
-        showNotification(`✅ Drive scan complete: ${atpFiles.length} ATP files found`, 'success');
+        if (files.length === 0 && !pageToken) {
+            showNotification('📁 No ATP-related files found', 'info');
+            return;
+        }
         
-        // Update service status
-        document.getElementById('driveStatus').textContent = `Connected (${atpFiles.length} files)`;
-        document.getElementById('driveStatus').className = 'service-status status-connected';
+        showNotification(`📁 Found ${files.length} files in this batch...`, 'info');
+        
+        // Add to all files collection
+        allFiles = allFiles.concat(files);
+        
+        // Show progress
+        showNotification(`📁 Processed ${allFiles.length} files so far...`, 'info');
+        
+        // Continue to next batch or finish
+        if (nextPageToken && allFiles.length < 1000) { // Limit to 1000 to avoid infinite loops
+            setTimeout(() => {
+                scanDriveBatch(searchQuery, nextPageToken, allFiles);
+            }, 500); // 500ms delay between batches
+        } else {
+            // Finished scanning
+            finishDriveScan(allFiles, searchQuery);
+        }
         
     }).catch(function(error) {
         console.error('Drive scan error:', error);
         showNotification('❌ Failed to scan Google Drive', 'error');
     });
+}
+
+// Finish Drive scan and show results
+function finishDriveScan(allFiles, searchQuery) {
+    const atpFiles = allFiles.filter(file => isATPFile(file.name));
+    
+    displayScanResults('drive', allFiles, atpFiles);
+    showNotification(`✅ Drive scan complete: ${atpFiles.length} ATP files found out of ${allFiles.length} total`, 'success');
+    
+    // Update service status
+    document.getElementById('driveStatus').textContent = `Connected (${atpFiles.length} files)`;
+    document.getElementById('driveStatus').className = 'service-status status-connected';
 }
 
 function scanGmail() {
@@ -421,60 +461,96 @@ function scanGmail() {
     // Search for ATP-related emails
     const searchQuery = 'bid OR quote OR atp OR watts OR contract OR assistive OR tech OR (from:*.gov) OR (from:*.state.*.us)';
     
-    gapi.client.gmail.users.messages.list({
+    // Start with first batch
+    scanGmailBatch(searchQuery, null, []);
+}
+
+// Function to scan Gmail in batches to avoid rate limiting
+function scanGmailBatch(searchQuery, pageToken, allEmails) {
+    const requestParams = {
         userId: 'me',
         q: searchQuery,
-        maxResults: 20  // Reduced from 50 to avoid rate limiting
-    }).then(function(response) {
+        maxResults: 50  // Increased back to 50 for better coverage
+    };
+    
+    if (pageToken) {
+        requestParams.pageToken = pageToken;
+    }
+    
+    gapi.client.gmail.users.messages.list(requestParams).then(function(response) {
         const messages = response.result.messages || [];
+        const nextPageToken = response.result.nextPageToken;
         
-        if (messages.length === 0) {
+        if (messages.length === 0 && !pageToken) {
             showNotification('📧 No ATP-related emails found', 'info');
             return;
         }
         
-        // Get message details with rate limiting
-        const messagePromises = messages.map((message, index) => 
-            new Promise((resolve) => {
-                // Add delay to avoid rate limiting (429 errors)
-                setTimeout(() => {
-                    gapi.client.gmail.users.messages.get({
-                        userId: 'me',
-                        id: message.id,
-                        format: 'metadata',
-                        metadataHeaders: ['Subject', 'From', 'Date', 'To']
-                    }).then(resolve).catch((error) => {
-                        console.error(`Error fetching message ${message.id}:`, error);
-                        resolve({ result: null, error: error });
-                    });
-                }, index * 200); // 200ms delay between each request
-            })
-        );
+        showNotification(`📧 Found ${messages.length} emails in this batch...`, 'info');
         
-        Promise.all(messagePromises).then(function(messageDetails) {
-            // Filter out failed requests and null results
-            const validMessages = messageDetails
-                .filter(detail => detail.result && !detail.error)
-                .map(detail => detail.result);
-            
-            const atpEmails = validMessages.filter(msg => isATPEmail(msg));
-            
-            displayScanResults('gmail', validMessages, atpEmails);
-            showNotification(`✅ Gmail scan complete: ${atpEmails.length} ATP emails found out of ${validMessages.length} processed`, 'success');
-            
-            // Update service status
-            document.getElementById('gmailStatus').textContent = `Connected (${atpEmails.length} emails)`;
-            document.getElementById('gmailStatus').className = 'service-status status-connected';
-            
-        }).catch(function(error) {
-            console.error('Gmail message details error:', error);
-            showNotification('❌ Failed to get email details', 'error');
-        });
+        // Process this batch with rate limiting
+        processGmailMessages(messages, allEmails, nextPageToken, searchQuery);
         
     }).catch(function(error) {
         console.error('Gmail scan error:', error);
         showNotification('❌ Failed to scan Gmail', 'error');
     });
+}
+
+// Process Gmail messages with rate limiting
+function processGmailMessages(messages, allEmails, nextPageToken, searchQuery) {
+    // Get message details with rate limiting
+    const messagePromises = messages.map((message, index) => 
+        new Promise((resolve) => {
+            // Add delay to avoid rate limiting (429 errors)
+            setTimeout(() => {
+                gapi.client.gmail.users.messages.get({
+                    userId: 'me',
+                    id: message.id,
+                    format: 'metadata',
+                    metadataHeaders: ['Subject', 'From', 'Date', 'To']
+                }).then(resolve).catch((error) => {
+                    console.error(`Error fetching message ${message.id}:`, error);
+                    resolve({ result: null, error: error });
+                });
+            }, index * 100); // Reduced to 100ms delay for faster processing
+        })
+    );
+    
+    Promise.all(messagePromises).then(function(messageDetails) {
+        // Filter out failed requests and null results
+        const validMessages = messageDetails
+            .filter(detail => detail.result && !detail.error)
+            .map(detail => detail.result);
+        
+        // Add to all emails collection
+        allEmails = allEmails.concat(validMessages);
+        
+        // Show progress
+        showNotification(`📧 Processed ${allEmails.length} emails so far...`, 'info');
+        
+        // Continue to next batch or finish
+        if (nextPageToken && allEmails.length < 500) { // Limit to 500 to avoid infinite loops
+            setTimeout(() => {
+                scanGmailBatch(searchQuery, nextPageToken, allEmails);
+            }, 1000); // 1 second delay between batches
+        } else {
+            // Finished scanning
+            finishGmailScan(allEmails, searchQuery);
+        }
+    });
+}
+
+// Finish Gmail scan and show results
+function finishGmailScan(allEmails, searchQuery) {
+    const atpEmails = allEmails.filter(msg => isATPEmail(msg));
+    
+    displayScanResults('gmail', allEmails, atpEmails);
+    showNotification(`✅ Gmail scan complete: ${atpEmails.length} ATP emails found out of ${allEmails.length} total`, 'success');
+    
+    // Update service status
+    document.getElementById('gmailStatus').textContent = `Connected (${atpEmails.length} emails)`;
+    document.getElementById('gmailStatus').className = 'service-status status-connected';
 }
 
 // Check if file is ATP-related

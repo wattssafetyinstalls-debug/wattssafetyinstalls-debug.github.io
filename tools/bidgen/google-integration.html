@@ -110,12 +110,22 @@
             </div>
             <div class="service-item">
                 <div class="service-header">
-                    <h3>📊 WSI Financials</h3>
+                    <h3>� Local Files</h3>
+                    <p class="service-description">Scan local PC storage for quote files and historical bid data</p>
+                    <div class="service-status" id="localStatus">Not Connected</div>
+                </div>
+                <input type="file" id="localFileInput" webkitdirectory directory multiple style="display: none;" onchange="handleLocalFileScan(event)">
+                <button class="btn btn-primary" onclick="document.getElementById('localFileInput').click()">📁 Scan Local Files</button>
+                <button class="btn btn-secondary" onclick="scanLocalQuotes()" style="margin-left: 10px;">🔍 Auto-Scan Quotes</button>
+            </div>
+            <div class="service-item">
+                <div class="service-header">
+                    <h3>�📊 WSI Financials</h3>
                     <p class="service-description">Upload WSI financial spreadsheets for business intelligence</p>
                     <div class="service-status" id="financialsStatus">Not Connected</div>
                 </div>
                 <input type="file" id="financialsFileInput" multiple accept=".csv,.xlsx,.xls,.pdf" style="display: none;" onchange="handleFinancialsUpload(event)">
-                <button class="btn btn-primary" onclick="document.getElementById('financialsFileInput').click()">� Upload Financials</button>
+                <button class="btn btn-primary" onclick="document.getElementById('financialsFileInput').click()">📊 Upload Financials</button>
             </div>
             <div class="service-item">
                 <div class="service-header">
@@ -432,6 +442,9 @@ function showNotification(message, type = 'info') {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Page loaded, checking API key...');
+    
+    // Initialize local scanner
+    initializeLocalScanner();
     
     // Check if API key is already stored
     if (loadApiKey()) {
@@ -1844,6 +1857,448 @@ END OF REPORT
     window.URL.revokeObjectURL(url);
     
     showNotification(`📊 Report exported! ${totalAtpItems} ATP items found`, 'success');
+}
+
+// ========================================
+// LOCAL FILE SYSTEM SCANNER IMPLEMENTATION
+// ========================================
+
+// Local File System Scanner - Phase 1 Implementation
+class LocalFileScanner {
+    constructor() {
+        this.supportedTypes = ['.pdf', '.doc', '.docx', '.txt', '.csv', '.xlsx', '.xls'];
+        this.quoteFiles = [];
+        this.processedFiles = [];
+        this.nlpEngine = new LocalNLPProcessor();
+    }
+
+    // Handle local file selection
+    async handleLocalFileScan(event) {
+        const files = Array.from(event.target.files);
+        console.log(`📁 Selected ${files.length} local files for scanning`);
+        
+        showNotification(`📁 Scanning ${files.length} local files...`, 'info');
+        this.updateProgress(0, files.length, 'Starting local file scan...');
+        
+        const quoteFiles = [];
+        let processedCount = 0;
+        
+        for (const file of files) {
+            try {
+                if (this.isQuoteFile(file)) {
+                    const content = await this.extractFileContent(file);
+                    const parsedData = this.nlpEngine.parseQuoteData(content, file.name);
+                    
+                    if (parsedData.isQuote) {
+                        quoteFiles.push({
+                            file: file,
+                            content: content,
+                            parsedData: parsedData,
+                            source: 'local',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                }
+                
+                processedCount++;
+                this.updateProgress(processedCount, files.length, `Processed ${file.name}`);
+                
+            } catch (error) {
+                console.error(`Error processing file ${file.name}:`, error);
+            }
+        }
+        
+        this.quoteFiles = quoteFiles;
+        this.displayLocalResults(quoteFiles);
+        this.storeLocalData(quoteFiles);
+        
+        showNotification(`✅ Local scan complete: ${quoteFiles.length} quote files found`, 'success');
+        this.updateLocalStatus(`Connected (${quoteFiles.length} files)`);
+    }
+
+    // Check if file contains "quote" in name or is a supported type
+    isQuoteFile(file) {
+        const fileName = file.name.toLowerCase();
+        const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
+        
+        return fileName.includes('quote') || 
+               fileName.includes('bid') || 
+               fileName.includes('estimate') ||
+               fileName.includes('proposal') ||
+               this.supportedTypes.includes(fileExtension);
+    }
+
+    // Extract content from different file types
+    async extractFileContent(file) {
+        const fileName = file.name.toLowerCase();
+        const extension = fileName.split('.').pop();
+        
+        try {
+            switch (extension) {
+                case 'txt':
+                    return await this.readTextFile(file);
+                case 'csv':
+                    return await this.readCSVFile(file);
+                case 'pdf':
+                    return await this.readPDFFile(file);
+                case 'doc':
+                case 'docx':
+                    return await this.readWordFile(file);
+                case 'xls':
+                case 'xlsx':
+                    return await this.readExcelFile(file);
+                default:
+                    return await this.readTextFile(file);
+            }
+        } catch (error) {
+            console.error(`Error extracting content from ${fileName}:`, error);
+            return `Error reading file: ${error.message}`;
+        }
+    }
+
+    // Read text files
+    async readTextFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e.target.error);
+            reader.readAsText(file);
+        });
+    }
+
+    // Read CSV files
+    async readCSVFile(file) {
+        const content = await this.readTextFile(file);
+        // Simple CSV parsing - in production, use a proper CSV library
+        return content;
+    }
+
+    // Read PDF files (placeholder - would need PDF.js library)
+    async readPDFFile(file) {
+        // For now, return file info - would implement PDF.js integration
+        return `PDF File: ${file.name} (Size: ${file.size} bytes)`;
+    }
+
+    // Read Word files (placeholder - would need mammoth.js library)
+    async readWordFile(file) {
+        // For now, return file info - would implement mammoth.js integration
+        return `Word Document: ${file.name} (Size: ${file.size} bytes)`;
+    }
+
+    // Read Excel files (placeholder - would need SheetJS library)
+    async readExcelFile(file) {
+        // For now, return file info - would implement SheetJS integration
+        return `Excel File: ${file.name} (Size: ${file.size} bytes)`;
+    }
+
+    // Update progress indicator
+    updateProgress(current, total, message) {
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const progressCard = document.getElementById('progressCard');
+        
+        if (progressCard) {
+            progressCard.style.display = 'block';
+        }
+        
+        if (progressFill && progressText) {
+            const percentage = Math.round((current / total) * 100);
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = message;
+        }
+        
+        if (current === total) {
+            setTimeout(() => {
+                if (progressCard) {
+                    progressCard.style.display = 'none';
+                }
+            }, 2000);
+        }
+    }
+
+    // Display local scan results
+    displayLocalResults(quoteFiles) {
+        const resultsCard = document.getElementById('resultsCard');
+        const scanResults = document.getElementById('scanResults');
+        
+        if (!resultsCard || !scanResults) return;
+        
+        resultsCard.style.display = 'block';
+        
+        // Update stats
+        document.getElementById('totalScanned').textContent = quoteFiles.length;
+        document.getElementById('atpFound').textContent = quoteFiles.length;
+        document.getElementById('newBids').textContent = quoteFiles.filter(f => f.parsedData.isNew).length;
+        
+        // Display results
+        scanResults.innerHTML = quoteFiles.map(file => `
+            <div class="result-item atp">
+                <div>
+                    <strong>📄 ${file.file.name}</strong>
+                    <div style="font-size: 11px; color: #7f8c8d; margin-top: 2px;">
+                        ${file.parsedData.client ? `Client: ${file.parsedData.client}` : 'Client: Unknown'}
+                        ${file.parsedData.location ? ` | Location: ${file.parsedData.location}` : ''}
+                        ${file.parsedData.totalPrice ? ` | Price: $${file.parsedData.totalPrice.toLocaleString()}` : ''}
+                    </div>
+                </div>
+                <div style="font-size: 10px; color: #3498db;">
+                    Local File
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Store local data in localStorage and Firebase
+    storeLocalData(quoteFiles) {
+        // Store in localStorage for immediate access
+        const localData = {
+            source: 'local',
+            timestamp: new Date().toISOString(),
+            files: quoteFiles.map(f => ({
+                name: f.file.name,
+                size: f.file.size,
+                type: f.file.type,
+                parsedData: f.parsedData,
+                content: f.content.substring(0, 1000) // Store first 1000 chars
+            }))
+        };
+        
+        localStorage.setItem('localScanResults', JSON.stringify(localData));
+        
+        // Store in Firebase for persistence
+        const userPIN = sessionStorage.getItem('bid_pin');
+        if (userPIN) {
+            const hashed = hashPIN(userPIN);
+            db.ref(`googleIntelligence/${hashed}/local`).set(localData);
+        }
+    }
+
+    // Update local status
+    updateLocalStatus(status) {
+        const localStatus = document.getElementById('localStatus');
+        if (localStatus) {
+            localStatus.textContent = status;
+            localStatus.className = 'service-status status-connected';
+        }
+    }
+}
+
+// Local NLP Processor for extracting quote data
+class LocalNLPProcessor {
+    constructor() {
+        this.scopePatterns = this.initScopePatterns();
+        this.competitorPatterns = this.initCompetitorPatterns();
+        this.pricePatterns = this.initPricePatterns();
+    }
+
+    // Initialize scope extraction patterns
+    initScopePatterns() {
+        return {
+            client: [
+                /(?:client|customer|for|project:?)\s*([A-Z][a-z\s]+(?:School|Elementary|High|Middle|District|ISD))/gi,
+                /(?:North Park|Allen|Smith|Kent|Esperanza|Pleasant|Jayne)/gi
+            ],
+            location: [
+                /(?:location|in|at)\s*([A-Z][a-z\s]+,\s*[A-Z]{2})/gi,
+                /([A-Z][a-z]+),\s*([A-Z]{2})/gi
+            ],
+            projectType: [
+                /(?:full|complete|total)\s*(?:bathroom|restroom)\s*(?:remodel|renovation|rebuild)/gi,
+                /(?:handrail|grab\s*bar)\s*(?:install|installation)/gi,
+                /(?:shower|tub)\s*(?:install|installation|replacement)/gi,
+                /(?:accessibility|ada|compliance)/gi
+            ],
+            dimensions: [
+                /(\d+)\s*[xX×]\s*(\d+)/gi,
+                /(\d+)\s*(?:inch|in|")\s*[xX×]\s*(\d+)\s*(?:inch|in|")/gi
+            ],
+            requirements: [
+                /(?:electrical|electric)\s*(?:work|needed|required)/gi,
+                /(?:plumbing|plumber)\s*(?:work|needed|required)/gi,
+                /(?:translator|interpret)/gi
+            ]
+        };
+    }
+
+    // Initialize competitor patterns
+    initCompetitorPatterns() {
+        return [
+            /(?:winning|lowest|awarded)\s*(?:bid|contract)\s*(?:was|to|by)\s*([A-Z][a-z\s]+(?:Construction|Contracting|Remodeling|Builders|Install))/gi,
+            /(?:bid\s*(?:against|vs|versus)|competing\s*with)\s*([A-Z][a-z\s]+(?:Construction|Contracting|Remodeling))/gi,
+            /(?:CC:|From:)\s*([^@]+@(?:[^.]+\.)+(?:com|net|org))/gi
+        ];
+    }
+
+    // Initialize price patterns
+    initPricePatterns() {
+        return [
+            /\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g,
+            /(?:price|cost|bid|quote|estimate)\s*:?\s*\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/gi,
+            /(?:total|amount)\s*:?\s*\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/gi
+        ];
+    }
+
+    // Parse quote data from content
+    parseQuoteData(content, fileName) {
+        const parsed = {
+            isQuote: false,
+            isNew: false,
+            client: null,
+            location: null,
+            projectType: null,
+            complexity: 'simple',
+            scope: {},
+            competitors: [],
+            pricing: {
+                yourPrice: null,
+                winningPrice: null,
+                marketAverage: null,
+                prices: []
+            },
+            confidence: 0
+        };
+
+        // Check if this is a quote/bid document
+        const quoteKeywords = ['quote', 'bid', 'estimate', 'proposal', 'contract'];
+        const contentLower = content.toLowerCase();
+        const fileNameLower = fileName.toLowerCase();
+        
+        parsed.isQuote = quoteKeywords.some(keyword => 
+            contentLower.includes(keyword) || fileNameLower.includes(keyword)
+        );
+
+        if (!parsed.isQuote) {
+            return parsed;
+        }
+
+        // Extract client information
+        for (const pattern of this.scopePatterns.client) {
+            const match = content.match(pattern);
+            if (match) {
+                parsed.client = match[1] || match[0];
+                break;
+            }
+        }
+
+        // Extract location
+        for (const pattern of this.scopePatterns.location) {
+            const match = content.match(pattern);
+            if (match) {
+                parsed.location = match[1] || match[0];
+                break;
+            }
+        }
+
+        // Extract project type
+        if (contentLower.includes('handrail') || contentLower.includes('grab bar')) {
+            parsed.projectType = 'handrail_install';
+            parsed.complexity = 'simple';
+        } else if (contentLower.includes('shower') && !contentLower.includes('full')) {
+            parsed.projectType = 'shower_install';
+            parsed.complexity = 'simple';
+        } else if (contentLower.includes('full') || contentLower.includes('complete')) {
+            parsed.projectType = 'full_bathroom_remodel';
+            parsed.complexity = 'moderate';
+        }
+
+        // Extract dimensions
+        const dimensionMatch = content.match(this.scopePatterns.dimensions[0]);
+        if (dimensionMatch) {
+            parsed.scope.dimensions = `${dimensionMatch[1]}x${dimensionMatch[2]}`;
+        }
+
+        // Extract requirements
+        parsed.scope.electricalNeeded = /electrical/i.test(content);
+        parsed.scope.plumbingNeeded = /plumbing/i.test(content);
+        parsed.scope.accessibilityRequired = /(?:ada|accessibility)/i.test(content);
+        parsed.scope.translatorNeeded = /translator/i.test(content);
+
+        // Calculate line items (proxy for complexity)
+        const lines = content.split('\n').filter(line => line.trim().length > 0);
+        parsed.scope.lineItemCount = lines.length;
+
+        // Adjust complexity based on factors
+        let complexityScore = 0;
+        if (parsed.scope.electricalNeeded) complexityScore += 2;
+        if (parsed.scope.plumbingNeeded) complexityScore += 2;
+        if (parsed.scope.accessibilityRequired) complexityScore += 1;
+        if (parsed.scope.translatorNeeded) complexityScore += 1;
+        if (parsed.scope.lineItemCount > 10) complexityScore += 1;
+
+        if (complexityScore <= 2) parsed.complexity = 'simple';
+        else if (complexityScore <= 4) parsed.complexity = 'moderate';
+        else parsed.complexity = 'complex';
+
+        // Extract competitors
+        for (const pattern of this.competitorPatterns) {
+            const matches = content.matchAll(pattern);
+            for (const match of matches) {
+                const competitorName = match[1] || match[0];
+                if (competitorName && !parsed.competitors.find(c => c.name === competitorName)) {
+                    parsed.competitors.push({
+                        name: competitorName,
+                        type: 'detected'
+                    });
+                }
+            }
+        }
+
+        // Extract prices
+        const priceMatches = content.match(this.pricePatterns[0]);
+        if (priceMatches) {
+            parsed.pricing.prices = priceMatches.map(price => 
+                parseInt(price.replace(/[$,]/g, ''))
+            );
+            
+            // Calculate average
+            if (parsed.pricing.prices.length > 0) {
+                parsed.pricing.marketAverage = Math.round(
+                    parsed.pricing.prices.reduce((a, b) => a + b, 0) / parsed.pricing.prices.length
+                );
+            }
+        }
+
+        // Calculate confidence based on data completeness
+        let confidenceScore = 0;
+        if (parsed.client) confidenceScore += 20;
+        if (parsed.location) confidenceScore += 15;
+        if (parsed.projectType) confidenceScore += 15;
+        if (parsed.pricing.prices.length > 0) confidenceScore += 25;
+        if (parsed.competitors.length > 0) confidenceScore += 15;
+        if (parsed.scope.dimensions) confidenceScore += 10;
+        
+        parsed.confidence = Math.min(confidenceScore, 100);
+
+        return parsed;
+    }
+}
+
+// Global scanner instance
+let localScanner;
+
+// Initialize local scanner
+function initializeLocalScanner() {
+    localScanner = new LocalFileScanner();
+}
+
+// Handle local file scan
+function handleLocalFileScan(event) {
+    if (!localScanner) {
+        initializeLocalScanner();
+    }
+    localScanner.handleLocalFileScan(event);
+}
+
+// Auto-scan local quotes (placeholder for future implementation)
+function scanLocalQuotes() {
+    showNotification('🔍 Auto-scanning local quotes...', 'info');
+    
+    // This would implement automatic directory scanning
+    // For now, prompt user to select directory
+    const input = document.getElementById('localFileInput');
+    if (input) {
+        input.click();
+    }
 }
 </script>
 

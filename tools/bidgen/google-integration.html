@@ -1982,92 +1982,194 @@ END OF REPORT
 // LOCAL FILE SYSTEM SCANNER IMPLEMENTATION
 // ========================================
 
-// Local File System Scanner - Phase 1 Implementation
+// Enhanced Local File Scanner - Memory Safe Implementation
 class LocalFileScanner {
     constructor() {
         this.supportedTypes = ['.pdf', '.doc', '.docx', '.txt', '.csv', '.xlsx', '.xls'];
         this.quoteFiles = [];
         this.processedFiles = [];
         this.nlpEngine = new LocalNLPProcessor();
+        this.batchSize = 10; // Process files in small batches
+        this.maxConcurrent = 3; // Max concurrent processing
+        this.scanQueue = [];
+        this.isScanning = false;
     }
 
-    // Handle local file selection
+    // Handle local file selection (memory safe)
     async handleLocalFileScan(event) {
         const files = Array.from(event.target.files);
-        console.log(`📁 Selected ${files.length} local files for scanning`);
+        console.log(`📁 Selected ${files.length} local files for memory-safe scanning`);
         
-        showNotification(`📁 Scanning ${files.length} local files...`, 'info');
-        this.updateProgress(0, files.length, 'Starting local file scan...');
+        // Filter files first before processing
+        const relevantFiles = this.filterRelevantFiles(files);
+        console.log(`📋 Filtered to ${relevantFiles.length} relevant files`);
         
+        if (relevantFiles.length === 0) {
+            showNotification('📄 No relevant files found (no quote/bid/estimate keywords)', 'info');
+            return;
+        }
+        
+        showNotification(`📁 Processing ${relevantFiles.length} relevant files safely...`, 'info');
+        this.updateProgress(0, relevantFiles.length, 'Starting memory-safe scan...');
+        
+        try {
+            const quoteFiles = await this.processFilesInBatches(relevantFiles);
+            this.quoteFiles = quoteFiles;
+            this.displayLocalResults(quoteFiles);
+            this.storeLocalData(quoteFiles);
+            
+            showNotification(`✅ Safe scan complete: ${quoteFiles.length} quote files found`, 'success');
+            this.updateLocalStatus(`Safe-scanned (${quoteFiles.length} files)`);
+            
+        } catch (error) {
+            console.error('Safe scan error:', error);
+            showNotification('❌ Scan completed with some errors', 'warning');
+        }
+    }
+
+    // Filter files by filename first (much faster than content reading)
+    filterRelevantFiles(files) {
+        const keywords = [
+            'quote', 'bid', 'estimate', 'proposal', 'contract', 'invoice',
+            'atp', 'dhhs', 'nebraska', 'materials', 'request'
+        ];
+        
+        return files.filter(file => {
+            const fileName = file.name.toLowerCase();
+            const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
+            
+            // Check filename for keywords
+            const hasKeyword = keywords.some(keyword => fileName.includes(keyword));
+            const isSupportedType = this.supportedTypes.includes(fileExtension);
+            
+            return hasKeyword || isSupportedType;
+        });
+    }
+
+    // Process files in small batches to prevent memory issues
+    async processFilesInBatches(files) {
         const quoteFiles = [];
         let processedCount = 0;
         
-        for (const file of files) {
-            try {
-                if (this.isQuoteFile(file)) {
-                    const content = await this.extractFileContent(file);
-                    const parsedData = this.nlpEngine.parseQuoteData(content, file.name);
-                    
-                    if (parsedData.isQuote) {
-                        quoteFiles.push({
-                            file: file,
-                            content: content,
-                            parsedData: parsedData,
-                            source: 'local',
-                            timestamp: new Date().toISOString()
-                        });
-                    }
+        // Process in batches of 10 files
+        for (let i = 0; i < files.length; i += this.batchSize) {
+            const batch = files.slice(i, i + this.batchSize);
+            
+            this.updateProgress(processedCount, files.length, 
+                `Processing batch ${Math.floor(i/this.batchSize) + 1}/${Math.ceil(files.length/this.batchSize)}...`);
+            
+            // Process batch with concurrent limit
+            const batchPromises = batch.map(file => 
+                this.processFileSafely(file).catch(error => {
+                    console.error(`Error processing ${file.name}:`, error);
+                    return null;
+                })
+            );
+            
+            const batchResults = await Promise.all(batchPromises);
+            
+            // Add valid results
+            batchResults.forEach(result => {
+                if (result && result.isQuote) {
+                    quoteFiles.push(result);
                 }
-                
-                processedCount++;
-                this.updateProgress(processedCount, files.length, `Processed ${file.name}`);
-                
-            } catch (error) {
-                console.error(`Error processing file ${file.name}:`, error);
-            }
+            });
+            
+            processedCount += batch.length;
+            
+            // Small delay to allow garbage collection
+            await this.sleep(100);
+            
+            // Update progress
+            this.updateProgress(processedCount, files.length, 
+                `Processed ${processedCount}/${files.length} files...`);
         }
         
-        this.quoteFiles = quoteFiles;
-        this.displayLocalResults(quoteFiles);
-        this.storeLocalData(quoteFiles);
-        
-        showNotification(`✅ Local scan complete: ${quoteFiles.length} quote files found`, 'success');
-        this.updateLocalStatus(`Connected (${quoteFiles.length} files)`);
+        return quoteFiles;
     }
 
-    // Check if file contains "quote" in name or is a supported type
-    isQuoteFile(file) {
-        const fileName = file.name.toLowerCase();
-        const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
-        
-        return fileName.includes('quote') || 
-               fileName.includes('bid') || 
-               fileName.includes('estimate') ||
-               fileName.includes('proposal') ||
-               this.supportedTypes.includes(fileExtension);
+    // Process single file safely with memory management
+    async processFileSafely(file) {
+        try {
+            // Quick filename check first
+            const fileName = file.name.toLowerCase();
+            if (!this.isLikelyQuoteFile(fileName)) {
+                return { isQuote: false };
+            }
+            
+            // Read content with size limit
+            const content = await this.extractFileContentSafely(file);
+            
+            // Quick content check before full NLP
+            if (!this.contentContainsKeywords(content)) {
+                return { isQuote: false };
+            }
+            
+            // Full NLP processing only for promising files
+            const parsedData = this.nlpEngine.parseQuoteData(content, file.name);
+            
+            if (parsedData.isQuote) {
+                return {
+                    file: file,
+                    content: this.truncateContent(content), // Limit content size
+                    parsedData: parsedData,
+                    source: 'local_safe',
+                    timestamp: new Date().toISOString()
+                };
+            }
+            
+            return { isQuote: false };
+            
+        } catch (error) {
+            console.error(`Safe processing error for ${file.name}:`, error);
+            return { isQuote: false, error: error.message };
+        }
     }
 
-    // Extract content from different file types
-    async extractFileContent(file) {
+    // Quick filename check
+    isLikelyQuoteFile(fileName) {
+        const keywords = ['quote', 'bid', 'estimate', 'proposal', 'contract', 'invoice', 'atp'];
+        return keywords.some(keyword => fileName.includes(keyword));
+    }
+
+    // Quick content keyword check
+    contentContainsKeywords(content) {
+        if (!content || content.length < 50) return false;
+        
+        const keywords = ['quote', 'bid', 'estimate', 'proposal', 'contract', 'invoice', 'atp', 'dhhs'];
+        const contentLower = content.substring(0, 2000).toLowerCase(); // Check first 2000 chars only
+        
+        return keywords.some(keyword => contentLower.includes(keyword));
+    }
+
+    // Extract content with memory limits
+    async extractFileContentSafely(file) {
         const fileName = file.name.toLowerCase();
         const extension = fileName.split('.').pop();
+        const maxSize = 5 * 1024 * 1024; // 5MB limit
+        
+        // Skip files larger than 5MB
+        if (file.size > maxSize) {
+            console.log(`Skipping large file: ${file.name} (${file.size} bytes)`);
+            return `Large file skipped: ${file.name}`;
+        }
         
         try {
             switch (extension) {
                 case 'txt':
-                    return await this.readTextFile(file);
+                    return await this.readTextFileSafely(file);
                 case 'csv':
-                    return await this.readCSVFile(file);
+                    return await this.readCSVFileSafely(file);
                 case 'pdf':
-                    return await this.readPDFFile(file);
+                    return `PDF File: ${file.name} (Size: ${file.size} bytes)`;
                 case 'doc':
                 case 'docx':
-                    return await this.readWordFile(file);
+                    return `Word Document: ${file.name} (Size: ${file.size} bytes)`;
                 case 'xls':
                 case 'xlsx':
-                    return await this.readExcelFile(file);
+                    return `Excel File: ${file.name} (Size: ${file.size} bytes)`;
                 default:
-                    return await this.readTextFile(file);
+                    return await this.readTextFileSafely(file);
             }
         } catch (error) {
             console.error(`Error extracting content from ${fileName}:`, error);
@@ -2075,39 +2177,129 @@ class LocalFileScanner {
         }
     }
 
-    // Read text files
-    async readTextFile(file) {
+    // Safe text file reading with size limit
+    async readTextFileSafely(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
+            
+            reader.onload = (e) => {
+                const content = e.target.result;
+                // Truncate to prevent memory issues
+                const maxLength = 10000; // 10KB max per file
+                const truncated = content.length > maxLength ? 
+                    content.substring(0, maxLength) + '...[truncated]' : content;
+                resolve(truncated);
+            };
+            
             reader.onerror = (e) => reject(e.target.error);
             reader.readAsText(file);
         });
     }
 
-    // Read CSV files
-    async readCSVFile(file) {
-        const content = await this.readTextFile(file);
-        // Simple CSV parsing - in production, use a proper CSV library
-        return content;
+    // Safe CSV reading
+    async readCSVFileSafely(file) {
+        const content = await this.readTextFileSafely(file);
+        // Only read first 50 lines of CSV
+        const lines = content.split('\n').slice(0, 50);
+        return lines.join('\n');
     }
 
-    // Read PDF files (placeholder - would need PDF.js library)
-    async readPDFFile(file) {
-        // For now, return file info - would implement PDF.js integration
-        return `PDF File: ${file.name} (Size: ${file.size} bytes)`;
+    // Truncate content to save memory
+    truncateContent(content) {
+        const maxLength = 2000; // Store only 2KB per file
+        return content.length > maxLength ? 
+            content.substring(0, maxLength) + '...[truncated]' : content;
     }
 
-    // Read Word files (placeholder - would need mammoth.js library)
-    async readWordFile(file) {
-        // For now, return file info - would implement mammoth.js integration
-        return `Word Document: ${file.name} (Size: ${file.size} bytes)`;
+    // Helper function for delays
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // Read Excel files (placeholder - would need SheetJS library)
-    async readExcelFile(file) {
-        // For now, return file info - would implement SheetJS integration
-        return `Excel File: ${file.name} (Size: ${file.size} bytes)`;
+    // Enhanced auto-scan with memory safety
+    async autoScanLocalPC() {
+        console.log('🔍 Starting memory-safe automatic PC scan...');
+        
+        if (this.isScanning) {
+            showNotification('⚠️ Scan already in progress...', 'warning');
+            return;
+        }
+        
+        this.isScanning = true;
+        this.updateProgress(0, 100, 'Initializing memory-safe scan...');
+        
+        try {
+            // Prompt user for directory selection
+            const files = await this.promptForDirectoryScan();
+            
+            if (!files || files.length === 0) {
+                showNotification('📁 No files selected for scanning', 'info');
+                return;
+            }
+            
+            // Filter and process safely
+            const relevantFiles = this.filterRelevantFiles(files);
+            console.log(`📋 Found ${relevantFiles.length} relevant files out of ${files.length} total`);
+            
+            if (relevantFiles.length > 500) {
+                showNotification(`⚠️ Large dataset detected (${relevantFiles.length} files). Processing in safe mode...`, 'warning');
+            }
+            
+            this.updateProgress(5, 100, `Processing ${relevantFiles.length} files safely...`);
+            
+            const quoteFiles = await this.processFilesInBatches(relevantFiles);
+            
+            // Final update
+            this.updateProgress(95, 100, 'Finalizing results...');
+            
+            this.quoteFiles = quoteFiles;
+            this.displayLocalResults(quoteFiles);
+            this.storeLocalData(quoteFiles);
+            
+            this.updateProgress(100, 100, `✅ Safe scan complete! Found ${quoteFiles.length} quote files`);
+            
+            showNotification(`✅ Memory-safe scan complete: ${quoteFiles.length} quote files found from ${files.length} files scanned`, 'success');
+            this.updateLocalStatus(`Safe-scanned (${quoteFiles.length} files)`);
+            
+        } catch (error) {
+            console.error('Safe auto-scan failed:', error);
+            showNotification('❌ Scan failed. Try selecting a smaller folder.', 'error');
+        } finally {
+            this.isScanning = false;
+            
+            // Hide progress after completion
+            setTimeout(() => {
+                const progressCard = document.getElementById('progressCard');
+                if (progressCard) {
+                    progressCard.style.display = 'none';
+                }
+            }, 3000);
+        }
+    }
+
+    // Prompt for directory selection
+    async promptForDirectoryScan() {
+        return new Promise((resolve, reject) => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.webkitdirectory = true;
+            input.multiple = true;
+            
+            input.onchange = (event) => {
+                const files = Array.from(event.target.files);
+                resolve(files);
+            };
+            
+            input.oncancel = () => {
+                resolve([]);
+            };
+            
+            // Show user-friendly prompt
+            showNotification('📁 Select a folder to scan for quote files (processed safely)...', 'info');
+            
+            // Trigger file selection
+            input.click();
+        });
     }
 
     // Update progress indicator

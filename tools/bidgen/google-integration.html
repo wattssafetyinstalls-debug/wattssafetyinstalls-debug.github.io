@@ -65,6 +65,44 @@
     <h1>Google Integration Setup</h1>
     <p class="subtitle">Connect Google Drive and Gmail to automatically scan for ATP files</p>
 
+    <!-- API KEY INPUT -->
+    <div class="card" id="apiKeySection">
+        <h2><span class="icon">🔑</span> Google API Key Required</h2>
+        <div style="background: #0f1a33; border: 1px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+            <h4 style="color: #f39c12; margin-bottom: 10px;">🔒 Security Notice</h4>
+            <p style="font-size: 12px; color: #ecf0f1;">For security reasons, the Google API key is not stored in the code.</p>
+            <p style="font-size: 12px; color: #ecf0f1;">You must provide your own API key to use Google services.</p>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #3498db; margin-bottom: 10px;">Steps to Get Your API Key:</h4>
+            <ol style="font-size: 12px; color: #ecf0f1; margin-left: 20px; line-height: 1.6;">
+                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" style="color: #3498db;">Google Cloud Console</a></li>
+                <li>Create a new project or select existing project</li>
+                <li>Enable Google Drive API and Gmail API</li>
+                <li>Go to Credentials → Create Credentials → API Key</li>
+                <li>Restrict the key to your domains (recommended)</li>
+                <li>Copy the API key and paste it below</li>
+            </ol>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label for="apiKeyInput" style="display: block; margin-bottom: 8px; color: #ecf0f1; font-weight: 600;">Enter Your Google API Key:</label>
+            <input type="password" id="apiKeyInput" placeholder="AIzaSy..." style="width: 100%; padding: 12px; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #ecf0f1; font-size: 14px; margin-bottom: 15px;">
+            <button class="btn btn-primary" onclick="setApiKey()">🔑 Set API Key</button>
+        </div>
+        
+        <div style="background: #2a3a5c; border-radius: 8px; padding: 15px;">
+            <h4 style="color: #f39c12; margin-bottom: 10px;">⚠️ Important Restrictions:</h4>
+            <ul style="font-size: 11px; color: #ecf0f1; margin-left: 20px; line-height: 1.4;">
+                <li>Add HTTP referrers: <code style="background: #1a1a2e; padding: 2px 4px; border-radius: 3px;">http://localhost:3000/*</code></li>
+                <li>Add production referrers: <code style="background: #1a1a2e; padding: 2px 4px; border-radius: 3px;">https://wattsatpcontractor.com/*</code></li>
+                <li>Restrict APIs: Google Drive API + Gmail API only</li>
+                <li>Never share your API key publicly</li>
+            </ul>
+        </div>
+    </div>
+
     <!-- AUTHENTICATION -->
     <div class="card" id="authCard">
         <h2><span class="icon">🔐</span> Google Authentication</h2>

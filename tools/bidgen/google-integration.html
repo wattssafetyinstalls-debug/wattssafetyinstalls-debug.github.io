@@ -175,9 +175,9 @@
 // Google API Configuration
 // SECURITY: All credentials are stored locally and never exposed to public
 // Client ID is public information (safe to display)
-// API Key is sensitive and kept in local storage only
+// API Key is sensitive and should be provided by user
 const CLIENT_ID = '1059217531358-84phisns4u8mt67v7g9aumksfqt69glj.apps.googleusercontent.com'; // Public identifier
-const API_KEY = 'AIzaSyDfqFcaBPTp-2PVUP3pbhaG4NEv7ujr57s'; // Sensitive - stored locally only
+let API_KEY = ''; // Sensitive - user must provide this
 
 // OAuth 2.0 Scopes (read-only permissions only)
 const SCOPES = [
@@ -205,9 +205,55 @@ const atpPatterns = [
 let tokenClient;
 let gapiInited = false;
 
+// API Key Management Functions
+function setApiKey() {
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const apiKey = apiKeyInput.value.trim();
+    
+    if (!apiKey) {
+        showNotification('❌ Please enter a valid API key', 'error');
+        return;
+    }
+    
+    // Validate API key format (basic validation)
+    if (!apiKey.startsWith('AIzaSy') || apiKey.length < 30) {
+        showNotification('❌ Invalid API key format. Please check your Google API key.', 'error');
+        return;
+    }
+    
+    // Store API key in localStorage
+    localStorage.setItem('google_api_key', apiKey);
+    API_KEY = apiKey;
+    
+    // Hide API key section and show authentication section
+    document.getElementById('apiKeySection').style.display = 'none';
+    document.getElementById('authCard').style.display = 'block';
+    
+    showNotification('✅ API key set successfully! You can now connect to Google.', 'success');
+    
+    // Initialize Google API with the provided key
+    initGoogleApi();
+}
+
+function loadApiKey() {
+    const storedKey = localStorage.getItem('google_api_key');
+    if (storedKey) {
+        API_KEY = storedKey;
+        document.getElementById('apiKeySection').style.display = 'none';
+        document.getElementById('authCard').style.display = 'block';
+        return true;
+    }
+    return false;
+}
+
 // Initialize Google API (modern approach)
 function initGoogleApi() {
     console.log('Initializing Google API with modern GIS...');
+    
+    if (!API_KEY) {
+        showNotification('❌ API key not set. Please set your API key first.', 'error');
+        return;
+    }
     
     try {
         // Load Google API client library separately
@@ -385,17 +431,11 @@ function showNotification(message, type = 'info') {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page loaded, checking Google APIs...');
+    console.log('Page loaded, checking API key...');
     
-    // Wait for Google APIs to load
-    setTimeout(() => {
-        console.log('Checking Google Identity Services availability...');
-        console.log('typeof google:', typeof google);
-        
-        // Initialize OAuth2 with modern GIS
-        if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-            console.log('✅ Google Identity Services found, initializing token client...');
-            initTokenClient();
+    // Check if API key is already stored
+    if (loadApiKey()) {
+        console.log('API key found, initializing...');
         } else {
             console.error('❌ Google Identity Services not loaded');
             showNotification('❌ Google Identity Services failed to load', 'error');

@@ -6,6 +6,8 @@
     <title>Google Integration Setup</title>
     <meta name="robots" content="noindex, nofollow">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
@@ -263,6 +265,32 @@
 </div>
 
 <script>
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCelYHbV_SwJTgnnhGATpNWJnRPsmtVRH8",
+    authDomain: "wattsatpcontractor.firebaseapp.com",
+    databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
+    projectId: "wattsatpcontractor",
+    storageBucket: "wattsatpcontractor.appspot.com",
+    messagingSenderId: "1059217531358",
+    appId: "1:1059217531358:web:abc123def456ghi789"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Utility function for hashing PIN
+function hashPIN(pin) {
+    let hash = 0;
+    for (let i = 0; i < pin.length; i++) {
+        const char = pin.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+    return hash.toString();
+}
+
 // Google API Configuration
 // SECURITY: All credentials are stored locally and never exposed to public
 // Client ID is public information (safe to display)
@@ -387,6 +415,13 @@ function initTokenClient() {
     console.log('Initializing OAuth token client...');
     
     try {
+        // Wait for Google Identity Services to load
+        if (typeof google === 'undefined') {
+            console.error('❌ Google Identity Services not loaded');
+            showNotification('❌ Google Identity Services failed to load', 'error');
+            return;
+        }
+        
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES.join(' '),
@@ -2705,10 +2740,14 @@ class DataFlowMonitor {
         
         this.updateStats('localStorageCount', totalLocal + totalDrive);
         
-        // Check Firebase connection
-        if (db) {
-            this.updateStatus('🟢 Firebase connected | LocalStorage active | Monitoring data flow');
-        } else {
+        // Check Firebase connection (safely)
+        try {
+            if (typeof db !== 'undefined' && db) {
+                this.updateStatus('🟢 Firebase connected | LocalStorage active | Monitoring data flow');
+            } else {
+                this.updateStatus('🔴 Firebase initializing | LocalStorage active');
+            }
+        } catch (error) {
             this.updateStatus('🔴 Firebase disconnected | LocalStorage active');
         }
     }

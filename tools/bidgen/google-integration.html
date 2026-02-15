@@ -436,17 +436,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check if API key is already stored
     if (loadApiKey()) {
         console.log('API key found, initializing...');
-        } else {
-            console.error('❌ Google Identity Services not loaded');
-            showNotification('❌ Google Identity Services failed to load', 'error');
-        }
-        
-        // Initialize Google API client separately
         initGoogleApi();
-        
-        // Check existing authentication
-        updateAuthStatus();
-    }, 2000);
+    } else {
+        console.log('API key not found, showing API key input...');
+        document.getElementById('apiKeySection').style.display = 'block';
+        document.getElementById('authCard').style.display = 'none';
+    }
+    
+    // Initialize token client
+    initTokenClient();
+    
+    // Check for existing authentication
+    updateAuthStatus();
 });
 
 // Placeholder functions for scanning (to be implemented)

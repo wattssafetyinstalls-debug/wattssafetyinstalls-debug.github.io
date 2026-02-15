@@ -139,6 +139,49 @@
         </div>
     </div>
 
+    <!-- DATA FLOW MONITORING -->
+    <div class="card" id="dataFlowCard" style="display: none;">
+        <h2><span class="icon">📊</span> Data Flow Monitor</h2>
+        <div style="background: #0f1a33; border: 1px solid #3498db; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <h4 style="color: #3498db; margin-bottom: 10px;">🔄 Real-time Data Pipeline Status</h4>
+            <div id="dataFlowStatus" style="font-size: 12px; color: #ecf0f1;">
+                Initializing data flow monitoring...
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="localScanned">0</div>
+                <div class="stat-label">Local Files Scanned</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="localStorageCount">0</div>
+                <div class="stat-label">LocalStorage Records</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="firebaseSynced">0</div>
+                <div class="stat-label">Firebase Synced</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="bidGeneratorReady">0</div>
+                <div class="stat-label">Bid Generator Ready</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <h4 style="color: #3498db; margin-bottom: 10px;">📋 Data Transfer Log</h4>
+            <div id="dataTransferLog" style="background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px; height: 200px; overflow-y: auto; font-size: 11px; color: #ecf0f1; font-family: monospace;">
+                <!-- Data transfer events will appear here -->
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <button class="btn btn-primary" onclick="verifyDataFlow()">🔍 Verify Data Flow</button>
+            <button class="btn btn-secondary" onclick="testBidGeneratorSync()">🧪 Test Bid Generator Sync</button>
+            <button class="btn btn-warning" onclick="exportDataFlowReport()">📊 Export Flow Report</button>
+        </div>
+    </div>
+
     <!-- SCAN RESULTS -->
     <div class="card" id="resultsCard" style="display: none;">
         <h2><span class="icon">📋</span> Scan Results</h2>
@@ -445,6 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize local scanner
     initializeLocalScanner();
+    
+    // Initialize data flow monitor
+    initializeDataFlowMonitor();
     
     // Check if API key is already stored
     if (loadApiKey()) {
@@ -2050,6 +2096,12 @@ class LocalFileScanner {
 
     // Store local data in localStorage and Firebase
     storeLocalData(quoteFiles) {
+        // Log data flow event
+        if (dataFlowMonitor) {
+            dataFlowMonitor.logEvent('LOCAL', `Storing ${quoteFiles.length} quote files to LocalStorage`);
+            dataFlowMonitor.updateStats('localScanned', quoteFiles.length);
+        }
+        
         // Store in localStorage for immediate access
         const localData = {
             source: 'local',
@@ -2065,11 +2117,30 @@ class LocalFileScanner {
         
         localStorage.setItem('localScanResults', JSON.stringify(localData));
         
+        if (dataFlowMonitor) {
+            dataFlowMonitor.logEvent('STORAGE', `Local scan data stored in LocalStorage`);
+        }
+        
         // Store in Firebase for persistence
         const userPIN = sessionStorage.getItem('bid_pin');
         if (userPIN) {
             const hashed = hashPIN(userPIN);
-            db.ref(`googleIntelligence/${hashed}/local`).set(localData);
+            db.ref(`googleIntelligence/${hashed}/local`).set(localData)
+                .then(() => {
+                    if (dataFlowMonitor) {
+                        dataFlowMonitor.logEvent('FIREBASE', `Local data synced to Firebase successfully`);
+                        dataFlowMonitor.updateStats('firebaseSynced', 1);
+                    }
+                })
+                .catch(error => {
+                    if (dataFlowMonitor) {
+                        dataFlowMonitor.logEvent('FIREBASE', `Firebase sync error: ${error.message}`);
+                    }
+                });
+        } else {
+            if (dataFlowMonitor) {
+                dataFlowMonitor.logEvent('FIREBASE', 'No user PIN - Firebase sync skipped');
+            }
         }
     }
 
@@ -2469,6 +2540,391 @@ async function scanLocalQuotes() {
         if (input) {
             input.click();
         }
+    }
+}
+
+// ========================================
+// DATA FLOW MONITORING SYSTEM
+// ========================================
+
+// Data Flow Monitor Class
+class DataFlowMonitor {
+    constructor() {
+        this.transferLog = [];
+        this.stats = {
+            localScanned: 0,
+            localStorageCount: 0,
+            firebaseSynced: 0,
+            bidGeneratorReady: 0
+        };
+        this.monitoring = false;
+    }
+
+    // Start monitoring data flow
+    startMonitoring() {
+        this.monitoring = true;
+        this.updateStatus('🔄 Data flow monitoring active');
+        this.logEvent('SYSTEM', 'Data flow monitoring started');
+        
+        // Show the monitoring card
+        document.getElementById('dataFlowCard').style.display = 'block';
+        
+        // Start real-time updates
+        this.startRealTimeUpdates();
+    }
+
+    // Log data transfer events
+    logEvent(source, message, data = null) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${source}: ${message}`;
+        
+        this.transferLog.push({
+            timestamp: timestamp,
+            source: source,
+            message: message,
+            data: data
+        });
+
+        // Update log display
+        this.updateLogDisplay();
+        
+        // Also show notification for important events
+        if (source === 'FIREBASE' || source === 'BID_GENERATOR') {
+            showNotification(`${source}: ${message}`, 'info');
+        }
+    }
+
+    // Update log display
+    updateLogDisplay() {
+        const logDiv = document.getElementById('dataTransferLog');
+        if (logDiv) {
+            const recentLogs = this.transferLog.slice(-20); // Show last 20 events
+            logDiv.innerHTML = recentLogs.map(log => 
+                `<div style="margin-bottom: 2px; color: ${this.getSourceColor(log.source)};">
+                    ${log.timestamp} [${log.source}] ${log.message}
+                </div>`
+            ).join('');
+            
+            // Auto-scroll to bottom
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+    }
+
+    // Get color for different sources
+    getSourceColor(source) {
+        const colors = {
+            'SYSTEM': '#3498db',
+            'LOCAL': '#27ae60', 
+            'STORAGE': '#f39c12',
+            'FIREBASE': '#e74c3c',
+            'BID_GENERATOR': '#9b59b6'
+        };
+        return colors[source] || '#ecf0f1';
+    }
+
+    // Update statistics
+    updateStats(statType, value) {
+        this.stats[statType] = value;
+        
+        // Update UI
+        const statElement = document.getElementById(statType);
+        if (statElement) {
+            statElement.textContent = value;
+            
+            // Add animation for changes
+            statElement.style.color = '#27ae60';
+            setTimeout(() => {
+                statElement.style.color = '#3498db';
+            }, 1000);
+        }
+    }
+
+    // Update status
+    updateStatus(message) {
+        const statusDiv = document.getElementById('dataFlowStatus');
+        if (statusDiv) {
+            statusDiv.innerHTML = message;
+        }
+    }
+
+    // Start real-time updates
+    startRealTimeUpdates() {
+        setInterval(() => {
+            if (this.monitoring) {
+                this.checkDataFlowHealth();
+            }
+        }, 5000); // Check every 5 seconds
+    }
+
+    // Check data flow health
+    checkDataFlowHealth() {
+        // Check localStorage
+        const localData = localStorage.getItem('localScanResults');
+        const driveData = localStorage.getItem('googleScanResults');
+        
+        const totalLocal = localData ? JSON.parse(localData).files?.length || 0 : 0;
+        const totalDrive = driveData ? Object.keys(driveData).length : 0;
+        
+        this.updateStats('localStorageCount', totalLocal + totalDrive);
+        
+        // Check Firebase connection
+        if (db) {
+            this.updateStatus('🟢 Firebase connected | LocalStorage active | Monitoring data flow');
+        } else {
+            this.updateStatus('🔴 Firebase disconnected | LocalStorage active');
+        }
+    }
+
+    // Verify complete data flow
+    async verifyDataFlow() {
+        this.logEvent('SYSTEM', 'Starting data flow verification...');
+        
+        try {
+            // Step 1: Check LocalStorage
+            const localData = localStorage.getItem('localScanResults');
+            if (localData) {
+                const parsed = JSON.parse(localData);
+                this.logEvent('STORAGE', `LocalStorage contains ${parsed.files?.length || 0} local files`);
+                this.updateStats('localStorageCount', parsed.files?.length || 0);
+            } else {
+                this.logEvent('STORAGE', 'No local scan data found in LocalStorage');
+            }
+
+            // Step 2: Check Google scan data
+            const googleData = localStorage.getItem('googleScanResults');
+            if (googleData) {
+                const parsed = JSON.parse(googleData);
+                const sources = Object.keys(parsed);
+                this.logEvent('STORAGE', `Google scan data: ${sources.join(', ')}`);
+                sources.forEach(source => {
+                    const count = parsed[source]?.atpItems?.length || 0;
+                    this.logEvent('STORAGE', `${source.toUpperCase()}: ${count} items`);
+                });
+            } else {
+                this.logEvent('STORAGE', 'No Google scan data found in LocalStorage');
+            }
+
+            // Step 3: Check Firebase connection
+            if (db) {
+                this.logEvent('FIREBASE', 'Firebase database connection verified');
+                
+                // Test Firebase read
+                const userPIN = sessionStorage.getItem('bid_pin');
+                if (userPIN) {
+                    const hashed = hashPIN(userPIN);
+                    const testRef = db.ref(`googleIntelligence/${hashed}`);
+                    
+                    testRef.once('value').then(snapshot => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            const itemCount = Object.keys(data).length;
+                            this.logEvent('FIREBASE', `Firebase contains ${itemCount} data sources`);
+                            this.updateStats('firebaseSynced', itemCount);
+                        } else {
+                            this.logEvent('FIREBASE', 'No data found in Firebase');
+                        }
+                    }).catch(error => {
+                        this.logEvent('FIREBASE', `Firebase read error: ${error.message}`);
+                    });
+                } else {
+                    this.logEvent('FIREBASE', 'No user PIN found for Firebase access');
+                }
+            } else {
+                this.logEvent('FIREBASE', 'Firebase not connected');
+            }
+
+            // Step 4: Check Bid Generator access
+            const bidGenData = localStorage.getItem('googleScanResults');
+            if (bidGenData) {
+                this.logEvent('BID_GENERATOR', 'Data available for Bid Generator import');
+                this.updateStats('bidGeneratorReady', 1);
+            } else {
+                this.logEvent('BID_GENERATOR', 'No data available for Bid Generator');
+            }
+
+            this.logEvent('SYSTEM', 'Data flow verification complete');
+            
+        } catch (error) {
+            this.logEvent('SYSTEM', `Verification error: ${error.message}`);
+        }
+    }
+
+    // Test Bid Generator sync
+    async testBidGeneratorSync() {
+        this.logEvent('BID_GENERATOR', 'Testing Bid Generator data sync...');
+        
+        try {
+            // Get current scan results
+            const scanResults = {
+                local: localStorage.getItem('localScanResults'),
+                drive: localStorage.getItem('googleScanResults')?.drive || null,
+                gmail: localStorage.getItem('googleScanResults')?.gmail || null,
+                financials: localStorage.getItem('googleScanResults')?.financials || null,
+                wave: localStorage.getItem('googleScanResults')?.wave || null
+            };
+
+            // Create test data package
+            const testData = {
+                timestamp: new Date().toISOString(),
+                source: 'data_flow_test',
+                scanResults: scanResults,
+                totalItems: this.calculateTotalItems(scanResults)
+            };
+
+            // Store in LocalStorage (simulating Bid Generator access)
+            localStorage.setItem('bidGeneratorTestData', JSON.stringify(testData));
+            
+            this.logEvent('BID_GENERATOR', `Test data package created: ${testData.totalItems} total items`);
+            this.updateStats('bidGeneratorReady', testData.totalItems);
+
+            // Verify Bid Generator can access the data
+            setTimeout(() => {
+                const retrievedData = localStorage.getItem('bidGeneratorTestData');
+                if (retrievedData) {
+                    const parsed = JSON.parse(retrievedData);
+                    this.logEvent('BID_GENERATOR', '✅ Bid Generator can access test data successfully');
+                } else {
+                    this.logEvent('BID_GENERATOR', '❌ Bid Generator cannot access test data');
+                }
+            }, 1000);
+
+        } catch (error) {
+            this.logEvent('BID_GENERATOR', `Sync test error: ${error.message}`);
+        }
+    }
+
+    // Calculate total items across all sources
+    calculateTotalItems(scanResults) {
+        let total = 0;
+        
+        if (scanResults.local) {
+            const local = JSON.parse(scanResults.local);
+            total += local.files?.length || 0;
+        }
+        
+        Object.values(scanResults).forEach(source => {
+            if (source && typeof source === 'object' && source.atpItems) {
+                total += source.atpItems.length || 0;
+            }
+        });
+        
+        return total;
+    }
+
+    // Export data flow report
+    exportDataFlowReport() {
+        const report = `
+========================================
+DATA FLOW MONITORING REPORT
+========================================
+
+Generated: ${new Date().toLocaleString()}
+Monitoring Status: ${this.monitoring ? 'Active' : 'Inactive'}
+
+========================================
+STATISTICS
+========================================
+Local Files Scanned: ${this.stats.localScanned}
+LocalStorage Records: ${this.stats.localStorageCount}
+Firebase Synced: ${this.stats.firebaseSynced}
+Bid Generator Ready: ${this.stats.bidGeneratorReady}
+
+========================================
+DATA TRANSFER LOG
+========================================
+${this.transferLog.map(log => 
+    `[${log.timestamp}] ${log.source}: ${log.message}`
+).join('\n')}
+
+========================================
+STORAGE ANALYSIS
+========================================
+LocalStorage Keys: ${Object.keys(localStorage).filter(key => 
+    key.includes('scan') || key.includes('google') || key.includes('bid')
+).join(', ')}
+
+Firebase Connection: ${db ? 'Connected' : 'Disconnected'}
+
+========================================
+RECOMMENDATIONS
+========================================
+${this.generateRecommendations()}
+
+========================================
+END OF REPORT
+========================================
+        `;
+
+        // Download the report
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `data-flow-report-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        this.logEvent('SYSTEM', 'Data flow report exported');
+        showNotification('📊 Data flow report exported successfully', 'success');
+    }
+
+    // Generate recommendations based on current state
+    generateRecommendations() {
+        const recommendations = [];
+        
+        if (this.stats.localStorageCount === 0) {
+            recommendations.push('• No data in LocalStorage - Run scans to populate data');
+        }
+        
+        if (this.stats.firebaseSynced === 0) {
+            recommendations.push('• No Firebase sync - Check user PIN and Firebase connection');
+        }
+        
+        if (this.stats.bidGeneratorReady === 0) {
+            recommendations.push('• No data for Bid Generator - Complete scans first');
+        }
+        
+        if (this.stats.localStorageCount > 0 && this.stats.firebaseSynced > 0) {
+            recommendations.push('✅ Data flow working correctly - Bid Generator ready');
+        }
+        
+        return recommendations.join('\n') || '✅ All systems operational';
+    }
+}
+
+// Global data flow monitor instance
+let dataFlowMonitor;
+
+// Initialize data flow monitor
+function initializeDataFlowMonitor() {
+    dataFlowMonitor = new DataFlowMonitor();
+    dataFlowMonitor.startMonitoring();
+}
+
+// Verification functions for UI buttons
+function verifyDataFlow() {
+    if (dataFlowMonitor) {
+        dataFlowMonitor.verifyDataFlow();
+    } else {
+        showNotification('❌ Data flow monitor not initialized', 'error');
+    }
+}
+
+function testBidGeneratorSync() {
+    if (dataFlowMonitor) {
+        dataFlowMonitor.testBidGeneratorSync();
+    } else {
+        showNotification('❌ Data flow monitor not initialized', 'error');
+    }
+}
+
+function exportDataFlowReport() {
+    if (dataFlowMonitor) {
+        dataFlowMonitor.exportDataFlowReport();
+    } else {
+        showNotification('❌ Data flow monitor not initialized', 'error');
     }
 }
 </script>

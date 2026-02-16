@@ -285,7 +285,10 @@
                         <span>Upload CSV File</span>
                         <input type="file" id="catCsvFile" accept=".csv,.txt,.tsv" style="display:none" onchange="catImportCSV(this)">
                     </label>
-                    <span style="font-size:11px;color:#7f8c8d">Accepts .csv files (description, price, store)</span>
+                    <button class="cat-add-btn" onclick="catImportFromScan()" style="background:linear-gradient(135deg,#e67e22,#d35400)">
+                        📥 Import from Scan
+                    </button>
+                    <span style="font-size:11px;color:#7f8c8d">Import from Google Integration scans</span>
                 </div>
             </div>
             <div class="pl-status" id="catImportStatus">Paste product lists, upload CSV files, or use the AI prompt below.</div>
@@ -1275,6 +1278,98 @@ function catUpdatePrompt() {
     document.getElementById('catAiPrompt').textContent = template;
 }
 
+function catImportFromScan() {
+    showNotification('🔄 Checking for scan results from Google Integration...', 'info');
+    
+    // Check Firebase shared storage for scan results
+    db.ref('shared/scanResults').once('value').then(snapshot => {
+        const scanData = snapshot.val();
+        if (scanData && scanData.results) {
+            // Import Google Drive/Gmail scan results
+            const items = [];
+            
+            // Process Drive files
+            if (scanData.results.drive) {
+                scanData.results.drive.forEach(file => {
+                    if (file.isRelevant) {
+                        items.push({
+                            desc: file.name,
+                            price: 'N/A',
+                            source: 'Google Drive',
+                            model: file.id
+                        });
+                    }
+                });
+            }
+            
+            // Process Gmail messages
+            if (scanData.results.gmail) {
+                scanData.results.gmail.forEach(email => {
+                    if (email.isRelevant) {
+                        items.push({
+                            desc: email.subject,
+                            price: 'N/A',
+                            source: 'Gmail',
+                            model: email.id
+                        });
+                    }
+                });
+            }
+            
+            if (items.length > 0) {
+                // Add items to catalog
+                items.forEach(item => catAddItemDirect(item));
+                showNotification(`✅ Imported ${items.length} items from scan results`, 'success');
+                catSwitchTab('browse');
+                catRenderList();
+            } else {
+                showNotification('📄 No relevant items found in scan results', 'info');
+            }
+        } else {
+            // Check local scan results
+            db.ref('shared/localScanResults').once('value').then(snapshot => {
+                const localData = snapshot.val();
+                if (localData && localData.results && localData.results.files) {
+                    const items = localData.results.files.map(file => ({
+                        desc: file.name,
+                        price: file.parsedData.price || 'N/A',
+                        source: 'Local Scan',
+                        model: file.parsedData.client || 'N/A'
+                    }));
+                    
+                    items.forEach(item => catAddItemDirect(item));
+                    showNotification(`✅ Imported ${items.length} items from local scan`, 'success');
+                    catSwitchTab('browse');
+                    catRenderList();
+                } else {
+                    showNotification('📄 No scan results found. Run a scan first in Google Integration.', 'info');
+                }
+            }).catch(error => {
+                console.error('Error checking local scan results:', error);
+                showNotification('❌ Failed to load scan results', 'error');
+            });
+        }
+    }).catch(error => {
+        console.error('Error checking scan results:', error);
+        showNotification('❌ Failed to load scan results', 'error');
+    });
+}
+
+function catAddItemDirect(item) {
+    const key = item.desc.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const itemData = {
+        desc: item.desc,
+        price: item.price,
+        qty: 1,
+        source: item.source,
+        model: item.model,
+        useCount: 0,
+        lastUsed: null
+    };
+    
+    dbRef.child('materials/' + key).set(itemData);
+}
+
 function catCopyPrompt() {
     const text = document.getElementById('catAiPrompt').textContent;
     navigator.clipboard.writeText(text).then(() => {
@@ -1286,6 +1381,8 @@ function catCopyPrompt() {
         // Fallback for older browsers
         const ta = document.createElement('textarea');
         ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
         document.body.appendChild(ta);
         ta.select();
         document.execCommand('copy');

@@ -1183,26 +1183,47 @@ END OF ANALYSIS
 function applyPredictiveInsights() {
     showNotification('🚀 Applying predictive insights to bid strategy...', 'info');
     
-    // Save all scan results to localStorage for bid generator access
-    if (window.scanResults) {
-        localStorage.setItem('googleScanResults', JSON.stringify(window.scanResults));
-        localStorage.setItem('lastGoogleScan', new Date().getTime().toString());
-        showNotification('✅ Intelligence data saved for bid generator!', 'success');
+    // Save all scan results to Firebase for bid generator access
+    if (window.scanResults && db) {
+        const scanData = {
+            results: window.scanResults,
+            timestamp: new Date().getTime(),
+            source: 'google_integration',
+            version: '1.0'
+        };
         
-        // Auto-close if opened by bid generator
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('auto') === 'true') {
-            setTimeout(() => {
-                window.close();
-            }, 2000);
-        } else {
-            // Open bid generator in new tab
-            setTimeout(() => {
-                window.open('dual-brand-bid-system.html', '_blank');
-            }, 1000);
-        }
+        // Save to Firebase under a shared path
+        db.ref('shared/scanResults').set(scanData)
+            .then(() => {
+                showNotification('✅ Intelligence data synced to cloud for bid generator!', 'success');
+                
+                // Also save to localStorage as backup
+                localStorage.setItem('googleScanResults', JSON.stringify(window.scanResults));
+                localStorage.setItem('lastGoogleScan', new Date().getTime().toString());
+            })
+            .catch(error => {
+                console.error('Failed to save to Firebase:', error);
+                showNotification('⚠️ Saved locally only (Firebase sync failed)', 'warning');
+                
+                // Fallback to localStorage
+                localStorage.setItem('googleScanResults', JSON.stringify(window.scanResults));
+                localStorage.setItem('lastGoogleScan', new Date().getTime().toString());
+            });
     } else {
         showNotification('❌ No scan data available to apply', 'error');
+    }
+        
+    // Auto-close if opened by bid generator
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('auto') === 'true') {
+        setTimeout(() => {
+            window.close();
+        }, 2000);
+    } else {
+        // Open bid generator in new tab
+        setTimeout(() => {
+            window.open('dual-brand-bid-system.html', '_blank');
+        }, 1000);
     }
 }
 
@@ -2507,11 +2528,31 @@ class LocalFileScanner {
             }))
         };
         
-        localStorage.setItem('localScanResults', JSON.stringify(localData));
-        
-        if (dataFlowMonitor) {
-            dataFlowMonitor.logEvent('STORAGE', `Local scan data stored in LocalStorage`);
+        // Save to Firebase for cross-domain syncing
+        if (db) {
+            const scanData = {
+                results: localData,
+                timestamp: new Date().getTime(),
+                source: 'local_scanner',
+                version: '1.0'
+            };
+            
+            db.ref('shared/localScanResults').set(scanData)
+                .then(() => {
+                    if (dataFlowMonitor) {
+                        dataFlowMonitor.logEvent('STORAGE', `Local scan data synced to Firebase`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Firebase sync failed, using localStorage:', error);
+                    if (dataFlowMonitor) {
+                        dataFlowMonitor.logEvent('STORAGE', `Local scan data stored in LocalStorage (Firebase failed)`);
+                    }
+                });
         }
+        
+        // Always save to localStorage as backup
+        localStorage.setItem('localScanResults', JSON.stringify(localData));
         
         // Store in Firebase for persistence
         const userPIN = sessionStorage.getItem('bid_pin');

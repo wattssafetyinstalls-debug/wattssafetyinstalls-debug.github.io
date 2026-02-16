@@ -307,15 +307,16 @@ function saveApiKey() {
     // Store in localStorage (not in code)
     localStorage.setItem('googleApiKey', apiKey);
     
-    // Initialize Firebase config
+    // Initialize Firebase config (same as bid generator)
     firebaseConfig = {
         apiKey: apiKey,
-        authDomain: "wattsatpcontractor.firebaseapp.com",
-        databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
-        projectId: "wattsatpcontractor",
-        storageBucket: "wattsatpcontractor.appspot.com",
-        messagingSenderId: "1059217531358",
-        appId: "1:1059217531358:web:abc123def456ghi789"
+        authDomain: "wsi---bid-generator.firebaseapp.com",
+        databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+        projectId: "wsi---bid-generator",
+        storageBucket: "wsi---bid-generator.firebasestorage.app",
+        messagingSenderId: "613129301141",
+        appId: "1:613129301141:web:92405028eca5aae354bf9c",
+        measurementId: "G-011LE4CZEF"
     };
     
     // Initialize Firebase
@@ -332,8 +333,11 @@ function saveApiKey() {
         db = firebase.database();
         
         // Test the connection
+        console.log('Testing Firebase connection...');
         db.ref('.info/connected').once('value').then(snapshot => {
+            console.log('Firebase connection test result:', snapshot.val());
             if (snapshot.val() === true) {
+                console.log('Firebase connection successful');
                 // Show success and switch to auth card
                 document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key saved successfully</p>';
                 document.getElementById('apiKeyCard').style.display = 'none';
@@ -342,8 +346,12 @@ function saveApiKey() {
                 // Clear the input field for security
                 document.getElementById('apiKeyInput').value = '';
             } else {
+                console.log('Firebase connection failed - value:', snapshot.val());
                 document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Firebase connection failed</p>';
             }
+        }).catch(error => {
+            console.error('Firebase connection test error:', error);
+            document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Connection test failed: ' + error.message + '</p>';
         });
     } catch (error) {
         console.error('Firebase initialization error:', error);
@@ -355,15 +363,22 @@ function saveApiKey() {
 function checkApiKey() {
     const savedKey = localStorage.getItem('googleApiKey');
     if (savedKey) {
-        // Auto-initialize with saved key
+        console.log('API key found, initializing...');
+        
+        // Populate the input field for visibility
+        document.getElementById('apiKeyInput').value = savedKey;
+        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key loaded from saved storage</p>';
+        
+        // Auto-initialize with saved key (same as bid generator)
         firebaseConfig = {
             apiKey: savedKey,
-            authDomain: "wattsatpcontractor.firebaseapp.com",
-            databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
-            projectId: "wattsatpcontractor",
-            storageBucket: "wattsatpcontractor.appspot.com",
-            messagingSenderId: "1059217531358",
-            appId: "1:1059217531358:web:abc123def456ghi789"
+            authDomain: "wsi---bid-generator.firebaseapp.com",
+            databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+            projectId: "wsi---bid-generator",
+            storageBucket: "wsi---bid-generator.firebasestorage.app",
+            messagingSenderId: "613129301141",
+            appId: "1:613129301141:web:92405028eca5aae354bf9c",
+            measurementId: "G-011LE4CZEF"
         };
         
         try {
@@ -374,11 +389,20 @@ function checkApiKey() {
             db = firebase.database();
             
             // Test connection
+            console.log('Testing Firebase connection (auto-load)...');
             db.ref('.info/connected').once('value').then(snapshot => {
+                console.log('Firebase auto-load connection test result:', snapshot.val());
                 if (snapshot.val() === true) {
+                    console.log('Firebase auto-load connection successful');
                     document.getElementById('apiKeyCard').style.display = 'none';
                     document.getElementById('authCard').style.display = 'block';
+                } else {
+                    console.log('Firebase auto-load connection failed - value:', snapshot.val());
+                    document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Firebase connection failed (auto-load)</p>';
                 }
+            }).catch(error => {
+                console.error('Firebase auto-load connection test error:', error);
+                document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Auto-load connection test failed: ' + error.message + '</p>';
             });
         } catch (error) {
             console.error('Firebase initialization error:', error);

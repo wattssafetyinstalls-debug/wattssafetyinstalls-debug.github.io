@@ -178,6 +178,7 @@
                 <input type="file" id="localFileInput" webkitdirectory directory multiple style="display: none;" onchange="handleLocalFileScan(event)">
                 <button class="btn btn-primary" onclick="document.getElementById('localFileInput').click()">📁 Scan Local Files</button>
                 <button class="btn btn-secondary" onclick="scanLocalQuotes()" style="margin-left: 10px;">🔍 Auto-Scan Quotes</button>
+                <button class="btn btn-danger" onclick="cancelLocalScan()" id="cancelScanBtn" style="margin-left: 10px; display: none;">🛑 Cancel</button>
             </div>
             <div class="service-item">
                 <div class="service-header">
@@ -2064,16 +2065,29 @@ class LocalFileScanner {
         this.quoteFiles = [];
         this.processedFiles = [];
         this.nlpEngine = new LocalNLPProcessor();
-        this.batchSize = 10; // Process files in small batches
-        this.maxConcurrent = 3; // Max concurrent processing
+        this.batchSize = 3; // Reduced batch size for stability
+        this.maxConcurrent = 1; // Process one file at a time
+        this.maxFileSize = 10 * 1024 * 1024; // 10MB limit
+        this.maxTotalSize = 50 * 1024 * 1024; // 50MB total limit
         this.scanQueue = [];
         this.isScanning = false;
+        this.abortController = null;
     }
 
     // Handle local file selection (memory safe)
     async handleLocalFileScan(event) {
+        // Create abort controller for cancellation
+        this.abortController = new AbortController();
+        
         const files = Array.from(event.target.files);
         console.log(`📁 Selected ${files.length} local files for memory-safe scanning`);
+        
+        // Early size filtering to prevent crashes
+        const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+        if (totalSize > this.maxTotalSize) {
+            showNotification(`❌ Total file size (${(totalSize/1024/1024).toFixed(1)}MB) exceeds 50MB limit. Select fewer files.`, 'error');
+            return;
+        }
         
         // Filter files first before processing
         const relevantFiles = this.filterRelevantFiles(files);
@@ -2082,6 +2096,12 @@ class LocalFileScanner {
         if (relevantFiles.length === 0) {
             showNotification('📄 No relevant files found (no quote/bid/estimate keywords)', 'info');
             return;
+        }
+        
+        // Warn if too many files
+        if (relevantFiles.length > 50) {
+            showNotification(`⚠️ ${relevantFiles.length} files found. Processing first 50 to prevent crashes.`, 'warning');
+            relevantFiles.splice(50);
         }
         
         showNotification(`📁 Processing ${relevantFiles.length} relevant files safely...`, 'info');
@@ -2098,7 +2118,13 @@ class LocalFileScanner {
             
         } catch (error) {
             console.error('Safe scan error:', error);
-            showNotification('❌ Scan completed with some errors', 'warning');
+            if (error.name === 'AbortError') {
+                showNotification('🛑 Scan cancelled by user', 'info');
+            } else {
+                showNotification('❌ Scan completed with some errors', 'warning');
+            }
+        } finally {
+            this.abortController = null;
         }
     }
 
@@ -2110,6 +2136,12 @@ class LocalFileScanner {
         ];
         
         return files.filter(file => {
+            // Skip files larger than 10MB
+            if (file.size > this.maxFileSize) {
+                console.log(`⚠️ Skipping large file: ${file.name} (${(file.size/1024/1024).toFixed(1)}MB)`);
+                return false;
+            }
+            
             const fileName = file.name.toLowerCase();
             const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
             
@@ -2126,38 +2158,48 @@ class LocalFileScanner {
         const quoteFiles = [];
         let processedCount = 0;
         
-        // Process in batches of 10 files
+        // Process in batches of 3 files (reduced from 10)
         for (let i = 0; i < files.length; i += this.batchSize) {
+            // Check if scan was aborted
+            if (this.abortController?.signal.aborted) {
+                throw new Error('AbortError');
+            }
+            
             const batch = files.slice(i, i + this.batchSize);
             
             this.updateProgress(processedCount, files.length, 
                 `Processing batch ${Math.floor(i/this.batchSize) + 1}/${Math.ceil(files.length/this.batchSize)}...`);
             
-            // Process batch with concurrent limit
-            const batchPromises = batch.map(file => 
-                this.processFileSafely(file).catch(error => {
-                    console.error(`Error processing ${file.name}:`, error);
-                    return null;
-                })
-            );
-            
-            const batchResults = await Promise.all(batchPromises);
-            
-            // Add valid results
-            batchResults.forEach(result => {
-                if (result && result.isQuote) {
-                    quoteFiles.push(result);
+            // Process files sequentially (not concurrently) to reduce memory pressure
+            for (const file of batch) {
+                if (this.abortController?.signal.aborted) {
+                    throw new Error('AbortError');
                 }
-            });
-            
-            processedCount += batch.length;
-            
-            // Small delay to allow garbage collection
-            await this.sleep(100);
-            
-            // Update progress
-            this.updateProgress(processedCount, files.length, 
-                `Processed ${processedCount}/${files.length} files...`);
+                
+                try {
+                    const result = await this.processFileSafely(file);
+                    if (result && result.isQuote) {
+                        quoteFiles.push(result);
+                    }
+                } catch (error) {
+                    console.error(`Error processing ${file.name}:`, error);
+                    // Continue with other files
+                }
+                
+                processedCount++;
+                
+                // Update progress for each file
+                this.updateProgress(processedCount, files.length, 
+                    `Processed ${processedCount}/${files.length} files...`);
+                
+                // Force garbage collection hint
+                if (processedCount % 5 === 0) {
+                    await this.sleep(500); // Longer pause every 5 files
+                    if (window.gc) window.gc(); // Force GC if available
+                } else {
+                    await this.sleep(200); // Normal pause between files
+                }
+            }
         }
         
         return quoteFiles;
@@ -2172,8 +2214,18 @@ class LocalFileScanner {
                 return { isQuote: false };
             }
             
+            // Check for abort signal
+            if (this.abortController?.signal.aborted) {
+                throw new Error('AbortError');
+            }
+            
             // Read content with size limit
             const content = await this.extractFileContentSafely(file);
+            
+            // Check for abort signal again
+            if (this.abortController?.signal.aborted) {
+                throw new Error('AbortError');
+            }
             
             // Quick content check before full NLP
             if (!this.contentContainsKeywords(content)) {
@@ -2857,7 +2909,22 @@ function handleLocalFileScan(event) {
     if (!localScanner) {
         initializeLocalScanner();
     }
-    localScanner.handleLocalFileScan(event);
+    
+    // Show cancel button
+    document.getElementById('cancelScanBtn').style.display = 'inline-block';
+    
+    localScanner.handleLocalFileScan(event).finally(() => {
+        // Hide cancel button when done
+        document.getElementById('cancelScanBtn').style.display = 'none';
+    });
+}
+
+// Cancel local scan
+function cancelLocalScan() {
+    if (localScanner && localScanner.abortController) {
+        localScanner.abortController.abort();
+        showNotification('🛑 Cancelling scan...', 'info');
+    }
 }
 
 // Auto-scan local quotes - Full PC Search Implementation

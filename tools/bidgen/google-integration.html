@@ -580,6 +580,25 @@ function scanDrive() {
         return;
     }
     
+    // Get OAuth token from localStorage
+    const tokenData = localStorage.getItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY);
+    if (!tokenData) {
+        showNotification('⚠️ Not authenticated. Please connect your Google account first.', 'warning');
+        return;
+    }
+    
+    try {
+        const token = JSON.parse(tokenData);
+        // Set the OAuth token for GAPI client
+        gapi.client.setToken({
+            access_token: token.access_token
+        });
+    } catch (error) {
+        console.error('Error setting token:', error);
+        showNotification('❌ Authentication error. Please reconnect your Google account.', 'error');
+        return;
+    }
+    
     showNotification('🔍 Scanning Google Drive for ATP files...', 'info');
     
     // Use broader search to avoid permission issues
@@ -654,6 +673,25 @@ function finishDriveScan(allFiles, searchQuery) {
 function scanGmail() {
     if (!gapiInited) {
         showNotification('⚠️ Google API not initialized', 'warning');
+        return;
+    }
+    
+    // Get OAuth token from localStorage
+    const tokenData = localStorage.getItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY);
+    if (!tokenData) {
+        showNotification('⚠️ Not authenticated. Please connect your Google account first.', 'warning');
+        return;
+    }
+    
+    try {
+        const token = JSON.parse(tokenData);
+        // Set the OAuth token for GAPI client
+        gapi.client.setToken({
+            access_token: token.access_token
+        });
+    } catch (error) {
+        console.error('Error setting token:', error);
+        showNotification('❌ Authentication error. Please reconnect your Google account.', 'error');
         return;
     }
     

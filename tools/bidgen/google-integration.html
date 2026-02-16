@@ -105,8 +105,29 @@
         </div>
     </div>
 
+    <!-- API KEY INPUT -->
+    <div class="card" id="apiKeyCard">
+        <h2><span class="icon">🔑</span> API Key Required</h2>
+        <div class="auth-section">
+            <h3>Enter Your Google API Key</h3>
+            <p style="color: #7f8c8d; margin-bottom: 20px;">Your API key was removed for security. Please enter it below to continue.</p>
+            <div style="background: #0f1a33; border: 1px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="color: #f39c12; margin-bottom: 10px;">🔒 Security Notice</h4>
+                <p style="font-size: 12px; color: #ecf0f1;">Your API key is stored locally in your browser only.</p>
+                <p style="font-size: 12px; color: #ecf0f1;">Never share your API key or commit it to public repositories.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                <input type="password" id="apiKeyInput" placeholder="Enter your Google API key" style="flex: 1; padding: 10px; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee;">
+                <button class="btn btn-primary" onclick="saveApiKey()">Save Key</button>
+            </div>
+            <div class="auth-status" id="apiKeyStatus">
+                <p style="color: #7f8c8d;">API key required to continue</p>
+            </div>
+        </div>
+    </div>
+
     <!-- AUTHENTICATION -->
-    <div class="card" id="authCard">
+    <div class="card" id="authCard" style="display: none;">
         <h2><span class="icon">🔐</span> Google Authentication</h2>
         <div class="auth-section">
             <h3>Connect Your Google Account</h3>
@@ -265,20 +286,74 @@
 </div>
 
 <script>
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyCelYHbV_SwJTgnnhGATpNWJnRPsmtVRH8",
-    authDomain: "wattsatpcontractor.firebaseapp.com",
-    databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
-    projectId: "wattsatpcontractor",
-    storageBucket: "wattsatpcontractor.appspot.com",
-    messagingSenderId: "1059217531358",
-    appId: "1:1059217531358:web:abc123def456ghi789"
-};
+// Firebase Configuration - API key removed for security
+let firebaseConfig = null;
+let db = null;
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+// Save API key and initialize Firebase
+function saveApiKey() {
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    if (!apiKey) {
+        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Please enter an API key</p>';
+        return;
+    }
+    
+    // Store in localStorage (not in code)
+    localStorage.setItem('googleApiKey', apiKey);
+    
+    // Initialize Firebase config
+    firebaseConfig = {
+        apiKey: apiKey,
+        authDomain: "wattsatpcontractor.firebaseapp.com",
+        databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
+        projectId: "wattsatpcontractor",
+        storageBucket: "wattsatpcontractor.appspot.com",
+        messagingSenderId: "1059217531358",
+        appId: "1:1059217531358:web:abc123def456ghi789"
+    };
+    
+    // Initialize Firebase
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        
+        // Show success and switch to auth card
+        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key saved successfully</p>';
+        document.getElementById('apiKeyCard').style.display = 'none';
+        document.getElementById('authCard').style.display = 'block';
+        
+        // Clear the input field for security
+        document.getElementById('apiKeyInput').value = '';
+    } catch (error) {
+        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Error: ' + error.message + '</p>';
+    }
+}
+
+// Check for existing API key on load
+function checkApiKey() {
+    const savedKey = localStorage.getItem('googleApiKey');
+    if (savedKey) {
+        // Auto-initialize with saved key
+        firebaseConfig = {
+            apiKey: savedKey,
+            authDomain: "wattsatpcontractor.firebaseapp.com",
+            databaseURL: "https://wattsatpcontractor-default-rtdb.firebaseio.com",
+            projectId: "wattsatpcontractor",
+            storageBucket: "wattsatpcontractor.appspot.com",
+            messagingSenderId: "1059217531358",
+            appId: "1:1059217531358:web:abc123def456ghi789"
+        };
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            document.getElementById('apiKeyCard').style.display = 'none';
+            document.getElementById('authCard').style.display = 'block';
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
+    }
+}
 
 // Utility function for hashing PIN
 function hashPIN(pin) {
@@ -3196,6 +3271,11 @@ function exportDataFlowReport() {
         showNotification('❌ Data flow monitor not initialized', 'error');
     }
 }
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkApiKey();
+});
 </script>
 
 </body>

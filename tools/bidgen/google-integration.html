@@ -91,7 +91,7 @@
         <div style="margin-bottom: 20px;">
             <label for="apiKeyInput" style="display: block; margin-bottom: 8px; color: #ecf0f1; font-weight: 600;">Enter Your Google API Key:</label>
             <input type="password" id="apiKeyInput" placeholder="AIzaSy..." style="width: 100%; padding: 12px; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #ecf0f1; font-size: 14px; margin-bottom: 15px;">
-            <button class="btn btn-primary" onclick="setApiKey()">🔑 Set API Key</button>
+            <button class="btn btn-primary" onclick="saveApiKey()">🔑 Save API Key</button>
         </div>
         
         <div style="background: #2a3a5c; border-radius: 8px; padding: 15px;">
@@ -2522,56 +2522,15 @@ class LocalFileScanner {
             this.updateProgress(1, 100, `Found ${searchPaths.length} directories to scan...`);
             
             // Scan each path
-            for (let i = 0; i < searchPaths.length; i++) {
-                const path = searchPaths[i];
-                this.updateProgress(2 + i, 100, `Scanning ${path}...`);
                 
-                try {
-                    const files = await this.scanDirectoryForQuotes(path);
-                    totalFiles += files.total;
-                    
-                    // Process files found in this directory
-                    for (const file of files.quoteFiles) {
-                        try {
-                            const content = await this.extractFileContent(file);
-                            const parsedData = this.nlpEngine.parseQuoteData(content, file.name);
-                            
-                            if (parsedData.isQuote) {
-                                quoteFiles.push({
-                                    file: file,
-                                    content: content,
-                                    parsedData: parsedData,
-                                    source: 'local_auto',
-                                    timestamp: new Date().toISOString(),
-                                    path: path
-                                });
-                            }
-                            
-                            processedFiles++;
-                            
-                            // Update progress every 10 files
-                            if (processedFiles % 10 === 0) {
-                                this.updateProgress(10 + Math.floor((processedFiles / totalFiles) * 80), 100, 
-                                    `Processed ${processedFiles}/${totalFiles} files...`);
-                            }
-                            
-                        } catch (error) {
-                            console.error(`Error processing file ${file.name}:`, error);
-                        }
+                // Hide progress after completion
+                setTimeout(() => {
+                    const progressCard = document.getElementById('progressCard');
+                    if (progressCard) {
+                        progressCard.style.display = 'none';
                     }
-                    
-                } catch (error) {
-                    console.error(`Error scanning directory ${path}:`, error);
-                }
+                }, 3000);
             }
-            
-            // Final update
-            this.updateProgress(95, 100, 'Finalizing results...');
-            
-            // Store and display results
-            this.quoteFiles = quoteFiles;
-            this.displayLocalResults(quoteFiles);
-            this.storeLocalData(quoteFiles);
             
             this.updateProgress(100, 100, `Scan complete! Found ${quoteFiles.length} quote files`);
             
@@ -2644,7 +2603,7 @@ class LocalFileScanner {
             
             input.onchange = (event) => {
                 const files = Array.from(event.target.files);
-                const quoteFiles = files.filter(file => this.isQuoteFile(file));
+                const quoteFiles = this.filterRelevantFiles(files);
                 
                 resolve({
                     total: files.length,

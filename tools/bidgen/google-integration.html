@@ -287,130 +287,42 @@
 </div>
 
 <script>
-// Firebase Configuration - API key removed for security
-let firebaseConfig = null;
-let db = null;
+// =====================================================================
+// FIREBASE INITIALIZATION (Same as bid generator)
+// =====================================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c",
+    measurementId: "G-011LE4CZEF"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// Save API key and initialize Firebase
+// Save Google API key (for Drive/Gmail access, NOT Firebase)
 function saveApiKey() {
     const apiKey = document.getElementById('apiKeyInput').value.trim();
-    console.log('Save API key called, key length:', apiKey.length);
     
     if (!apiKey) {
         document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Please enter an API key</p>';
         return;
     }
     
-    // Show loading state
-    document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #f39c12;">Validating API key...</p>';
+    // Store Google API key in localStorage
+    localStorage.setItem('google_api_key', apiKey);
+    API_KEY = apiKey;
     
-    // Store in localStorage (not in code)
-    localStorage.setItem('googleApiKey', apiKey);
+    // Show success and switch to auth card
+    document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key saved successfully</p>';
+    document.getElementById('apiKeyCard').style.display = 'none';
+    document.getElementById('authCard').style.display = 'block';
     
-    // Initialize Firebase config (use correct Firebase key, not Google API key)
-    firebaseConfig = {
-        apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
-        authDomain: "wsi---bid-generator.firebaseapp.com",
-        databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
-        projectId: "wsi---bid-generator",
-        storageBucket: "wsi---bid-generator.firebasestorage.app",
-        messagingSenderId: "613129301141",
-        appId: "1:613129301141:web:92405028eca5aae354bf9c",
-        measurementId: "G-011LE4CZEF"
-    };
-    
-    // Initialize Firebase
-    try {
-        // Use existing Firebase instance or initialize new one
-        if (firebase.apps.length > 0) {
-            console.log('Using existing Firebase app for manual save');
-            db = firebase.database();
-        } else {
-            console.log('Initializing new Firebase app for manual save');
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-        }
-        
-        // Test the connection
-        console.log('Testing Firebase connection...');
-        db.ref('.info/connected').once('value').then(snapshot => {
-            console.log('Firebase connection test result:', snapshot.val());
-            if (snapshot.val() === true) {
-                console.log('Firebase connection successful');
-                // Show success and switch to auth card
-                document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key saved successfully</p>';
-                document.getElementById('apiKeyCard').style.display = 'none';
-                document.getElementById('authCard').style.display = 'block';
-                
-                // Clear the input field for security
-                document.getElementById('apiKeyInput').value = '';
-            } else {
-                console.log('Firebase connection failed - value:', snapshot.val());
-                document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Firebase connection failed</p>';
-            }
-        }).catch(error => {
-            console.error('Firebase connection test error:', error);
-            document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Connection test failed: ' + error.message + '</p>';
-        });
-    } catch (error) {
-        console.error('Firebase initialization error:', error);
-        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Error: ' + error.message + '</p>';
-    }
-}
-
-// Check for existing API key on load
-function checkApiKey() {
-    const savedKey = localStorage.getItem('googleApiKey');
-    if (savedKey) {
-        console.log('API key found, initializing...');
-        
-        // Populate the input field for visibility
-        document.getElementById('apiKeyInput').value = savedKey;
-        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key loaded from saved storage</p>';
-        
-        // Auto-initialize with saved key (use correct Firebase key, not Google API key)
-        firebaseConfig = {
-            apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
-            authDomain: "wsi---bid-generator.firebaseapp.com",
-            databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
-            projectId: "wsi---bid-generator",
-            storageBucket: "wsi---bid-generator.firebasestorage.app",
-            messagingSenderId: "613129301141",
-            appId: "1:613129301141:web:92405028eca5aae354bf9c",
-            measurementId: "G-011LE4CZEF"
-        };
-        
-        try {
-            // Use existing Firebase instance or initialize new one
-            if (firebase.apps.length > 0) {
-                console.log('Using existing Firebase app');
-                db = firebase.database();
-            } else {
-                console.log('Initializing new Firebase app');
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.database();
-            }
-            
-            // Test connection
-            console.log('Testing Firebase connection (auto-load)...');
-            db.ref('.info/connected').once('value').then(snapshot => {
-                console.log('Firebase auto-load connection test result:', snapshot.val());
-                if (snapshot.val() === true) {
-                    console.log('Firebase auto-load connection successful');
-                    document.getElementById('apiKeyCard').style.display = 'none';
-                    document.getElementById('authCard').style.display = 'block';
-                } else {
-                    console.log('Firebase auto-load connection failed - value:', snapshot.val());
-                    document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Firebase connection failed (auto-load)</p>';
-                }
-            }).catch(error => {
-                console.error('Firebase auto-load connection test error:', error);
-                document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Auto-load connection test failed: ' + error.message + '</p>';
-            });
-        } catch (error) {
-            console.error('Firebase initialization error:', error);
-        }
-    }
+    // Initialize Google API with the provided key
+    initGoogleApi();
 }
 
 // Utility function for hashing PIN
@@ -457,41 +369,13 @@ const atpPatterns = [
 let tokenClient;
 let gapiInited = false;
 
-// API Key Management Functions
-function setApiKey() {
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    const apiKey = apiKeyInput.value.trim();
-    
-    if (!apiKey) {
-        showNotification('❌ Please enter a valid API key', 'error');
-        return;
-    }
-    
-    // Validate API key format (basic validation)
-    if (!apiKey.startsWith('AIzaSy') || apiKey.length < 30) {
-        showNotification('❌ Invalid API key format. Please check your Google API key.', 'error');
-        return;
-    }
-    
-    // Store API key in localStorage
-    localStorage.setItem('google_api_key', apiKey);
-    API_KEY = apiKey;
-    
-    // Hide API key section and show authentication section
-    document.getElementById('apiKeySection').style.display = 'none';
-    document.getElementById('authCard').style.display = 'block';
-    
-    showNotification('✅ API key set successfully! You can now connect to Google.', 'success');
-    
-    // Initialize Google API with the provided key
-    initGoogleApi();
-}
-
+// Load Google API key from localStorage
 function loadApiKey() {
     const storedKey = localStorage.getItem('google_api_key');
     if (storedKey) {
         API_KEY = storedKey;
-        document.getElementById('apiKeySection').style.display = 'none';
+        document.getElementById('apiKeyInput').value = storedKey;
+        document.getElementById('apiKeyCard').style.display = 'none';
         document.getElementById('authCard').style.display = 'block';
         return true;
     }
@@ -688,32 +572,6 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page loaded, checking API key...');
-    
-    // Initialize local scanner
-    initializeLocalScanner();
-    
-    // Initialize data flow monitor
-    initializeDataFlowMonitor();
-    
-    // Check if API key is already stored
-    if (loadApiKey()) {
-        console.log('API key found, initializing...');
-        initGoogleApi();
-    } else {
-        console.log('API key not found, showing API key input...');
-        document.getElementById('apiKeySection').style.display = 'block';
-        document.getElementById('authCard').style.display = 'none';
-    }
-    
-    // Initialize token client
-    initTokenClient();
-    
-    // Check for existing authentication
-    updateAuthStatus();
-});
 
 // Placeholder functions for scanning (to be implemented)
 function scanDrive() {
@@ -1308,14 +1166,6 @@ function autoScanAllSources() {
     }, 7000);
 }
 
-// Check for auto mode on page load
-document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('auto') === 'true') {
-        console.log('🤖 Auto mode detected, starting automatic scan...');
-        setTimeout(autoScanAllSources, 2000);
-    }
-});
 
 // Handle WSI Financials file upload
 function handleFinancialsUpload(event) {
@@ -2152,8 +2002,7 @@ class LocalFileScanner {
         this.quoteFiles = [];
         this.processedFiles = [];
         this.nlpEngine = new LocalNLPProcessor();
-        this.batchSize = 3; // Reduced batch size for stability
-        this.maxConcurrent = 1; // Process one file at a time
+        this.batchSize = 5; // Increased for speed
         this.maxFileSize = 10 * 1024 * 1024; // 10MB limit
         this.maxTotalSize = 50 * 1024 * 1024; // 50MB total limit
         this.scanQueue = [];
@@ -2280,11 +2129,11 @@ class LocalFileScanner {
                     `Processed ${processedCount}/${files.length} files...`);
                 
                 // Force garbage collection hint
-                if (processedCount % 5 === 0) {
-                    await this.sleep(500); // Longer pause every 5 files
+                if (processedCount % 10 === 0) {
+                    await this.sleep(200); // Longer pause every 10 files
                     if (window.gc) window.gc(); // Force GC if available
                 } else {
-                    await this.sleep(200); // Normal pause between files
+                    await this.sleep(50); // Reduced pause between files
                 }
             }
         }
@@ -2295,37 +2144,55 @@ class LocalFileScanner {
     // Process single file safely with memory management
     async processFileSafely(file) {
         try {
-            // Quick filename check first
             const fileName = file.name.toLowerCase();
-            if (!this.isLikelyQuoteFile(fileName)) {
-                return { isQuote: false };
-            }
+            const extension = '.' + fileName.split('.').pop().toLowerCase();
             
             // Check for abort signal
             if (this.abortController?.signal.aborted) {
                 throw new Error('AbortError');
             }
             
-            // Read content with size limit
+            // For binary files (PDF, DOC, XLS), skip content reading and use metadata only
+            const binaryExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
+            if (binaryExtensions.includes(extension)) {
+                // Quick metadata-only processing for binary files
+                const keywords = ['quote', 'bid', 'estimate', 'proposal', 'contract', 'invoice', 'atp'];
+                const hasKeyword = keywords.some(keyword => fileName.includes(keyword));
+                
+                if (hasKeyword) {
+                    return {
+                        file: file,
+                        content: `Binary file: ${file.name}`,
+                        parsedData: {
+                            isQuote: true,
+                            isNew: false,
+                            client: null,
+                            location: null,
+                            projectType: null,
+                            complexity: 'unknown',
+                            confidence: 50
+                        },
+                        source: 'local_safe',
+                        timestamp: new Date().toISOString()
+                    };
+                }
+                return { isQuote: false };
+            }
+            
+            // For text files, do full processing
             const content = await this.extractFileContentSafely(file);
             
-            // Check for abort signal again
             if (this.abortController?.signal.aborted) {
                 throw new Error('AbortError');
             }
             
-            // Quick content check before full NLP
-            if (!this.contentContainsKeywords(content)) {
-                return { isQuote: false };
-            }
-            
-            // Full NLP processing only for promising files
+            // Full NLP processing for text files
             const parsedData = this.nlpEngine.parseQuoteData(content, file.name);
             
             if (parsedData.isQuote) {
                 return {
                     file: file,
-                    content: this.truncateContent(content), // Limit content size
+                    content: this.truncateContent(content),
                     parsedData: parsedData,
                     source: 'local_safe',
                     timestamp: new Date().toISOString()
@@ -2340,21 +2207,6 @@ class LocalFileScanner {
         }
     }
 
-    // Quick filename check
-    isLikelyQuoteFile(fileName) {
-        const keywords = ['quote', 'bid', 'estimate', 'proposal', 'contract', 'invoice', 'atp'];
-        return keywords.some(keyword => fileName.includes(keyword));
-    }
-
-    // Quick content keyword check
-    contentContainsKeywords(content) {
-        if (!content || content.length < 50) return false;
-        
-        const keywords = ['quote', 'bid', 'estimate', 'proposal', 'contract', 'invoice', 'atp', 'dhhs'];
-        const contentLower = content.substring(0, 2000).toLowerCase(); // Check first 2000 chars only
-        
-        return keywords.some(keyword => contentLower.includes(keyword));
-    }
 
     // Extract content with memory limits
     async extractFileContentSafely(file) {
@@ -3446,69 +3298,42 @@ function exportDataFlowReport() {
     }
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, starting initialization...');
-    checkApiKey();
+// =====================================================================
+// UNIFIED PAGE INITIALIZATION
+// =====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Page loaded, initializing...');
     
-    // Direct Firebase initialization
-    setTimeout(() => {
-        console.log('Direct Firebase initialization...');
-        try {
-            // Firebase doesn't need the Google API key - use the hardcoded Firebase key
-            console.log('Initializing Firebase with hardcoded Firebase key...');
-            
-            // Initialize Firebase with correct Firebase key (not Google API key)
-            const firebaseConfig = {
-                apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
-                authDomain: "wsi---bid-generator.firebaseapp.com",
-                databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
-                projectId: "wsi---bid-generator",
-                storageBucket: "wsi---bid-generator.firebasestorage.app",
-                messagingSenderId: "613129301141",
-                appId: "1:613129301141:web:92405028eca5aae354bf9c",
-                measurementId: "G-011LE4CZEF"
-            };
-            
-            if (!firebase.apps.length) {
-                console.log('Initializing Firebase with saved key...');
-                firebase.initializeApp(firebaseConfig);
-            }
-            db = firebase.database();
-            
-            // Test connection immediately
-            db.ref('.info/connected').once('value').then(snapshot => {
-                console.log('Direct Firebase test result:', snapshot.val());
-                if (snapshot.val() === true) {
-                    console.log('✅ Firebase connected successfully!');
-                    // Update UI to show connected
-                    const statusEl = document.getElementById('apiKeyStatus');
-                    if (statusEl) {
-                        statusEl.innerHTML = '<p style="color: #27ae60;">✅ Firebase connected!</p>';
-                    }
-                }
-            }).catch(error => {
-                console.error('Direct Firebase test error:', error);
-            });
-        } catch (error) {
-            console.error('Direct Firebase init error:', error);
-        }
-    }, 1000);
+    // Initialize local scanner
+    initializeLocalScanner();
     
-    // Force Firebase connection test after 2 seconds
-    setTimeout(() => {
-        console.log('Forcing Firebase connection test...');
-        if (db) {
-            console.log('Database object exists, testing connection...');
-            db.ref('.info/connected').once('value').then(snapshot => {
-                console.log('Forced Firebase test result:', snapshot.val());
-            }).catch(error => {
-                console.error('Forced Firebase test error:', error);
-            });
-        } else {
-            console.log('Database object does not exist');
-        }
-    }, 2000);
+    // Initialize data flow monitor
+    initializeDataFlowMonitor();
+    
+    // Check if Google API key is already stored
+    if (loadApiKey()) {
+        console.log('✅ Google API key found');
+        initGoogleApi();
+    } else {
+        console.log('⚠️ Google API key not found, showing input');
+        document.getElementById('apiKeyCard').style.display = 'block';
+        document.getElementById('authCard').style.display = 'none';
+    }
+    
+    // Initialize token client for OAuth
+    initTokenClient();
+    
+    // Check for existing authentication
+    updateAuthStatus();
+    
+    // Check for auto mode
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('auto') === 'true') {
+        console.log('🤖 Auto mode detected, starting automatic scan...');
+        setTimeout(autoScanAllSources, 2000);
+    }
+    
+    console.log('✅ Initialization complete');
 });
 </script>
 

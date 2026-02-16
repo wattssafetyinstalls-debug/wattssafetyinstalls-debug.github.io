@@ -307,9 +307,9 @@ function saveApiKey() {
     // Store in localStorage (not in code)
     localStorage.setItem('googleApiKey', apiKey);
     
-    // Initialize Firebase config (same as bid generator)
+    // Initialize Firebase config (use correct Firebase key, not Google API key)
     firebaseConfig = {
-        apiKey: apiKey,
+        apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
         authDomain: "wsi---bid-generator.firebaseapp.com",
         databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
         projectId: "wsi---bid-generator",
@@ -321,16 +321,15 @@ function saveApiKey() {
     
     // Initialize Firebase
     try {
-        // Check if Firebase is already initialized
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        // Use existing Firebase instance or initialize new one
+        if (firebase.apps.length > 0) {
+            console.log('Using existing Firebase app for manual save');
+            db = firebase.database();
         } else {
-            // Update existing app config
-            firebase.app().delete().then(() => {
-                firebase.initializeApp(firebaseConfig);
-            });
+            console.log('Initializing new Firebase app for manual save');
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
         }
-        db = firebase.database();
         
         // Test the connection
         console.log('Testing Firebase connection...');
@@ -369,9 +368,9 @@ function checkApiKey() {
         document.getElementById('apiKeyInput').value = savedKey;
         document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key loaded from saved storage</p>';
         
-        // Auto-initialize with saved key (same as bid generator)
+        // Auto-initialize with saved key (use correct Firebase key, not Google API key)
         firebaseConfig = {
-            apiKey: savedKey,
+            apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
             authDomain: "wsi---bid-generator.firebaseapp.com",
             databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
             projectId: "wsi---bid-generator",
@@ -382,11 +381,15 @@ function checkApiKey() {
         };
         
         try {
-            // Check if Firebase is already initialized
-            if (!firebase.apps.length) {
+            // Use existing Firebase instance or initialize new one
+            if (firebase.apps.length > 0) {
+                console.log('Using existing Firebase app');
+                db = firebase.database();
+            } else {
+                console.log('Initializing new Firebase app');
                 firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
             }
-            db = firebase.database();
             
             // Test connection
             console.log('Testing Firebase connection (auto-load)...');
@@ -1944,6 +1947,15 @@ function displayScanResults(service, allItems, atpItems) {
     
     resultsContainer.innerHTML = fullHTML;
     
+    // Show the results card
+    document.getElementById('resultsCard').style.display = 'block';
+    
+    // Update stats
+    document.getElementById('totalScanned').textContent = allItems.length;
+    document.getElementById('atpFound').textContent = atpItems.length;
+    document.getElementById('newBids').textContent = atpItems.filter(item => item.isNew).length;
+    document.getElementById('imported').textContent = '0';
+    
     // Store results for export
     window.scanResults = window.scanResults || {};
     window.scanResults[service] = {
@@ -3436,7 +3448,67 @@ function exportDataFlowReport() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, starting initialization...');
     checkApiKey();
+    
+    // Direct Firebase initialization
+    setTimeout(() => {
+        console.log('Direct Firebase initialization...');
+        try {
+            // Firebase doesn't need the Google API key - use the hardcoded Firebase key
+            console.log('Initializing Firebase with hardcoded Firebase key...');
+            
+            // Initialize Firebase with correct Firebase key (not Google API key)
+            const firebaseConfig = {
+                apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
+                authDomain: "wsi---bid-generator.firebaseapp.com",
+                databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+                projectId: "wsi---bid-generator",
+                storageBucket: "wsi---bid-generator.firebasestorage.app",
+                messagingSenderId: "613129301141",
+                appId: "1:613129301141:web:92405028eca5aae354bf9c",
+                measurementId: "G-011LE4CZEF"
+            };
+            
+            if (!firebase.apps.length) {
+                console.log('Initializing Firebase with saved key...');
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.database();
+            
+            // Test connection immediately
+            db.ref('.info/connected').once('value').then(snapshot => {
+                console.log('Direct Firebase test result:', snapshot.val());
+                if (snapshot.val() === true) {
+                    console.log('✅ Firebase connected successfully!');
+                    // Update UI to show connected
+                    const statusEl = document.getElementById('apiKeyStatus');
+                    if (statusEl) {
+                        statusEl.innerHTML = '<p style="color: #27ae60;">✅ Firebase connected!</p>';
+                    }
+                }
+            }).catch(error => {
+                console.error('Direct Firebase test error:', error);
+            });
+        } catch (error) {
+            console.error('Direct Firebase init error:', error);
+        }
+    }, 1000);
+    
+    // Force Firebase connection test after 2 seconds
+    setTimeout(() => {
+        console.log('Forcing Firebase connection test...');
+        if (db) {
+            console.log('Database object exists, testing connection...');
+            db.ref('.info/connected').once('value').then(snapshot => {
+                console.log('Forced Firebase test result:', snapshot.val());
+            }).catch(error => {
+                console.error('Forced Firebase test error:', error);
+            });
+        } else {
+            console.log('Database object does not exist');
+        }
+    }, 2000);
 });
 </script>
 

@@ -294,10 +294,15 @@ let db = null;
 // Save API key and initialize Firebase
 function saveApiKey() {
     const apiKey = document.getElementById('apiKeyInput').value.trim();
+    console.log('Save API key called, key length:', apiKey.length);
+    
     if (!apiKey) {
         document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Please enter an API key</p>';
         return;
     }
+    
+    // Show loading state
+    document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #f39c12;">Validating API key...</p>';
     
     // Store in localStorage (not in code)
     localStorage.setItem('googleApiKey', apiKey);
@@ -315,17 +320,33 @@ function saveApiKey() {
     
     // Initialize Firebase
     try {
-        firebase.initializeApp(firebaseConfig);
+        // Check if Firebase is already initialized
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            // Update existing app config
+            firebase.app().delete().then(() => {
+                firebase.initializeApp(firebaseConfig);
+            });
+        }
         db = firebase.database();
         
-        // Show success and switch to auth card
-        document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key saved successfully</p>';
-        document.getElementById('apiKeyCard').style.display = 'none';
-        document.getElementById('authCard').style.display = 'block';
-        
-        // Clear the input field for security
-        document.getElementById('apiKeyInput').value = '';
+        // Test the connection
+        db.ref('.info/connected').once('value').then(snapshot => {
+            if (snapshot.val() === true) {
+                // Show success and switch to auth card
+                document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #27ae60;">✓ API key saved successfully</p>';
+                document.getElementById('apiKeyCard').style.display = 'none';
+                document.getElementById('authCard').style.display = 'block';
+                
+                // Clear the input field for security
+                document.getElementById('apiKeyInput').value = '';
+            } else {
+                document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Firebase connection failed</p>';
+            }
+        });
     } catch (error) {
+        console.error('Firebase initialization error:', error);
         document.getElementById('apiKeyStatus').innerHTML = '<p style="color: #e74c3c;">Error: ' + error.message + '</p>';
     }
 }
@@ -346,10 +367,19 @@ function checkApiKey() {
         };
         
         try {
-            firebase.initializeApp(firebaseConfig);
+            // Check if Firebase is already initialized
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
             db = firebase.database();
-            document.getElementById('apiKeyCard').style.display = 'none';
-            document.getElementById('authCard').style.display = 'block';
+            
+            // Test connection
+            db.ref('.info/connected').once('value').then(snapshot => {
+                if (snapshot.val() === true) {
+                    document.getElementById('apiKeyCard').style.display = 'none';
+                    document.getElementById('authCard').style.display = 'block';
+                }
+            });
         } catch (error) {
             console.error('Firebase initialization error:', error);
         }

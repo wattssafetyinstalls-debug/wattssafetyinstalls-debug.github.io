@@ -90,9 +90,45 @@
         .catalog-bar .cb-inflation input:focus { outline: none; border-color: #f39c12; }
         .predict-btn { background: linear-gradient(135deg, #8e44ad, #3498db); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; letter-spacing: 0.3px; }
         .predict-btn:hover { filter: brightness(1.15); }
-        /* Invoice Management Styles */
-        .invoice-manager { background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        .invoice-manager h2 { font-size: 18px; color: #3498db; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        /* Invoice Widget Styles */
+        .invoice-widget { position: fixed; top: 20px; right: 20px; width: 320px; background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; max-height: calc(100vh - 40px); display: flex; flex-direction: column; }
+        .invoice-widget-header { padding: 12px 16px; border-bottom: 1px solid #2a3a5c; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .invoice-widget-header:hover { background: #1a2744; }
+        .invoice-widget-title { font-size: 14px; font-weight: 600; color: #3498db; display: flex; align-items: center; gap: 8px; }
+        .invoice-widget-toggle { background: none; border: none; color: #7f8c8d; cursor: pointer; font-size: 18px; padding: 0; }
+        .invoice-widget-toggle:hover { color: #3498db; }
+        .invoice-widget-stats { padding: 10px 16px; background: #0f1a33; border-bottom: 1px solid #2a3a5c; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; }
+        .invoice-widget-stat { text-align: center; }
+        .invoice-widget-stat-value { font-size: 16px; font-weight: 700; color: #3498db; }
+        .invoice-widget-stat-label { color: #7f8c8d; margin-top: 2px; }
+        .invoice-widget-body { overflow-y: auto; max-height: 400px; }
+        .invoice-widget-body.collapsed { display: none; }
+        .invoice-banner-item { padding: 10px 16px; border-bottom: 1px solid #2a3a5c; transition: background 0.2s; }
+        .invoice-banner-item:hover { background: #1a2744; }
+        .invoice-banner-item.urgent { background: rgba(231, 76, 60, 0.1); border-left: 3px solid #e74c3c; }
+        .invoice-banner-item.warning { background: rgba(243, 156, 18, 0.1); border-left: 3px solid #f39c12; }
+        .invoice-banner-client { font-size: 13px; font-weight: 600; color: #ecf0f1; margin-bottom: 4px; }
+        .invoice-banner-meta { font-size: 11px; color: #7f8c8d; display: flex; justify-content: space-between; align-items: center; }
+        .invoice-banner-date { display: flex; align-items: center; gap: 4px; }
+        .invoice-banner-timer { font-weight: 600; }
+        .invoice-banner-timer.urgent { color: #e74c3c; }
+        .invoice-banner-timer.warning { color: #f39c12; }
+        .invoice-banner-timer.safe { color: #27ae60; }
+        .invoice-widget-actions { padding: 10px 16px; border-top: 1px solid #2a3a5c; display: flex; gap: 6px; }
+        .invoice-widget-btn { flex: 1; padding: 6px 10px; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .invoice-widget-btn.primary { background: #3498db; color: white; }
+        .invoice-widget-btn.primary:hover { background: #2980b9; }
+        .invoice-widget-btn.secondary { background: #2a3a5c; color: #bdc3c7; }
+        .invoice-widget-btn.secondary:hover { background: #3a4a6c; }
+        .invoice-widget-empty { padding: 30px 20px; text-align: center; color: #7f8c8d; font-size: 12px; }
+        .invoice-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10000; display: none; align-items: center; justify-content: center; }
+        .invoice-modal.show { display: flex; }
+        .invoice-modal-content { background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+        .invoice-modal-header { padding: 16px 20px; border-bottom: 1px solid #2a3a5c; display: flex; justify-content: space-between; align-items: center; }
+        .invoice-modal-title { font-size: 16px; font-weight: 600; color: #3498db; }
+        .invoice-modal-close { background: none; border: none; color: #7f8c8d; cursor: pointer; font-size: 24px; }
+        .invoice-modal-close:hover { color: #e74c3c; }
+        .invoice-modal-body { padding: 20px; }
         .invoice-tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #2a3a5c; padding-bottom: 8px; }
         .invoice-tab { background: transparent; border: none; color: #7f8c8d; padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 600; border-radius: 6px 6px 0 0; transition: all 0.2s; }
         .invoice-tab:hover { background: #1a2744; color: #bdc3c7; }
@@ -127,10 +163,6 @@
         .invoice-btn.delete { background: #7f8c8d; color: white; }
         .invoice-btn.delete:hover { background: #95a5a6; }
         .invoice-empty { text-align: center; padding: 40px 20px; color: #7f8c8d; font-size: 14px; }
-        .invoice-stats { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-        .invoice-stat { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 150px; }
-        .invoice-stat-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-bottom: 4px; }
-        .invoice-stat-value { font-size: 20px; font-weight: 700; color: #3498db; }
         /* Price Lookup Panel */
         .price-lookup { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
         .price-lookup h3 { color: #3498db; font-size: 14px; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; }
@@ -262,58 +294,66 @@
         </div>
     </div>
 
-    <!-- INVOICE MANAGER -->
-    <div class="invoice-manager" id="invoiceManager">
-        <h2>📋 Invoice Manager</h2>
-        
-        <!-- Stats -->
-        <div class="invoice-stats">
-            <div class="invoice-stat">
-                <div class="invoice-stat-label">Pending Quotes</div>
-                <div class="invoice-stat-value" id="statPending">0</div>
+    <!-- INVOICE WIDGET (Top-Right Corner) -->
+    <div class="invoice-widget" id="invoiceWidget">
+        <div class="invoice-widget-header" onclick="toggleInvoiceWidget()">
+            <div class="invoice-widget-title">📋 Invoices</div>
+            <button class="invoice-widget-toggle" id="widgetToggle">−</button>
+        </div>
+        <div class="invoice-widget-stats">
+            <div class="invoice-widget-stat">
+                <div class="invoice-widget-stat-value" id="statPending">0</div>
+                <div class="invoice-widget-stat-label">Pending</div>
             </div>
-            <div class="invoice-stat">
-                <div class="invoice-stat-label">Awarded Contracts</div>
-                <div class="invoice-stat-value" id="statAwarded" style="color: #27ae60;">0</div>
-            </div>
-            <div class="invoice-stat">
-                <div class="invoice-stat-label">Total Value</div>
-                <div class="invoice-stat-value" id="statTotal" style="color: #f39c12;">$0</div>
-            </div>
-            <div class="invoice-stat">
-                <div class="invoice-stat-label">Expiring Soon</div>
-                <div class="invoice-stat-value" id="statExpiring" style="color: #e74c3c;">0</div>
+            <div class="invoice-widget-stat">
+                <div class="invoice-widget-stat-value" id="statExpiring" style="color: #e74c3c;">0</div>
+                <div class="invoice-widget-stat-label">Expiring</div>
             </div>
         </div>
-
-        <!-- Tabs -->
-        <div class="invoice-tabs">
-            <button class="invoice-tab active" onclick="invSwitchTab('all')">All Invoices</button>
-            <button class="invoice-tab" onclick="invSwitchTab('temporary')">Pending (Temporary)</button>
-            <button class="invoice-tab" onclick="invSwitchTab('permanent')">Awarded (Permanent)</button>
-            <button class="invoice-tab" onclick="invSwitchTab('lost')">Lost/Archived</button>
+        <div class="invoice-widget-body" id="widgetBody">
+            <!-- Auto-populated with urgent invoices -->
         </div>
-
-        <!-- Filters -->
-        <div class="invoice-filters">
-            <input type="text" id="invSearchClient" placeholder="Search by client name..." oninput="invRenderList()">
-            <select id="invSortBy" onchange="invRenderList()">
-                <option value="date-desc">Date: Newest First</option>
-                <option value="date-asc">Date: Oldest First</option>
-                <option value="client-asc">Client: A-Z</option>
-                <option value="client-desc">Client: Z-A</option>
-                <option value="amount-desc">Amount: High to Low</option>
-                <option value="amount-asc">Amount: Low to High</option>
-                <option value="expires-asc">Expiring Soonest</option>
-            </select>
-            <select id="invFilterClient" onchange="invRenderList()">
-                <option value="">All Clients</option>
-            </select>
+        <div class="invoice-widget-actions">
+            <button class="invoice-widget-btn primary" onclick="openInvoiceModal()">View All</button>
         </div>
+    </div>
 
-        <!-- Invoice List -->
-        <div class="invoice-list" id="invoiceList">
-            <div class="invoice-empty">No invoices yet. Generate an invoice to get started.</div>
+    <!-- INVOICE MODAL (Full List) -->
+    <div class="invoice-modal" id="invoiceModal">
+        <div class="invoice-modal-content">
+            <div class="invoice-modal-header">
+                <div class="invoice-modal-title">📋 Invoice Manager</div>
+                <button class="invoice-modal-close" onclick="closeInvoiceModal()">×</button>
+            </div>
+            <div class="invoice-modal-body">
+                <!-- Tabs -->
+                <div class="invoice-tabs">
+                    <button class="invoice-tab active" onclick="invSwitchTab('all')">All</button>
+                    <button class="invoice-tab" onclick="invSwitchTab('temporary')">Pending</button>
+                    <button class="invoice-tab" onclick="invSwitchTab('permanent')">Awarded</button>
+                    <button class="invoice-tab" onclick="invSwitchTab('lost')">Lost</button>
+                </div>
+                <!-- Filters -->
+                <div class="invoice-filters">
+                    <input type="text" id="invSearchClient" placeholder="Search by client..." oninput="invRenderList()">
+                    <select id="invSortBy" onchange="invRenderList()">
+                        <option value="expires-asc">Expiring Soonest</option>
+                        <option value="date-desc">Date: Newest</option>
+                        <option value="date-asc">Date: Oldest</option>
+                        <option value="client-asc">Client: A-Z</option>
+                        <option value="client-desc">Client: Z-A</option>
+                        <option value="amount-desc">Amount: High-Low</option>
+                        <option value="amount-asc">Amount: Low-High</option>
+                    </select>
+                    <select id="invFilterClient" onchange="invRenderList()">
+                        <option value="">All Clients</option>
+                    </select>
+                </div>
+                <!-- Invoice List -->
+                <div class="invoice-list" id="invoiceList">
+                    <div class="invoice-empty">No invoices yet.</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1877,9 +1917,88 @@ function initInvoiceSystem() {
     loadInvoicesFromFirebase();
     invRenderList();
     updateInvoiceStats();
+    renderWidgetBanner();
     
     // Check for expired invoices every hour
     setInterval(checkExpiredInvoices, 3600000);
+    
+    // Update widget banner every minute
+    setInterval(renderWidgetBanner, 60000);
+}
+
+// Toggle widget collapse/expand
+function toggleInvoiceWidget() {
+    const body = document.getElementById('widgetBody');
+    const toggle = document.getElementById('widgetToggle');
+    
+    if (body.classList.contains('collapsed')) {
+        body.classList.remove('collapsed');
+        toggle.textContent = '−';
+    } else {
+        body.classList.add('collapsed');
+        toggle.textContent = '+';
+    }
+}
+
+// Open invoice modal
+function openInvoiceModal() {
+    document.getElementById('invoiceModal').classList.add('show');
+    invRenderList();
+}
+
+// Close invoice modal
+function closeInvoiceModal() {
+    document.getElementById('invoiceModal').classList.remove('show');
+}
+
+// Render widget banner with urgent invoices
+function renderWidgetBanner() {
+    const widgetBody = document.getElementById('widgetBody');
+    const now = new Date();
+    
+    // Get temporary invoices sorted by urgency
+    const tempInvoices = Object.values(invoiceData.temporary).map(inv => {
+        const expiresDate = new Date(inv.expiresDate);
+        const daysLeft = Math.ceil((expiresDate - now) / (1000 * 60 * 60 * 24));
+        return { ...inv, daysLeft };
+    }).sort((a, b) => a.daysLeft - b.daysLeft);
+    
+    if (tempInvoices.length === 0) {
+        widgetBody.innerHTML = '<div class="invoice-widget-empty">No pending invoices</div>';
+        return;
+    }
+    
+    // Show top 5 most urgent
+    const urgentInvoices = tempInvoices.slice(0, 5);
+    
+    widgetBody.innerHTML = urgentInvoices.map(inv => {
+        let urgencyClass = '';
+        let timerClass = 'safe';
+        
+        if (inv.daysLeft <= 0) {
+            urgencyClass = 'urgent';
+            timerClass = 'urgent';
+        } else if (inv.daysLeft <= 5) {
+            urgencyClass = 'urgent';
+            timerClass = 'urgent';
+        } else if (inv.daysLeft <= 10) {
+            urgencyClass = 'warning';
+            timerClass = 'warning';
+        }
+        
+        const dateEntered = new Date(inv.createdDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const timerText = inv.daysLeft <= 0 ? 'EXPIRED' : `${inv.daysLeft}d left`;
+        
+        return `
+            <div class="invoice-banner-item ${urgencyClass}" onclick="invViewDetails('${inv.id}')">
+                <div class="invoice-banner-client">${inv.clientName}</div>
+                <div class="invoice-banner-meta">
+                    <div class="invoice-banner-date">📅 ${dateEntered}</div>
+                    <div class="invoice-banner-timer ${timerClass}">⏱️ ${timerText}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 // Auto-save invoice when generating documents
@@ -1942,6 +2061,7 @@ function autoSaveInvoice(type) {
     // Update UI
     invRenderList();
     updateInvoiceStats();
+    renderWidgetBanner();
     
     // Show notification
     showNotification('📋 Invoice saved as Pending (21-day expiration)', 'success');
@@ -1993,6 +2113,7 @@ function loadInvoicesFromFirebase() {
                     invoiceData[status] = snapshot.val() || {};
                     invRenderList();
                     updateInvoiceStats();
+                    renderWidgetBanner();
                 }
             })
             .catch(error => {
@@ -2158,6 +2279,7 @@ function invMarkAsAwarded(invoiceId) {
     // Update UI
     invRenderList();
     updateInvoiceStats();
+    renderWidgetBanner();
     
     showNotification('✅ Invoice marked as Awarded and moved to permanent storage!', 'success');
 }
@@ -2188,6 +2310,7 @@ function invMarkAsLost(invoiceId) {
     // Update UI
     invRenderList();
     updateInvoiceStats();
+    renderWidgetBanner();
     
     showNotification('Invoice marked as Lost and archived.', 'info');
 }
@@ -2210,6 +2333,7 @@ function invDeleteInvoice(invoiceId, status) {
     // Update UI
     invRenderList();
     updateInvoiceStats();
+    renderWidgetBanner();
     
     showNotification('Invoice deleted.', 'info');
 }
@@ -2327,6 +2451,7 @@ function checkExpiredInvoices() {
     if (expiredCount > 0) {
         invRenderList();
         updateInvoiceStats();
+        renderWidgetBanner();
         showNotification(`${expiredCount} expired invoice(s) auto-archived.`, 'info');
     }
 }

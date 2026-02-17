@@ -90,6 +90,47 @@
         .catalog-bar .cb-inflation input:focus { outline: none; border-color: #f39c12; }
         .predict-btn { background: linear-gradient(135deg, #8e44ad, #3498db); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; letter-spacing: 0.3px; }
         .predict-btn:hover { filter: brightness(1.15); }
+        /* Invoice Management Styles */
+        .invoice-manager { background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .invoice-manager h2 { font-size: 18px; color: #3498db; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .invoice-tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #2a3a5c; padding-bottom: 8px; }
+        .invoice-tab { background: transparent; border: none; color: #7f8c8d; padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 600; border-radius: 6px 6px 0 0; transition: all 0.2s; }
+        .invoice-tab:hover { background: #1a2744; color: #bdc3c7; }
+        .invoice-tab.active { background: #1a2744; color: #3498db; border-bottom: 2px solid #3498db; }
+        .invoice-filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .invoice-filters select, .invoice-filters input { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 8px 12px; color: #eee; font-size: 13px; }
+        .invoice-filters select:focus, .invoice-filters input:focus { outline: none; border-color: #3498db; }
+        .invoice-list { max-height: 500px; overflow-y: auto; }
+        .invoice-item { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 14px; margin-bottom: 10px; transition: all 0.2s; }
+        .invoice-item:hover { border-color: #3498db; background: #1a2744; }
+        .invoice-item.temporary { border-left: 3px solid #f39c12; }
+        .invoice-item.permanent { border-left: 3px solid #27ae60; }
+        .invoice-item.expired { opacity: 0.6; border-left: 3px solid #e74c3c; }
+        .invoice-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; }
+        .invoice-client { font-size: 15px; font-weight: 600; color: #ecf0f1; }
+        .invoice-status { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 600; text-transform: uppercase; }
+        .invoice-status.temp { background: #f39c12; color: #1a1a1a; }
+        .invoice-status.perm { background: #27ae60; color: white; }
+        .invoice-status.lost { background: #e74c3c; color: white; }
+        .invoice-details { font-size: 12px; color: #7f8c8d; margin-bottom: 10px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .invoice-details span { display: flex; align-items: center; gap: 4px; }
+        .invoice-timer { font-size: 11px; color: #f39c12; font-weight: 600; }
+        .invoice-timer.urgent { color: #e74c3c; }
+        .invoice-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .invoice-btn { padding: 6px 12px; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .invoice-btn.award { background: #27ae60; color: white; }
+        .invoice-btn.award:hover { background: #2ecc71; }
+        .invoice-btn.lost { background: #e74c3c; color: white; }
+        .invoice-btn.lost:hover { background: #c0392b; }
+        .invoice-btn.view { background: #3498db; color: white; }
+        .invoice-btn.view:hover { background: #2980b9; }
+        .invoice-btn.delete { background: #7f8c8d; color: white; }
+        .invoice-btn.delete:hover { background: #95a5a6; }
+        .invoice-empty { text-align: center; padding: 40px 20px; color: #7f8c8d; font-size: 14px; }
+        .invoice-stats { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+        .invoice-stat { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 150px; }
+        .invoice-stat-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-bottom: 4px; }
+        .invoice-stat-value { font-size: 20px; font-weight: 700; color: #3498db; }
         /* Price Lookup Panel */
         .price-lookup { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
         .price-lookup h3 { color: #3498db; font-size: 14px; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; }
@@ -218,6 +259,61 @@
             <div class="catalog-icon">&#x1F50D;</div>
             <div class="catalog-label">Smart Fill from History</div>
             <button class="predict-btn" onclick="predictiveFill()">&#9889; Smart Fill from History</button>
+        </div>
+    </div>
+
+    <!-- INVOICE MANAGER -->
+    <div class="invoice-manager" id="invoiceManager">
+        <h2>📋 Invoice Manager</h2>
+        
+        <!-- Stats -->
+        <div class="invoice-stats">
+            <div class="invoice-stat">
+                <div class="invoice-stat-label">Pending Quotes</div>
+                <div class="invoice-stat-value" id="statPending">0</div>
+            </div>
+            <div class="invoice-stat">
+                <div class="invoice-stat-label">Awarded Contracts</div>
+                <div class="invoice-stat-value" id="statAwarded" style="color: #27ae60;">0</div>
+            </div>
+            <div class="invoice-stat">
+                <div class="invoice-stat-label">Total Value</div>
+                <div class="invoice-stat-value" id="statTotal" style="color: #f39c12;">$0</div>
+            </div>
+            <div class="invoice-stat">
+                <div class="invoice-stat-label">Expiring Soon</div>
+                <div class="invoice-stat-value" id="statExpiring" style="color: #e74c3c;">0</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="invoice-tabs">
+            <button class="invoice-tab active" onclick="invSwitchTab('all')">All Invoices</button>
+            <button class="invoice-tab" onclick="invSwitchTab('temporary')">Pending (Temporary)</button>
+            <button class="invoice-tab" onclick="invSwitchTab('permanent')">Awarded (Permanent)</button>
+            <button class="invoice-tab" onclick="invSwitchTab('lost')">Lost/Archived</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="invoice-filters">
+            <input type="text" id="invSearchClient" placeholder="Search by client name..." oninput="invRenderList()">
+            <select id="invSortBy" onchange="invRenderList()">
+                <option value="date-desc">Date: Newest First</option>
+                <option value="date-asc">Date: Oldest First</option>
+                <option value="client-asc">Client: A-Z</option>
+                <option value="client-desc">Client: Z-A</option>
+                <option value="amount-desc">Amount: High to Low</option>
+                <option value="amount-asc">Amount: Low to High</option>
+                <option value="expires-asc">Expiring Soonest</option>
+            </select>
+            <select id="invFilterClient" onchange="invRenderList()">
+                <option value="">All Clients</option>
+            </select>
+        </div>
+
+        <!-- Invoice List -->
+        <div class="invoice-list" id="invoiceList">
+            <div class="invoice-empty">No invoices yet. Generate an invoice to get started.</div>
         </div>
     </div>
 
@@ -1764,6 +1860,529 @@ function generateChangeOrder() {
     h += docJS() + '</body></html>';
     openDoc(h);
 }
+
+// =====================================================================
+// INVOICE MANAGEMENT SYSTEM
+// =====================================================================
+
+let invoiceData = {
+    temporary: {},
+    permanent: {},
+    lost: {}
+};
+let currentInvoiceTab = 'all';
+
+// Initialize invoice system
+function initInvoiceSystem() {
+    loadInvoicesFromFirebase();
+    invRenderList();
+    updateInvoiceStats();
+    
+    // Check for expired invoices every hour
+    setInterval(checkExpiredInvoices, 3600000);
+}
+
+// Auto-save invoice when generating documents
+function autoSaveInvoice(type) {
+    const invoiceId = 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const clientName = gv('clientName') || 'Unknown Client';
+    const estimateDate = gv('estimateDate') || new Date().toISOString().split('T')[0];
+    
+    // Calculate total
+    const sq = gn('sqft');
+    const litems = getLaborItems();
+    let laborTotal = 0;
+    litems.forEach(i => {
+        laborTotal += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price;
+    });
+    
+    const mitems = getMatItems();
+    let matSubtotal = 0;
+    mitems.forEach(i => {
+        matSubtotal += (parseFloat(i.qty) || 1) * i.price;
+    });
+    
+    const markup = gn('materialsMarkup') / 100;
+    const matTotal = matSubtotal + (matSubtotal * markup);
+    const grandTotal = laborTotal + matTotal;
+    
+    const invoice = {
+        id: invoiceId,
+        type: type,
+        status: 'temporary',
+        clientName: clientName,
+        estimateDate: estimateDate,
+        createdDate: new Date().toISOString(),
+        expiresDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+        amount: grandTotal,
+        laborTotal: laborTotal,
+        materialsTotal: matTotal,
+        jobDetails: {
+            complexName: gv('complexName'),
+            unitNum: gv('unitNum'),
+            jobCity: gv('jobCity'),
+            sqft: sq,
+            areaDesc: gv('areaDesc'),
+            tradeType: gv('tradeType')
+        },
+        companyInfo: {
+            companyName: gv('companyName'),
+            licenseNum: gv('licenseNum'),
+            phone: gv('phone'),
+            email: gv('email')
+        }
+    };
+    
+    // Save to temporary storage
+    invoiceData.temporary[invoiceId] = invoice;
+    
+    // Save to Firebase
+    saveInvoiceToFirebase(invoice);
+    
+    // Update UI
+    invRenderList();
+    updateInvoiceStats();
+    
+    // Show notification
+    showNotification('📋 Invoice saved as Pending (21-day expiration)', 'success');
+    
+    return invoiceId;
+}
+
+// Save invoice to Firebase
+function saveInvoiceToFirebase(invoice) {
+    if (!db || !userPIN) return;
+    
+    const hashedPIN = hashPIN(userPIN);
+    const path = `invoices/${hashedPIN}/${invoice.status}/${invoice.id}`;
+    
+    db.ref(path).set(invoice)
+        .then(() => {
+            console.log('✅ Invoice synced to Firebase:', invoice.id);
+        })
+        .catch(error => {
+            console.error('❌ Firebase sync failed:', error);
+            // Fallback to localStorage
+            localStorage.setItem('invoices_' + invoice.status, JSON.stringify(invoiceData[invoice.status]));
+        });
+}
+
+// Load invoices from Firebase
+function loadInvoicesFromFirebase() {
+    if (!db || !userPIN) {
+        // Load from localStorage as fallback
+        ['temporary', 'permanent', 'lost'].forEach(status => {
+            const stored = localStorage.getItem('invoices_' + status);
+            if (stored) {
+                try {
+                    invoiceData[status] = JSON.parse(stored);
+                } catch (e) {
+                    invoiceData[status] = {};
+                }
+            }
+        });
+        return;
+    }
+    
+    const hashedPIN = hashPIN(userPIN);
+    
+    ['temporary', 'permanent', 'lost'].forEach(status => {
+        db.ref(`invoices/${hashedPIN}/${status}`).once('value')
+            .then(snapshot => {
+                if (snapshot.exists()) {
+                    invoiceData[status] = snapshot.val() || {};
+                    invRenderList();
+                    updateInvoiceStats();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading invoices:', error);
+            });
+    });
+}
+
+// Switch invoice tab
+function invSwitchTab(tab) {
+    currentInvoiceTab = tab;
+    
+    // Update tab buttons
+    document.querySelectorAll('.invoice-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    invRenderList();
+}
+
+// Render invoice list
+function invRenderList() {
+    const listEl = document.getElementById('invoiceList');
+    const searchTerm = document.getElementById('invSearchClient').value.toLowerCase();
+    const sortBy = document.getElementById('invSortBy').value;
+    const filterClient = document.getElementById('invFilterClient').value;
+    
+    // Collect all invoices based on current tab
+    let invoices = [];
+    
+    if (currentInvoiceTab === 'all') {
+        invoices = [
+            ...Object.values(invoiceData.temporary),
+            ...Object.values(invoiceData.permanent),
+            ...Object.values(invoiceData.lost)
+        ];
+    } else {
+        invoices = Object.values(invoiceData[currentInvoiceTab] || {});
+    }
+    
+    // Filter by search term
+    if (searchTerm) {
+        invoices = invoices.filter(inv => 
+            inv.clientName.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    // Filter by client
+    if (filterClient) {
+        invoices = invoices.filter(inv => inv.clientName === filterClient);
+    }
+    
+    // Sort invoices
+    invoices.sort((a, b) => {
+        switch (sortBy) {
+            case 'date-desc':
+                return new Date(b.createdDate) - new Date(a.createdDate);
+            case 'date-asc':
+                return new Date(a.createdDate) - new Date(b.createdDate);
+            case 'client-asc':
+                return a.clientName.localeCompare(b.clientName);
+            case 'client-desc':
+                return b.clientName.localeCompare(a.clientName);
+            case 'amount-desc':
+                return b.amount - a.amount;
+            case 'amount-asc':
+                return a.amount - b.amount;
+            case 'expires-asc':
+                if (a.status === 'temporary' && b.status === 'temporary') {
+                    return new Date(a.expiresDate) - new Date(b.expiresDate);
+                }
+                return 0;
+            default:
+                return 0;
+        }
+    });
+    
+    // Update client filter dropdown
+    updateClientFilter();
+    
+    // Render invoices
+    if (invoices.length === 0) {
+        listEl.innerHTML = '<div class="invoice-empty">No invoices found.</div>';
+        return;
+    }
+    
+    listEl.innerHTML = invoices.map(inv => renderInvoiceItem(inv)).join('');
+}
+
+// Render single invoice item
+function renderInvoiceItem(invoice) {
+    const now = new Date();
+    const expiresDate = new Date(invoice.expiresDate);
+    const daysLeft = Math.ceil((expiresDate - now) / (1000 * 60 * 60 * 24));
+    const isExpired = daysLeft <= 0 && invoice.status === 'temporary';
+    const isUrgent = daysLeft <= 5 && daysLeft > 0 && invoice.status === 'temporary';
+    
+    let statusBadge = '';
+    if (invoice.status === 'temporary') {
+        statusBadge = '<span class="invoice-status temp">PENDING</span>';
+    } else if (invoice.status === 'permanent') {
+        statusBadge = '<span class="invoice-status perm">AWARDED</span>';
+    } else if (invoice.status === 'lost') {
+        statusBadge = '<span class="invoice-status lost">LOST</span>';
+    }
+    
+    let timerHTML = '';
+    if (invoice.status === 'temporary') {
+        const timerClass = isUrgent ? 'urgent' : '';
+        timerHTML = `<div class="invoice-timer ${timerClass}">⏱️ ${daysLeft > 0 ? daysLeft + ' days left' : 'EXPIRED'}</div>`;
+    }
+    
+    const itemClass = `invoice-item ${invoice.status} ${isExpired ? 'expired' : ''}`;
+    
+    return `
+        <div class="${itemClass}">
+            <div class="invoice-header">
+                <div class="invoice-client">${invoice.clientName}</div>
+                ${statusBadge}
+            </div>
+            <div class="invoice-details">
+                <span>📅 ${new Date(invoice.estimateDate).toLocaleDateString()}</span>
+                <span>💰 $${invoice.amount.toFixed(2)}</span>
+                <span>📍 ${invoice.jobDetails.jobCity || 'N/A'}</span>
+                <span>🏗️ ${invoice.jobDetails.tradeType || 'General'}</span>
+            </div>
+            ${timerHTML}
+            <div class="invoice-actions">
+                ${invoice.status === 'temporary' ? `
+                    <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}')">✅ Mark as Awarded</button>
+                    <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}')">❌ Mark as Lost</button>
+                ` : ''}
+                <button class="invoice-btn view" onclick="invViewDetails('${invoice.id}')">👁️ View Details</button>
+                <button class="invoice-btn delete" onclick="invDeleteInvoice('${invoice.id}', '${invoice.status}')">🗑️ Delete</button>
+            </div>
+        </div>
+    `;
+}
+
+// Mark invoice as awarded
+function invMarkAsAwarded(invoiceId) {
+    const invoice = invoiceData.temporary[invoiceId];
+    if (!invoice) return;
+    
+    // Move to permanent storage
+    invoice.status = 'permanent';
+    invoice.awardedDate = new Date().toISOString();
+    delete invoice.expiresDate;
+    
+    invoiceData.permanent[invoiceId] = invoice;
+    delete invoiceData.temporary[invoiceId];
+    
+    // Delete from temporary Firebase path
+    if (db && userPIN) {
+        const hashedPIN = hashPIN(userPIN);
+        db.ref(`invoices/${hashedPIN}/temporary/${invoiceId}`).remove();
+    }
+    
+    // Save to permanent Firebase path
+    saveInvoiceToFirebase(invoice);
+    
+    // Update UI
+    invRenderList();
+    updateInvoiceStats();
+    
+    showNotification('✅ Invoice marked as Awarded and moved to permanent storage!', 'success');
+}
+
+// Mark invoice as lost
+function invMarkAsLost(invoiceId) {
+    const invoice = invoiceData.temporary[invoiceId];
+    if (!invoice) return;
+    
+    if (!confirm('Mark this invoice as Lost? It will be archived.')) return;
+    
+    // Move to lost storage
+    invoice.status = 'lost';
+    invoice.lostDate = new Date().toISOString();
+    
+    invoiceData.lost[invoiceId] = invoice;
+    delete invoiceData.temporary[invoiceId];
+    
+    // Delete from temporary Firebase path
+    if (db && userPIN) {
+        const hashedPIN = hashPIN(userPIN);
+        db.ref(`invoices/${hashedPIN}/temporary/${invoiceId}`).remove();
+    }
+    
+    // Save to lost Firebase path
+    saveInvoiceToFirebase(invoice);
+    
+    // Update UI
+    invRenderList();
+    updateInvoiceStats();
+    
+    showNotification('Invoice marked as Lost and archived.', 'info');
+}
+
+// Delete invoice
+function invDeleteInvoice(invoiceId, status) {
+    if (!confirm('Permanently delete this invoice? This cannot be undone.')) return;
+    
+    delete invoiceData[status][invoiceId];
+    
+    // Delete from Firebase
+    if (db && userPIN) {
+        const hashedPIN = hashPIN(userPIN);
+        db.ref(`invoices/${hashedPIN}/${status}/${invoiceId}`).remove();
+    }
+    
+    // Update localStorage
+    localStorage.setItem('invoices_' + status, JSON.stringify(invoiceData[status]));
+    
+    // Update UI
+    invRenderList();
+    updateInvoiceStats();
+    
+    showNotification('Invoice deleted.', 'info');
+}
+
+// View invoice details
+function invViewDetails(invoiceId) {
+    // Find invoice in all statuses
+    let invoice = null;
+    for (const status in invoiceData) {
+        if (invoiceData[status][invoiceId]) {
+            invoice = invoiceData[status][invoiceId];
+            break;
+        }
+    }
+    
+    if (!invoice) return;
+    
+    const details = `
+Invoice ID: ${invoice.id}
+Client: ${invoice.clientName}
+Status: ${invoice.status.toUpperCase()}
+Date: ${new Date(invoice.estimateDate).toLocaleDateString()}
+Amount: $${invoice.amount.toFixed(2)}
+
+Job Details:
+- Property: ${invoice.jobDetails.complexName || 'N/A'}
+- Unit: ${invoice.jobDetails.unitNum || 'N/A'}
+- Location: ${invoice.jobDetails.jobCity || 'N/A'}
+- Area: ${invoice.jobDetails.sqft || 'N/A'} sq ft
+- Type: ${invoice.jobDetails.tradeType || 'N/A'}
+
+Breakdown:
+- Labor: $${invoice.laborTotal.toFixed(2)}
+- Materials: $${invoice.materialsTotal.toFixed(2)}
+- Total: $${invoice.amount.toFixed(2)}
+
+${invoice.status === 'temporary' ? `Expires: ${new Date(invoice.expiresDate).toLocaleDateString()}` : ''}
+${invoice.status === 'permanent' ? `Awarded: ${new Date(invoice.awardedDate).toLocaleDateString()}` : ''}
+${invoice.status === 'lost' ? `Lost: ${new Date(invoice.lostDate).toLocaleDateString()}` : ''}
+    `;
+    
+    alert(details);
+}
+
+// Update invoice statistics
+function updateInvoiceStats() {
+    const pending = Object.values(invoiceData.temporary).length;
+    const awarded = Object.values(invoiceData.permanent).length;
+    
+    const totalValue = Object.values(invoiceData.permanent).reduce((sum, inv) => sum + inv.amount, 0);
+    
+    const now = new Date();
+    const expiringSoon = Object.values(invoiceData.temporary).filter(inv => {
+        const daysLeft = Math.ceil((new Date(inv.expiresDate) - now) / (1000 * 60 * 60 * 24));
+        return daysLeft <= 5 && daysLeft > 0;
+    }).length;
+    
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statAwarded').textContent = awarded;
+    document.getElementById('statTotal').textContent = '$' + totalValue.toFixed(0);
+    document.getElementById('statExpiring').textContent = expiringSoon;
+}
+
+// Update client filter dropdown
+function updateClientFilter() {
+    const filterEl = document.getElementById('invFilterClient');
+    const currentValue = filterEl.value;
+    
+    // Get unique client names
+    const clients = new Set();
+    for (const status in invoiceData) {
+        Object.values(invoiceData[status]).forEach(inv => {
+            clients.add(inv.clientName);
+        });
+    }
+    
+    // Sort alphabetically
+    const sortedClients = Array.from(clients).sort();
+    
+    // Update dropdown
+    filterEl.innerHTML = '<option value="">All Clients</option>' + 
+        sortedClients.map(client => `<option value="${client}">${client}</option>`).join('');
+    
+    // Restore previous selection
+    filterEl.value = currentValue;
+}
+
+// Check for expired invoices
+function checkExpiredInvoices() {
+    const now = new Date();
+    let expiredCount = 0;
+    
+    Object.entries(invoiceData.temporary).forEach(([id, invoice]) => {
+        const expiresDate = new Date(invoice.expiresDate);
+        if (expiresDate < now) {
+            // Auto-archive expired invoices
+            invoice.status = 'lost';
+            invoice.lostDate = new Date().toISOString();
+            invoice.expiredReason = 'Auto-archived after 21 days';
+            
+            invoiceData.lost[id] = invoice;
+            delete invoiceData.temporary[id];
+            
+            // Update Firebase
+            if (db && userPIN) {
+                const hashedPIN = hashPIN(userPIN);
+                db.ref(`invoices/${hashedPIN}/temporary/${id}`).remove();
+                saveInvoiceToFirebase(invoice);
+            }
+            
+            expiredCount++;
+        }
+    });
+    
+    if (expiredCount > 0) {
+        invRenderList();
+        updateInvoiceStats();
+        showNotification(`${expiredCount} expired invoice(s) auto-archived.`, 'info');
+    }
+}
+
+// Show notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 4000);
+}
+
+// Hook into existing generate functions to auto-save invoices
+const originalGenerateLabor = generateLabor;
+generateLabor = function() {
+    autoSaveInvoice('labor');
+    originalGenerateLabor();
+};
+
+const originalGenerateMaterials = generateMaterials;
+generateMaterials = function() {
+    autoSaveInvoice('materials');
+    originalGenerateMaterials();
+};
+
+const originalGenerateChangeOrder = generateChangeOrder;
+generateChangeOrder = function() {
+    autoSaveInvoice('change_order');
+    originalGenerateChangeOrder();
+};
+
+// Initialize invoice system on page load
+if (typeof attemptLogin !== 'undefined') {
+    const originalAttemptLogin = attemptLogin;
+    attemptLogin = function() {
+        originalAttemptLogin();
+        setTimeout(initInvoiceSystem, 1000);
+    };
+}
+
 </script>
 </body>
 </html>

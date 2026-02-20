@@ -3485,13 +3485,50 @@ async function scanProcessPDF(file) {
     scanRunOCR(_scanImageData);
 }
 
-// Gemini API key management
-function saveGeminiKey() {
+// Gemini API key management — validates key before saving
+async function saveGeminiKey() {
     var key = document.getElementById('geminiApiKey').value.trim();
+    var status = document.getElementById('geminiKeyStatus');
     if (!key) { showNotification('Please enter a Gemini API key', 'error'); return; }
-    try { localStorage.setItem('gemini_api_key', key); } catch(e) {}
-    document.getElementById('geminiKeyStatus').innerHTML = '<span style="color:#27ae60">Key saved securely to this device.</span>';
-    showNotification('Gemini API key saved', 'success');
+
+    status.innerHTML = '<span style="color:#f39c12">Testing key...</span>';
+
+    try {
+        // Tiny test request — just ask it to say "ok", costs almost nothing
+        var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: 'Reply with only the word OK' }] }], generationConfig: { maxOutputTokens: 5 } })
+        });
+
+        if (res.ok) {
+            try { localStorage.setItem('gemini_api_key', key); } catch(e) {}
+            status.innerHTML = '<span style="color:#27ae60">✅ Key verified and saved! Ready to scan.</span>';
+            showNotification('Gemini API key verified and saved!', 'success');
+            return;
+        }
+
+        var errBody = await res.text();
+        var errMsg = '';
+        try { errMsg = JSON.parse(errBody).error.message || ''; } catch(e) { errMsg = errBody.substring(0, 200); }
+
+        if (res.status === 429 && /limit:\s*0/.test(errMsg)) {
+            status.innerHTML = '<span style="color:#e74c3c">❌ This key has ZERO quota. You need to:<br>'
+                + '1. Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#3498db">aistudio.google.com/app/apikey</a><br>'
+                + '2. Click "Create API Key" → "Create in NEW project"<br>'
+                + '3. Or enable billing on your Google Cloud project (free tier still applies)</span>';
+            showNotification('Key has zero quota — see instructions below the key field', 'error');
+        } else if (res.status === 400 || res.status === 403) {
+            status.innerHTML = '<span style="color:#e74c3c">❌ Invalid key. Double-check you copied the full key from aistudio.google.com</span>';
+            showNotification('Invalid API key', 'error');
+        } else {
+            status.innerHTML = '<span style="color:#e74c3c">❌ Error ' + res.status + ': ' + errMsg.substring(0, 100) + '</span>';
+            showNotification('Key test failed: ' + errMsg.substring(0, 80), 'error');
+        }
+    } catch(err) {
+        status.innerHTML = '<span style="color:#e74c3c">❌ Network error testing key: ' + err.message + '</span>';
+        showNotification('Could not test key: ' + err.message, 'error');
+    }
 }
 function loadGeminiKey() {
     try {
@@ -3558,13 +3595,9 @@ async function scanRunOCR(imageData) {
     }
 }
 
-// Gemini Vision API — tries multiple models, shows real errors
+// Gemini Vision API — single model, no wasted calls
 var GEMINI_MODELS = [
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-    'gemini-1.5-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-pro-vision'
+    'gemini-2.0-flash'
 ];
 
 async function scanWithGemini(imageData, apiKey, progText, progFill, prog) {

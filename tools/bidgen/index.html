@@ -3495,7 +3495,7 @@ async function saveGeminiKey() {
 
     try {
         // Tiny test request — just ask it to say "ok", costs almost nothing
-        var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+        var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=' + key, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ contents: [{ parts: [{ text: 'Reply with only the word OK' }] }], generationConfig: { maxOutputTokens: 5 } })
@@ -3602,7 +3602,7 @@ async function scanRunOCR(imageData) {
 
 // Gemini Vision API — single model, no wasted calls
 var GEMINI_MODELS = [
-    'gemini-2.0-flash'
+    'gemini-1.5-pro'
 ];
 
 async function scanWithGemini(imageData, apiKey, progText, progFill, prog) {

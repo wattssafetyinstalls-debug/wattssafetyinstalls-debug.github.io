@@ -21,7 +21,7 @@
         .form-group.full { grid-column: 1 / -1; }
         .form-group label { font-size: 11px; text-transform: uppercase; color: #7f8c8d; letter-spacing: 0.5px; margin-bottom: 4px; }
         .form-group input, .form-group textarea, .form-group select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 12px; color: #eee; font-size: 14px; font-family: inherit; transition: border-color 0.2s; min-width: 0; }
-        .card { overflow: hidden; }
+        .card { overflow: visible; }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3498db; }
         .form-group input::placeholder, .form-group textarea::placeholder { color: #4a5568; }
         .form-group select option { background: #0f1a33; color: #eee; }
@@ -59,15 +59,15 @@
         .trade-badge.plumbing { background: #2980b9; color: white; }
         .trade-badge.electrical { background: #f39c12; color: #1a1a1a; }
         .trade-badge.custom { background: #7f8c8d; color: white; }
-        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 120px 120px; gap: 6px; margin-bottom: 6px; align-items: center; }
+        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 100px 100px; gap: 6px; margin-bottom: 6px; align-items: center; }
         #laborItemsContainer .li-row input { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
         #laborItemsContainer .li-row input:focus { outline: none; border-color: #3498db; }
-        #matItemsContainer .mi-row, #distMatContainer .di-row { display: grid; grid-template-columns: 1fr 90px 120px; gap: 6px; margin-bottom: 6px; align-items: center; }
+        #matItemsContainer .mi-row, #distMatContainer .di-row { display: grid; grid-template-columns: 1fr 80px 100px; gap: 6px; margin-bottom: 6px; align-items: center; }
         #matItemsContainer .mi-row input, #distMatContainer .di-row input { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
         #matItemsContainer .mi-row input:focus, #distMatContainer .di-row input:focus { outline: none; border-color: #3498db; }
         .item-header { display: grid; gap: 6px; margin-bottom: 6px; font-size: 10px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 2px; }
-        .item-header.labor { grid-template-columns: 1fr 120px 120px; }
-        .item-header.mat { grid-template-columns: 1fr 90px 120px; }
+        .item-header.labor { grid-template-columns: 1fr 100px 100px; }
+        .item-header.mat { grid-template-columns: 1fr 80px 100px; }
         .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 6px; width: 100%; }
         .add-row-btn:hover { border-color: #3498db; color: #3498db; }
         .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
@@ -93,13 +93,19 @@
         .predict-btn { background: linear-gradient(135deg, #8e44ad, #3498db); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; letter-spacing: 0.3px; }
         .predict-btn:hover { filter: brightness(1.15); }
         /* Invoice Widget Styles */
-        .invoice-widget { position: fixed; top: 20px; right: 20px; width: 320px; background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; max-height: calc(100vh - 40px); display: flex; flex-direction: column; }
+        .invoice-widget { position: fixed; top: 20px; right: 20px; width: 320px; background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; max-height: calc(100vh - 40px); display: flex; flex-direction: column; transition: all 0.2s; }
+        .invoice-widget.widget-collapsed { width: auto; max-height: none; }
+        .invoice-widget.widget-collapsed .invoice-widget-stats,
+        .invoice-widget.widget-collapsed .invoice-widget-body,
+        .invoice-widget.widget-collapsed .invoice-widget-actions { display: none !important; }
+        .invoice-widget.widget-collapsed .invoice-widget-header { border-bottom: none; }
         .invoice-widget-header { padding: 12px 16px; border-bottom: 1px solid #2a3a5c; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .invoice-widget-header:hover { background: #1a2744; }
         .invoice-widget-title { font-size: 14px; font-weight: 600; color: #3498db; display: flex; align-items: center; gap: 8px; }
         .invoice-widget-toggle { background: none; border: none; color: #7f8c8d; cursor: pointer; font-size: 18px; padding: 0; }
         .invoice-widget-toggle:hover { color: #3498db; }
         .invoice-widget-stats { padding: 10px 16px; background: #0f1a33; border-bottom: 1px solid #2a3a5c; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; }
+        @media (max-width: 768px) { .invoice-widget { width: auto; right: 10px; top: 10px; max-width: 280px; } .invoice-widget.widget-collapsed { width: auto; } }
         .invoice-widget-stat { text-align: center; }
         .invoice-widget-stat-value { font-size: 16px; font-weight: 700; color: #3498db; }
         .invoice-widget-stat-label { color: #7f8c8d; margin-top: 2px; }
@@ -3964,14 +3970,14 @@ function initInvoiceSystem() {
 
 // Toggle widget collapse/expand
 function toggleInvoiceWidget() {
-    const body = document.getElementById('widgetBody');
+    const widget = document.getElementById('invoiceWidget');
     const toggle = document.getElementById('widgetToggle');
     
-    if (body.classList.contains('collapsed')) {
-        body.classList.remove('collapsed');
+    if (widget.classList.contains('widget-collapsed')) {
+        widget.classList.remove('widget-collapsed');
         toggle.textContent = '−';
     } else {
-        body.classList.add('collapsed');
+        widget.classList.add('widget-collapsed');
         toggle.textContent = '+';
     }
 }

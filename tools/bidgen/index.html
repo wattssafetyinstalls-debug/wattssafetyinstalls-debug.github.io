@@ -420,7 +420,7 @@
                 </div>
                 <!-- Filters -->
                 <div class="invoice-filters">
-                    <input type="text" id="invSearchClient" placeholder="Search by client or location..." oninput="invRenderList()" style="flex:1">
+                    <input type="text" id="invSearchClient" placeholder="Search by client, invoice ID, or location..." oninput="invRenderList()" style="flex:1">
                     <select id="invSortBy" onchange="invRenderList()">
                         <option value="expires-asc">Expiring Soonest</option>
                         <option value="date-desc">Date: Newest</option>
@@ -832,6 +832,7 @@ function showApp() {
         initClientDB();
         initPushNotifications();
         tplLoadFromFirebase();
+        loadInvoiceCounter();
     }, 500);
 }
 
@@ -1971,7 +1972,7 @@ function docJS() {
     js += 'function initSig(cid,did){var c=document.getElementById(cid);if(!c)return;var x=c.getContext("2d");var d=false,h=false;function rs(){var r=c.getBoundingClientRect();c.width=r.width*2;c.height=r.height*2;x.scale(2,2);x.strokeStyle="#1a1a1a";x.lineWidth=2;x.lineCap="round";x.lineJoin="round";}rs();function gp(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}c.addEventListener("mousedown",function(e){d=true;x.beginPath();var p=gp(e);x.moveTo(p.x,p.y);});c.addEventListener("mousemove",function(e){if(!d)return;var p=gp(e);x.lineTo(p.x,p.y);x.stroke();});c.addEventListener("mouseup",function(){d=false;if(!h){h=true;sd(did);}});c.addEventListener("mouseleave",function(){d=false;});c.addEventListener("touchstart",function(e){e.preventDefault();d=true;x.beginPath();var p=gp(e);x.moveTo(p.x,p.y);},{passive:false});c.addEventListener("touchmove",function(e){e.preventDefault();if(!d)return;var p=gp(e);x.lineTo(p.x,p.y);x.stroke();},{passive:false});c.addEventListener("touchend",function(e){e.preventDefault();d=false;if(!h){h=true;sd(did);}},{passive:false});window["clear_"+cid]=function(){x.clearRect(0,0,c.width,c.height);h=false;document.getElementById(did).textContent=""};}';
     js += 'function sd(did){var e=document.getElementById(did);if(e){var n=new Date();e.textContent="Signed: "+n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})+" at "+n.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});}}';
     js += 'function exportPDF(){var el=document.body;var tb=document.querySelector(".toolbar");if(tb)tb.style.display="none";document.querySelectorAll(".sig-clear").forEach(function(b){b.style.display="none"});var client=document.querySelector(".info-box .value")?document.querySelector(".info-box .value").textContent.trim():"Quote";var title=document.title||"Estimate";var fn=title.replace(/[^a-zA-Z0-9]/g,"_")+"_"+new Date().toISOString().slice(0,10)+".pdf";var opt={margin:0.3,filename:fn,image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:"in",format:"letter",orientation:"portrait"}};if(typeof html2pdf!=="undefined"){html2pdf().set(opt).from(el).save().then(function(){if(tb)tb.style.display="flex";document.querySelectorAll(".sig-clear").forEach(function(b){b.style.display=""})});}else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";s.onload=function(){html2pdf().set(opt).from(el).save().then(function(){if(tb)tb.style.display="flex";document.querySelectorAll(".sig-clear").forEach(function(b){b.style.display=""})});};document.head.appendChild(s);}}';
-    js += 'function emailQuote(){var client=document.querySelector(".info-box .value")?document.querySelector(".info-box .value").textContent.trim():"";var total="";document.querySelectorAll("[data-total],[data-grand-total]").forEach(function(e){total=e.textContent;});var title=document.title||"Estimate";var subj=encodeURIComponent(title+" - "+(client||"Quote"));var body=encodeURIComponent("Hi "+client+",\\n\\nPlease find attached the "+title+".\\n\\nTotal: "+total+"\\n\\nPlease review and let us know if you have any questions.\\n\\nBest regards");window.location.href="mailto:?subject="+subj+"&body="+body;}';
+    js += 'function emailQuote(){var client=document.querySelector(".info-box .value")?document.querySelector(".info-box .value").textContent.trim():"";var total="";document.querySelectorAll("[data-total],[data-grand-total]").forEach(function(e){total=e.textContent;});var title=document.title||"Estimate";var nl=String.fromCharCode(10);var subj=encodeURIComponent(title+" - "+(client||"Quote"));var body=encodeURIComponent("Hi "+client+","+nl+nl+"Please find attached the "+title+"."+nl+nl+"Total: "+total+nl+nl+"Please review and let us know if you have any questions."+nl+nl+"Best regards");var url="mailto:?subject="+subj+"&body="+body;try{window.open(url,"_self");}catch(e){window.location.href=url;}}';
     js += 'function copySummary(){var lines=[];var title=document.title||"Estimate";lines.push(title);lines.push("=".repeat(title.length));var boxes=document.querySelectorAll(".info-box");boxes.forEach(function(b){var lbl=b.querySelector("label");var val=b.querySelector(".value");if(lbl&&val)lines.push(lbl.textContent.trim()+": "+val.textContent.trim());});lines.push("");var rows=document.querySelectorAll("tbody tr");rows.forEach(function(r){var cells=r.querySelectorAll("td");if(cells.length>=3){var desc=cells[1]?cells[1].textContent.trim():"";var amt=cells[cells.length-1]?cells[cells.length-1].textContent.trim():"";if(desc&&amt)lines.push(desc+" - "+amt);}});var total="";document.querySelectorAll("[data-total],[data-grand-total]").forEach(function(e){total=e.textContent;});if(total)lines.push("\\nTOTAL: "+total);var txt=lines.join("\\n");navigator.clipboard.writeText(txt).then(function(){alert("Summary copied to clipboard!");}).catch(function(){prompt("Copy this summary:",txt);});}';
     js += 'function generateQR(){var qrEl=document.getElementById("docQR");if(!qrEl)return;var title=document.title||"Quote";var client=document.querySelector(".info-box .value")?document.querySelector(".info-box .value").textContent.trim():"";var date=new Date().toISOString().slice(0,10);var ref=title.replace(/[^a-zA-Z0-9]/g,"-")+"-"+date;var data="REF:"+ref+" CLIENT:"+client+" DATE:"+date;var size=120;var canvas=document.createElement("canvas");canvas.width=size;canvas.height=size;var ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,size,size);ctx.fillStyle="#1a1a1a";var s=4;for(var y=0;y<size/s;y++){for(var x=0;x<size/s;x++){if(simpleHash(data+x+","+y)%3===0){ctx.fillRect(x*s,y*s,s,s);}}}drawFinderPattern(ctx,0,0,s);drawFinderPattern(ctx,size-7*s,0,s);drawFinderPattern(ctx,0,size-7*s,s);qrEl.src=canvas.toDataURL();qrEl.title="Quote Ref: "+ref;}';
     js += 'function simpleHash(str){var h=0;for(var i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return Math.abs(h);}';
@@ -1981,7 +1982,25 @@ function docJS() {
 }
 function toolbar(title) { return '<div class="toolbar no-print"><span class="tbt">'+title+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="exportPDF()">📄 Download PDF</button><button class="tbe" onclick="emailQuote()">📧 Email</button><button class="tbe" onclick="copySummary()">📋 Copy Summary</button><button class="tbe" onclick="window.print()">🖨️ Print</button></div>'; }
 function sigHTML() { return '<div class="sig-section"><h3>Signatures</h3><div class="sig-grid"><div class="sig-pad"><label>Contractor Signature</label><canvas id="sigContractor" class="sig-canvas"></canvas><div class="sig-date" id="sigDateContractor"></div><button class="sig-clear no-print" onclick="clear_sigContractor()">Clear</button></div><div class="sig-pad"><label>Client / Property Manager Signature</label><canvas id="sigClient" class="sig-canvas"></canvas><div class="sig-date" id="sigDateClient"></div><button class="sig-clear no-print" onclick="clear_sigClient()">Clear</button></div></div></div>'; }
-function openDoc(html) { var w = window.open('','_blank'); w.document.write(html); w.document.close(); }
+function openDoc(html, invoiceId) {
+    var w = window.open('','_blank');
+    w.document.write(html);
+    w.document.close();
+    // Save HTML for reopening from library
+    if (invoiceId) {
+        try { localStorage.setItem('doc_html_' + invoiceId, html); } catch(e) { console.warn('Could not cache doc HTML:', e); }
+    }
+}
+function reopenDoc(invoiceId) {
+    var html = localStorage.getItem('doc_html_' + invoiceId);
+    if (html) {
+        var w = window.open('','_blank');
+        w.document.write(html);
+        w.document.close();
+    } else {
+        alert('Document HTML not cached on this device. Generate a new document from the bid form.');
+    }
+}
 
 // ========== LABOR ESTIMATE ==========
 function generateLabor() {
@@ -2013,7 +2032,7 @@ function generateLabor() {
     h += sigHTML();
     h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>'+brand.name+' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
-    openDoc(h);
+    openDoc(h, _lastInvoiceId);
     saveClientToDB(gv('clientName'), { complexName: gv('complexName'), jobCity: gv('jobCity'), unitNum: gv('unitNum') });
 }
 
@@ -2055,7 +2074,7 @@ function generateMaterials() {
     h += sigHTML();
     h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>'+brand.name+' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
-    openDoc(h);
+    openDoc(h, _lastInvoiceId);
     saveClientToDB(gv('clientName'), { complexName: gv('complexName'), jobCity: gv('jobCity'), unitNum: gv('unitNum') });
 }
 
@@ -2097,7 +2116,7 @@ function generateChangeOrder() {
     h += sigHTML();
     h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>Change Order &mdash; '+brand.name+' &nbsp;|&nbsp; Licensed GC &mdash; Nebraska &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
     h += docJS() + '</body></html>';
-    openDoc(h);
+    openDoc(h, _lastInvoiceId);
     saveClientToDB(gv('clientName'), { complexName: gv('complexName'), jobCity: gv('jobCity'), unitNum: gv('unitNum') });
 }
 
@@ -3302,9 +3321,33 @@ function renderWidgetBanner() {
     }).join('');
 }
 
+// Generate human-readable invoice ID: WSI-2026-0001
+let _invoiceCounter = 0;
+function generateInvoiceId() {
+    _invoiceCounter++;
+    var year = new Date().getFullYear();
+    var num = String(_invoiceCounter).padStart(4, '0');
+    return 'WSI-' + year + '-' + num;
+}
+
+function loadInvoiceCounter() {
+    if (!db || !userPIN) return;
+    var hashedPIN = hashPIN(userPIN);
+    db.ref('invoiceCounter/' + hashedPIN).once('value').then(function(snap) {
+        _invoiceCounter = snap.val() || 0;
+    });
+}
+
+function saveInvoiceCounter() {
+    if (!db || !userPIN) return;
+    var hashedPIN = hashPIN(userPIN);
+    db.ref('invoiceCounter/' + hashedPIN).set(_invoiceCounter);
+}
+
 // Auto-save invoice when generating documents
 function autoSaveInvoice(type) {
-    const invoiceId = 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const invoiceId = generateInvoiceId();
+    saveInvoiceCounter();
     const clientName = gv('clientName') || 'Unknown Client';
     const estimateDate = gv('estimateDate') || new Date().toISOString().split('T')[0];
     
@@ -3337,6 +3380,11 @@ function autoSaveInvoice(type) {
         amount: grandTotal,
         laborTotal: laborTotal,
         materialsTotal: matTotal,
+        laborItems: litems,
+        materialItems: mitems,
+        scope: getScope(),
+        notes: getNotes(),
+        disclaimer: gv('disclaimer'),
         jobDetails: {
             complexName: gv('complexName'),
             unitNum: gv('unitNum'),
@@ -3365,7 +3413,7 @@ function autoSaveInvoice(type) {
     renderWidgetBanner();
     
     // Show notification
-    showNotification('📋 Invoice saved as Pending (21-day expiration)', 'success');
+    showNotification('Invoice ' + invoiceId + ' saved to library', 'success');
     
     return invoiceId;
 }
@@ -3461,10 +3509,13 @@ function invRenderList() {
         invoices = Object.values(invoiceData[currentInvoiceTab] || {});
     }
     
-    // Filter by search term
+    // Filter by search term (matches client name, invoice ID, location)
     if (searchTerm) {
         invoices = invoices.filter(inv => 
-            inv.clientName.toLowerCase().includes(searchTerm)
+            inv.clientName.toLowerCase().includes(searchTerm) ||
+            (inv.id && inv.id.toLowerCase().includes(searchTerm)) ||
+            (inv.jobDetails && inv.jobDetails.complexName && inv.jobDetails.complexName.toLowerCase().includes(searchTerm)) ||
+            (inv.jobDetails && inv.jobDetails.jobCity && inv.jobDetails.jobCity.toLowerCase().includes(searchTerm))
         );
     }
     
@@ -3556,7 +3607,7 @@ function renderInvoiceItem(invoice) {
     return `
         <div class="${itemClass}" style="cursor:pointer" onclick="invViewDetails('${invoice.id}')">
             <div class="invoice-header">
-                <div class="invoice-client">${invoice.clientName}</div>
+                <div class="invoice-client">${invoice.clientName} <span style="font-size:10px;color:#3498db;font-family:monospace;margin-left:6px">${invoice.id}</span></div>
                 ${statusBadge}
             </div>
             <div style="font-size:12px;color:#95a5a6;margin-bottom:6px;line-height:1.4">${summary}</div>
@@ -3571,6 +3622,7 @@ function renderInvoiceItem(invoice) {
                     <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}')">✅ Award</button>
                     <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}')">❌ Lost</button>
                 ` : ''}
+                <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}')" style="background:#3498db;color:white">📄 Open</button>
                 <button class="invoice-btn delete" onclick="invDeleteInvoice('${invoice.id}', '${invoice.status}')">🗑️</button>
             </div>
         </div>
@@ -3702,6 +3754,7 @@ function invViewDetails(invoiceId) {
         <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:10px;padding:20px">
             <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
                 <div>
+                    <div style="font-size:11px;color:#3498db;font-weight:700;font-family:monospace;letter-spacing:1px;margin-bottom:4px">${invoice.id}</div>
                     <div style="font-size:20px;font-weight:700;color:#ecf0f1">${invoice.clientName}</div>
                     <div style="font-size:12px;color:#7f8c8d;margin-top:4px">${statusLine}</div>
                 </div>
@@ -3766,6 +3819,7 @@ function invViewDetails(invoiceId) {
             ` : ''}
             
             <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}')" style="background:#3498db;color:white">📄 Reopen Document</button>
                 ${invoice.status === 'temporary' ? `
                     <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}');invCloseDetail()">✅ Mark as Awarded</button>
                     <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}');invCloseDetail()">❌ Mark as Lost</button>
@@ -3898,21 +3952,22 @@ function showNotification(message, type) {
 }
 
 // Hook into existing generate functions to auto-save invoices
+let _lastInvoiceId = null;
 const originalGenerateLabor = generateLabor;
 generateLabor = function() {
-    autoSaveInvoice('labor');
+    _lastInvoiceId = autoSaveInvoice('labor');
     originalGenerateLabor();
 };
 
 const originalGenerateMaterials = generateMaterials;
 generateMaterials = function() {
-    autoSaveInvoice('materials');
+    _lastInvoiceId = autoSaveInvoice('materials');
     originalGenerateMaterials();
 };
 
 const originalGenerateChangeOrder = generateChangeOrder;
 generateChangeOrder = function() {
-    autoSaveInvoice('change_order');
+    _lastInvoiceId = autoSaveInvoice('change_order');
     originalGenerateChangeOrder();
 };
 

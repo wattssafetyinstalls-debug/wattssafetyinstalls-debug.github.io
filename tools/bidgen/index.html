@@ -3586,11 +3586,16 @@ async function scanRunOCR(imageData) {
     var geminiKey = '';
     try { geminiKey = localStorage.getItem('gemini_api_key') || ''; } catch(e) {}
 
+    console.log('Gemini key check:', geminiKey ? 'FOUND (length: ' + geminiKey.length + ')' : 'NOT FOUND');
+
     if (geminiKey) {
+        progText.textContent = 'Using Gemini AI (paid tier)...';
+        progFill.style.width = '25%';
         await scanWithGemini(processedImage, geminiKey, progText, progFill, prog);
     } else {
-        progText.textContent = 'No Gemini key — using basic OCR (less accurate)...';
+        progText.textContent = 'No Gemini key saved — using offline OCR (less accurate)';
         progFill.style.width = '25%';
+        showNotification('No Gemini key found. Open scanner settings and save your key.', 'warning');
         await scanWithTesseract(processedImage, progText, progFill, prog);
     }
 }

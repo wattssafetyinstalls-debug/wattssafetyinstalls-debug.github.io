@@ -318,24 +318,43 @@
         </div>
     </div>
 
-    <!-- INVOICE MODAL (Full List) -->
-    <div class="invoice-modal" id="invoiceModal">
+    <!-- QUOTE LIBRARY MODAL -->
+    <div class="invoice-modal" id="invoiceModal" onclick="if(event.target===this)closeInvoiceModal()">
         <div class="invoice-modal-content">
             <div class="invoice-modal-header">
-                <div class="invoice-modal-title">📋 Invoice Manager</div>
+                <div class="invoice-modal-title">📚 Quote Library</div>
                 <button class="invoice-modal-close" onclick="closeInvoiceModal()">×</button>
             </div>
             <div class="invoice-modal-body">
+                <!-- Stats Bar -->
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+                    <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:10px;text-align:center">
+                        <div style="font-size:20px;font-weight:700;color:#3498db" id="statPendingLib">0</div>
+                        <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase">Pending</div>
+                    </div>
+                    <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:10px;text-align:center">
+                        <div style="font-size:20px;font-weight:700;color:#27ae60" id="statAwarded">0</div>
+                        <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase">Awarded</div>
+                    </div>
+                    <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:10px;text-align:center">
+                        <div style="font-size:20px;font-weight:700;color:#f39c12" id="statTotal">$0</div>
+                        <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase">Total Value</div>
+                    </div>
+                    <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:10px;text-align:center">
+                        <div style="font-size:20px;font-weight:700;color:#e74c3c" id="statExpiringLib">0</div>
+                        <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase">Expiring</div>
+                    </div>
+                </div>
                 <!-- Tabs -->
                 <div class="invoice-tabs">
-                    <button class="invoice-tab active" onclick="invSwitchTab('all')">All</button>
+                    <button class="invoice-tab active" onclick="invSwitchTab('all')">All Quotes</button>
                     <button class="invoice-tab" onclick="invSwitchTab('temporary')">Pending</button>
                     <button class="invoice-tab" onclick="invSwitchTab('permanent')">Awarded</button>
                     <button class="invoice-tab" onclick="invSwitchTab('lost')">Lost</button>
                 </div>
                 <!-- Filters -->
                 <div class="invoice-filters">
-                    <input type="text" id="invSearchClient" placeholder="Search by client..." oninput="invRenderList()">
+                    <input type="text" id="invSearchClient" placeholder="Search by client or location..." oninput="invRenderList()" style="flex:1">
                     <select id="invSortBy" onchange="invRenderList()">
                         <option value="expires-asc">Expiring Soonest</option>
                         <option value="date-desc">Date: Newest</option>
@@ -349,10 +368,12 @@
                         <option value="">All Clients</option>
                     </select>
                 </div>
-                <!-- Invoice List -->
+                <!-- Quote Index List -->
                 <div class="invoice-list" id="invoiceList">
-                    <div class="invoice-empty">No invoices yet.</div>
+                    <div class="invoice-empty">No quotes yet. Generate a bid to get started.</div>
                 </div>
+                <!-- Detail Panel (shown when clicking a quote) -->
+                <div id="quoteDetailPanel" style="display:none"></div>
             </div>
         </div>
     </div>
@@ -654,6 +675,7 @@ function showApp() {
     document.getElementById('mainApp').style.display = 'block';
     document.getElementById('syncDevice').textContent = 'PIN: ' + userPIN.charAt(0) + '***';
     initApp();
+    setTimeout(initInvoiceSystem, 500);
 }
 
 // Auto-login if session still active
@@ -965,11 +987,14 @@ function updateCatalogBar() {
     const lc = Object.keys(_catalog.labor).length;
     const mc = Object.keys(_catalog.materials).length;
     const jc = Object.keys(_cloudJobs).length;
-    document.getElementById('cbLaborCount').textContent = lc;
-    document.getElementById('cbMatCount').textContent = mc;
-    document.getElementById('cbJobCount').textContent = jc;
-    // ALWAYS show catalog bar now - it has the Enhanced ATP and Google buttons
-    document.getElementById('catalogBar').style.display = 'flex';
+    const elL = document.getElementById('cbLaborCount');
+    const elM = document.getElementById('cbMatCount');
+    const elJ = document.getElementById('cbJobCount');
+    if (elL) elL.textContent = lc;
+    if (elM) elM.textContent = mc;
+    if (elJ) elJ.textContent = jc;
+    const bar = document.getElementById('catalogBar');
+    if (bar) bar.style.display = 'flex';
 }
 
 function saveInflationRate() {
@@ -2138,9 +2163,13 @@ function invSwitchTab(tab) {
 // Render invoice list
 function invRenderList() {
     const listEl = document.getElementById('invoiceList');
-    const searchTerm = document.getElementById('invSearchClient').value.toLowerCase();
-    const sortBy = document.getElementById('invSortBy').value;
-    const filterClient = document.getElementById('invFilterClient').value;
+    if (!listEl) return;
+    const searchEl = document.getElementById('invSearchClient');
+    const sortEl = document.getElementById('invSortBy');
+    const filterEl = document.getElementById('invFilterClient');
+    const searchTerm = searchEl ? searchEl.value.toLowerCase() : '';
+    const sortBy = sortEl ? sortEl.value : 'expires-asc';
+    const filterClient = filterEl ? filterEl.value : '';
     
     // Collect all invoices based on current tab
     let invoices = [];
@@ -2391,15 +2420,24 @@ function updateInvoiceStats() {
         return daysLeft <= 5 && daysLeft > 0;
     }).length;
     
-    document.getElementById('statPending').textContent = pending;
-    document.getElementById('statAwarded').textContent = awarded;
-    document.getElementById('statTotal').textContent = '$' + totalValue.toFixed(0);
-    document.getElementById('statExpiring').textContent = expiringSoon;
+    const elP = document.getElementById('statPending');
+    const elA = document.getElementById('statAwarded');
+    const elT = document.getElementById('statTotal');
+    const elE = document.getElementById('statExpiring');
+    const elPL = document.getElementById('statPendingLib');
+    const elEL = document.getElementById('statExpiringLib');
+    if (elP) elP.textContent = pending;
+    if (elA) elA.textContent = awarded;
+    if (elT) elT.textContent = '$' + totalValue.toFixed(0);
+    if (elE) elE.textContent = expiringSoon;
+    if (elPL) elPL.textContent = pending;
+    if (elEL) elEL.textContent = expiringSoon;
 }
 
 // Update client filter dropdown
 function updateClientFilter() {
     const filterEl = document.getElementById('invFilterClient');
+    if (!filterEl) return;
     const currentValue = filterEl.value;
     
     // Get unique client names
@@ -2499,14 +2537,6 @@ generateChangeOrder = function() {
     originalGenerateChangeOrder();
 };
 
-// Initialize invoice system on page load
-if (typeof attemptLogin !== 'undefined') {
-    const originalAttemptLogin = attemptLogin;
-    attemptLogin = function() {
-        originalAttemptLogin();
-        setTimeout(initInvoiceSystem, 1000);
-    };
-}
 
 </script>
 </body>

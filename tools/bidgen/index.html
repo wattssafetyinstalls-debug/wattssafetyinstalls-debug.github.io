@@ -3558,15 +3558,31 @@ async function scanRunOCR(imageData) {
     }
 }
 
-// Gemini Vision API — sends image + structured prompt, gets back JSON
+// Gemini Vision API — tries multiple models, shows real errors
+var GEMINI_MODELS = [
+    'gemini-2.0-flash',
+    'gemini-2.0-flash-lite',
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-pro-vision'
+];
+
 async function scanWithGemini(imageData, apiKey, progText, progFill, prog) {
-    progText.textContent = 'Sending to Google Gemini AI...';
-    progFill.style.width = '40%';
+    progText.textContent = 'Preparing image for Gemini AI...';
+    progFill.style.width = '35%';
 
     // Strip data URL prefix to get raw base64
     var base64 = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
     var mimeType = imageData.match(/^data:(image\/[a-z]+);/);
     mimeType = mimeType ? mimeType[1] : 'image/jpeg';
+
+    // Check image size — if base64 is over 4MB, compress further
+    if (base64.length > 4 * 1024 * 1024) {
+        progText.textContent = 'Compressing large image...';
+        imageData = await compressImageFurther(imageData);
+        base64 = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
+        mimeType = 'image/jpeg';
+    }
 
     var prompt = 'You are an expert invoice and document analyzer. Analyze this image of a document (invoice, receipt, materials list, estimate, or purchase order) and extract ALL information.\n\n'
         + 'Return ONLY valid JSON in this exact format (no markdown, no code fences, just raw JSON):\n'
@@ -3591,92 +3607,152 @@ async function scanWithGemini(imageData, apiKey, progText, progFill, prog) {
         + '- For rawText, transcribe ALL visible text on the document\n'
         + '- Be precise with numbers — do not round or estimate';
 
-    try {
-        var response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [
-                        { text: prompt },
-                        { inline_data: { mime_type: mimeType, data: base64 } }
-                    ]
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 4096
-                }
-            })
-        });
-
-        progFill.style.width = '80%';
-        progText.textContent = 'Processing Gemini response...';
-
-        if (!response.ok) {
-            var errBody = await response.text();
-            console.error('Gemini API error:', response.status, errBody);
-            if (response.status === 400 || response.status === 403) {
-                progText.textContent = 'Gemini key invalid or quota exceeded. Falling back to basic OCR...';
-                await scanWithTesseract(_scanImageData, progText, progFill, prog);
-                return;
-            }
-            throw new Error('Gemini API returned ' + response.status);
+    var requestBody = JSON.stringify({
+        contents: [{
+            parts: [
+                { text: prompt },
+                { inline_data: { mime_type: mimeType, data: base64 } }
+            ]
+        }],
+        generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 4096
         }
+    });
 
-        var data = await response.json();
-        var textContent = '';
-        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            textContent = data.candidates[0].content.parts[0].text || '';
-        }
+    // Try each model until one works
+    var lastError = '';
+    for (var mi = 0; mi < GEMINI_MODELS.length; mi++) {
+        var model = GEMINI_MODELS[mi];
+        progText.textContent = 'Trying Gemini model: ' + model + '...';
+        progFill.style.width = (40 + mi * 8) + '%';
 
-        // Clean up response — strip markdown code fences if present
-        textContent = textContent.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-
-        var parsed;
         try {
-            parsed = JSON.parse(textContent);
-        } catch(e) {
-            // Try to extract JSON from the response
-            var jsonMatch = textContent.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                parsed = JSON.parse(jsonMatch[0]);
-            } else {
-                throw new Error('Could not parse Gemini response as JSON');
+            var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + apiKey;
+            var response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: requestBody
+            });
+
+            if (!response.ok) {
+                var errBody = await response.text();
+                var errMsg = '';
+                try { errMsg = JSON.parse(errBody).error.message || ''; } catch(e) { errMsg = errBody.substring(0, 200); }
+                console.warn('Gemini ' + model + ' failed (' + response.status + '):', errMsg);
+                lastError = model + ': ' + response.status + ' - ' + errMsg;
+
+                // 404 = model not found, try next; 429 = rate limit, try next
+                if (response.status === 404 || response.status === 429) continue;
+                // 400 could be bad request format for this model, try next
+                if (response.status === 400) continue;
+                // 403 = key not authorized — show error and stop trying
+                if (response.status === 403) {
+                    progText.textContent = 'API key not authorized: ' + errMsg;
+                    showNotification('Gemini API key error: ' + errMsg, 'error');
+                    await scanWithTesseract(_scanImageData, progText, progFill, prog);
+                    return;
+                }
+                continue;
             }
+
+            // Success — parse the response
+            progFill.style.width = '80%';
+            progText.textContent = 'Processing Gemini response (' + model + ')...';
+
+            var data = await response.json();
+
+            // Check for blocked content or empty response
+            if (data.candidates && data.candidates[0] && data.candidates[0].finishReason === 'SAFETY') {
+                lastError = model + ': Content blocked by safety filter';
+                continue;
+            }
+
+            var textContent = '';
+            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+                textContent = data.candidates[0].content.parts[0].text || '';
+            }
+
+            if (!textContent) {
+                lastError = model + ': Empty response from API';
+                console.warn('Gemini ' + model + ' returned empty content:', JSON.stringify(data).substring(0, 500));
+                continue;
+            }
+
+            // Clean up response — strip markdown code fences if present
+            textContent = textContent.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+            var parsed;
+            try {
+                parsed = JSON.parse(textContent);
+            } catch(e) {
+                var jsonMatch = textContent.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    parsed = JSON.parse(jsonMatch[0]);
+                } else {
+                    lastError = model + ': Response was not valid JSON';
+                    console.warn('Gemini ' + model + ' non-JSON response:', textContent.substring(0, 300));
+                    continue;
+                }
+            }
+
+            progFill.style.width = '95%';
+            progText.textContent = 'Populating results...';
+
+            _scanData = {
+                vendor: parsed.vendor || '',
+                invoiceNum: parsed.invoiceNum || '',
+                date: parsed.date || '',
+                total: parsed.total || '',
+                items: (parsed.items || []).map(function(item) {
+                    return { desc: item.desc || '', qty: item.qty || '1', amount: item.amount || '' };
+                }),
+                rawText: parsed.rawText || textContent,
+                billTo: parsed.billTo || '',
+                subtotal: parsed.subtotal || '',
+                tax: parsed.tax || '',
+                notes: parsed.notes || '',
+                imageData: _scanImageData,
+                scanDate: new Date().toISOString(),
+                ocrEngine: 'gemini-' + model
+            };
+
+            scanPopulateUI(_scanData);
+            progFill.style.width = '100%';
+            progText.textContent = 'Done! Powered by Gemini AI (' + model + ')';
+            setTimeout(function() { prog.style.display = 'none'; }, 1200);
+            return; // Success — exit
+
+        } catch(err) {
+            console.warn('Gemini ' + model + ' exception:', err.message);
+            lastError = model + ': ' + err.message;
+            continue;
         }
-
-        progFill.style.width = '95%';
-        progText.textContent = 'Populating results...';
-
-        // Build scan data from Gemini's structured response
-        _scanData = {
-            vendor: parsed.vendor || '',
-            invoiceNum: parsed.invoiceNum || '',
-            date: parsed.date || '',
-            total: parsed.total || '',
-            items: (parsed.items || []).map(function(item) {
-                return { desc: item.desc || '', qty: item.qty || '1', amount: item.amount || '' };
-            }),
-            rawText: parsed.rawText || textContent,
-            billTo: parsed.billTo || '',
-            subtotal: parsed.subtotal || '',
-            tax: parsed.tax || '',
-            notes: parsed.notes || '',
-            imageData: _scanImageData,
-            scanDate: new Date().toISOString(),
-            ocrEngine: 'gemini'
-        };
-
-        scanPopulateUI(_scanData);
-        progFill.style.width = '100%';
-        progText.textContent = 'Done! Powered by Google Gemini AI';
-        setTimeout(function() { prog.style.display = 'none'; }, 1200);
-
-    } catch(err) {
-        console.error('Gemini scan error:', err);
-        progText.textContent = 'Gemini failed: ' + err.message + '. Trying basic OCR...';
-        await scanWithTesseract(_scanImageData, progText, progFill, prog);
     }
+
+    // All models failed — show the last error and fall back
+    console.error('All Gemini models failed. Last error:', lastError);
+    progText.textContent = 'All Gemini models failed: ' + lastError;
+    showNotification('Gemini failed: ' + lastError + ' — using offline OCR', 'error');
+    await scanWithTesseract(_scanImageData, progText, progFill, prog);
+}
+
+// Extra compression for very large phone photos
+function compressImageFurther(imageData) {
+    return new Promise(function(resolve) {
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var maxDim = 1600;
+            var scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.80));
+        };
+        img.src = imageData;
+    });
 }
 
 // Tesseract.js fallback — for offline or when Gemini is unavailable

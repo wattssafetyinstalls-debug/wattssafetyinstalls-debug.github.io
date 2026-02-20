@@ -3642,8 +3642,25 @@ async function scanWithGemini(imageData, apiKey, progText, progFill, prog) {
                 console.warn('Gemini ' + model + ' failed (' + response.status + '):', errMsg);
                 lastError = model + ': ' + response.status + ' - ' + errMsg;
 
-                // 404 = model not found, try next; 429 = rate limit, try next
-                if (response.status === 404 || response.status === 429) continue;
+                // 404 = model not found, try next
+                if (response.status === 404) continue;
+                // 429 = rate limit — check if quota is literally 0 (needs billing) vs temporary
+                if (response.status === 429) {
+                    if (/limit:\s*0/.test(errMsg)) {
+                        // Quota is zero — this key needs billing enabled or a new project
+                        progText.textContent = 'API key has zero quota. Create a new key in a new project at aistudio.google.com';
+                        showNotification('Gemini key has 0 quota — create a new key in a NEW project at aistudio.google.com/app/apikey', 'error');
+                        await scanWithTesseract(_scanImageData, progText, progFill, prog);
+                        return;
+                    }
+                    // Temporary rate limit — wait and retry same model
+                    var waitMatch = errMsg.match(/retry in ([\d.]+)s/i);
+                    var waitSec = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 1 : 3;
+                    progText.textContent = 'Rate limited on ' + model + ', retrying in ' + waitSec + 's...';
+                    await new Promise(function(r) { setTimeout(r, waitSec * 1000); });
+                    mi--; // retry same model
+                    continue;
+                }
                 // 400 could be bad request format for this model, try next
                 if (response.status === 400) continue;
                 // 403 = key not authorized — show error and stop trying

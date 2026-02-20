@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Generator with Import/Analysis</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        h1 { font-size: 28px; margin-bottom: 4px; color: #e8e8e8; }
+        .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 30px; }
+        .card { background: #16213e; border: 1px solid #2a3a5c; border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+        .card h2 { font-size: 16px; color: #3498db; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .card h2 .icon { width: 28px; height: 28px; background: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 11px; text-transform: uppercase; color: #7f8c8d; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .form-group input, .form-group textarea, .form-group select { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 10px 12px; color: #eee; font-size: 14px; font-family: inherit; transition: border-color 0.2s; min-width: 0; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3498db; }
+        .btn { padding: 14px 28px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #2ecc71; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-warning:hover { background: #e67e22; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-secondary { background: #2a3a5c; color: #bbb; border: 1px solid #3a4a6c; }
+        .btn-secondary:hover { background: #3a4a6c; color: white; }
+        .import-zone { border: 2px dashed #3a4a6c; border-radius: 10px; padding: 40px; text-align: center; margin-bottom: 20px; transition: all 0.3s; }
+        .import-zone:hover { border-color: #3498db; background: #0f1a33; }
+        .import-zone.dragover { border-color: #27ae60; background: #0a2818; }
+        .import-zone h3 { color: #3498db; margin-bottom: 10px; }
+        .import-zone p { color: #7f8c8d; margin-bottom: 20px; }
+        .analysis-results { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .analysis-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2a3a5c; }
+        .analysis-item:last-child { border-bottom: none; }
+        .analysis-label { color: #7f8c8d; font-size: 13px; }
+        .analysis-value { color: #eee; font-weight: 600; font-size: 14px; }
+        .analysis-value.high { color: #e74c3c; }
+        .analysis-value.low { color: #f39c12; }
+        .analysis-value.good { color: #27ae60; }
+        .suggestion-box { background: #1a2744; border-left: 4px solid #3498db; padding: 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+        .suggestion-box h4 { color: #3498db; margin-bottom: 8px; font-size: 14px; }
+        .suggestion-box p { color: #95a5a6; font-size: 13px; line-height: 1.5; }
+        .file-input-wrapper { position: relative; display: inline-block; }
+        .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+        .file-input-label { display: inline-block; padding: 12px 24px; background: #3498db; color: white; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .file-input-label:hover { background: #2980b9; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .comparison-table th, .comparison-table td { padding: 10px; text-align: left; border-bottom: 1px solid #2a3a5c; }
+        .comparison-table th { background: #0f1a33; color: #3498db; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+        .comparison-table td { font-size: 13px; }
+        .price-diff { font-weight: 600; }
+        .price-diff.increase { color: #e74c3c; }
+        .price-diff.decrease { color: #27ae60; }
+        .price-diff.neutral { color: #f39c12; }
+        .adjustment-controls { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .adjustment-controls input { width: 80px; padding: 5px; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 4px; color: #eee; text-align: center; }
+        .adjustment-controls button { padding: 5px 10px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bid Generator with Import & Analysis</h1>
+    <p class="subtitle">Import existing bids, analyze market rates, and optimize your pricing</p>
+
+    <!-- IMPORT SECTION -->
+    <div class="card">
+        <h2><span class="icon">📁</span> Import Existing Bid</h2>
+        <div class="import-zone" id="importZone">
+            <h3>Drop your bid file here</h3>
+            <p>Or click to browse (supports .txt, .csv, .doc, .pdf)</p>
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" accept=".txt,.csv,.doc,.docx,.pdf" multiple>
+                <label for="fileInput" class="file-input-label">Choose Files</label>
+            </div>
+        </div>
+        <div id="importStatus" style="margin-top: 15px; font-size: 13px; color: #7f8c8d;"></div>
+    </div>
+
+    <!-- ANALYSIS RESULTS -->
+    <div class="card" id="analysisCard" style="display: none;">
+        <h2><span class="icon">📊</span> Market Analysis Results</h2>
+        <div class="analysis-results" id="analysisResults">
+            <!-- Analysis will be populated here -->
+        </div>
+    </div>
+
+    <!-- ADJUSTMENT CONTROLS -->
+    <div class="card" id="adjustmentCard" style="display: none;">
+        <h2><span class="icon">⚙️</span> Price Adjustments</h2>
+        <div id="adjustmentControls">
+            <!-- Adjustment controls will be populated here -->
+        </div>
+        <div style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="applyAdjustments()">Apply Adjustments</button>
+            <button class="btn btn-secondary" onclick="exportAdjustedBid()">Export Adjusted Bid</button>
+            <button class="btn btn-success" onclick="openInBidGenerator()">Open in Bid Generator</button>
+        </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="card" id="comparisonCard" style="display: none;">
+        <h2><span class="icon">📈</span> Before/After Comparison</h2>
+        <table class="comparison-table" id="comparisonTable">
+            <!-- Comparison table will be populated here -->
+        </table>
+    </div>
+</div>
+
+<script>
+// Firebase configuration (same as original)
+const firebaseConfig = {
+    apiKey: "AIzaSyBPcOw7Qjw6ePeHSmGBTSIRKwrqhIZMB0Q",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c",
+    measurementId: "G-011LE4CZEF"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Global variables
+let importedBid = null;
+let marketData = null;
+let adjustedBid = null;
+
+// Market rate data (based on research) with inflation adjustment
+const marketRates = {
+    demolition: { low: 0.70, high: 7.00, average: 2.50, note: "Varies by material and layers", baseYear: 2024 },
+    toiletRemoval: { low: 125, high: 175, average: 140, note: "Standard toilet removal/reinstall", baseYear: 2024 },
+    subfloorRepair: { low: 2.20, high: 4.75, average: 3.50, note: "Per square foot", baseYear: 2024 },
+    concretePatch: { low: 1.00, high: 2.00, average: 1.25, note: "Per square foot", baseYear: 2024 },
+    selfLeveling: { low: 2.00, high: 4.00, average: 2.50, note: "Per square foot", baseYear: 2024 },
+    flooringInstall: { low: 2.00, high: 8.00, average: 3.50, note: "Per square foot", baseYear: 2024 },
+    debrisDisposal: { low: 20, high: 160, average: 60, note: "Varies by volume", baseYear: 2024 },
+    materialCoordination: { low: 40, high: 100, average: 60, note: "Procurement and coordination", baseYear: 2024 }
+};
+
+// Inflation and predictive variables
+let inflationRate = 3.2; // Default inflation rate
+let predictiveData = {
+    pastJobs: [],
+    materialHistory: {},
+    laborHistory: {},
+    seasonalFactors: {},
+    regionalAdjustments: {
+        'Norfolk, NE': 0.85, // Rural discount
+        'Omaha, NE': 1.0,   // Baseline
+        'Lincoln, NE': 1.05 // Slight premium
+    }
+};
+
+// File upload handling
+const importZone = document.getElementById('importZone');
+const fileInput = document.getElementById('fileInput');
+
+importZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    importZone.classList.add('dragover');
+});
+
+importZone.addEventListener('dragleave', () => {
+    importZone.classList.remove('dragover');
+});
+
+importZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    importZone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', (e) => {
+    handleFiles(e.target.files);
+});
+
+function handleFiles(files) {
+    const importStatus = document.getElementById('importStatus');
+    importStatus.textContent = 'Processing files...';
+    
+    for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            parseBidFile(e.target.result, file.name);
+        };
+        reader.readAsText(file);
+    }
+}
+
+function parseBidFile(content, filename) {
+    try {
+        // Simple text parsing - look for common bid patterns
+        const lines = content.split('\n');
+        const bid = {
+            filename: filename,
+            items: [],
+            total: 0,
+            metadata: {}
+        };
+        
+        // Extract basic info
+        lines.forEach(line => {
+            // Look for monetary values and descriptions
+            const match = line.match(/(.+?)\s*\$?([\d,]+\.?\d*)/);
+            if (match) {
+                const description = match[1].trim();
+                const price = parseFloat(match[2].replace(',', ''));
+                
+                // Categorize the item
+                const category = categorizeItem(description);
+                bid.items.push({
+                    description: description,
+                    price: price,
+                    category: category,
+                    originalPrice: price
+                });
+                bid.total += price;
+            }
+            
+            // Extract metadata
+            if (line.toLowerCase().includes('total') || line.toLowerCase().includes('subtotal')) {
+                const totalMatch = line.match(/\$?([\d,]+\.?\d*)/);
+                if (totalMatch) {
+                    bid.total = parseFloat(totalMatch[1].replace(',', ''));
+                }
+            }
+        });
+        
+        importedBid = bid;
+        analyzeBid();
+        document.getElementById('importStatus').textContent = `Successfully imported: ${filename}`;
+        
+    } catch (error) {
+        document.getElementById('importStatus').textContent = `Error parsing file: ${error.message}`;
+        console.error('Parse error:', error);
+    }
+}
+
+function categorizeItem(description) {
+    const desc = description.toLowerCase();
+    
+    if (desc.includes('demolition') || desc.includes('removal') || desc.includes('tear')) return 'demolition';
+    if (desc.includes('toilet')) return 'toilet';
+    if (desc.includes('subfloor')) return 'subfloor';
+    if (desc.includes('concrete') || desc.includes('cement') || desc.includes('patch')) return 'concrete';
+    if (desc.includes('level') || desc.includes('underlayment')) return 'leveling';
+    if (desc.includes('install') || desc.includes('flooring')) return 'installation';
+    if (desc.includes('debris') || desc.includes('disposal') || desc.includes('haul')) return 'disposal';
+    if (desc.includes('material') || desc.includes('coordination') || desc.includes('procurement')) return 'coordination';
+    
+    return 'other';
+}
+
+function analyzeBid() {
+    if (!importedBid) return;
+    
+    // Load inflation rate from Firebase or use default
+    loadInflationRate();
+    
+    const analysisResults = document.getElementById('analysisResults');
+    const analysisCard = document.getElementById('analysisCard');
+    
+    let html = '';
+    let totalMarketAverage = 0;
+    let totalMarketLow = 0;
+    let totalMarketHigh = 0;
+    
+    importedBid.items.forEach(item => {
+        const marketRate = marketRates[item.category];
+        if (marketRate) {
+            // Apply inflation adjustment to market rates
+            const adjustedRates = applyInflationAdjustment(marketRate);
+            
+            // Apply regional adjustment for Norfolk, NE
+            const regionalMultiplier = predictiveData.regionalAdjustments['Norfolk, NE'] || 1.0;
+            const finalRates = {
+                low: adjustedRates.low * regionalMultiplier,
+                high: adjustedRates.high * regionalMultiplier,
+                average: adjustedRates.average * regionalMultiplier
+            };
+            
+            const isHigh = item.price > finalRates.high;
+            const isLow = item.price < finalRates.low;
+            const status = isHigh ? 'high' : isLow ? 'low' : 'good';
+            
+            html += `
+                <div class="analysis-item">
+                    <div>
+                        <div class="analysis-label">${item.description}</div>
+                        <div style="font-size: 11px; color: #555; margin-top: 2px;">
+                            Norfolk Market: $${finalRates.low.toFixed(2)}-${finalRates.high.toFixed(2)} (${marketRate.note})
+                            <br>Base Rate: $${marketRate.low.toFixed(2)}-${marketRate.high.toFixed(2)} → Inflated +${inflationRate}%
+                        </div>
+                    </div>
+                    <div class="analysis-value ${status}">
+                        $${item.price.toFixed(2)}
+                        ${isHigh ? ' ⬆️' : isLow ? ' ⬇️' : ' ✅'}
+                    </div>
+                </div>
+            `;
+            
+            totalMarketAverage += finalRates.average;
+            totalMarketLow += finalRates.low;
+            totalMarketHigh += finalRates.high;
+        }
+    });
+    
+    // Add summary with predictive insights
+    const avgDiff = importedBid.total - totalMarketAverage;
+    const avgDiffPercent = (avgDiff / totalMarketAverage * 100).toFixed(1);
+    
+    html += `
+        <div class="suggestion-box">
+            <h4>📊 Norfolk, NE Market Analysis (2026)</h4>
+            <p><strong>Your Total:</strong> $${importedBid.total.toFixed(2)}</p>
+            <p><strong>Norfolk Market Average:</strong> $${totalMarketAverage.toFixed(2)}</p>
+            <p><strong>Difference:</strong> <span class="price-diff ${avgDiff > 0 ? 'increase' : 'decrease'}">
+                ${avgDiff > 0 ? '+' : ''}$${avgDiff.toFixed(2)} (${avgDiffPercent}%)
+            </span></p>
+            <p style="font-size: 11px; color: #7f8c8d; margin-top: 8px;">
+                📍 Includes ${inflationRate}% inflation adjustment and 15% rural discount for Norfolk market
+            </p>
+        </div>
+    `;
+    
+    // Add predictive suggestions
+    html += generatePredictiveSuggestions();
+    
+    analysisResults.innerHTML = html;
+    analysisCard.style.display = 'block';
+    
+    // Show adjustment controls
+    createAdjustmentControls();
+}
+
+function applyInflationAdjustment(marketRate) {
+    const yearsSinceBase = new Date().getFullYear() - marketRate.baseYear;
+    const inflationMultiplier = Math.pow(1 + (inflationRate / 100), yearsSinceBase);
+    
+    return {
+        low: marketRate.low * inflationMultiplier,
+        high: marketRate.high * inflationMultiplier,
+        average: marketRate.average * inflationMultiplier,
+        note: marketRate.note + ` (+${inflationRate}% inflation)`
+    };
+}
+
+function loadInflationRate() {
+    // Try to load from Firebase first
+    const userPIN = sessionStorage.getItem('bid_pin');
+    if (userPIN) {
+        const hashed = hashPIN(userPIN);
+        db.ref('users/' + hashed + '/settings/inflationRate').once('value').then(snapshot => {
+            if (snapshot.exists()) {
+                inflationRate = parseFloat(snapshot.val());
+            }
+        }).catch(err => {
+            console.log('Using default inflation rate');
+        });
+    }
+}
+
+function hashPIN(pin) {
+    let h = 0;
+    for (let i = 0; i < pin.length; i++) {
+        h = ((h << 5) - h) + pin.charCodeAt(i);
+        h |= 0;
+    }
+    return 'u' + Math.abs(h).toString(36);
+}
+
+function generatePredictiveSuggestions() {
+    let html = '<div class="suggestion-box"><h4>🧠 Smart Pricing Recommendations</h4>';
+    
+    importedBid.items.forEach(item => {
+        const marketRate = marketRates[item.category];
+        if (marketRate) {
+            // Apply inflation and regional adjustments
+            const adjustedRates = applyInflationAdjustment(marketRate);
+            const regionalMultiplier = predictiveData.regionalAdjustments['Norfolk, NE'] || 1.0;
+            const finalRates = {
+                low: adjustedRates.low * regionalMultiplier,
+                high: adjustedRates.high * regionalMultiplier,
+                average: adjustedRates.average * regionalMultiplier
+            };
+            
+            if (item.price > finalRates.high) {
+                html += `<p><strong>${item.description}</strong> - Consider reducing to $${finalRates.high.toFixed(2)} (Norfolk market high)</p>`;
+            } else if (item.price < finalRates.low) {
+                html += `<p><strong>${item.description}</strong> - You could increase to $${finalRates.low.toFixed(2)} (Norfolk market low)</p>`;
+            } else {
+                html += `<p><strong>${item.description}</strong> - ✅ Well positioned in Norfolk market</p>`;
+            }
+        }
+    });
+    
+    // Add predictive insights
+    html += `
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #2a3a5c;">
+            <h5 style="color: #3498db; font-size: 13px; margin-bottom: 8px;">📈 Predictive Insights</h5>
+            <p style="font-size: 12px; color: #7f8c8d;">• Norfolk market shows 15% rural discount vs urban rates</p>
+            <p style="font-size: 12px; color: #7f8c8d;">• Applied ${inflationRate}% annual inflation since 2024</p>
+            <p style="font-size: 12px; color: #7f8c8d;">• Multi-layer demolition commands premium pricing</p>
+        </div>
+    `;
+    
+    html += '</div>';
+    return html;
+}
+
+function createAdjustmentControls() {
+    const adjustmentControls = document.getElementById('adjustmentControls');
+    const adjustmentCard = document.getElementById('adjustmentCard');
+    
+    let html = '';
+    importedBid.items.forEach((item, index) => {
+        const marketRate = marketRates[item.category];
+        if (marketRate) {
+            // Apply adjustments to market rates
+            const adjustedRates = applyInflationAdjustment(marketRate);
+            const regionalMultiplier = predictiveData.regionalAdjustments['Norfolk, NE'] || 1.0;
+            const finalRates = {
+                low: adjustedRates.low * regionalMultiplier,
+                high: adjustedRates.high * regionalMultiplier,
+                average: adjustedRates.average * regionalMultiplier
+            };
+            
+            html += `
+                <div class="analysis-item">
+                    <div>
+                        <div class="analysis-label">${item.description}</div>
+                        <div style="font-size: 11px; color: #555;">
+                            Norfolk: $${finalRates.low.toFixed(2)}-$${finalRates.high.toFixed(2)}
+                        </div>
+                    </div>
+                    <div class="adjustment-controls">
+                        <button class="btn btn-secondary" onclick="adjustPrice(${index}, -10)">-10%</button>
+                        <input type="number" id="price-${index}" value="${item.originalPrice}" step="0.01" onchange="updatePrice(${index})">
+                        <button class="btn btn-secondary" onclick="adjustPrice(${index}, 10)">+10%</button>
+                        <button class="btn btn-warning" onclick="setMarketPrice(${index}, 'low')">Norfolk Low</button>
+                        <button class="btn btn-success" onclick="setMarketPrice(${index}, 'average')">Norfolk Avg</button>
+                        <button class="btn btn-danger" onclick="setMarketPrice(${index}, 'high')">Norfolk High</button>
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    adjustmentControls.innerHTML = html;
+    adjustmentCard.style.display = 'block';
+}
+
+function adjustPrice(index, percent) {
+    const item = importedBid.items[index];
+    const newPrice = item.price * (1 + percent / 100);
+    document.getElementById(`price-${index}`).value = newPrice.toFixed(2);
+    updatePrice(index);
+}
+
+function setMarketPrice(index, type) {
+    const item = importedBid.items[index];
+    const marketRate = marketRates[item.category];
+    if (marketRate) {
+        const newPrice = marketRate[type];
+        document.getElementById(`price-${index}`).value = newPrice.toFixed(2);
+        updatePrice(index);
+    }
+}
+
+function updatePrice(index) {
+    const newPrice = parseFloat(document.getElementById(`price-${index}`).value);
+    importedBid.items[index].price = newPrice;
+}
+
+function applyAdjustments() {
+    // Recalculate total
+    adjustedBid = {
+        ...importedBid,
+        items: [...importedBid.items],
+        total: importedBid.items.reduce((sum, item) => sum + item.price, 0)
+    };
+    
+    // Show comparison
+    showComparison();
+}
+
+function showComparison() {
+    const comparisonCard = document.getElementById('comparisonCard');
+    const comparisonTable = document.getElementById('comparisonTable');
+    
+    let html = `
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Original Price</th>
+                <th>Adjusted Price</th>
+                <th>Difference</th>
+                <th>% Change</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    importedBid.items.forEach((item, index) => {
+        const diff = item.price - item.originalPrice;
+        const percentChange = (diff / item.originalPrice * 100).toFixed(1);
+        const diffClass = diff > 0 ? 'increase' : diff < 0 ? 'decrease' : 'neutral';
+        
+        html += `
+            <tr>
+                <td>${item.description}</td>
+                <td>$${item.originalPrice.toFixed(2)}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td class="price-diff ${diffClass}">${diff > 0 ? '+' : ''}$${diff.toFixed(2)}</td>
+                <td class="price-diff ${diffClass}">${percentChange}%</td>
+            </tr>
+        `;
+    });
+    
+    const totalDiff = adjustedBid.total - importedBid.items.reduce((sum, item) => sum + item.originalPrice, 0);
+    const totalPercentChange = (totalDiff / importedBid.total * 100).toFixed(1);
+    
+    html += `
+        <tr style="font-weight: bold; border-top: 2px solid #2a3a5c;">
+            <td>TOTAL</td>
+            <td>$${importedBid.items.reduce((sum, item) => sum + item.originalPrice, 0).toFixed(2)}</td>
+            <td>$${adjustedBid.total.toFixed(2)}</td>
+            <td class="price-diff ${totalDiff > 0 ? 'increase' : 'decrease'}">${totalDiff > 0 ? '+' : ''}$${totalDiff.toFixed(2)}</td>
+            <td class="price-diff ${totalDiff > 0 ? 'increase' : 'decrease'}">${totalPercentChange}%</td>
+        </tr>
+    </tbody>
+    `;
+    
+    comparisonTable.innerHTML = html;
+    comparisonCard.style.display = 'block';
+}
+
+function exportAdjustedBid() {
+    if (!adjustedBid) return;
+    
+    let content = `ADJUSTED BID - ${new Date().toLocaleDateString()}\n\n`;
+    content += `Filename: ${adjustedBid.filename}\n\n`;
+    content += `ITEMS:\n`;
+    content += `----------------------------------------\n`;
+    
+    adjustedBid.items.forEach(item => {
+        content += `${item.description}: $${item.price.toFixed(2)}\n`;
+    });
+    
+    content += `----------------------------------------\n`;
+    content += `TOTAL: $${adjustedBid.total.toFixed(2)}\n\n`;
+    
+    content += `COMPARISON:\n`;
+    content += `Original Total: $${importedBid.items.reduce((sum, item) => sum + item.originalPrice, 0).toFixed(2)}\n`;
+    content += `Adjusted Total: $${adjustedBid.total.toFixed(2)}\n`;
+    content += `Difference: $${(adjustedBid.total - importedBid.items.reduce((sum, item) => sum + item.originalPrice, 0)).toFixed(2)}\n`;
+    
+    // Download file
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `adjusted-bid-${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function openInBidGenerator() {
+    if (!adjustedBid) {
+        // If no adjustments made, use imported bid
+        adjustedBid = {
+            ...importedBid,
+            items: [...importedBid.items],
+            total: importedBid.items.reduce((sum, item) => sum + item.price, 0)
+        };
+    }
+    
+    // Store adjusted bid with predictive data in sessionStorage for the main bid generator
+    const exportData = {
+        bid: adjustedBid,
+        inflationRate: inflationRate,
+        regionalAdjustments: predictiveData.regionalAdjustments,
+        marketRates: marketRates,
+        source: 'import-enhancement'
+    };
+    
+    sessionStorage.setItem('importedBid', JSON.stringify(exportData));
+    
+    // Open the main bid generator
+    window.open('/tools/bidgen/index.html', '_blank');
+}
+
+// Load any imported bid from sessionStorage on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const savedBid = sessionStorage.getItem('importedBid');
+    if (savedBid) {
+        importedBid = JSON.parse(savedBid);
+        analyzeBid();
+    }
+});
+</script>
+
+</body>
+</html>

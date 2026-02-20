@@ -1,0 +1,71 @@
+FLOORING INSTALLATION & REPAIRS - BID GENERATOR TEMPLATE
+
+=== LABOR LINE ITEMS ===
+Carpet Installation | sq ft | $2.50
+Sheet Vinyl Installation | sq ft | $2.25
+Carpet Transition Repair | each | $45.00
+Carpet Patch Repair (4'x2') | each | $65.00
+Carpet Kick Repair | each | $35.00
+Storage Room Carpet Replacement | sq ft | $2.50
+Existing Flooring Removal | sq ft | $0.85
+Flooring Disposal | sq ft | $0.35
+Subfloor Preparation | sq ft | $0.75
+Transition Installation | each | $25.00
+Molding Installation | linear ft | $3.25
+Job Site Cleanup | sq ft | $0.25
+Material Coordination | job | $125.00
+Project Management | job | $185.00
+Material Pickup & Delivery | job | $95.00
+Scheduling Coordination | job | $75.00
+
+=== MATERIALS LINE ITEMS ===
+Carpet Materials | sq ft | $1.82
+Sheet Vinyl Materials | sq ft | $4.24
+Transition Strip Materials | each | $25.00
+Carpet Patch Materials | sq ft | $5.00
+Adhesives & Underlayment | sq ft | $0.45
+Molding & Trim | linear ft | $1.95
+Tack Strips | linear ft | $0.85
+Seam Tape | roll | $15.00
+Flooring Tools | job | $45.00
+Cleanup Supplies | job | $35.00
+
+=== DISCLAIMER & UNFORESEEN CONDITIONS ===
+This quote is a fixed price based on the scope outlined above and assumes standard subfloor conditions with typical preparation required. Additional preparation for sheet vinyl (such as feather patching, leveling compound, or extensive subfloor repair) is not included in this quote. If extra prep is required upon removal of existing flooring, subcontractor labor will be adjusted accordingly and a change order provided for approval prior to proceeding.
+
+Any unforeseen conditions (including but not limited to major subfloor damage, mold, asbestos, or other structural issues) discovered after work begins may require additional labor and/or materials at extra cost, with prior client approval required via change order.
+
+Only additional charges would be for items outside the specified scope or unforeseen issues as noted above.
+
+=== PROJECT NOTES ===
+● Materials to be ordered by client directly with Scranton Flooring
+● Subcontractor will coordinate pickup once all materials are ready
+● All three units will be completed efficiently in coordinated scheduling
+● Professional installation and repairs by licensed subcontractor
+● All materials paid directly by Property Management to Scranton Flooring
+● Quote valid for 30 days from date issued
+● Payment methods: Check, ACH
+● Balance due upon completion of all units
+
+=== SCOPE BREAKDOWN ===
+APARTMENT 1 (3 BR - Full Install + Repairs):
+- Full carpet & sheet vinyl installation (946 sq ft total)
+- Includes carpet kick repair
+- Includes storage room (stg) carpet replacement
+- Removal and disposal of existing flooring
+- All necessary subfloor preparation, transitions, and moldings
+- Complete job site cleanup
+
+APARTMENT 2 (Small Repair):
+- Quick carpet transition repair
+- Cleanup of work area
+
+APARTMENT 3 (Very Small Repair):
+- 4' x 2' carpet replacement only (8 sq ft)
+- Basic subfloor prep in repair area
+- Cleanup of work area
+
+=== PRICING SUMMARY ===
+Labor Charge: $3,780.00
+Materials (paid by client): $1,338.00
+Total Project Value: $5,118.00

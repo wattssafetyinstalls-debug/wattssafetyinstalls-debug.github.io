@@ -1,0 +1,111 @@
+BASEMENT FINISHING - BID GENERATOR TEMPLATE
+
+=== LABOR LINE ITEMS ===
+Demolition & Debris Removal | sq ft | $2.50
+Framing - Interior Walls | linear ft | $12.00
+Framing - Ceiling Joists | sq ft | $4.00
+Electrical Rough-In | per outlet | $45.00
+Electrical Rough-In - Light Boxes | per box | $35.00
+Plumbing Rough-In | per fixture | $125.00
+Insulation - Walls | sq ft | $1.50
+Insulation - Ceiling | sq ft | $1.25
+Vapor Barrier Installation | sq ft | $0.75
+Drywall Installation | sq ft | $2.25
+Drywall Taping & Finishing | sq ft | $2.50
+Drywall Sanding & Prep | sq ft | $1.00
+Texture Application | sq ft | $1.25
+Primer Coat | sq ft | $0.85
+Paint Finish Coat | sq ft | $1.25
+Flooring Underlayment | sq ft | $0.50
+Flooring Installation | sq ft | $3.50
+Baseboard Installation | linear ft | $3.25
+Door Installation (pre-hung) | per door | $175.00
+Trim & Casing Installation | linear ft | $4.50
+Built-in Shelving | linear ft | $35.00
+Countertop Installation | linear ft | $45.00
+Sink Installation | per sink | $125.00
+Toilet Installation | per toilet | $95.00
+Bathroom Vanity Installation | per vanity | $150.00
+Shower Surround Installation | per shower | $275.00
+HVAC Ductwork Installation | per run | $225.00
+Return Air Vent Installation | per vent | $85.00
+Smoke Detector Installation | per detector | $65.00
+Carbon Monoxide Detector | per detector | $65.00
+Final Cleanup | sq ft | $0.50
+
+=== MATERIALS LINE ITEMS ===
+2x4 Studs | each | $3.85
+2x6 Studs | each | $5.95
+Pressure Treated Plates | linear ft | $2.25
+OSB Sheathing | sheet | $12.95
+Insulation - R13 Batts | sq ft | $0.55
+Insulation - R19 Batts | sq ft | $0.75
+Vapor Barrier | roll | $85.00
+1/2" Drywall | sheet | $11.95
+Drywall Tape | roll | $8.95
+Drywall Compound | bucket | $15.95
+Drywall Screws | box | $24.95
+Texture Mix | bag | $18.95
+Primer | gallon | $25.95
+Paint | gallon | $35.95
+Paint Supplies | each | $45.00
+Underlayment | roll | $45.00
+Laminate Flooring | sq ft | $2.25
+Luxury Vinyl Plank | sq ft | $3.45
+Carpet | sq ft | $2.95
+Carpet Pad | sq ft | $0.85
+Baseboards | linear ft | $1.95
+Pre-hung Doors | each | $125.00
+Door Hardware | each | $35.00
+Trim & Casing | linear ft | $2.45
+Shelving Material | linear ft | $15.00
+Countertop - Laminate | linear ft | $35.00
+Countertop - Butcher Block | linear ft | $65.00
+Bathroom Vanity | each | $195.00
+Vanity Top | each | $125.00
+Bathroom Sink | each | $85.00
+Sink Faucet | each | $95.00
+Toilet | each | $125.00
+Shower Surround Kit | each | $295.00
+Shower Faucet Set | each | $145.00
+Flexible Drain Line | each | $25.00
+Toilet Supply Line | each | $12.00
+P-Trap | each | $8.95
+Electrical Wire | roll | $65.00
+Electrical Boxes | each | $4.25
+Outlet Receptacles | each | $3.95
+Light Switches | each | $4.50
+Breakers | each | $8.95
+Light Fixtures | each | $45.00
+Smoke Detectors | each | $25.00
+CO Detectors | each | $35.00
+HVAC Ductwork | linear ft | $12.50
+Register Vents | each | $15.00
+Return Air Grille | each | $25.00
+Construction Adhesive | tube | $4.95
+Caulk | tube | $5.95
+Wood Putty | container | $8.95
+Screws & Fasteners | box | $35.00
+Nails | box | $25.00
+Construction Plastic | roll | $45.00
+Cleanup Supplies | each | $75.00
+
+=== DISCLAIMER & UNFORESEEN CONDITIONS ===
+This estimate is based on the scope of work discussed and assumes standard conditions. Additional charges may apply for:
+- Hidden structural damage or code violations discovered during demolition
+- Moisture or water damage requiring remediation
+- Unexpected plumbing or electrical issues
+- Material price increases beyond standard markup
+- Changes requested by client after work begins
+- Permit requirements or inspections
+- Additional prep work beyond standard scope
+
+All work will be performed to meet or exceed local building codes. Proper permits will be obtained as required. Client is responsible for ensuring access to work area and maintaining clear pathways for contractors.
+
+=== TYPICAL SCOPE NOTES ===
+- Includes standard 8ft ceiling height. Additional charge for 9ft+ ceilings.
+- Assumes existing utilities are functional and properly sized.
+- Standard finishes included. Upgrades available at additional cost.
+- Egress windows required by code for bedrooms - additional if needed.
+- Bathroom includes standard fixtures only. Luxury upgrades extra.
+- Assumes adequate headroom and standard foundation condition.

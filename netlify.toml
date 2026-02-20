@@ -13,27 +13,22 @@
 
 [[redirects]]
   from = "/testimonials.html"
-  to = "/testimonials"
-  status = 301
-
-[[redirects]]
-  from = "/test_mobile_fix.html"
-  to = "/test_mobile_fix"
-  status = 301
-
-[[redirects]]
-  from = "/_site/idex.html"
   to = "/"
   status = 301
 
 [[redirects]]
-  from = "/_site/testimonials.html"
-  to = "/testimonials"
+  from = "/testimonials"
+  to = "/"
   status = 301
 
 [[redirects]]
-  from = "/_site/test_mobile_fix.html"
-  to = "/test_mobile_fix"
+  from = "/test_mobile_fix.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/_site/*"
+  to = "/"
   status = 301
 
 [[headers]]
@@ -42,6 +37,6 @@
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self' https:; img-src 'self' data: https:;"
+    Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; frame-src https://www.googletagmanager.com;"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"

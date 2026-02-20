@@ -229,6 +229,34 @@
         .sync-bar .logout-btn { background: none; border: 1px solid #2a3a5c; color: #7f8c8d; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; }
         .sync-bar .logout-btn:hover { border-color: #e74c3c; color: #e74c3c; }
         
+        /* Client Autocomplete */
+        .client-ac-wrap { position: relative; }
+        .client-ac-drop { position: absolute; top: 100%; left: 0; right: 0; background: #0f1a33; border: 1px solid #3498db; border-top: none; border-radius: 0 0 6px 6px; max-height: 200px; overflow-y: auto; z-index: 1001; display: none; }
+        .client-ac-drop.show { display: block; }
+        .client-ac-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #1a2744; font-size: 13px; }
+        .client-ac-item:hover, .client-ac-item.active { background: #1a2744; }
+        .client-ac-item .ca-name { color: #ecf0f1; font-weight: 600; }
+        .client-ac-item .ca-meta { color: #7f8c8d; font-size: 11px; margin-top: 2px; }
+        .client-ac-item .ca-new { color: #3498db; font-style: italic; }
+        /* Quick Templates */
+        .template-bar { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .template-bar label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; white-space: nowrap; }
+        .template-bar select { background: #1a2744; border: 1px solid #2a3a5c; border-radius: 6px; padding: 8px 12px; color: #eee; font-size: 13px; flex: 1; min-width: 200px; }
+        .template-bar select:focus { outline: none; border-color: #3498db; }
+        .template-bar button { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .template-bar button:hover { filter: brightness(1.15); }
+        /* Analytics Modal */
+        .analytics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .analytics-card { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 14px; text-align: center; }
+        .analytics-card .a-value { font-size: 24px; font-weight: 700; }
+        .analytics-card .a-label { font-size: 10px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px; }
+        .analytics-chart { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .analytics-chart h4 { font-size: 12px; color: #7f8c8d; text-transform: uppercase; margin-bottom: 12px; }
+        .analytics-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+        .analytics-bar-label { width: 100px; color: #bdc3c7; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .analytics-bar { flex: 1; height: 20px; background: #1a2744; border-radius: 4px; overflow: hidden; }
+        .analytics-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+        .analytics-bar-val { width: 60px; color: #7f8c8d; font-size: 11px; }
         /* CTA Buttons */
         .cta-buttons { display: flex; flex-direction: column; gap: 8px; }
         .cta-btn { padding: 10px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-width: 140px; }
@@ -529,7 +557,7 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
                     <option value="custom">Custom (blank template)</option>
                 </select>
             </div>
-            <div class="form-group"><label>Client / Property Management Co.</label><input type="text" id="clientName" placeholder="e.g. ABC Property Management"></div>
+            <div class="form-group"><label>Client / Property Management Co.</label><div class="client-ac-wrap"><input type="text" id="clientName" placeholder="e.g. ABC Property Management" oninput="clientAcSearch()" onfocus="clientAcSearch()" autocomplete="off"><div class="client-ac-drop" id="clientAcDrop"></div></div></div>
             <div class="form-group"><label>Estimate Date</label><input type="date" id="estimateDate"></div>
             <div class="form-group"><label>Property / Complex Name</label><input type="text" id="complexName" placeholder="e.g. Oakwood Apartments"></div>
             <div class="form-group"><label>Unit / Address</label><input type="text" id="unitNum" placeholder="e.g. Unit 204"></div>
@@ -1805,9 +1833,12 @@ function docJS() {
     +'function sd(did){var e=document.getElementById(did);if(e){var n=new Date();e.textContent="Signed: "+n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})+" at "+n.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});}}'
     +'document.querySelectorAll(".auth-opt").forEach(function(opt){opt.addEventListener("click",function(){document.querySelectorAll(".auth-opt").forEach(function(o){o.classList.remove("selected");o.querySelector(".auth-cb").classList.remove("checked");o.querySelector(".auth-cb").textContent="";});this.classList.add("selected");var cb=this.querySelector(".auth-cb");cb.classList.add("checked");cb.textContent="\\u2713";});});'
     +'document.addEventListener("DOMContentLoaded",function(){initSig("sigContractor","sigDateContractor");initSig("sigClient","sigDateClient");});'
+    +'function exportPDF(){var el=document.body;var tb=document.querySelector(".toolbar");if(tb)tb.style.display="none";document.querySelectorAll(".sig-clear").forEach(function(b){b.style.display="none"});var client=document.querySelector(".info-box .value")?document.querySelector(".info-box .value").textContent.trim():"Quote";var title=document.title||"Estimate";var fn=title.replace(/[^a-zA-Z0-9]/g,"_")+"_"+new Date().toISOString().slice(0,10)+".pdf";var opt={margin:0.3,filename:fn,image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:"in",format:"letter",orientation:"portrait"}};if(typeof html2pdf!=="undefined"){html2pdf().set(opt).from(el).save().then(function(){if(tb)tb.style.display="flex";document.querySelectorAll(".sig-clear").forEach(function(b){b.style.display=""})});}else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";s.onload=function(){html2pdf().set(opt).from(el).save().then(function(){if(tb)tb.style.display="flex";document.querySelectorAll(".sig-clear").forEach(function(b){b.style.display=""})});};document.head.appendChild(s);}}'
+    +'function emailQuote(){var client=document.querySelector(".info-box .value")?document.querySelector(".info-box .value").textContent.trim():"";var total="";document.querySelectorAll("[data-total],[data-grand-total]").forEach(function(e){total=e.textContent;});var title=document.title||"Estimate";var subj=encodeURIComponent(title+" — "+(client||"Quote"));var body=encodeURIComponent("Hi "+client+",\n\nPlease find attached the "+title+".\n\nTotal: "+total+"\n\nPlease review and let us know if you have any questions.\n\nBest regards");window.location.href="mailto:?subject="+subj+"&body="+body;}'
+    +'function copySummary(){var lines=[];var title=document.title||"Estimate";lines.push(title);lines.push("=".repeat(title.length));var boxes=document.querySelectorAll(".info-box");boxes.forEach(function(b){var lbl=b.querySelector("label");var val=b.querySelector(".value");if(lbl&&val)lines.push(lbl.textContent.trim()+": "+val.textContent.trim());});lines.push("");var rows=document.querySelectorAll("tbody tr");rows.forEach(function(r){var cells=r.querySelectorAll("td");if(cells.length>=3){var desc=cells[1]?cells[1].textContent.trim():"";var amt=cells[cells.length-1]?cells[cells.length-1].textContent.trim():"";if(desc&&amt)lines.push(desc+" — "+amt);}});var total="";document.querySelectorAll("[data-total],[data-grand-total]").forEach(function(e){total=e.textContent;});if(total)lines.push("\nTOTAL: "+total);var txt=lines.join("\n");navigator.clipboard.writeText(txt).then(function(){alert("Summary copied to clipboard!");}).catch(function(){prompt("Copy this summary:",txt);});}'
     +'</'+'script>';
 }
-function toolbar(title) { return '<div class="toolbar no-print"><span class="tbt">'+title+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="window.print()">Print / Save as PDF</button></div>'; }
+function toolbar(title) { return '<div class="toolbar no-print"><span class="tbt">'+title+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="exportPDF()">📄 Download PDF</button><button class="tbe" onclick="emailQuote()">📧 Email</button><button class="tbe" onclick="copySummary()">📋 Copy Summary</button><button class="tbe" onclick="window.print()">🖨️ Print</button></div>'; }
 function sigHTML() { return '<div class="sig-section"><h3>Signatures</h3><div class="sig-grid"><div class="sig-pad"><label>Contractor Signature</label><canvas id="sigContractor" class="sig-canvas"></canvas><div class="sig-date" id="sigDateContractor"></div><button class="sig-clear no-print" onclick="clear_sigContractor()">Clear</button></div><div class="sig-pad"><label>Client / Property Manager Signature</label><canvas id="sigClient" class="sig-canvas"></canvas><div class="sig-date" id="sigDateClient"></div><button class="sig-clear no-print" onclick="clear_sigClient()">Clear</button></div></div></div>'; }
 function openDoc(html) { var w = window.open('','_blank'); w.document.write(html); w.document.close(); }
 

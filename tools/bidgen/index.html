@@ -297,7 +297,7 @@
     <!-- INVOICE WIDGET (Top-Right Corner) -->
     <div class="invoice-widget" id="invoiceWidget">
         <div class="invoice-widget-header" onclick="toggleInvoiceWidget()">
-            <div class="invoice-widget-title">📋 Invoices</div>
+            <div class="invoice-widget-title">📚 Quotes</div>
             <button class="invoice-widget-toggle" id="widgetToggle">−</button>
         </div>
         <div class="invoice-widget-stats">
@@ -314,7 +314,7 @@
             <!-- Auto-populated with urgent invoices -->
         </div>
         <div class="invoice-widget-actions">
-            <button class="invoice-widget-btn primary" onclick="openInvoiceModal()">View All</button>
+            <button class="invoice-widget-btn primary" onclick="openInvoiceModal()">📚 Open Library</button>
         </div>
     </div>
 
@@ -2233,7 +2233,7 @@ function invRenderList() {
     listEl.innerHTML = invoices.map(inv => renderInvoiceItem(inv)).join('');
 }
 
-// Render single invoice item
+// Render single invoice item as a summary index card
 function renderInvoiceItem(invoice) {
     const now = new Date();
     const expiresDate = new Date(invoice.expiresDate);
@@ -2250,34 +2250,51 @@ function renderInvoiceItem(invoice) {
         statusBadge = '<span class="invoice-status lost">LOST</span>';
     }
     
+    // Build short summary line
+    const trade = (invoice.jobDetails.tradeType || 'general').charAt(0).toUpperCase() + (invoice.jobDetails.tradeType || 'general').slice(1);
+    const loc = invoice.jobDetails.jobCity || '';
+    const prop = invoice.jobDetails.complexName || '';
+    const unit = invoice.jobDetails.unitNum || '';
+    const area = invoice.jobDetails.areaDesc || '';
+    let summary = trade;
+    if (prop) summary += ' — ' + prop;
+    if (unit) summary += ', ' + unit;
+    if (area) summary += ' (' + area + ')';
+    if (loc && !summary.includes(loc)) summary += ' — ' + loc;
+    
+    const dateCreated = new Date(invoice.createdDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const dateEstimate = new Date(invoice.estimateDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
     let timerHTML = '';
     if (invoice.status === 'temporary') {
-        const timerClass = isUrgent ? 'urgent' : '';
-        timerHTML = `<div class="invoice-timer ${timerClass}">⏱️ ${daysLeft > 0 ? daysLeft + ' days left' : 'EXPIRED'}</div>`;
+        const timerClass = isUrgent || isExpired ? 'urgent' : '';
+        timerHTML = `<span class="invoice-timer ${timerClass}" style="margin-left:auto">⏱️ ${daysLeft > 0 ? daysLeft + 'd left' : 'EXPIRED'}</span>`;
+    }
+    if (invoice.status === 'permanent' && invoice.awardedDate) {
+        timerHTML = `<span style="color:#27ae60;font-size:11px;margin-left:auto">Awarded ${new Date(invoice.awardedDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`;
     }
     
     const itemClass = `invoice-item ${invoice.status} ${isExpired ? 'expired' : ''}`;
     
     return `
-        <div class="${itemClass}">
+        <div class="${itemClass}" style="cursor:pointer" onclick="invViewDetails('${invoice.id}')">
             <div class="invoice-header">
                 <div class="invoice-client">${invoice.clientName}</div>
                 ${statusBadge}
             </div>
+            <div style="font-size:12px;color:#95a5a6;margin-bottom:6px;line-height:1.4">${summary}</div>
             <div class="invoice-details">
-                <span>📅 ${new Date(invoice.estimateDate).toLocaleDateString()}</span>
+                <span>📅 ${dateEstimate}</span>
                 <span>💰 $${invoice.amount.toFixed(2)}</span>
-                <span>📍 ${invoice.jobDetails.jobCity || 'N/A'}</span>
-                <span>🏗️ ${invoice.jobDetails.tradeType || 'General'}</span>
+                <span>Labor: $${invoice.laborTotal.toFixed(0)} / Mat: $${invoice.materialsTotal.toFixed(0)}</span>
+                ${timerHTML}
             </div>
-            ${timerHTML}
-            <div class="invoice-actions">
+            <div class="invoice-actions" onclick="event.stopPropagation()">
                 ${invoice.status === 'temporary' ? `
-                    <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}')">✅ Mark as Awarded</button>
-                    <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}')">❌ Mark as Lost</button>
+                    <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}')">✅ Award</button>
+                    <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}')">❌ Lost</button>
                 ` : ''}
-                <button class="invoice-btn view" onclick="invViewDetails('${invoice.id}')">👁️ View Details</button>
-                <button class="invoice-btn delete" onclick="invDeleteInvoice('${invoice.id}', '${invoice.status}')">🗑️ Delete</button>
+                <button class="invoice-btn delete" onclick="invDeleteInvoice('${invoice.id}', '${invoice.status}')">🗑️</button>
             </div>
         </div>
     `;
@@ -2367,9 +2384,8 @@ function invDeleteInvoice(invoiceId, status) {
     showNotification('Invoice deleted.', 'info');
 }
 
-// View invoice details
+// View invoice details — rich inline panel
 function invViewDetails(invoiceId) {
-    // Find invoice in all statuses
     let invoice = null;
     for (const status in invoiceData) {
         if (invoiceData[status][invoiceId]) {
@@ -2377,34 +2393,119 @@ function invViewDetails(invoiceId) {
             break;
         }
     }
-    
     if (!invoice) return;
     
-    const details = `
-Invoice ID: ${invoice.id}
-Client: ${invoice.clientName}
-Status: ${invoice.status.toUpperCase()}
-Date: ${new Date(invoice.estimateDate).toLocaleDateString()}
-Amount: $${invoice.amount.toFixed(2)}
-
-Job Details:
-- Property: ${invoice.jobDetails.complexName || 'N/A'}
-- Unit: ${invoice.jobDetails.unitNum || 'N/A'}
-- Location: ${invoice.jobDetails.jobCity || 'N/A'}
-- Area: ${invoice.jobDetails.sqft || 'N/A'} sq ft
-- Type: ${invoice.jobDetails.tradeType || 'N/A'}
-
-Breakdown:
-- Labor: $${invoice.laborTotal.toFixed(2)}
-- Materials: $${invoice.materialsTotal.toFixed(2)}
-- Total: $${invoice.amount.toFixed(2)}
-
-${invoice.status === 'temporary' ? `Expires: ${new Date(invoice.expiresDate).toLocaleDateString()}` : ''}
-${invoice.status === 'permanent' ? `Awarded: ${new Date(invoice.awardedDate).toLocaleDateString()}` : ''}
-${invoice.status === 'lost' ? `Lost: ${new Date(invoice.lostDate).toLocaleDateString()}` : ''}
-    `;
+    const panel = document.getElementById('quoteDetailPanel');
+    const list = document.getElementById('invoiceList');
+    if (!panel) return;
     
-    alert(details);
+    // Hide list, show detail
+    if (list) list.style.display = 'none';
+    panel.style.display = 'block';
+    
+    const statusLabel = invoice.status === 'temporary' ? 'PENDING' : invoice.status === 'permanent' ? 'AWARDED' : 'LOST';
+    const statusColor = invoice.status === 'temporary' ? '#f39c12' : invoice.status === 'permanent' ? '#27ae60' : '#e74c3c';
+    
+    let statusLine = '';
+    if (invoice.status === 'temporary' && invoice.expiresDate) {
+        const dl = Math.ceil((new Date(invoice.expiresDate) - new Date()) / 86400000);
+        statusLine = `<span style="color:${dl<=5?'#e74c3c':'#f39c12'}">⏱️ ${dl > 0 ? dl + ' days until expiration' : 'EXPIRED'}</span>`;
+    }
+    if (invoice.status === 'permanent' && invoice.awardedDate) {
+        statusLine = `<span style="color:#27ae60">Awarded on ${new Date(invoice.awardedDate).toLocaleDateString()}</span>`;
+    }
+    if (invoice.status === 'lost' && invoice.lostDate) {
+        statusLine = `<span style="color:#e74c3c">Lost on ${new Date(invoice.lostDate).toLocaleDateString()}</span>`;
+    }
+    
+    panel.innerHTML = `
+        <div style="margin-bottom:16px">
+            <button onclick="invCloseDetail()" style="background:#2a3a5c;color:#bdc3c7;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">← Back to Quote Library</button>
+        </div>
+        <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:10px;padding:20px">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
+                <div>
+                    <div style="font-size:20px;font-weight:700;color:#ecf0f1">${invoice.clientName}</div>
+                    <div style="font-size:12px;color:#7f8c8d;margin-top:4px">${statusLine}</div>
+                </div>
+                <span style="background:${statusColor};color:${invoice.status==='temporary'?'#1a1a1a':'white'};padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700">${statusLabel}</span>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Estimate Date</div>
+                    <div style="font-size:14px;color:#ecf0f1">${new Date(invoice.estimateDate).toLocaleDateString()}</div>
+                </div>
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Created</div>
+                    <div style="font-size:14px;color:#ecf0f1">${new Date(invoice.createdDate).toLocaleDateString()}</div>
+                </div>
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Trade Type</div>
+                    <div style="font-size:14px;color:#ecf0f1">${(invoice.jobDetails.tradeType||'N/A').charAt(0).toUpperCase()+(invoice.jobDetails.tradeType||'').slice(1)}</div>
+                </div>
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Document Type</div>
+                    <div style="font-size:14px;color:#ecf0f1">${(invoice.type||'labor').replace('_',' ').charAt(0).toUpperCase()+(invoice.type||'labor').replace('_',' ').slice(1)}</div>
+                </div>
+            </div>
+            
+            <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;margin-bottom:16px">
+                <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:8px">Job Location</div>
+                <div style="font-size:14px;color:#ecf0f1">
+                    ${invoice.jobDetails.complexName ? '<strong>'+invoice.jobDetails.complexName+'</strong>' : ''}
+                    ${invoice.jobDetails.unitNum ? ' — '+invoice.jobDetails.unitNum : ''}
+                    ${invoice.jobDetails.jobCity ? '<br>'+invoice.jobDetails.jobCity : ''}
+                    ${invoice.jobDetails.areaDesc ? '<br><span style="color:#7f8c8d;font-size:12px">'+invoice.jobDetails.areaDesc+'</span>' : ''}
+                    ${invoice.jobDetails.sqft ? '<br><span style="color:#7f8c8d;font-size:12px">'+invoice.jobDetails.sqft+' sq ft</span>' : ''}
+                </div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;text-align:center">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Labor</div>
+                    <div style="font-size:18px;font-weight:700;color:#3498db">$${invoice.laborTotal.toFixed(2)}</div>
+                </div>
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;text-align:center">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Materials</div>
+                    <div style="font-size:18px;font-weight:700;color:#27ae60">$${invoice.materialsTotal.toFixed(2)}</div>
+                </div>
+                <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;text-align:center">
+                    <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:4px">Total</div>
+                    <div style="font-size:18px;font-weight:700;color:#f39c12">$${invoice.amount.toFixed(2)}</div>
+                </div>
+            </div>
+            
+            ${invoice.companyInfo ? `
+            <div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;margin-bottom:16px">
+                <div style="font-size:10px;color:#7f8c8d;text-transform:uppercase;margin-bottom:8px">Company Info</div>
+                <div style="font-size:13px;color:#ecf0f1">
+                    ${invoice.companyInfo.companyName ? '<strong>'+invoice.companyInfo.companyName+'</strong><br>' : ''}
+                    ${invoice.companyInfo.phone ? invoice.companyInfo.phone+' | ' : ''}
+                    ${invoice.companyInfo.email || ''}
+                    ${invoice.companyInfo.licenseNum ? '<br>License: '+invoice.companyInfo.licenseNum : ''}
+                </div>
+            </div>
+            ` : ''}
+            
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                ${invoice.status === 'temporary' ? `
+                    <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}');invCloseDetail()">✅ Mark as Awarded</button>
+                    <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}');invCloseDetail()">❌ Mark as Lost</button>
+                ` : ''}
+                <button class="invoice-btn delete" onclick="invDeleteInvoice('${invoice.id}','${invoice.status}');invCloseDetail()">🗑️ Delete</button>
+            </div>
+        </div>
+    `;
+}
+
+// Close detail panel and return to list
+function invCloseDetail() {
+    const panel = document.getElementById('quoteDetailPanel');
+    const list = document.getElementById('invoiceList');
+    if (panel) panel.style.display = 'none';
+    if (list) list.style.display = 'block';
+    invRenderList();
 }
 
 // Update invoice statistics

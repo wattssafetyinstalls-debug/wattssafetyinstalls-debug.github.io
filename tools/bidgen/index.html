@@ -542,6 +542,39 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
         </div>
     </div>
 
+    <!-- QUICK TEMPLATES -->
+    <div class="template-bar" id="templateBar">
+        <label>⚡ Quick Template</label>
+        <select id="templateSelect">
+            <option value="">-- Select a preset job template --</option>
+            <optgroup label="Accessibility / ATP">
+                <option value="grab_bar_install">Grab Bar Installation (Standard)</option>
+                <option value="ada_ramp">ADA Ramp Build &amp; Install</option>
+                <option value="walk_in_shower">Walk-In Shower Conversion</option>
+                <option value="stair_rail">Stair Rail / Handrail Install</option>
+            </optgroup>
+            <optgroup label="Plumbing">
+                <option value="toilet_replace">Toilet Replacement</option>
+                <option value="faucet_replace">Faucet Replacement</option>
+                <option value="water_heater">Water Heater Install</option>
+                <option value="drain_repair">Drain Repair / Clearing</option>
+            </optgroup>
+            <optgroup label="Electrical">
+                <option value="outlet_install">Outlet / Switch Install</option>
+                <option value="light_fixture">Light Fixture Install</option>
+                <option value="ceiling_fan">Ceiling Fan Install</option>
+                <option value="gfci_upgrade">GFCI Outlet Upgrade</option>
+            </optgroup>
+            <optgroup label="General / Remodel">
+                <option value="drywall_patch">Drywall Patch &amp; Repair</option>
+                <option value="door_install">Interior Door Install</option>
+                <option value="flooring_vinyl">Vinyl Flooring Install</option>
+                <option value="paint_room">Room Paint (Interior)</option>
+            </optgroup>
+        </select>
+        <button onclick="applyTemplate()">Apply</button>
+    </div>
+
     <!-- SECTION 2 -->
     <div class="card">
         <h2><span class="icon">2</span> Job Details <span class="trade-badge flooring" id="tradeBadge">Flooring</span></h2>
@@ -703,7 +736,21 @@ function showApp() {
     document.getElementById('mainApp').style.display = 'block';
     document.getElementById('syncDevice').textContent = 'PIN: ' + userPIN.charAt(0) + '***';
     initApp();
-    setTimeout(initInvoiceSystem, 500);
+    setTimeout(function() {
+        initInvoiceSystem();
+        initClientDB();
+        initPushNotifications();
+    }, 500);
+}
+
+function showNotification(msg, type) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,0.3);transition:opacity 0.3s;';
+    el.style.background = type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db';
+    el.style.color = 'white';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
 }
 
 // Auto-login if session still active
@@ -1955,6 +2002,586 @@ function generateChangeOrder() {
     h += '<div class="footer"><p>Change Order &mdash; '+brand.name+' &nbsp;|&nbsp; Licensed GC &mdash; Nebraska &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
     h += docJS() + '</body></html>';
     openDoc(h);
+}
+
+// =====================================================================
+// CLIENT AUTO-COMPLETE DATABASE
+// =====================================================================
+let _clientDB = {};
+
+function initClientDB() {
+    if (!db || !userPIN) return;
+    const hashedPIN = hashPIN(userPIN);
+    db.ref('clients/' + hashedPIN).on('value', snap => {
+        _clientDB = snap.val() || {};
+    });
+}
+
+function clientAcSearch() {
+    const input = document.getElementById('clientName');
+    const drop = document.getElementById('clientAcDrop');
+    if (!input || !drop) return;
+    const q = input.value.toLowerCase().trim();
+    if (q.length < 1) { drop.classList.remove('show'); return; }
+    
+    const matches = Object.values(_clientDB).filter(c => 
+        c.name && c.name.toLowerCase().includes(q)
+    ).slice(0, 8);
+    
+    if (matches.length === 0) { drop.classList.remove('show'); return; }
+    
+    drop.innerHTML = matches.map(c => {
+        const meta = [c.property, c.city].filter(Boolean).join(' — ');
+        return '<div class="client-ac-item" onmousedown="clientAcSelect(\'' + escHtml(c.name).replace(/'/g, "\\'") + '\')">' +
+            '<div class="ca-name">' + escHtml(c.name) + '</div>' +
+            (meta ? '<div class="ca-meta">' + escHtml(meta) + (c.email ? ' | ' + escHtml(c.email) : '') + '</div>' : '') +
+            '</div>';
+    }).join('');
+    drop.classList.add('show');
+}
+
+function clientAcSelect(name) {
+    const client = Object.values(_clientDB).find(c => c.name === name);
+    if (!client) return;
+    document.getElementById('clientName').value = client.name;
+    if (client.property) document.getElementById('complexName').value = client.property;
+    if (client.city) document.getElementById('jobCity').value = client.city;
+    if (client.unit) document.getElementById('unitNum').value = client.unit;
+    document.getElementById('clientAcDrop').classList.remove('show');
+}
+
+function saveClientToDB(clientName, jobData) {
+    if (!db || !userPIN || !clientName || clientName === 'Unknown Client') return;
+    const hashedPIN = hashPIN(userPIN);
+    const key = sanitizeKey(clientName);
+    const existing = _clientDB[key] || {};
+    const updated = {
+        name: clientName,
+        property: jobData.complexName || existing.property || '',
+        city: jobData.jobCity || existing.city || '',
+        unit: jobData.unitNum || existing.unit || '',
+        email: existing.email || '',
+        phone: existing.phone || '',
+        bidCount: (existing.bidCount || 0) + 1,
+        lastBid: Date.now(),
+        firstSeen: existing.firstSeen || Date.now()
+    };
+    _clientDB[key] = updated;
+    db.ref('clients/' + hashedPIN + '/' + key).set(updated);
+}
+
+document.addEventListener('click', function(e) {
+    const drop = document.getElementById('clientAcDrop');
+    if (drop && !e.target.closest('.client-ac-wrap')) drop.classList.remove('show');
+});
+
+// =====================================================================
+// QUICK TEMPLATES
+// =====================================================================
+const JOB_TEMPLATES = {
+    grab_bar_install: {
+        trade: 'general', areaDesc: 'Bathroom', sqft: 48,
+        labor: [
+            { desc: 'Wall stud location & blocking', basis: '1 lot', price: 45 },
+            { desc: 'Grab bar mounting (per bar)', basis: 'per unit', price: 35 },
+            { desc: 'Drywall patching (if needed)', basis: '1 lot', price: 30 },
+            { desc: 'Cleanup & inspection', basis: '1 lot', price: 20 }
+        ],
+        materials: [
+            { desc: 'Stainless Steel Grab Bar 18"', qty: '2', price: 28 },
+            { desc: 'Stainless Steel Grab Bar 36"', qty: '1', price: 42 },
+            { desc: 'Wood Blocking / Backing Board', qty: '1 lot', price: 12 },
+            { desc: 'Stainless Mounting Hardware', qty: '1 lot', price: 15 },
+            { desc: 'Drywall Patch Kit', qty: '1', price: 12 }
+        ],
+        disclaimer: 'Wall conditions behind tile or drywall cannot be assessed until access is gained. If studs are not present at required locations, additional blocking or reinforcement may be needed. Contractor shall provide written notice and a Change Order before proceeding.'
+    },
+    ada_ramp: {
+        trade: 'general', areaDesc: 'Exterior Entry', sqft: 120,
+        labor: [
+            { desc: 'Site prep & layout', basis: '1 lot', price: 150 },
+            { desc: 'Foundation / post setting', basis: '1 lot', price: 200 },
+            { desc: 'Ramp framing & decking', basis: 'per sq ft', price: 8 },
+            { desc: 'Handrail installation', basis: '1 lot', price: 175 },
+            { desc: 'Landing platform', basis: '1 lot', price: 125 },
+            { desc: 'Final inspection & cleanup', basis: '1 lot', price: 50 }
+        ],
+        materials: [
+            { desc: 'Pressure-Treated Lumber (framing)', qty: '1 lot', price: 280 },
+            { desc: 'Composite Decking Boards', qty: '1 lot', price: 350 },
+            { desc: 'Aluminum Handrails', qty: '2', price: 120 },
+            { desc: 'Concrete / Post Anchors', qty: '1 lot', price: 65 },
+            { desc: 'Hardware / Fasteners', qty: '1 lot', price: 45 },
+            { desc: 'Non-Slip Surface Strips', qty: '1 lot', price: 30 }
+        ],
+        disclaimer: 'Ground conditions, slope grade, and soil composition cannot be fully assessed until excavation begins. Frost depth, drainage issues, or underground utilities may require design modifications. Contractor shall provide written notice and a Change Order before proceeding. All work performed per ADA guidelines and local building code.'
+    },
+    walk_in_shower: {
+        trade: 'plumbing', areaDesc: 'Bathroom', sqft: 48,
+        labor: [
+            { desc: 'Demolition of existing tub/shower', basis: '1 lot', price: 250 },
+            { desc: 'Plumbing rough-in / reroute', basis: '1 lot', price: 300 },
+            { desc: 'Shower pan installation', basis: '1 lot', price: 200 },
+            { desc: 'Tile / surround installation', basis: '1 lot', price: 400 },
+            { desc: 'Fixture installation', basis: '1 lot', price: 150 },
+            { desc: 'Grab bar installation', basis: '1 lot', price: 75 },
+            { desc: 'Cleanup & haul-away', basis: '1 lot', price: 100 }
+        ],
+        materials: [
+            { desc: 'Walk-In Shower Pan (barrier-free)', qty: '1', price: 350 },
+            { desc: 'Shower Surround / Tile', qty: '1 lot', price: 280 },
+            { desc: 'Shower Valve & Trim Kit', qty: '1', price: 120 },
+            { desc: 'Handheld Shower Head w/ Slide Bar', qty: '1', price: 65 },
+            { desc: 'ADA Grab Bars', qty: '2', price: 35 },
+            { desc: 'Waterproofing Membrane', qty: '1 lot', price: 45 },
+            { desc: 'PEX / Fittings', qty: '1 lot', price: 40 },
+            { desc: 'Drain Assembly', qty: '1', price: 30 }
+        ],
+        disclaimer: 'Plumbing and structural conditions behind walls and under floors cannot be assessed until demolition. Corroded pipes, non-code-compliant connections, water damage, or inadequate subfloor may be discovered. Contractor shall provide written notice. Work shall cease until a written Change Order is executed.'
+    },
+    stair_rail: {
+        trade: 'general', areaDesc: 'Stairway', sqft: 30,
+        labor: [
+            { desc: 'Measurement & layout', basis: '1 lot', price: 40 },
+            { desc: 'Bracket / post mounting', basis: '1 lot', price: 75 },
+            { desc: 'Rail installation & leveling', basis: '1 lot', price: 60 },
+            { desc: 'Cleanup', basis: '1 lot', price: 20 }
+        ],
+        materials: [
+            { desc: 'Handrail (wood or metal)', qty: '1', price: 55 },
+            { desc: 'Wall Brackets', qty: '4', price: 8 },
+            { desc: 'End Caps / Returns', qty: '2', price: 12 },
+            { desc: 'Mounting Hardware', qty: '1 lot', price: 10 }
+        ],
+        disclaimer: 'Wall composition and stud placement cannot be confirmed until installation begins. If walls lack adequate backing, additional blocking will be required. Contractor shall provide written notice before proceeding.'
+    },
+    toilet_replace: {
+        trade: 'plumbing', areaDesc: 'Bathroom', sqft: 48,
+        labor: [
+            { desc: 'Remove existing toilet', basis: '1 lot', price: 45 },
+            { desc: 'Inspect flange & drain', basis: '1 lot', price: 30 },
+            { desc: 'Install new toilet', basis: '1 lot', price: 75 },
+            { desc: 'Connect supply & test', basis: '1 lot', price: 25 },
+            { desc: 'Cleanup & haul-away', basis: '1 lot', price: 25 }
+        ],
+        materials: [
+            { desc: 'Toilet (elongated, ADA height)', qty: '1', price: 189 },
+            { desc: 'Wax Ring / Gasket', qty: '1', price: 5 },
+            { desc: 'Supply Line (braided)', qty: '1', price: 8 },
+            { desc: 'Shut-Off Valve', qty: '1', price: 12 },
+            { desc: 'Toilet Seat', qty: '1', price: 25 },
+            { desc: 'Caulk', qty: '1', price: 6 }
+        ],
+        disclaimer: 'Plumbing conditions beneath the toilet cannot be assessed until removal. Corroded flanges, damaged subfloor, or non-standard drain connections may require additional work. Contractor shall provide written notice and a Change Order before proceeding.'
+    },
+    faucet_replace: {
+        trade: 'plumbing', areaDesc: 'Kitchen / Bathroom', sqft: 48,
+        labor: [
+            { desc: 'Remove existing faucet', basis: '1 lot', price: 35 },
+            { desc: 'Install new faucet', basis: '1 lot', price: 55 },
+            { desc: 'Connect supply lines & test', basis: '1 lot', price: 25 },
+            { desc: 'Cleanup', basis: '1 lot', price: 15 }
+        ],
+        materials: [
+            { desc: 'Faucet (single-handle)', qty: '1', price: 85 },
+            { desc: 'Supply Lines (braided)', qty: '2', price: 8 },
+            { desc: 'Plumber\'s Putty / Teflon', qty: '1 lot', price: 6 }
+        ],
+        disclaimer: 'Supply line connections and valve conditions cannot be assessed until the existing faucet is removed. Corroded valves or non-standard connections may require additional work.'
+    },
+    water_heater: {
+        trade: 'plumbing', areaDesc: 'Utility / Basement', sqft: 48,
+        labor: [
+            { desc: 'Disconnect & drain existing unit', basis: '1 lot', price: 75 },
+            { desc: 'Remove & haul away old unit', basis: '1 lot', price: 60 },
+            { desc: 'Install new water heater', basis: '1 lot', price: 200 },
+            { desc: 'Connect plumbing & gas/electric', basis: '1 lot', price: 100 },
+            { desc: 'Test & verify operation', basis: '1 lot', price: 40 }
+        ],
+        materials: [
+            { desc: 'Water Heater (50 gal)', qty: '1', price: 450 },
+            { desc: 'Expansion Tank', qty: '1', price: 35 },
+            { desc: 'Flex Connectors', qty: '2', price: 15 },
+            { desc: 'T&P Valve / Discharge Pipe', qty: '1 lot', price: 20 },
+            { desc: 'Gas Flex / Fittings (if gas)', qty: '1 lot', price: 25 }
+        ],
+        disclaimer: 'Existing plumbing, gas, and electrical connections may not meet current code. Venting, gas line sizing, or electrical circuit upgrades may be required. Permits pulled if required by local jurisdiction.'
+    },
+    drain_repair: {
+        trade: 'plumbing', areaDesc: 'Bathroom / Kitchen', sqft: 48,
+        labor: [
+            { desc: 'Diagnose drain issue', basis: '1 lot', price: 60 },
+            { desc: 'Access / open drain line', basis: '1 lot', price: 45 },
+            { desc: 'Snake / clear blockage', basis: '1 lot', price: 75 },
+            { desc: 'Repair / replace damaged section', basis: '1 lot', price: 100 },
+            { desc: 'Test & verify flow', basis: '1 lot', price: 25 }
+        ],
+        materials: [
+            { desc: 'PVC / ABS Pipe & Fittings', qty: '1 lot', price: 25 },
+            { desc: 'Drain Cleaner / Treatment', qty: '1', price: 12 },
+            { desc: 'Pipe Cement / Primer', qty: '1 lot', price: 10 }
+        ],
+        disclaimer: 'Drain conditions within walls, floors, and underground cannot be assessed until access is gained. Root intrusion, collapsed pipe, or non-code-compliant connections may be discovered.'
+    },
+    outlet_install: {
+        trade: 'electrical', areaDesc: 'Room Interior', sqft: 120,
+        labor: [
+            { desc: 'Circuit identification', basis: '1 lot', price: 40 },
+            { desc: 'Cut-in box installation', basis: 'per unit', price: 35 },
+            { desc: 'Wire run (new or extension)', basis: 'per run', price: 85 },
+            { desc: 'Device installation & wiring', basis: 'per unit', price: 30 },
+            { desc: 'Testing & verification', basis: '1 lot', price: 25 }
+        ],
+        materials: [
+            { desc: 'Outlet / Receptacle', qty: '2', price: 4 },
+            { desc: 'Old-Work Electrical Box', qty: '2', price: 5 },
+            { desc: 'Romex Wire (12/2 or 14/2)', qty: '1 lot', price: 25 },
+            { desc: 'Cover Plates', qty: '2', price: 3 },
+            { desc: 'Wire Nuts / Connectors', qty: '1 lot', price: 5 }
+        ],
+        disclaimer: 'Electrical systems concealed within walls cannot be fully assessed until access is gained. Aluminum wiring, overloaded circuits, or non-code-compliant connections may be discovered. All work per NEC and local code.'
+    },
+    light_fixture: {
+        trade: 'electrical', areaDesc: 'Room Interior', sqft: 120,
+        labor: [
+            { desc: 'Remove existing fixture', basis: 'per unit', price: 25 },
+            { desc: 'Install new fixture', basis: 'per unit', price: 45 },
+            { desc: 'Wiring connection & testing', basis: 'per unit', price: 20 },
+            { desc: 'Cleanup', basis: '1 lot', price: 15 }
+        ],
+        materials: [
+            { desc: 'Light Fixture', qty: '1', price: 65 },
+            { desc: 'Wire Nuts / Electrical Tape', qty: '1 lot', price: 5 },
+            { desc: 'Mounting Hardware', qty: '1 lot', price: 8 }
+        ],
+        disclaimer: 'Electrical box condition and wiring cannot be assessed until the existing fixture is removed. Inadequate boxes, damaged wiring, or missing grounds may require additional work.'
+    },
+    ceiling_fan: {
+        trade: 'electrical', areaDesc: 'Bedroom / Living Room', sqft: 150,
+        labor: [
+            { desc: 'Remove existing fixture', basis: '1 lot', price: 30 },
+            { desc: 'Install fan-rated box (if needed)', basis: '1 lot', price: 55 },
+            { desc: 'Assemble & mount ceiling fan', basis: '1 lot', price: 75 },
+            { desc: 'Wiring & testing', basis: '1 lot', price: 30 }
+        ],
+        materials: [
+            { desc: 'Ceiling Fan w/ Light Kit', qty: '1', price: 120 },
+            { desc: 'Fan-Rated Ceiling Box', qty: '1', price: 15 },
+            { desc: 'Mounting Hardware', qty: '1 lot', price: 8 }
+        ],
+        disclaimer: 'Ceiling structure and existing electrical box rating cannot be confirmed until the old fixture is removed. A fan-rated box is required by code. Additional framing support may be needed.'
+    },
+    gfci_upgrade: {
+        trade: 'electrical', areaDesc: 'Kitchen / Bathroom / Garage', sqft: 48,
+        labor: [
+            { desc: 'Circuit identification & testing', basis: '1 lot', price: 40 },
+            { desc: 'Remove existing outlet', basis: 'per unit', price: 10 },
+            { desc: 'Install GFCI outlet', basis: 'per unit', price: 30 },
+            { desc: 'Test trip/reset function', basis: '1 lot', price: 15 }
+        ],
+        materials: [
+            { desc: 'GFCI Outlet (20A)', qty: '3', price: 18 },
+            { desc: 'GFCI Cover Plates', qty: '3', price: 4 },
+            { desc: 'Wire Nuts / Tape', qty: '1 lot', price: 5 }
+        ],
+        disclaimer: 'Wiring behind existing outlets cannot be assessed until removal. Aluminum wiring, backstab connections, or missing grounds may require additional work per NEC code.'
+    },
+    drywall_patch: {
+        trade: 'general', areaDesc: 'Room Interior', sqft: 120,
+        labor: [
+            { desc: 'Cut out damaged area', basis: '1 lot', price: 30 },
+            { desc: 'Install backing & patch', basis: 'per patch', price: 35 },
+            { desc: 'Tape, mud & sand (3 coats)', basis: 'per patch', price: 55 },
+            { desc: 'Prime & paint to match', basis: '1 lot', price: 45 },
+            { desc: 'Cleanup', basis: '1 lot', price: 15 }
+        ],
+        materials: [
+            { desc: 'Drywall Patch / Sheet', qty: '1', price: 12 },
+            { desc: 'Joint Compound', qty: '1', price: 10 },
+            { desc: 'Mesh Tape', qty: '1', price: 6 },
+            { desc: 'Sandpaper (various grit)', qty: '1 lot', price: 8 },
+            { desc: 'Primer', qty: '1 qt', price: 12 },
+            { desc: 'Paint (matched)', qty: '1 qt', price: 18 }
+        ],
+        disclaimer: 'Conditions behind drywall cannot be assessed until the damaged area is opened. Water damage, mold, or structural issues may be discovered.'
+    },
+    door_install: {
+        trade: 'general', areaDesc: 'Room Interior', sqft: 120,
+        labor: [
+            { desc: 'Remove existing door & hardware', basis: '1 lot', price: 30 },
+            { desc: 'Prep opening / shim frame', basis: '1 lot', price: 45 },
+            { desc: 'Hang new door', basis: '1 lot', price: 65 },
+            { desc: 'Install hardware (knob, hinges)', basis: '1 lot', price: 30 },
+            { desc: 'Trim & casing adjustment', basis: '1 lot', price: 40 }
+        ],
+        materials: [
+            { desc: 'Pre-Hung Interior Door', qty: '1', price: 95 },
+            { desc: 'Door Knob / Lever Set', qty: '1', price: 25 },
+            { desc: 'Hinges (3-pack)', qty: '1', price: 10 },
+            { desc: 'Shims / Screws', qty: '1 lot', price: 8 },
+            { desc: 'Caulk / Wood Filler', qty: '1', price: 6 }
+        ],
+        disclaimer: 'Door frame and wall conditions cannot be assessed until the existing door is removed. Out-of-square frames, damaged headers, or non-standard sizing may require additional work.'
+    },
+    flooring_vinyl: {
+        trade: 'flooring', areaDesc: 'Room Interior', sqft: 120,
+        labor: [
+            { desc: 'Remove existing flooring', basis: 'per sq ft', price: 1.50 },
+            { desc: 'Subfloor prep & leveling', basis: 'per sq ft', price: 0.75 },
+            { desc: 'Vinyl plank installation', basis: 'per sq ft', price: 2.50 },
+            { desc: 'Transition strips & trim', basis: '1 lot', price: 45 },
+            { desc: 'Cleanup & haul-away', basis: '1 lot', price: 40 }
+        ],
+        materials: [
+            { desc: 'Luxury Vinyl Plank (LVP)', qty: '1 lot', price: 2.50 },
+            { desc: 'Underlayment', qty: '1 lot', price: 0.50 },
+            { desc: 'Transition Strips', qty: '3', price: 12 },
+            { desc: 'Quarter Round / Shoe Molding', qty: '1 lot', price: 25 },
+            { desc: 'Adhesive / Spacers', qty: '1 lot', price: 15 }
+        ],
+        disclaimer: 'Subfloor conditions cannot be assessed until existing flooring is removed. Water damage, uneven surfaces, or asbestos-containing materials may be discovered.'
+    },
+    paint_room: {
+        trade: 'painting', areaDesc: 'Room Interior', sqft: 150,
+        labor: [
+            { desc: 'Surface prep (fill, sand, tape)', basis: 'per sq ft', price: 0.50 },
+            { desc: 'Prime walls & ceiling', basis: 'per sq ft', price: 0.40 },
+            { desc: 'Paint — 2 coats walls', basis: 'per sq ft', price: 0.80 },
+            { desc: 'Paint — ceiling', basis: 'per sq ft', price: 0.50 },
+            { desc: 'Trim & detail work', basis: '1 lot', price: 75 },
+            { desc: 'Cleanup & touch-up', basis: '1 lot', price: 30 }
+        ],
+        materials: [
+            { desc: 'Interior Paint (walls)', qty: '2 gal', price: 35 },
+            { desc: 'Ceiling Paint', qty: '1 gal', price: 28 },
+            { desc: 'Primer', qty: '1 gal', price: 22 },
+            { desc: 'Painter\'s Tape', qty: '2 rolls', price: 7 },
+            { desc: 'Drop Cloths', qty: '2', price: 8 },
+            { desc: 'Rollers / Brushes / Tray', qty: '1 lot', price: 18 },
+            { desc: 'Spackle / Caulk', qty: '1 lot', price: 10 }
+        ],
+        disclaimer: 'Wall and ceiling conditions may reveal water stains, mold, lead paint (pre-1978), or structural cracks once preparation begins. Contractor shall provide written notice before proceeding with remediation.'
+    }
+};
+
+function applyTemplate() {
+    const sel = document.getElementById('templateSelect');
+    const key = sel.value;
+    if (!key) { alert('Select a template first.'); return; }
+    const t = JOB_TEMPLATES[key];
+    if (!t) return;
+    
+    if (document.getElementById('clientName').value && !confirm('This will replace current labor & material items. Continue?')) return;
+    
+    document.getElementById('tradeType').value = t.trade;
+    onTradeChange();
+    document.getElementById('areaDesc').value = t.areaDesc;
+    document.getElementById('sqft').value = t.sqft;
+    
+    document.getElementById('laborItemsContainer').innerHTML = '';
+    t.labor.forEach(li => addLaborRow(li.desc, li.basis, li.price));
+    
+    document.getElementById('matItemsContainer').innerHTML = '';
+    t.materials.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
+    
+    document.getElementById('disclaimer').value = t.disclaimer;
+    sel.value = '';
+    showNotification('⚡ Template applied! Fill in client & job details.', 'success');
+}
+
+// =====================================================================
+// PUSH NOTIFICATIONS FOR EXPIRING QUOTES
+// =====================================================================
+function initPushNotifications() {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+function checkAndNotifyExpiring() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const now = new Date();
+    Object.values(invoiceData.temporary || {}).forEach(inv => {
+        const daysLeft = Math.ceil((new Date(inv.expiresDate) - now) / 86400000);
+        const notifKey = 'notif_' + inv.id + '_' + daysLeft;
+        if (sessionStorage.getItem(notifKey)) return;
+        
+        if (daysLeft === 5 || daysLeft === 2 || daysLeft === 0) {
+            let title, body;
+            if (daysLeft === 0) {
+                title = '🔴 Quote EXPIRED';
+                body = inv.clientName + ' — Quote has expired today!';
+            } else if (daysLeft === 2) {
+                title = '🟠 Quote expiring in 2 days';
+                body = inv.clientName + ' — Follow up ASAP!';
+            } else {
+                title = '🟡 Quote expiring in 5 days';
+                body = inv.clientName + ' — $' + inv.amount.toFixed(0) + ' pending';
+            }
+            new Notification(title, { body: body, icon: '/favicon-96x96.png', tag: notifKey });
+            sessionStorage.setItem(notifKey, '1');
+        }
+    });
+}
+
+// =====================================================================
+// WIN/LOSS ANALYTICS DASHBOARD
+// =====================================================================
+function openAnalytics() {
+    const panel = document.getElementById('quoteDetailPanel');
+    const list = document.getElementById('invoiceList');
+    if (panel) { panel.style.display = 'block'; }
+    if (list) { list.style.display = 'none'; }
+    
+    const temp = Object.values(invoiceData.temporary);
+    const perm = Object.values(invoiceData.permanent);
+    const lost = Object.values(invoiceData.lost);
+    const all = [...temp, ...perm, ...lost];
+    
+    const totalBids = all.length;
+    const wonCount = perm.length;
+    const lostCount = lost.length;
+    const pendingCount = temp.length;
+    const winRate = totalBids > 0 ? Math.round((wonCount / (wonCount + lostCount || 1)) * 100) : 0;
+    const avgBid = all.length > 0 ? all.reduce((s, i) => s + i.amount, 0) / all.length : 0;
+    const totalRevenue = perm.reduce((s, i) => s + i.amount, 0);
+    
+    // Revenue by trade type
+    const byTrade = {};
+    perm.forEach(inv => {
+        const t = (inv.jobDetails && inv.jobDetails.tradeType) || 'general';
+        byTrade[t] = (byTrade[t] || 0) + inv.amount;
+    });
+    const maxTrade = Math.max(...Object.values(byTrade), 1);
+    const tradeColors = { flooring: '#27ae60', painting: '#8e44ad', general: '#e67e22', plumbing: '#2980b9', electrical: '#f39c12', custom: '#7f8c8d' };
+    
+    // Top clients
+    const byClient = {};
+    perm.forEach(inv => {
+        byClient[inv.clientName] = (byClient[inv.clientName] || 0) + inv.amount;
+    });
+    const topClients = Object.entries(byClient).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxClient = topClients.length > 0 ? topClients[0][1] : 1;
+    
+    // Monthly trend (last 6 months)
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        const label = d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        const won = perm.filter(inv => inv.awardedDate && inv.awardedDate.startsWith(key)).length;
+        const total = all.filter(inv => inv.createdDate && inv.createdDate.startsWith(key)).length;
+        months.push({ label, won, total });
+    }
+    const maxMonth = Math.max(...months.map(m => m.total), 1);
+    
+    if (!panel) return;
+    panel.innerHTML = `
+        <div style="margin-bottom:16px">
+            <button onclick="invCloseDetail()" style="background:#2a3a5c;color:#bdc3c7;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">← Back to Quote Library</button>
+        </div>
+        <div class="analytics-grid">
+            <div class="analytics-card"><div class="a-value" style="color:#3498db">${winRate}%</div><div class="a-label">Win Rate</div></div>
+            <div class="analytics-card"><div class="a-value" style="color:#27ae60">$${totalRevenue.toFixed(0)}</div><div class="a-label">Total Revenue</div></div>
+            <div class="analytics-card"><div class="a-value" style="color:#f39c12">$${avgBid.toFixed(0)}</div><div class="a-label">Avg Bid Size</div></div>
+            <div class="analytics-card"><div class="a-value" style="color:#27ae60">${wonCount}</div><div class="a-label">Won</div></div>
+            <div class="analytics-card"><div class="a-value" style="color:#e74c3c">${lostCount}</div><div class="a-label">Lost</div></div>
+            <div class="analytics-card"><div class="a-value" style="color:#f39c12">${pendingCount}</div><div class="a-label">Pending</div></div>
+        </div>
+        <div class="analytics-chart">
+            <h4>Revenue by Trade Type</h4>
+            ${Object.entries(byTrade).sort((a,b) => b[1]-a[1]).map(([trade, amt]) => `
+                <div class="analytics-bar-row">
+                    <div class="analytics-bar-label">${trade.charAt(0).toUpperCase()+trade.slice(1)}</div>
+                    <div class="analytics-bar"><div class="analytics-bar-fill" style="width:${(amt/maxTrade*100).toFixed(0)}%;background:${tradeColors[trade]||'#3498db'}"></div></div>
+                    <div class="analytics-bar-val">$${amt.toFixed(0)}</div>
+                </div>
+            `).join('') || '<div style="color:#7f8c8d;font-size:12px;text-align:center;padding:10px">No awarded quotes yet</div>'}
+        </div>
+        <div class="analytics-chart">
+            <h4>Top Clients (by Revenue)</h4>
+            ${topClients.map(([name, amt]) => `
+                <div class="analytics-bar-row">
+                    <div class="analytics-bar-label">${name}</div>
+                    <div class="analytics-bar"><div class="analytics-bar-fill" style="width:${(amt/maxClient*100).toFixed(0)}%;background:#3498db"></div></div>
+                    <div class="analytics-bar-val">$${amt.toFixed(0)}</div>
+                </div>
+            `).join('') || '<div style="color:#7f8c8d;font-size:12px;text-align:center;padding:10px">No awarded quotes yet</div>'}
+        </div>
+        <div class="analytics-chart">
+            <h4>Monthly Activity (Last 6 Months)</h4>
+            ${months.map(m => `
+                <div class="analytics-bar-row">
+                    <div class="analytics-bar-label">${m.label}</div>
+                    <div class="analytics-bar">
+                        <div class="analytics-bar-fill" style="width:${(m.total/maxMonth*100).toFixed(0)}%;background:#2a3a5c"></div>
+                    </div>
+                    <div class="analytics-bar-val">${m.won}W / ${m.total}T</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// =====================================================================
+// VERSION HISTORY / REVISION TRACKING
+// =====================================================================
+function saveQuoteRevision(invoiceId) {
+    if (!db || !userPIN) return;
+    const hashedPIN = hashPIN(userPIN);
+    let invoice = null;
+    for (const status in invoiceData) {
+        if (invoiceData[status][invoiceId]) {
+            invoice = invoiceData[status][invoiceId];
+            break;
+        }
+    }
+    if (!invoice) return;
+    
+    const revKey = 'rev_' + Date.now();
+    const revision = {
+        ...invoice,
+        revisionDate: new Date().toISOString(),
+        revisionId: revKey
+    };
+    
+    db.ref('revisions/' + hashedPIN + '/' + invoiceId + '/' + revKey).set(revision);
+}
+
+function viewRevisionHistory(invoiceId) {
+    if (!db || !userPIN) return;
+    const hashedPIN = hashPIN(userPIN);
+    
+    db.ref('revisions/' + hashedPIN + '/' + invoiceId).once('value').then(snap => {
+        const revisions = snap.val() || {};
+        const revList = Object.values(revisions).sort((a, b) => new Date(b.revisionDate) - new Date(a.revisionDate));
+        
+        if (revList.length === 0) {
+            alert('No revision history for this quote.');
+            return;
+        }
+        
+        let html = '<div style="margin-bottom:16px"><button onclick="invCloseDetail()" style="background:#2a3a5c;color:#bdc3c7;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">← Back</button></div>';
+        html += '<h3 style="color:#3498db;font-size:14px;margin-bottom:12px">📝 Revision History (' + revList.length + ' versions)</h3>';
+        
+        revList.forEach((rev, i) => {
+            const date = new Date(rev.revisionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            html += '<div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:12px;margin-bottom:8px">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+            html += '<div><span style="color:#3498db;font-weight:700">v' + (revList.length - i) + '</span> <span style="color:#7f8c8d;font-size:12px">' + date + '</span></div>';
+            html += '<span style="color:#f39c12;font-size:13px;font-weight:600">$' + rev.amount.toFixed(2) + '</span>';
+            html += '</div>';
+            html += '<div style="font-size:11px;color:#95a5a6;margin-top:4px">Labor: $' + rev.laborTotal.toFixed(0) + ' | Materials: $' + rev.materialsTotal.toFixed(0) + '</div>';
+            html += '</div>';
+        });
+        
+        const panel = document.getElementById('quoteDetailPanel');
+        const list = document.getElementById('invoiceList');
+        if (panel) { panel.style.display = 'block'; panel.innerHTML = html; }
+        if (list) list.style.display = 'none';
+    });
 }
 
 // =====================================================================

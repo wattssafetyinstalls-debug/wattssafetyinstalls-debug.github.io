@@ -545,112 +545,7 @@
 }
 </style>
 
-    <!-- MOBILE CAROUSEL FIX & BENEFIT CARD ANINETIONS -->
-    <style>
-    /* FIX: Mobile carousel dropdown background */
-    @media (max-width: 768px) {
-        .service-card.touch-active .service-dropdown {
-            background: linear-gradient(135deg, #0A1D37, #00C4B4) !important;
-            color: white !important;
-        }
-        
-        .service-card.touch-active .service-dropdown a {
-            color: white !important;
-            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
-        }
-        
-        .service-card.touch-active .service-dropdown a:hover {
-            background: rgba(255,255,255,0.1) !important;
-            color: var(--gold) !important;
-        }
-    }
-
-    /* BENEFIT CARD ANINETIONS - Same as service tiles */
-    .benefit-card {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .benefit-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0A1D37, #00C4B4);
-        transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 1;
-    }
-    
-    .benefit-card:hover::before {
-        left: 0;
-    }
-    
-    .benefit-card > * {
-        position: relative;
-        z-index: 2;
-    }
-    
-    .benefit-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* SATIN GLOSS SWIPE FOR BENEFIT CARDS */
-    .benefit-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-        );
-        transition: left 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        z-index: 3;
-    }
-    
-    .benefit-card:hover::after {
-        left: 100%;
-    }
-    
-    /* TEXT COLOR OPTIMIZATION FOR BENEFIT CARDS */
-    .benefit-card:hover .benefit-icon,
-    .benefit-card:hover h3,
-    .benefit-card:hover p {
-        color: white !important;
-    }
-    
-    /* MOBILE AUTO-ANINETION FOR BENEFIT CARDS */
-    @media (max-width: 768px) {
-        .benefit-card.mobile-animated {
-            animation: benefitMobileGlow 3s ease-in-out 1;
-        }
-        
-        @keyframes benefitMobileGlow {
-            0% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 196, 180, 0.3);
-                transform: translateY(-5px);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(0, 196, 180, 0);
-                transform: translateY(0);
-            }
-        }
-    }
-    </style>
-    
-<link rel="canonical" href="https://wattsatpcontractor.com/sitemap">
+    <link rel="canonical" href="https://wattsatpcontractor.com/sitemap">
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -694,6 +589,7 @@
                 <a href="/services.html">Services</a>
                 <a href="/service-area.html">Service Area</a>
                 <a href="/about.html">About</a>
+                <a href="/referrals.html">Referrals</a>
                 <a href="/contact.html">Contact</a>
             </div>
             
@@ -727,96 +623,41 @@
                 <li><a href="/services.html"><i class="fas fa-tools"></i> Services</a></li>
                 <li><a href="/service-area.html"><i class="fas fa-map-marker-alt"></i> Service Area</a></li>
                 <li><a href="/about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+                <li><a href="/referrals.html"><i class="fas fa-handshake"></i> Referrals</a></li>
                 <li><a href="/contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
-                <li><a href="/sitemap"><i class="fas fa-sitemap"></i> Site Map</a></li>
+                <li><a href="/sitemap.html"><i class="fas fa-sitemap"></i> Site Map</a></li>
                 <li><a href="/privacy-policy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
-            </ul>
-        </div>
-        
-        <div class="sitemap-section">
-            <h2>Watts Safety Installs DBA</h2>
-            <ul class="sitemap-list">
-                <li><a href="/safety-installs/"><i class="fas fa-building"></i> Safety Installs Home</a></li>
-                <li><a href="/safety-installs/services.html"><i class="fas fa-hammer"></i> All Professional Services</a></li>
-                <li><a href="/safety-installs/service-area.html"><i class="fas fa-map"></i> Service Area</a></li>
-                <li><a href="/safety-installs/about.html"><i class="fas fa-users"></i> About Safety Installs</a></li>
-                <li><a href="/safety-installs/contact.html"><i class="fas fa-phone"></i> Contact Safety Installs</a></li>
-                <li><a href="/safety-installs/sitemap.html"><i class="fas fa-sitemap"></i> Safety Installs Sitemap</a></li>
-            </ul>
-        </div>
-        
-        <div class="sitemap-section">
-            <h2>Professional Home Services (DBA)</h2>
-            <ul class="sitemap-list">
-                <li><a href="/safety-installs/services/home-remodeling"><i class="fas fa-home"></i> Home Remodeling</a></li>
-                <li><a href="/safety-installs/services/concrete-flooring"><i class="fas fa-th"></i> Concrete & Flooring</a></li>
-                <li><a href="/safety-installs/services/deck-siding"><i class="fas fa-house"></i> Deck & Siding</a></li>
-                <li><a href="/safety-installs/services/handyman-services"><i class="fas fa-tools"></i> Handyman Services</a></li>
-                <li><a href="/safety-installs/services/cabinets-countertops"><i class="fas fa-cube"></i> Cabinets & Countertops</a></li>
-                <li><a href="/safety-installs/services/property-maintenance"><i class="fas fa-wrench"></i> Property Maintenance</a></li>
-                <li><a href="/safety-installs/services/snow-removal"><i class="fas fa-snowflake"></i> Snow Removal</a></li>
-                <li><a href="/safety-installs/services/lawn-care"><i class="fas fa-leaf"></i> Lawn Care</a></li>
-                <li><a href="/safety-installs/services/tv-mounting"><i class="fas fa-tv"></i> TV Mounting & AV</a></li>
-                <li><a href="/safety-installs/services/seasonal-services"><i class="fas fa-calendar"></i> Seasonal Services</a></li>
             </ul>
         </div>
         
         <div class="sitemap-section">
             <h2>Our Services</h2>
             <ul class="sitemap-list">
-                <li><a href="services.html#accessibility-safety"><i class="fas fa-wheelchair"></i> Accessibility & Safety Solutions</a>
-                <li>
-                    <a href="services.html#accessibility-safety"><i class="fas fa-wheelchair"></i> Accessibility & Safety Solutions</a>
-                    <ul class="sub-list">
-                        <li><a href="services.html#accessibility-safety">ADA-compliant showers & bathrooms</a></li>
-                        <li><a href="services.html#accessibility-safety">Commercial-grade grab bars & handrails</a></li>
-                        <li><a href="services.html#accessibility-safety">Non-slip flooring installations</a></li>
-                        <li><a href="services.html#accessibility-safety">Custom accessibility ramps</a></li>
-                        <li><a href="services.html#accessibility-safety">Senior safety modifications</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="services.html#home-remodeling"><i class="fas fa-hammer"></i> Home Remodeling & Improvements</a>
-                    <ul class="sub-list">
-                        <li><a href="services.html#home-remodeling">Kitchen & bathroom renovations</a></li>
-                        <li><a href="services.html#home-remodeling">Deck construction & repair</a></li>
-                        <li><a href="services.html#home-remodeling">Siding replacement & installation</a></li>
-                        <li><a href="services.html#home-remodeling">Complete home remodeling</a></li>
-                        <li><a href="services.html#home-remodeling">Basement finishing</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="services.html#tv-mounting"><i class="fas fa-tv"></i> TV Mounting & Audio Visual Services</a>
-                    <ul class="sub-list">
-                        <li><a href="services.html#tv-mounting">Residential & commercial TV mounting</a></li>
-                        <li><a href="services.html#tv-mounting">Home theater system installation</a></li>
-                        <li><a href="services.html#tv-mounting">Soundbar & speaker setup</a></li>
-                        <li><a href="services.html#tv-mounting">Cable management & concealment</a></li>
-                        <li><a href="services.html#tv-mounting">Smart home audio integration</a></li>
-                        <li><a href="services.html#tv-mounting">Projector Mounting & Screen Installations</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="services.html#property-maintenance"><i class="fas fa-snowplow"></i> Property Maintenance & Snow Removal</a>
-                    <ul class="sub-list">
-                        <li><a href="services.html#property-maintenance">Routine property maintenance</a></li>
-                        <li><a href="services.html#property-maintenance">Emergency repair services</a></li>
-                        <li><a href="services.html#property-maintenance">Snow removal & de-icing</a></li>
-                        <li><a href="services.html#property-maintenance">Seasonal property preparation</a></li>
-                        <li><a href="services.html#property-maintenance">Tree trimming & removal services</a></li>
-                        <li><a href="services.html#property-maintenance">On call emergency snow removal</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="services.html#lawn-care"><i class="fas fa-leaf"></i> Lawn & Landscape Care</a>
-                    <ul class="sub-list">
-                        <li><a href="services.html#lawn-care">Regular lawn maintenance</a></li>
-                        <li><a href="services.html#lawn-care">Fertilization & weed control</a></li>
-                        <li><a href="services.html#lawn-care">Landscape design & installation</a></li>
-                        <li><a href="services.html#lawn-care">Seasonal clean-up services</a></li>
-                        <li><a href="services.html#lawn-care">Garden bed maintenance & rose care</a></li>
-                    </ul>
-                </li>
+                <li><a href="/services.html"><i class="fas fa-tools"></i> All Services</a></li>
+                <li><a href="/accessibility-safety-solutions.html"><i class="fas fa-wheelchair"></i> Accessibility &amp; Safety Solutions</a></li>
+                <li><a href="/bathroom-accessibility.html"><i class="fas fa-bath"></i> Bathroom Accessibility</a></li>
+                <li><a href="/grab-bar-installation.html"><i class="fas fa-hands-helping"></i> Grab Bar Installation</a></li>
+                <li><a href="/non-slip-flooring-solutions.html"><i class="fas fa-shoe-prints"></i> Non-Slip Flooring Solutions</a></li>
+                <li><a href="/wheelchair-ramp-installation.html"><i class="fas fa-road"></i> Wheelchair Ramp Installation</a></li>
+            </ul>
+        </div>
+        
+        <div class="sitemap-section">
+            <h2>Watts Safety Installs — Sister Company</h2>
+            <ul class="sitemap-list">
+                <li><a href="/safety-installs/"><i class="fas fa-building"></i> Safety Installs Home</a></li>
+                <li><a href="/safety-installs/services.html"><i class="fas fa-hammer"></i> All Professional Services</a></li>
+                <li><a href="/safety-installs/services/kitchen-bath-remodeling.html"><i class="fas fa-sink"></i> Kitchen &amp; Bath Remodeling</a></li>
+                <li><a href="/safety-installs/services/electronics.html"><i class="fas fa-tv"></i> Electronics &amp; AV</a></li>
+                <li><a href="/safety-installs/services/handyman.html"><i class="fas fa-wrench"></i> Handyman Services</a></li>
+                <li><a href="/safety-installs/services/painting-gutters.html"><i class="fas fa-paint-roller"></i> Painting &amp; Gutters</a></li>
+                <li><a href="/safety-installs/services/property-maintenance.html"><i class="fas fa-snowplow"></i> Property Maintenance</a></li>
+                <li><a href="/safety-installs/service-area.html"><i class="fas fa-map"></i> Service Area</a></li>
+                <li><a href="/safety-installs/about.html"><i class="fas fa-users"></i> About</a></li>
+                <li><a href="/safety-installs/referrals.html"><i class="fas fa-handshake"></i> Referrals</a></li>
+                <li><a href="/safety-installs/contact.html"><i class="fas fa-phone"></i> Contact</a></li>
+                <li><a href="/safety-installs/sitemap.html"><i class="fas fa-sitemap"></i> Sitemap</a></li>
+                <li><a href="/safety-installs/privacy-policy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
             </ul>
         </div>
         
@@ -842,11 +683,12 @@
             <div class="footer-links">
                 <h3>Our Services</h3>
                 <ul>
-                    <li><a href="services.html#accessibility-safety">Accessibility & Safety</a></li>
-                    <li><a href="services.html#home-remodeling">Home Remodeling</a></li>
-                    <li><a href="services.html#tv-mounting">TV Mounting & AV</a></li>
-                    <li><a href="services.html#property-maintenance">Property Maintenance</a></li>
-                    <li><a href="services.html#lawn-care">Lawn & Landscape</a></li>
+                    <li><a href="/services.html">All Services</a></li>
+                    <li><a href="/accessibility-safety-solutions.html">Accessibility & Safety</a></li>
+                    <li><a href="/bathroom-accessibility.html">Bathroom Accessibility</a></li>
+                    <li><a href="/grab-bar-installation.html">Grab Bar Installation</a></li>
+                    <li><a href="/non-slip-flooring-solutions.html">Non-Slip Flooring</a></li>
+                    <li><a href="/wheelchair-ramp-installation.html">Wheelchair Ramps</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -899,115 +741,5 @@
         });
     </script>
 
-<script>
-// Hamburger menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.hamburger');  // Adjust selector if needed
-    const navMenu = document.querySelector('.nav-menu');    // Adjust to your nav class/ID
-    
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled');
-        });
-        // Optional: Add touchstart for better mobile support
-        hamburger.addEventListener('touchstart', () => {
-            navMenu.classList.toggle('active');
-            console.log('Hamburger menu toggled via touch');
-        });
-    }
-});
-</script>
-
-    <!-- BENEFIT CARD ANINETION SCRIPT -->
-    <script>
-    // Mobile auto-animation for benefit cards
-    function initBenefitAnimations() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        
-        console.log('Found ' + benefitCards.length + ' benefit cards');
-        
-        // Add touch support for mobile
-        benefitCards.forEach(card => {
-            card.classList.remove('mobile-animated');
-            
-            // Touch events for mobile
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            card.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Auto-animate benefit cards on mobile
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            let delay = 0;
-            benefitCards.forEach(card => {
-                setTimeout(() => {
-                    card.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        card.classList.remove('mobile-animated');
-                    }, 3000);
-                }, delay);
-                delay += 500;
-            });
-            
-            // Re-animate when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    setTimeout(() => {
-                        let newDelay = 0;
-                        benefitCards.forEach(card => {
-                            setTimeout(() => {
-                                card.classList.add('mobile-animated');
-                                setTimeout(() => {
-                                    card.classList.remove('mobile-animated');
-                                }, 3000);
-                            }, newDelay);
-                            newDelay += 500;
-                        });
-                    }, 1000);
-                }
-            });
-        }
-    }
-    
-    // Initialize when DOM loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBenefitAnimations);
-    } else {
-        initBenefitAnimations();
-    }
-    
-    // Re-initialize on page show
-    window.addEventListener('pageshow', initBenefitAnimations);
-    
-    // Also animate when benefit cards come into view
-    function animateBenefitOnScroll() {
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && window.matchMedia("(max-width: 768px)").matches) {
-                    entry.target.classList.add('mobile-animated');
-                    setTimeout(() => {
-                        entry.target.classList.remove('mobile-animated');
-                    }, 3000);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        benefitCards.forEach(card => {
-            observer.observe(card);
-        });
-    }
-    
-    // Start scroll animation observer
-    if (window.matchMedia("(max-width: 768px)").matches) {
-        document.addEventListener('DOMContentLoaded', animateBenefitOnScroll);
-    }
-    </script>
-    
 </body>
 </html>

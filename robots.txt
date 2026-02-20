@@ -29,15 +29,16 @@ Disallow: /homepage-css.txt
 Disallow: /service-structure.txt
 
 # Allow all important content
-Allow: /services/
 Allow: /about.html
 Allow: /contact.html
-Allow: /privacy-policy.html
-Allow: /testimonials.html
+Allow: /services.html
 Allow: /service-area.html
+Allow: /privacy-policy.html
 Allow: /referrals.html
+Allow: /sitemap.html
 Allow: /sitemap.xml
 Allow: /robots.txt
+Allow: /safety-installs/
 
 # Sitemap location
 Sitemap: https://wattsatpcontractor.com/sitemap.xml

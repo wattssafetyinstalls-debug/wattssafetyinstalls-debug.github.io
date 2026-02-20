@@ -134,11 +134,11 @@
 </script>
 <style>
         :root {
-            --teal: #00C4B4;
-            --navy: #0A1D37;
+            --red: #dc2626;
+            --black: #1a1a1a;
             --light: #F8FAFC;
             --gray: #64748B;
-            --gold: #FFD700;
+            --cream: #f5f5dc;
             --white: #FFFFFF;
             --warm-light: #FEF7ED;
             --warm-accent: #F59E0B;
@@ -166,7 +166,7 @@
        
         /* Professional Navigation */
         header { 
-            background: var(--navy); 
+            background: var(--black); 
             padding: 0; 
             position: sticky; 
             top: 0; 
@@ -191,7 +191,7 @@
         .logo { 
             font-family: 'Playfair Display', serif; 
             font-size: 2.5rem; 
-            color: var(--teal); 
+            color: var(--red); 
             font-weight: 700; 
             text-decoration: none; 
             letter-spacing: -0.5px;
@@ -211,10 +211,10 @@
             padding: 10px 0;
         }
         .nav-links a:hover { 
-            color: var(--teal); 
+            color: var(--red); 
         }
         .nav-links a.active { 
-            color: var(--teal); 
+            color: var(--red); 
         }
         .nav-links a.active::after {
             content: '';
@@ -223,7 +223,7 @@
             height: 3px;
             bottom: 0;
             left: 0;
-            background-color: var(--teal);
+            background-color: var(--red);
         }
         .nav-links a::after {
             content: '';
@@ -232,14 +232,14 @@
             height: 3px;
             bottom: 0;
             left: 0;
-            background-color: var(--teal);
+            background-color: var(--red);
             transition: width 0.3s;
         }
         .nav-links a:hover::after {
             width: 100%;
         }
         .phone-link { 
-            background: var(--teal); 
+            background: var(--red); 
             color: var(--white); 
             padding: 12px 25px; 
             border-radius: 50px; 
@@ -248,12 +248,12 @@
             transition: all 0.3s; 
             white-space: nowrap;
             font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+            box-shadow: 0 4px 15px rgba(220,38,38,0.3);
         }
         .phone-link:hover { 
             transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(0,196,180,0.4);
-            background: #00b3a4;
+            box-shadow: 0 6px 20px rgba(220,38,38,0.4);
+            background: #b91c1c;
         }
 
         /* MOBILE OPTIMIZATION - Phone Button */
@@ -305,11 +305,11 @@
         }
         
         .breadcrumb a:hover {
-            color: var(--teal);
+            color: var(--red);
         }
         
         .breadcrumb span {
-            color: var(--navy);
+            color: var(--black);
             font-weight: 600;
         }
         
@@ -377,7 +377,7 @@
         .service-area-info h2 {
             font-family: 'Playfair Display', serif;
             font-size: 2.8rem;
-            color: var(--navy);
+            color: var(--black);
             margin-bottom: 25px;
         }
         
@@ -404,7 +404,7 @@
         }
         
         .service-area-item i {
-            color: var(--teal);
+            color: var(--red);
             font-size: 1.2rem;
         }
         
@@ -450,7 +450,7 @@
             text-align: center; 
             font-family: 'Playfair Display', serif; 
             font-size: 2.8rem; 
-            color: var(--navy); 
+            color: var(--black); 
             margin-bottom: 20px; 
             position: relative;
             z-index: 1;
@@ -492,13 +492,13 @@
         
         .coverage-icon {
             font-size: 3rem;
-            color: var(--teal);
+            color: var(--red);
             margin-bottom: 20px;
         }
         
         .coverage-card h3 {
             font-size: 1.8rem;
-            color: var(--navy);
+            color: var(--black);
             margin-bottom: 15px;
             font-family: 'Playfair Display', serif;
         }
@@ -511,7 +511,7 @@
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
-            background: linear-gradient(135deg, var(--teal), #00b3a4);
+            background: linear-gradient(135deg, var(--red), #b91c1c);
             color: var(--white);
             text-align: center;
             width: 100%;
@@ -532,7 +532,7 @@
         }
         
         .cta-button { 
-            background: var(--navy); 
+            background: var(--black); 
             color: var(--white); 
             padding: 20px 55px; 
             border-radius: 50px; 
@@ -554,7 +554,7 @@
         }
         
         footer { 
-            background: var(--navy); 
+            background: var(--black); 
             color: var(--white); 
             padding: 80px 20px 30px; 
             width: 100%;
@@ -573,7 +573,7 @@
         .footer-logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
-            color: var(--teal);
+            color: var(--red);
             margin-bottom: 25px;
         }
         
@@ -586,7 +586,7 @@
         .footer-links h3, .footer-contact h3 {
             font-size: 1.4rem;
             margin-bottom: 25px;
-            color: var(--teal);
+            color: var(--red);
         }
         
         .footer-links ul {
@@ -605,7 +605,7 @@
         }
         
         .footer-links a:hover, .footer-contact a:hover {
-            color: var(--teal);
+            color: var(--red);
         }
         
         .copyright { 
@@ -637,7 +637,7 @@
                 top: 100%;
                 left: 0;
                 width: 100%;
-                background: var(--navy);
+                background: var(--black);
                 flex-direction: column;
                 padding: 30px 20px; /* Increased padding */
                 gap: 20px; /* Increased gap */
@@ -735,18 +735,18 @@
 <header>
 <div class="header-container">
 <div class="logo-container">
-<a class="logo" href="index">WATTS</a>
+<a class="logo" href="/safety-installs/">WATTS</a>
 </div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">
 <i class="fas fa-bars"></i>
 </button>
 <nav class="nav-links" id="navLinks">
-<a href="index">Home</a>
-<a href="services">Services</a>
-<a class="active" href="service-area">Service Area</a>
-<a href="about">About</a>
-<a href="referrals">Referrals</a>
-<a href="contact">Contact</a>
+<a href="/safety-installs/">Home</a>
+<a href="/safety-installs/services.html">Services</a>
+<a class="active" href="/safety-installs/service-area.html">Service Area</a>
+<a href="/safety-installs/about.html">About</a>
+<a href="/safety-installs/referrals.html">Referrals</a>
+<a href="/safety-installs/contact.html">Contact</a>
 </nav>
 <a class="phone-link" href="tel:+14054106402">
 <i class="fas fa-phone"></i> (405) 410-6402
@@ -756,7 +756,7 @@
 <!-- Breadcrumb -->
 <div class="breadcrumb">
 <div class="breadcrumb-container">
-<a href="index">Home</a>
+<a href="/safety-installs/">Home</a>
 <i class="fas fa-chevron-right"></i>
 <span>Service Area</span>
 </div>
@@ -771,9 +771,9 @@
 <div class="service-area-container">
 <div class="service-area-info">
 <h2>Serving Norfolk NE &amp; Surrounding Communities</h2>
-<p>Watts Safety Installs is proud to serve Norfolk, Nebraska and the surrounding areas. As an ATP Approved Contractor with Nebraska license #54690-25, we bring professional accessibility solutions, safety installations, and comprehensive home services to communities throughout Northeast Nebraska.</p>
+<p>Watts Safety Installs is proud to serve Norfolk, Nebraska and the surrounding areas. As a Professional Home Services contractor with Nebraska license #54690-25, we bring professional accessibility solutions, safety installations, and comprehensive home services to communities throughout Northeast Nebraska.</p>
 <p>Whether you need ADA-compliant ramps, grab bars for bathroom safety, snow removal services, or lawn care, we're committed to providing exceptional service to residents and businesses in our service area.</p>
-<h3 style="margin-top: 30px; color: var(--navy);">Primary Service Areas:</h3>
+<h3 style="margin-top: 30px; color: var(--black);">Primary Service Areas:</h3>
 <div class="service-area-list">
 <div class="service-area-item"><i class="fas fa-check-circle"></i> Norfolk, NE</div>
 <div class="service-area-item"><i class="fas fa-check-circle"></i> Madison, NE</div>
@@ -842,9 +842,9 @@
 <div class="footer-container">
 <div class="footer-about">
 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
-<p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, and comprehensive home services near you.</p>
-<p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-<p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a></p>
+<p>Nebraska's premier home services contractor specializing in accessibility modifications, safety installations, and comprehensive home services near you.</p>
+<p>Nebraska License #54690-25 • Professional Home Services</p>
+<p><a href="/safety-installs/sitemap.html">Sitemap</a> | <a href="/safety-installs/privacy-policy.html">Privacy Policy</a></p>
 </div>
 <div class="footer-links">
 <h3>Our Services</h3>
@@ -866,7 +866,7 @@
 </div>
 </div>
 <div class="copyright">
-<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
+<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • Professional Home Services</p>
 </div>
 </footer>
 <script>

@@ -3,166 +3,168 @@
 
   <!-- ======================== -->
   <!-- WATTS ATP CONTRACTOR     -->
+  <!-- Root pages + 5 services  -->
   <!-- ======================== -->
 
   <url>
     <loc>https://wattsatpcontractor.com/</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/services</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/services.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/service-area</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/about.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/about</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wattsatpcontractor.com/referrals</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://wattsatpcontractor.com/contact</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/contact.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/sitemap</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/service-area.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/privacy-policy</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/referrals.html</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://wattsatpcontractor.com/privacy-policy.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/wheelchair-ramp-installation</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/sitemap.html</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://wattsatpcontractor.com/wheelchair-ramp-installation.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/grab-bar-installation</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/grab-bar-installation.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/bathroom-accessibility</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/bathroom-accessibility.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/non-slip-flooring-solutions</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/non-slip-flooring-solutions.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/accessibility-safety-solutions</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/accessibility-safety-solutions.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- ======================== -->
   <!-- WATTS SAFETY INSTALLS    -->
+  <!-- Root pages + 5 services  -->
   <!-- ======================== -->
 
   <url>
     <loc>https://wattsatpcontractor.com/safety-installs/</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/services</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/services.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/about</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/about.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/contact</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/contact.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/service-area</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/service-area.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/referrals</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/referrals.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/sitemap</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/privacy-policy</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/privacy-policy.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/services/property-maintenance</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/sitemap.html</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://wattsatpcontractor.com/safety-installs/services/property-maintenance.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/services/electronics</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/services/electronics.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/services/handyman</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/services/handyman.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/services/painting-gutters</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/services/painting-gutters.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wattsatpcontractor.com/safety-installs/services/kitchen-bath-remodeling</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://wattsatpcontractor.com/safety-installs/services/kitchen-bath-remodeling.html</loc>
+    <lastmod>2025-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

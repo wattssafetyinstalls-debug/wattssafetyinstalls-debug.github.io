@@ -1,0 +1,313 @@
+================================================================================
+WATTS ATP CONTRACTOR / WATTS SAFETY INSTALLS — FULL SITE AUDIT REPORT
+Generated: Feb 19, 2026
+Repository: github.com/wattssafetyinstalls-debug/wattssafetyinstalls-debug.github.io
+Live Domain: wattsatpcontractor.com
+Hosting: GitHub Pages (with Jekyll enabled via Gemfile)
+================================================================================
+
+TABLE OF CONTENTS
+  [A] CRITICAL INFRASTRUCTURE ISSUES (5 issues)
+  [B] COLOR SCHEME / BRAND SEPARATION ISSUES (6 issues)
+  [C] BROKEN LINKS (3 issues)
+  [D] NAVIGATION INCONSISTENCIES (3 issues)
+  [E] FOOTER / BRANDING INCONSISTENCIES (5 issues)
+  [F] SITEMAP & CANONICAL ISSUES (3 issues)
+  [G] MISCELLANEOUS / CLEANUP (4 issues)
+  [H] TASK BUNDLE STRATEGY (7 bundles)
+
+================================================================================
+[A] CRITICAL INFRASTRUCTURE ISSUES
+================================================================================
+
+A1. _redirects FILE IS NON-FUNCTIONAL ON GITHUB PAGES
+    Severity: CRITICAL
+    File: /_redirects (100 lines)
+    Problem: _redirects is a Netlify-specific file format. GitHub Pages does NOT
+             read or process this file. All 80+ redirect rules are completely
+             ignored. Every old /services/* URL returns a 404 error.
+    Impact: Any user or search engine hitting an old /services/* URL gets a 404.
+            This includes links from Google's index, bookmarks, and external sites.
+    Fix: Move _redirects to _REDUNDANT_BACKUP. Implement redirects via:
+         (a) Jekyll front matter using jekyll-redirect-from plugin (already in Gemfile)
+         (b) A custom 404.html with JavaScript-based redirect logic
+
+A2. netlify.toml IS NON-FUNCTIONAL ON GITHUB PAGES
+    Severity: CRITICAL
+    File: /netlify.toml (43 lines)
+    Problem: netlify.toml is Netlify-specific. GitHub Pages ignores it entirely.
+             - Build settings: ignored
+             - Redirect rules (/idex.html, /testimonials, etc.): not working
+             - Security headers (X-Frame-Options, CSP, HSTS, etc.): NOT applied
+    Impact: No security headers on any page. Old URLs not redirecting.
+    Fix: Move netlify.toml to _REDUNDANT_BACKUP.
+
+A3. NO 404.html PAGE EXISTS
+    Severity: HIGH
+    Problem: GitHub Pages shows its default 404 page when a URL doesn't resolve.
+             No custom 404 page exists to catch bad URLs or redirect old paths.
+    Impact: Users hitting any dead URL see an ugly default GitHub 404 page.
+    Fix: Create /404.html with:
+         - Brand-consistent design
+         - Links back to homepage and services
+         - JavaScript redirect map for old /services/* paths
+
+A4. jekyll-redirect-from PLUGIN NOT ACTIVATED IN _config.yml
+    Severity: HIGH
+    File: /_config.yml, /Gemfile
+    Problem: Gemfile includes jekyll-redirect-from plugin, but _config.yml has
+             no "plugins:" section listing it. The plugin is not activated.
+    Impact: Even if we add redirect_from front matter to pages, it won't work
+            until the plugin is listed in _config.yml.
+    Fix: Add to _config.yml:
+         plugins:
+           - jekyll-redirect-from
+           - jekyll-sitemap
+           - jekyll-seo-tag
+
+A5. _layouts/default.html HAS BROKEN CANONICAL URLs
+    Severity: MEDIUM
+    File: /_layouts/default.html (lines 8 and 353)
+    Problem: Contains TWO canonical tags both pointing to:
+             https://wattsatpcontractor.com/_layouts/default
+             This is a framework file, not a real page. Having two canonical tags
+             and pointing them to a non-existent URL is an SEO error.
+    Fix: Replace with dynamic Jekyll canonical or remove duplicates.
+
+================================================================================
+[B] COLOR SCHEME / BRAND SEPARATION ISSUES
+================================================================================
+
+EXPECTED COLOR SCHEMES (per agent.md):
+  ATP (Watts ATP Contractor):  --teal: #00C4B4  --navy: #0A1D37  --gold: #FFD700
+  DBA (Watts Safety Installs): --black: #1a1a1a --red: #dc2626   --cream: #f5f5dc
+
+B1. DBA /safety-installs/referrals.html USES ATP COLORS
+    File: /safety-installs/referrals.html (line 77-79)
+    Current:  --teal: #00C4B4; --navy: #0A1D37; --gold: #FFD700
+    Should be: --red: #dc2626; --black: #1a1a1a; --cream: #f5f5dc
+    Impact: Entire page renders in ATP teal instead of DBA red. Logo, nav
+            highlights, buttons, footer headings all wrong color.
+
+B2. DBA /safety-installs/service-area.html USES ATP COLORS
+    File: /safety-installs/service-area.html (line 137-141)
+    Current:  --teal: #00C4B4; --navy: #0A1D37; --gold: #FFD700
+    Should be: --red: #dc2626; --black: #1a1a1a; --cream: #f5f5dc
+    Impact: Same as B1 — full page in wrong brand colors.
+
+B3. DBA /safety-installs/privacy-policy.html USES ATP COLORS
+    File: /safety-installs/privacy-policy.html (line 137-141)
+    Current:  --teal: #00C4B4; --navy: #0A1D37; --gold: #FFD700
+    Should be: --red: #dc2626; --black: #1a1a1a; --cream: #f5f5dc
+    Impact: Same as B1 — full page in wrong brand colors.
+
+B4. DBA /safety-installs/services.html USES CORRECT COLORS BUT WRONG VAR NAMES
+    File: /safety-installs/services.html (line 62-66)
+    Current: --red: #dc2626; --navy: #1a1a1a; --gold: #f5f5dc
+    Problem: Uses "--navy" and "--gold" which are ATP variable names.
+             Per agent.md, DBA should use --black and --cream.
+    Note: Colors are correct values, just inconsistent variable naming.
+
+B5. DBA /safety-installs/sitemap.html USES CORRECT COLORS BUT WRONG VAR NAMES
+    File: /safety-installs/sitemap.html (line 122-124)
+    Current: --red: #dc2626; --black: #1a1a1a
+    Problem: Missing --cream variable. Uses --black correctly but inconsistent
+             with other DBA pages that use --teal for the red value.
+
+B6. DBA SERVICE PAGES USE --teal AND --navy VARIABLE NAMES FOR DBA COLORS
+    Files: All 5 DBA service pages (/safety-installs/services/*.html)
+           Also: /safety-installs/about.html, /safety-installs/index.html,
+                 /safety-installs/contact.html
+    Current: --teal: #dc2626; --navy: #1a1a1a; --gold: #f5f5dc
+    Problem: Variable names are ATP names (--teal, --navy, --gold) but values
+             are DBA colors. This is confusing and violates brand separation.
+             Per agent.md, DBA should use --black, --red, --cream.
+    Note: This is a naming inconsistency. The actual rendered colors are correct
+          on these pages, but the code is misleading.
+
+================================================================================
+[C] BROKEN LINKS
+================================================================================
+
+C1. 17 BROKEN LINKS IN /index.html (HOMEPAGE)
+    File: /index.html (lines 1156-1218)
+    Problem: Service card dropdown lists contain 17 links to deleted /services/*
+             pages. These paths no longer exist and _redirects doesn't work on
+             GitHub Pages, so they all return 404.
+    Broken links:
+      /services/ada-compliant-showers
+      /services/grab-bars
+      /services/custom-ramps
+      /services/senior-safety
+      /services/ada-compliant-showers-bathrooms
+      /services/walk-in-tubs
+      /services/roll-in-showers
+      /services/modular-ramps
+      /services/threshold-ramps
+      /services/ramp-handrails
+      /services/fall-prevention
+      /services/aging-in-place
+      /services/stair-lifts
+      /services/handrail-installation
+      /services/door-widening
+    Fix: Replace with links to existing ATP pages or /services.html
+
+C2. SERVICE-AREA.HTML FOOTER LINKS TO ANCHOR-BASED SERVICES
+    File: /service-area.html (lines 852-855)
+    Links: services.html#accessibility-safety, services.html#home-remodeling,
+           services.html#property-maintenance, services.html#lawn-care
+    Problem: These are DBA-style service categories on an ATP page footer.
+             Should link to ATP service pages instead.
+    Fix: Replace with actual ATP service page links.
+
+C3. PRIVACY-POLICY.HTML AND SITEMAP.HTML NAV LINK "index"
+    Files: /privacy-policy.html (line 681), /sitemap.html (line 693)
+    Problem: Nav "Home" link is href="index" (relative) instead of href="/".
+    Fix: Change to href="/" for consistency.
+
+================================================================================
+[D] NAVIGATION INCONSISTENCIES
+================================================================================
+
+D1. ATP PAGES USE MIXED LINK FORMATS (.html vs no extension)
+    WITH .html extensions:
+      /index.html, /services.html, /privacy-policy.html, /sitemap.html
+    WITHOUT .html extensions:
+      /about.html, /contact.html, /referrals.html, all ATP service pages
+    Fix: Standardize ALL ATP nav links to use .html format per agent.md rule:
+         "ATP pages link to: /, /services.html, /about.html, etc."
+
+D2. DBA CORE PAGES USE RELATIVE NAV LINKS
+    Files: /safety-installs/about.html, contact.html, referrals.html,
+           service-area.html, privacy-policy.html
+    Current: href="index", href="services", href="service-area"
+    Should be: href="/safety-installs/", href="/safety-installs/services.html"
+    Fix: Change all DBA nav links to absolute /safety-installs/ prefix format.
+
+D3. DBA PAGES USE MIXED NAV FORMATS
+    DBA services.html and sitemap.html use .html extensions in nav.
+    DBA service pages use no extension.
+    Fix: Standardize all DBA nav to /safety-installs/*.html format.
+
+================================================================================
+[E] FOOTER / BRANDING INCONSISTENCIES
+================================================================================
+
+E1. DBA SERVICE PAGES SAY "DBA Safety Installs" IN HERO BADGE
+    Files: All 5 files in /safety-installs/services/*.html (line 886 each)
+    Current: "DBA Safety Installs - Nebraska Licensed #54690-25"
+    Should be: "Professional Home Services - Nebraska Licensed #54690-25"
+    (per agent.md badge rule for DBA brand)
+
+E2. DBA PAGES SAY "ATP Approved Contractor" IN FOOTERS/BODY
+    Files: /safety-installs/service-area.html, referrals.html, about.html,
+           privacy-policy.html, contact.html
+    Current: "Nebraska's premier ATP Approved Contractor..."
+    Problem: DBA pages should NOT reference "ATP Approved Contractor."
+    Fix: Change to "Professional Home Services" or "Nebraska Licensed General
+         Contractor" per agent.md.
+
+E3. ATP SERVICE-AREA.HTML FOOTER HAS DBA-STYLE SERVICE CATEGORIES
+    File: /service-area.html (lines 852-855)
+    Fix: Replace with actual ATP service page links.
+
+E4. ATP FOOTER LOGO TEXT IS INCONSISTENT
+    Some pages: "WATTS ATP CONTRACTOR" (all caps)
+    Other pages: "Watts ATP Contractor" (title case)
+    Fix: Standardize to one format.
+
+E5. FOOTER SITEMAP/PRIVACY LINKS MIX FORMATS
+    Some: href="/sitemap.html" | Others: href="/sitemap" | Others: href="sitemap"
+    Fix: Standardize per agent.md link rules.
+
+================================================================================
+[F] SITEMAP & CANONICAL ISSUES
+================================================================================
+
+F1. SITEMAP URLs USE EXTENSIONLESS FORMAT
+    File: /sitemap.xml
+    All URLs like /services, /about (no .html). Per agent.md, ATP links should
+    use .html format. Sitemap should match.
+    Fix: Add .html extensions to sitemap URLs.
+
+F2. SITEMAP lastmod DATES ARE STALE
+    All 27 entries show lastmod 2025-01-01. Should be updated.
+
+F3. _layouts/default.html CANONICAL POINTS TO ITSELF
+    Two canonical tags pointing to /_layouts/default (not a real page).
+
+================================================================================
+[G] MISCELLANEOUS / CLEANUP
+================================================================================
+
+G1. _config.yml EXCLUDE LIST INCOMPLETE
+    Missing: CLEANUP_PROGRESS.md, FULL_AUDIT_REPORT.txt, tools/, agent.md,
+             google-api-setup-guide.md, *.txt templates
+
+G2. _headers FILE IS NETLIFY-SPECIFIC (useless on GitHub Pages)
+
+G3. DBA ABOUT.HTML HERO SAYS "ATP Approved Contractor"
+    Should say: "Professional Home Services - Nebraska Licensed #54690-25"
+
+G4. STALE PROMOTIONAL CONTENT
+    "15% OFF First 3 Snow Visits 2025" — expired promo in services pages.
+
+================================================================================
+[H] TASK BUNDLE STRATEGY — RECOMMENDED FIX ORDER
+================================================================================
+
+BUNDLE 1: REDIRECT INFRASTRUCTURE [CRITICAL]
+  Files: 5
+  Tasks:
+    1. Move /_redirects to /_REDUNDANT_BACKUP/_redirects
+    2. Move /netlify.toml to /_REDUNDANT_BACKUP/netlify.toml
+    3. Move /_headers to /_REDUNDANT_BACKUP/_headers
+    4. Add plugins list to /_config.yml
+    5. Create /404.html with redirect map and brand-consistent design
+    6. Update _config.yml exclude list
+
+BUNDLE 2: FIX BROKEN LINKS [CRITICAL]
+  Files: 2
+  Tasks:
+    1. /index.html — Replace 17 broken /services/* links
+    2. /service-area.html — Replace footer service links
+
+BUNDLE 3: DBA COLOR SCHEME FIX [HIGH]
+  Files: 5
+  Tasks:
+    1. /safety-installs/referrals.html — Fix CSS colors to DBA scheme
+    2. /safety-installs/service-area.html — Fix CSS colors to DBA scheme
+    3. /safety-installs/privacy-policy.html — Fix CSS colors to DBA scheme
+    4. /safety-installs/services.html — Standardize variable names
+    5. /safety-installs/sitemap.html — Standardize variable names
+
+BUNDLE 4: NAVIGATION STANDARDIZATION [HIGH]
+  Files: ~15
+  Tasks:
+    1. ATP pages: Standardize nav links to .html format
+    2. DBA core pages: Change relative nav to absolute /safety-installs/ paths
+    3. DBA pages: Standardize nav link format
+
+BUNDLE 5: BRANDING & FOOTER CLEANUP [HIGH]
+  Files: ~15
+  Tasks:
+    1. DBA service pages: Fix badge text to "Professional Home Services"
+    2. DBA core pages: Remove "ATP Approved Contractor" references
+    3. ATP pages: Standardize footer logo text
+    4. Standardize footer sitemap/privacy links
+
+BUNDLE 6: SITEMAP & SEO [MEDIUM]
+  Files: 2
+  Tasks:
+    1. /sitemap.xml — Update lastmod dates, add .html extensions
+    2. /_layouts/default.html — Fix canonical tags
+
+BUNDLE 7: CONFIG CLEANUP [LOW]
+  Files: 1-2
+  Tasks:
+    1. Update _config.yml exclude list
+    2. Review stale promotional content
+
+================================================================================
+SUMMARY: 29 issues across 25 files, 7 task bundles
+================================================================================

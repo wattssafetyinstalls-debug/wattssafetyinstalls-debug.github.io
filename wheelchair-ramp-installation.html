@@ -1031,7 +1031,8 @@
 <a href="/contact">Contact</a>
 </div>
 <a class="dba-redirect" href="/safety-installs/">Watts Safety Installs →</a>
-<p>&copy; 2024 Watts ATP Contractor. All rights reserved.</p>
+<p>&copy; <span id="current-year"></span> Watts ATP Contractor. All rights reserved.</p>
 </footer>
+<script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

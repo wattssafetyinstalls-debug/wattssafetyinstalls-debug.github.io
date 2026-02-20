@@ -1,0 +1,267 @@
+---
+permalink: /404.html
+layout: none
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Watts ATP Contractor</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://wattsatpcontractor.com/404.html">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        :root {
+            --navy: #0A1D37;
+            --teal: #00C4B4;
+            --gold: #FFD700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--navy);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--teal);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 20px rgba(0, 196, 180, 0.3);
+        }
+
+        .error-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .redirect-notice {
+            background: rgba(0, 196, 180, 0.1);
+            border: 1px solid var(--teal);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--teal);
+            display: none;
+        }
+
+        .redirect-notice.active {
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a.primary {
+            background: var(--teal);
+            color: var(--navy);
+        }
+
+        .nav-links a.primary:hover {
+            background: #00e6d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 196, 180, 0.4);
+        }
+
+        .nav-links a.secondary {
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+        }
+
+        .nav-links a.secondary:hover {
+            background: var(--gold);
+            color: var(--navy);
+            transform: translateY(-2px);
+        }
+
+        .brand {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .brand strong {
+            color: var(--teal);
+        }
+
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 5rem;
+            }
+            .error-title {
+                font-size: 1.3rem;
+            }
+            .nav-links {
+                flex-direction: column;
+            }
+            .nav-links a {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-message">
+            The page you're looking for may have been moved or no longer exists.
+            We recently reorganized our site to serve you better.
+        </p>
+        <div class="redirect-notice" id="redirectNotice">
+            Redirecting you to the right page...
+        </div>
+        <div class="nav-links">
+            <a href="/" class="primary">Go to Homepage</a>
+            <a href="/services.html" class="secondary">View Our Services</a>
+        </div>
+        <div class="nav-links" style="margin-top: 0.5rem;">
+            <a href="/about.html" class="secondary">About Us</a>
+            <a href="/service-area.html" class="secondary">Service Area</a>
+        </div>
+    </div>
+    <div class="brand">
+        <strong>Watts ATP Contractor</strong> &mdash; ATP Approved Contractor &bull; Nebraska Licensed #54690-25
+    </div>
+
+    <script>
+        // Redirect map for old /services/* URLs to their new locations
+        var redirectMap = {
+            '/services/wheelchair-ramp-installation': '/wheelchair-ramp-installation.html',
+            '/services/grab-bar-installation': '/grab-bar-installation.html',
+            '/services/grab-bars': '/grab-bar-installation.html',
+            '/services/bathroom-accessibility': '/bathroom-accessibility.html',
+            '/services/non-slip-flooring-solutions': '/non-slip-flooring-solutions.html',
+            '/services/non-slip-flooring': '/non-slip-flooring-solutions.html',
+            '/services/accessibility-safety-solutions': '/services.html',
+            '/services/ada-compliant-showers': '/services.html',
+            '/services/ada-compliant-showers-bathrooms': '/services.html',
+            '/services/audio-visual': '/services.html',
+            '/services/basement-finishing': '/services.html',
+            '/services/bathroom-remodels': '/services.html',
+            '/services/cabinet-refacing': '/services.html',
+            '/services/cable-management': '/services.html',
+            '/services/concrete-pouring': '/services.html',
+            '/services/concrete-repair': '/services.html',
+            '/services/countertop-repair': '/services.html',
+            '/services/custom-cabinets': '/services.html',
+            '/services/custom-ramps': '/services.html',
+            '/services/custom-storage': '/services.html',
+            '/services/deck-construction': '/services.html',
+            '/services/driveway-installation': '/services.html',
+            '/services/drywall-repair': '/services.html',
+            '/services/emergency-repairs': '/services.html',
+            '/services/emergency-snow': '/services.html',
+            '/services/fence-installation': '/services.html',
+            '/services/fence-repair': '/services.html',
+            '/services/fertilization': '/services.html',
+            '/services/floor-refinishing': '/services.html',
+            '/services/flooring-installation': '/services.html',
+            '/services/garden-maintenance': '/services.html',
+            '/services/gutter-cleaning': '/services.html',
+            '/services/handyman-repair-services': '/services.html',
+            '/services/handyman-services': '/services.html',
+            '/services/hardwood-flooring': '/services.html',
+            '/services/home-audio': '/services.html',
+            '/services/home-remodeling': '/services.html',
+            '/services/home-remodeling-renovation': '/services.html',
+            '/services/home-theater-installation': '/services.html',
+            '/services/kitchen-cabinetry': '/services.html',
+            '/services/kitchen-renovations': '/services.html',
+            '/services/landscape-design': '/services.html',
+            '/services/lawn-maintenance': '/services.html',
+            '/services/onyx-countertops': '/services.html',
+            '/services/painting-drywall': '/services.html',
+            '/services/painting-services': '/services.html',
+            '/services/patio-construction': '/services.html',
+            '/services/pressure-washing': '/services.html',
+            '/services/projector-install': '/services.html',
+            '/services/property-maintenance-services': '/services.html',
+            '/services/room-additions': '/services.html',
+            '/services/seasonal-cleanup': '/services.html',
+            '/services/seasonal-prep': '/services.html',
+            '/services/senior-safety': '/services.html',
+            '/services/siding-replacement': '/services.html',
+            '/services/smart-audio': '/services.html',
+            '/services/snow-removal': '/services.html',
+            '/services/sound-system-setup': '/services.html',
+            '/services/soundbar-setup': '/services.html',
+            '/services/stairlift-elevator-installation': '/services.html',
+            '/services/tree-trimming': '/services.html',
+            '/services/tv-home-theater-installation': '/services.html',
+            '/services/tv-mounting': '/services.html',
+            '/services/tv-mounting-residential': '/services.html',
+            '/services/window-doors': '/services.html',
+            // Legacy redirects
+            '/wheelchair-ramps': '/wheelchair-ramp-installation.html',
+            '/stairlift-installation': '/services.html',
+            '/terms': '/privacy-policy.html',
+            '/testimonials': '/',
+            '/idex.html': '/',
+            '/test_mobile_fix.html': '/'
+        };
+
+        // Check current path against redirect map
+        var path = window.location.pathname.replace(/\/$/, '').replace(/\.html$/, '');
+        var pathWithSlash = path + '/';
+
+        // Try exact match, then without trailing slash
+        var destination = redirectMap[path] || redirectMap[pathWithSlash] || redirectMap[window.location.pathname];
+
+        if (destination) {
+            document.getElementById('redirectNotice').classList.add('active');
+            document.getElementById('redirectNotice').textContent = 'Redirecting you to the right page...';
+            setTimeout(function() {
+                window.location.href = destination;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

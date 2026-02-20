@@ -29,9 +29,23 @@ exclude:
   - "UPGRADE_PREVIEW.html"
   - "README.md"
   - "SEO-IMPROVEMENTS.md"
+  - "CLEANUP_PROGRESS.md"
+  - "FULL_AUDIT_REPORT.txt"
+  - "agent.md"
+  - "google-api-setup-guide.md"
+  - "_REDUNDANT_BACKUP"
+  - "tools"
 
 # Include specific files if needed
-include: []
+include:
+  - "robots.txt"
+  - "sitemap.xml"
+
+# Plugins
+plugins:
+  - jekyll-redirect-from
+  - jekyll-sitemap
+  - jekyll-seo-tag
 
 # Permalink structure - use default (no trailing slashes)
 # GitHub Pages will serve /about.html as /about automatically

@@ -134,11 +134,11 @@
 </script>
 <style>
         :root {
-            --teal: #00C4B4;
-            --navy: #0A1D37;
+            --red: #dc2626;
+            --black: #1a1a1a;
             --light: #F8FAFC;
             --gray: #64748B;
-            --gold: #FFD700;
+            --cream: #f5f5dc;
             --white: #FFFFFF;
             --warm-light: #FEF7ED;
             --warm-accent: #F59E0B;
@@ -166,7 +166,7 @@
        
         /* Professional Navigation */
         header { 
-            background: var(--navy); 
+            background: var(--black); 
             padding: 0; 
             position: sticky; 
             top: 0; 
@@ -191,7 +191,7 @@
         .logo { 
             font-family: 'Playfair Display', serif; 
             font-size: 2.5rem; 
-            color: var(--teal); 
+            color: var(--red); 
             font-weight: 700; 
             text-decoration: none; 
             letter-spacing: -0.5px;
@@ -211,7 +211,7 @@
             padding: 10px 0;
         }
         .nav-links a:hover { 
-            color: var(--teal); 
+            color: var(--red); 
         }
         .nav-links a::after {
             content: '';
@@ -220,14 +220,14 @@
             height: 3px;
             bottom: 0;
             left: 0;
-            background-color: var(--teal);
+            background-color: var(--red);
             transition: width 0.3s;
         }
         .nav-links a:hover::after {
             width: 100%;
         }
         .phone-link { 
-            background: var(--teal); 
+            background: var(--red); 
             color: var(--white); 
             padding: 12px 25px; 
             border-radius: 50px; 
@@ -236,12 +236,12 @@
             transition: all 0.3s; 
             white-space: nowrap;
             font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+            box-shadow: 0 4px 15px rgba(220,38,38,0.3);
         }
         .phone-link:hover { 
             transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(0,196,180,0.4);
-            background: #00b3a4;
+            box-shadow: 0 6px 20px rgba(220,38,38,0.4);
+            background: #b91c1c;
         }
 
         /* Mobile Menu Button */
@@ -290,15 +290,15 @@
         .privacy-section h2 {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
-            color: var(--navy);
+            color: var(--red);
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid var(--teal);
+            border-bottom: 2px solid var(--red);
         }
         
         .privacy-section h3 {
             font-size: 1.5rem;
-            color: var(--navy);
+            color: var(--black);
             margin: 30px 0 15px;
         }
         
@@ -321,7 +321,7 @@
         
         .highlight-box {
             background: var(--white);
-            border-left: 4px solid var(--teal);
+            border-left: 4px solid var(--cream);
             padding: 25px;
             margin: 30px 0;
             border-radius: 8px;
@@ -329,7 +329,7 @@
         }
         
         .contact-info {
-            background: var(--navy);
+            background: var(--black);
             color: var(--white);
             padding: 30px;
             border-radius: 12px;
@@ -337,7 +337,7 @@
         }
         
         .contact-info h3 {
-            color: var(--teal);
+            color: var(--red);
             margin-bottom: 20px;
         }
         
@@ -347,11 +347,11 @@
         }
         
         .contact-info a:hover {
-            color: var(--teal);
+            color: var(--red);
         }
         
         footer { 
-            background: var(--navy); 
+            background: var(--black); 
             color: var(--white); 
             padding: 80px 20px 30px; 
             width: 100%;
@@ -370,7 +370,7 @@
         .footer-logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
-            color: var(--teal);
+            color: var(--red);
             margin-bottom: 25px;
         }
         
@@ -383,7 +383,7 @@
         .footer-links h3, .footer-contact h3 {
             font-size: 1.4rem;
             margin-bottom: 25px;
-            color: var(--teal);
+            color: var(--red);
         }
         
         .footer-links ul {
@@ -402,7 +402,7 @@
         }
         
         .footer-links a:hover, .footer-contact a:hover {
-            color: var(--teal);
+            color: var(--red);
         }
         
         .copyright { 
@@ -433,7 +433,7 @@
                 top: 100%;
                 left: 0;
                 width: 100%;
-                background: var(--navy);
+                background: var(--black);
                 flex-direction: column;
                 padding: 20px;
                 gap: 15px;
@@ -503,17 +503,17 @@
 <header>
 <div class="header-container">
 <div class="logo-container">
-<a class="logo" href="index">WATTS</a>
+<a class="logo" href="/safety-installs/">WATTS</a>
 </div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">
 <i class="fas fa-bars"></i>
 </button>
 <div class="nav-links" id="navLinks">
-<a href="index">Home</a>
-<a href="services">Services</a>
-<a href="service-area">Service Area</a>
-<a href="about">About</a>
-<a href="contact">Contact</a>
+<a href="/safety-installs/">Home</a>
+<a href="/safety-installs/services.html">Services</a>
+<a href="/safety-installs/service-area.html">Service Area</a>
+<a href="/safety-installs/about.html">About</a>
+<a href="/safety-installs/contact.html">Contact</a>
 </div>
 <a class="phone-link" href="tel:+14054106402">
 <i class="fas fa-phone"></i> (405) 410-6402
@@ -531,7 +531,7 @@
 <h2>Introduction</h2>
 <p>At Watts Safety Installs ("we," "our," or "us"), we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.</p>
 <div class="highlight-box">
-<p><strong>Last Updated:</strong> This Privacy Policy was last updated on January 1, 2024.</p>
+<p><strong>Last Updated:</strong> This Privacy Policy was last updated on February 20, 2025.</p>
 </div>
 </div>
 <div class="privacy-section">
@@ -637,9 +637,9 @@
 <div class="footer-container">
 <div class="footer-about">
 <div class="footer-logo">WATTS SAFETY INSTALLS</div>
-<p>Nebraska's premier ATP Approved Contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
-<p>Nebraska License #54690-25 • ATP Approved Contractor</p>
-<p><a href="sitemap">Sitemap</a> | <a href="privacy-policy">Privacy Policy</a></p>
+<p>Nebraska's premier home services contractor specializing in accessibility modifications, safety installations, TV mounting, and comprehensive home services near you.</p>
+<p>Nebraska License #54690-25 • Professional Home Services</p>
+<p><a href="/safety-installs/sitemap.html">Sitemap</a> | <a href="/safety-installs/privacy-policy.html">Privacy Policy</a></p>
 </div>
 <div class="footer-links">
 <h3>Our Services</h3>
@@ -662,7 +662,7 @@
 </div>
 </div>
 <div class="copyright">
-<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • ATP Approved Contractor</p>
+<p>© <span id="current-year"></span> Watts Safety Installs. All rights reserved. | Nebraska License #54690-25 • Professional Home Services</p>
 </div>
 </footer>
 <script>

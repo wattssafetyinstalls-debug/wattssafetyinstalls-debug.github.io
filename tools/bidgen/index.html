@@ -296,6 +296,41 @@
         .tpl-gen-bar .tpl-fill-btn { background:linear-gradient(135deg,#3498db,#2980b9);color:white; }
         .tpl-gen-bar .tpl-fill-btn:hover { filter:brightness(1.15); }
         .tpl-gen-bar .tpl-cancel-btn { background:#2a3a5c;color:#bdc3c7; }
+        /* Document Scanner */
+        .scan-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:3500;display:none;overflow-y:auto;padding:20px; }
+        .scan-overlay.show { display:flex;align-items:flex-start;justify-content:center; }
+        .scan-modal { background:#0d1b2a;border:1px solid #2a3a5c;border-radius:12px;width:100%;max-width:700px;margin:20px auto;padding:24px;color:#ecf0f1; }
+        .scan-modal h2 { font-size:18px;margin-bottom:16px; }
+        .scan-capture-zone { border:2px dashed #2a3a5c;border-radius:10px;padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:16px;position:relative; }
+        .scan-capture-zone:hover,.scan-capture-zone.dragover { border-color:#e67e22;background:rgba(230,126,34,0.08); }
+        .scan-capture-btns { display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap; }
+        .scan-capture-btns button { padding:10px 20px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer; }
+        .scan-capture-btns .scan-cam-btn { background:linear-gradient(135deg,#e67e22,#d35400);color:white; }
+        .scan-capture-btns .scan-file-btn { background:#2a3a5c;color:#bdc3c7; }
+        .scan-preview { max-width:100%;border-radius:8px;margin:16px 0;display:none; }
+        .scan-progress { background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:16px;margin:16px 0;display:none; }
+        .scan-progress-bar { height:6px;background:#1a2744;border-radius:3px;overflow:hidden;margin-top:8px; }
+        .scan-progress-fill { height:100%;background:linear-gradient(90deg,#e67e22,#f39c12);border-radius:3px;transition:width 0.3s;width:0%; }
+        .scan-results { display:none; }
+        .scan-field { background:#16213e;border:1px solid #2a3a5c;border-radius:6px;padding:10px 12px;margin-bottom:8px; }
+        .scan-field label { font-size:10px;color:#7f8c8d;text-transform:uppercase;display:block;margin-bottom:4px; }
+        .scan-field .scan-val { font-size:13px;color:#ecf0f1;font-weight:600; }
+        .scan-field input { background:#0f1a33;border:1px solid #2a3a5c;border-radius:4px;padding:6px 8px;color:#eee;font-size:13px;width:100%;box-sizing:border-box; }
+        .scan-items-table { width:100%;border-collapse:collapse;margin:8px 0; }
+        .scan-items-table th { background:#1a2744;color:#7f8c8d;font-size:10px;text-transform:uppercase;padding:6px 8px;text-align:left; }
+        .scan-items-table td { padding:6px 8px;border-bottom:1px solid #1a2744;font-size:12px;color:#bdc3c7; }
+        .scan-items-table td:last-child { text-align:right;font-weight:600;color:#f39c12; }
+        .vendor-tpl-list { display:grid;gap:10px;margin-top:12px; }
+        .vendor-tpl-card { background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:14px;display:flex;align-items:center;gap:14px;transition:all 0.2s; }
+        .vendor-tpl-card:hover { border-color:#e67e22; }
+        .vendor-tpl-thumb { width:56px;height:56px;border-radius:6px;object-fit:cover;background:#0f1a33;flex-shrink:0; }
+        .vendor-tpl-info { flex:1;min-width:0; }
+        .vendor-tpl-info .vt-name { font-size:14px;font-weight:600;color:#ecf0f1; }
+        .vendor-tpl-info .vt-meta { font-size:11px;color:#7f8c8d;margin-top:2px; }
+        .vendor-tpl-actions { display:flex;gap:6px; }
+        .vendor-tpl-actions button { padding:6px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer; }
+        .vendor-tpl-actions .vt-gen { background:linear-gradient(135deg,#e67e22,#d35400);color:white; }
+        .vendor-tpl-actions .vt-del { background:#2a3a5c;color:#bdc3c7; }
         /* CTA Buttons */
         .cta-buttons { display: flex; flex-direction: column; gap: 8px; }
         .cta-btn { padding: 10px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-width: 140px; }
@@ -695,6 +730,75 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
         <button class="btn btn-materials" onclick="generateMaterials()">Open Materials Estimate (B)</button>
         <button class="btn btn-change" onclick="generateChangeOrder()">Open Change Order</button>
         <button class="btn" style="background:linear-gradient(135deg,#8e44ad,#9b59b6);color:white" onclick="openTemplateManager()">Use My Template</button>
+        <button class="btn" style="background:linear-gradient(135deg,#e67e22,#d35400);color:white" onclick="openScanner()">Scan Document</button>
+    </div>
+</div>
+
+<!-- DOCUMENT SCANNER MODAL -->
+<div class="scan-overlay" id="scanOverlay">
+    <div class="scan-modal">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 style="margin:0">Document Scanner</h2>
+            <button onclick="closeScanner()" style="background:none;border:none;color:#7f8c8d;font-size:20px;cursor:pointer">&times;</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid #2a3a5c;padding-bottom:8px">
+            <button class="tpl-tab active" onclick="scanSwitchTab('scan',this)">Scan / Upload</button>
+            <button class="tpl-tab" onclick="scanSwitchTab('vendors',this)">Vendor Templates</button>
+            <button class="tpl-tab" onclick="scanSwitchTab('history',this)">Scan History</button>
+        </div>
+        <!-- SCAN TAB -->
+        <div id="scanTabScan">
+            <div class="scan-capture-zone" id="scanDropZone">
+                <div style="font-size:36px;margin-bottom:8px">📸</div>
+                <strong style="color:#ecf0f1;font-size:14px">Scan or Upload a Document</strong>
+                <p style="color:#7f8c8d;font-size:12px;margin-top:6px">Take a photo of a paper invoice, or upload an image/PDF.<br>The scanner will extract text, line items, and vendor info.</p>
+                <div class="scan-capture-btns">
+                    <button class="scan-cam-btn" onclick="scanFromCamera()">📷 Camera</button>
+                    <button class="scan-file-btn" onclick="document.getElementById('scanFileInput').click()">📁 Upload File</button>
+                </div>
+                <input type="file" id="scanFileInput" accept="image/*,.pdf" capture="environment" style="display:none">
+            </div>
+            <img class="scan-preview" id="scanPreview">
+            <div class="scan-progress" id="scanProgress">
+                <div style="font-size:13px;color:#ecf0f1;font-weight:600" id="scanProgressText">Analyzing document...</div>
+                <div class="scan-progress-bar"><div class="scan-progress-fill" id="scanProgressFill"></div></div>
+            </div>
+            <div class="scan-results" id="scanResults">
+                <h3 style="font-size:14px;color:#e67e22;margin-bottom:12px">Extracted Data</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+                    <div class="scan-field"><label>Vendor / Company</label><input id="scanVendor" placeholder="Detected vendor name"></div>
+                    <div class="scan-field"><label>Invoice / PO #</label><input id="scanInvNum" placeholder="Invoice number"></div>
+                    <div class="scan-field"><label>Date</label><input id="scanDate" placeholder="Invoice date"></div>
+                    <div class="scan-field"><label>Total</label><input id="scanTotal" placeholder="$0.00"></div>
+                </div>
+                <div class="scan-field" style="margin-bottom:12px"><label>Line Items</label>
+                    <table class="scan-items-table" id="scanItemsTable">
+                        <thead><tr><th>Description</th><th>Qty</th><th>Amount</th></tr></thead>
+                        <tbody id="scanItemsBody"></tbody>
+                    </table>
+                </div>
+                <div class="scan-field"><label>Full OCR Text</label><textarea id="scanRawText" style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:4px;padding:8px;color:#7f8c8d;font-size:11px;width:100%;box-sizing:border-box;height:80px;resize:vertical;font-family:monospace"></textarea></div>
+                <div style="display:flex;gap:8px;margin-top:16px">
+                    <button onclick="scanSaveToLibrary()" style="background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;flex:1">Save to Library</button>
+                    <button onclick="scanSaveAsVendorTemplate()" style="background:linear-gradient(135deg,#e67e22,#d35400);color:white;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;flex:1">Save as Vendor Template</button>
+                    <button onclick="scanImportToForm()" style="background:#2a3a5c;color:#bdc3c7;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Import to Form</button>
+                </div>
+            </div>
+        </div>
+        <!-- VENDOR TEMPLATES TAB -->
+        <div id="scanTabVendors" style="display:none">
+            <p style="font-size:12px;color:#7f8c8d;margin-bottom:12px">Vendor templates are created from scanned invoices. Each template captures the vendor's branding and layout so you can generate new invoices in their exact format.</p>
+            <div class="vendor-tpl-list" id="vendorTplList">
+                <div style="text-align:center;color:#7f8c8d;padding:20px;font-size:13px">No vendor templates yet. Scan an invoice and click "Save as Vendor Template" to create one.</div>
+            </div>
+        </div>
+        <!-- SCAN HISTORY TAB -->
+        <div id="scanTabHistory" style="display:none">
+            <p style="font-size:12px;color:#7f8c8d;margin-bottom:12px">Previously scanned documents saved to your library.</p>
+            <div id="scanHistoryList">
+                <div style="text-align:center;color:#7f8c8d;padding:20px;font-size:13px">No scanned documents yet.</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -847,6 +951,7 @@ function showApp() {
         initPushNotifications();
         tplLoadFromFirebase();
         loadInvoiceCounter();
+        loadScannerData();
     }, 500);
 }
 
@@ -3264,6 +3369,567 @@ function tplLoadFromFirebase() {
             _pdfTemplates[id] = t;
         });
         tplRenderList();
+    });
+}
+
+// =====================================================================
+// DOCUMENT SCANNER SYSTEM
+// =====================================================================
+
+let _scanData = {};
+let _vendorTemplates = {};
+let _scanHistory = [];
+let _scanImageData = null;
+
+function openScanner() {
+    document.getElementById('scanOverlay').classList.add('show');
+    scanSwitchTab('scan', document.querySelector('#scanOverlay .tpl-tab'));
+    scanRenderVendorList();
+    scanRenderHistory();
+}
+function closeScanner() {
+    document.getElementById('scanOverlay').classList.remove('show');
+}
+
+function scanSwitchTab(tab, btn) {
+    document.querySelectorAll('#scanOverlay .tpl-tab').forEach(function(t) { t.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    document.getElementById('scanTabScan').style.display = tab === 'scan' ? 'block' : 'none';
+    document.getElementById('scanTabVendors').style.display = tab === 'vendors' ? 'block' : 'none';
+    document.getElementById('scanTabHistory').style.display = tab === 'history' ? 'block' : 'none';
+}
+
+// Camera capture (works on mobile via input capture)
+function scanFromCamera() {
+    var inp = document.getElementById('scanFileInput');
+    inp.setAttribute('capture', 'environment');
+    inp.click();
+}
+
+// File input handler
+document.addEventListener('DOMContentLoaded', function() {
+    var inp = document.getElementById('scanFileInput');
+    if (inp) {
+        inp.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) scanProcessFile(e.target.files[0]);
+        });
+    }
+    var dz = document.getElementById('scanDropZone');
+    if (dz) {
+        dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('dragover'); });
+        dz.addEventListener('dragleave', function() { dz.classList.remove('dragover'); });
+        dz.addEventListener('drop', function(e) {
+            e.preventDefault(); dz.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) scanProcessFile(e.dataTransfer.files[0]);
+        });
+    }
+});
+
+function scanProcessFile(file) {
+    if (file.type === 'application/pdf') {
+        scanProcessPDF(file);
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        _scanImageData = e.target.result;
+        var prev = document.getElementById('scanPreview');
+        prev.src = _scanImageData;
+        prev.style.display = 'block';
+        scanRunOCR(_scanImageData);
+    };
+    reader.readAsDataURL(file);
+}
+
+async function scanProcessPDF(file) {
+    document.getElementById('scanProgress').style.display = 'block';
+    document.getElementById('scanProgressText').textContent = 'Rendering PDF page...';
+    document.getElementById('scanProgressFill').style.width = '10%';
+    // Load pdf.js if needed
+    if (typeof pdfjsLib === 'undefined') {
+        await new Promise(function(res) {
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload = res;
+            document.head.appendChild(s);
+        });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+    var arrayBuf = await file.arrayBuffer();
+    var pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+    var page = await pdf.getPage(1);
+    var vp = page.getViewport({ scale: 2 });
+    var canvas = document.createElement('canvas');
+    canvas.width = vp.width;
+    canvas.height = vp.height;
+    var ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    _scanImageData = canvas.toDataURL('image/png');
+    var prev = document.getElementById('scanPreview');
+    prev.src = _scanImageData;
+    prev.style.display = 'block';
+    scanRunOCR(_scanImageData);
+}
+
+async function scanRunOCR(imageData) {
+    var prog = document.getElementById('scanProgress');
+    var progText = document.getElementById('scanProgressText');
+    var progFill = document.getElementById('scanProgressFill');
+    prog.style.display = 'block';
+    progText.textContent = 'Loading OCR engine...';
+    progFill.style.width = '15%';
+
+    // Load Tesseract.js
+    if (typeof Tesseract === 'undefined') {
+        await new Promise(function(res) {
+            var s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+            s.onload = res;
+            document.head.appendChild(s);
+        });
+    }
+
+    progText.textContent = 'Analyzing document...';
+    progFill.style.width = '30%';
+
+    try {
+        var worker = await Tesseract.createWorker('eng', 1, {
+            logger: function(m) {
+                if (m.status === 'recognizing text') {
+                    var pct = Math.round(30 + m.progress * 60);
+                    progFill.style.width = pct + '%';
+                    progText.textContent = 'Reading text... ' + Math.round(m.progress * 100) + '%';
+                }
+            }
+        });
+        var result = await worker.recognize(imageData);
+        var text = result.data.text;
+        await worker.terminate();
+
+        progFill.style.width = '95%';
+        progText.textContent = 'Parsing results...';
+
+        // Parse the OCR text
+        _scanData = scanParseText(text);
+        _scanData.rawText = text;
+        _scanData.imageData = _scanImageData;
+        _scanData.scanDate = new Date().toISOString();
+
+        // Populate UI
+        document.getElementById('scanVendor').value = _scanData.vendor || '';
+        document.getElementById('scanInvNum').value = _scanData.invoiceNum || '';
+        document.getElementById('scanDate').value = _scanData.date || '';
+        document.getElementById('scanTotal').value = _scanData.total || '';
+        document.getElementById('scanRawText').value = text;
+
+        // Render line items
+        var tbody = document.getElementById('scanItemsBody');
+        tbody.innerHTML = '';
+        (_scanData.items || []).forEach(function(item) {
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + escHtml(item.desc) + '</td><td>' + escHtml(item.qty || '1') + '</td><td>' + escHtml(item.amount || '') + '</td>';
+            tbody.appendChild(tr);
+        });
+
+        progFill.style.width = '100%';
+        progText.textContent = 'Done!';
+        setTimeout(function() { prog.style.display = 'none'; }, 800);
+        document.getElementById('scanResults').style.display = 'block';
+    } catch (err) {
+        progText.textContent = 'OCR failed: ' + err.message;
+        progFill.style.width = '0%';
+        console.error('OCR error:', err);
+    }
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// Smart text parser — extracts vendor, invoice #, date, total, line items
+function scanParseText(text) {
+    var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
+    var result = { vendor: '', invoiceNum: '', date: '', total: '', items: [] };
+
+    // Vendor: usually the first prominent line (all caps or large)
+    for (var i = 0; i < Math.min(lines.length, 5); i++) {
+        var line = lines[i];
+        if (line.length > 2 && line.length < 60 && !/invoice|date|bill|ship|to:|from:|page/i.test(line)) {
+            result.vendor = line;
+            break;
+        }
+    }
+
+    // Invoice number
+    var invMatch = text.match(/(?:invoice|inv|po|order)\s*[#:.\-]?\s*([A-Z0-9\-]+)/i);
+    if (invMatch) result.invoiceNum = invMatch[1];
+
+    // Date
+    var dateMatch = text.match(/(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/);
+    if (dateMatch) result.date = dateMatch[1];
+
+    // Total — look for the largest dollar amount or one near "total"
+    var totalMatch = text.match(/(?:total|amount\s*due|balance\s*due|grand\s*total)[:\s]*\$?([\d,]+\.?\d*)/i);
+    if (totalMatch) {
+        result.total = '$' + totalMatch[1];
+    } else {
+        // Find the largest dollar amount
+        var amounts = [];
+        var amtRegex = /\$\s*([\d,]+\.?\d*)/g;
+        var m;
+        while ((m = amtRegex.exec(text)) !== null) {
+            amounts.push(parseFloat(m[1].replace(/,/g, '')));
+        }
+        if (amounts.length > 0) {
+            result.total = '$' + Math.max.apply(null, amounts).toFixed(2);
+        }
+    }
+
+    // Line items — look for lines with dollar amounts
+    var itemRegex = /^(.+?)\s+(\d+\.?\d*)\s+\$?([\d,]+\.?\d*)$/;
+    var itemRegex2 = /^(.+?)\s+\$?([\d,]+\.?\d*)$/;
+    lines.forEach(function(line) {
+        if (/^(subtotal|total|tax|shipping|balance|amount|invoice|date|bill|ship)/i.test(line)) return;
+        var m1 = line.match(itemRegex);
+        if (m1) {
+            result.items.push({ desc: m1[1].trim(), qty: m1[2], amount: '$' + m1[3] });
+            return;
+        }
+        var m2 = line.match(itemRegex2);
+        if (m2 && m2[1].length > 3 && parseFloat(m2[2].replace(/,/g, '')) > 0) {
+            result.items.push({ desc: m2[1].trim(), qty: '1', amount: '$' + m2[2] });
+        }
+    });
+
+    return result;
+}
+
+// Save scanned document to library (Firebase)
+function scanSaveToLibrary() {
+    var record = {
+        id: 'scan_' + Date.now(),
+        vendor: document.getElementById('scanVendor').value,
+        invoiceNum: document.getElementById('scanInvNum').value,
+        date: document.getElementById('scanDate').value,
+        total: document.getElementById('scanTotal').value,
+        rawText: document.getElementById('scanRawText').value,
+        items: _scanData.items || [],
+        scanDate: new Date().toISOString()
+    };
+
+    _scanHistory.unshift(record);
+
+    // Save thumbnail to localStorage
+    if (_scanImageData) {
+        try { localStorage.setItem('scan_img_' + record.id, _scanImageData); } catch(e) {}
+    }
+
+    // Save to Firebase
+    if (db && userPIN) {
+        var hashedPIN = hashPIN(userPIN);
+        db.ref('scanHistory/' + hashedPIN + '/' + record.id).set(record);
+    }
+
+    scanRenderHistory();
+    showNotification('Document saved to scan history', 'success');
+}
+
+// Save as vendor template — captures layout for reuse
+function scanSaveAsVendorTemplate() {
+    var vendorName = document.getElementById('scanVendor').value.trim();
+    if (!vendorName) {
+        vendorName = prompt('Enter the vendor/company name for this template:');
+        if (!vendorName) return;
+    }
+
+    var tplId = 'vtpl_' + Date.now();
+    var tpl = {
+        id: tplId,
+        vendorName: vendorName,
+        createdDate: new Date().toISOString(),
+        sampleItems: _scanData.items || [],
+        sampleText: document.getElementById('scanRawText').value,
+        invoiceNumFormat: document.getElementById('scanInvNum').value,
+        // Store layout hints from the OCR
+        layoutHints: scanDetectLayout(_scanData.rawText || ''),
+        hasImage: !!_scanImageData
+    };
+
+    _vendorTemplates[tplId] = tpl;
+
+    // Save image thumbnail
+    if (_scanImageData) {
+        try { localStorage.setItem('vtpl_img_' + tplId, _scanImageData); } catch(e) {}
+    }
+
+    // Save to Firebase
+    if (db && userPIN) {
+        var hashedPIN = hashPIN(userPIN);
+        db.ref('vendorTemplates/' + hashedPIN + '/' + tplId).set(tpl);
+    }
+
+    scanRenderVendorList();
+    showNotification('Vendor template "' + vendorName + '" created!', 'success');
+}
+
+// Detect layout structure from OCR text
+function scanDetectLayout(text) {
+    var hints = {
+        hasHeader: false,
+        hasLineItems: false,
+        hasSubtotal: false,
+        hasMarkup: false,
+        hasTax: false,
+        hasSignature: false,
+        hasTerms: false,
+        sections: []
+    };
+    var lower = text.toLowerCase();
+    if (/invoice|estimate|quote|proposal/i.test(lower)) hints.hasHeader = true;
+    if (/qty|quantity|description|item|material/i.test(lower)) hints.hasLineItems = true;
+    if (/subtotal|sub\s*total/i.test(lower)) hints.hasSubtotal = true;
+    if (/markup|margin|overhead/i.test(lower)) hints.hasMarkup = true;
+    if (/tax|sales\s*tax/i.test(lower)) hints.hasTax = true;
+    if (/signature|sign|authorized/i.test(lower)) hints.hasSignature = true;
+    if (/terms|conditions|payment|net\s*\d/i.test(lower)) hints.hasTerms = true;
+
+    // Detect section headers
+    var lines = text.split('\n');
+    lines.forEach(function(line) {
+        var trimmed = line.trim();
+        if (trimmed.length > 2 && trimmed.length < 40 && trimmed === trimmed.toUpperCase() && !/\$/.test(trimmed)) {
+            hints.sections.push(trimmed);
+        }
+    });
+
+    return hints;
+}
+
+// Import scanned data into the bid form
+function scanImportToForm() {
+    var items = _scanData.items || [];
+    if (items.length > 0) {
+        items.forEach(function(item) {
+            addDistMatRow(item.desc, item.qty || '1', parseFloat((item.amount || '0').replace(/[^0-9.]/g, '')) || 0);
+        });
+    }
+    var vendor = document.getElementById('scanVendor').value;
+    if (vendor) {
+        document.getElementById('distName').value = vendor;
+    }
+    var invNum = document.getElementById('scanInvNum').value;
+    if (invNum) {
+        document.getElementById('distPO').value = invNum;
+    }
+    closeScanner();
+    showNotification('Scanned items imported to Distributor Materials', 'success');
+}
+
+// Render vendor template list
+function scanRenderVendorList() {
+    var container = document.getElementById('vendorTplList');
+    var keys = Object.keys(_vendorTemplates);
+    if (keys.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#7f8c8d;padding:20px;font-size:13px">No vendor templates yet. Scan an invoice and click "Save as Vendor Template" to create one.</div>';
+        return;
+    }
+    container.innerHTML = keys.map(function(id) {
+        var tpl = _vendorTemplates[id];
+        var thumbSrc = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        try { var stored = localStorage.getItem('vtpl_img_' + id); if (stored) thumbSrc = stored; } catch(e) {}
+        var itemCount = (tpl.sampleItems || []).length;
+        var created = new Date(tpl.createdDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return '<div class="vendor-tpl-card">'
+            + '<img class="vendor-tpl-thumb" src="' + thumbSrc + '">'
+            + '<div class="vendor-tpl-info">'
+            + '<div class="vt-name">' + escHtml(tpl.vendorName) + '</div>'
+            + '<div class="vt-meta">' + itemCount + ' sample items &bull; Created ' + created + '</div>'
+            + '</div>'
+            + '<div class="vendor-tpl-actions">'
+            + '<button class="vt-gen" onclick="vendorGenerate(\'' + id + '\')">Generate Invoice</button>'
+            + '<button class="vt-del" onclick="vendorDelete(\'' + id + '\')">Delete</button>'
+            + '</div></div>';
+    }).join('');
+}
+
+// Render scan history
+function scanRenderHistory() {
+    var container = document.getElementById('scanHistoryList');
+    if (_scanHistory.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#7f8c8d;padding:20px;font-size:13px">No scanned documents yet.</div>';
+        return;
+    }
+    container.innerHTML = _scanHistory.map(function(rec) {
+        var date = new Date(rec.scanDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return '<div style="background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">'
+            + '<div>'
+            + '<div style="font-size:13px;font-weight:600;color:#ecf0f1">' + escHtml(rec.vendor || 'Unknown Vendor') + '</div>'
+            + '<div style="font-size:11px;color:#7f8c8d">' + escHtml(rec.invoiceNum || '') + ' &bull; ' + date + ' &bull; ' + escHtml(rec.total || '') + '</div>'
+            + '</div>'
+            + '<div style="display:flex;gap:6px">'
+            + '<button onclick="scanViewRecord(\'' + rec.id + '\')" style="background:#2a3a5c;color:#bdc3c7;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer">View</button>'
+            + '<button onclick="scanDeleteRecord(\'' + rec.id + '\')" style="background:none;border:none;color:#c0392b;font-size:14px;cursor:pointer">&times;</button>'
+            + '</div></div>';
+    }).join('');
+}
+
+function scanViewRecord(id) {
+    var rec = _scanHistory.find(function(r) { return r.id === id; });
+    if (!rec) return;
+    _scanData = rec;
+    document.getElementById('scanVendor').value = rec.vendor || '';
+    document.getElementById('scanInvNum').value = rec.invoiceNum || '';
+    document.getElementById('scanDate').value = rec.date || '';
+    document.getElementById('scanTotal').value = rec.total || '';
+    document.getElementById('scanRawText').value = rec.rawText || '';
+    var tbody = document.getElementById('scanItemsBody');
+    tbody.innerHTML = '';
+    (rec.items || []).forEach(function(item) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + escHtml(item.desc) + '</td><td>' + escHtml(item.qty || '1') + '</td><td>' + escHtml(item.amount || '') + '</td>';
+        tbody.appendChild(tr);
+    });
+    // Show image if cached
+    var img = localStorage.getItem('scan_img_' + id);
+    var prev = document.getElementById('scanPreview');
+    if (img) { prev.src = img; prev.style.display = 'block'; _scanImageData = img; }
+    else { prev.style.display = 'none'; }
+    document.getElementById('scanResults').style.display = 'block';
+    scanSwitchTab('scan', document.querySelectorAll('#scanOverlay .tpl-tab')[0]);
+}
+
+function scanDeleteRecord(id) {
+    if (!confirm('Delete this scan record?')) return;
+    _scanHistory = _scanHistory.filter(function(r) { return r.id !== id; });
+    try { localStorage.removeItem('scan_img_' + id); } catch(e) {}
+    if (db && userPIN) {
+        db.ref('scanHistory/' + hashPIN(userPIN) + '/' + id).remove();
+    }
+    scanRenderHistory();
+}
+
+function vendorDelete(id) {
+    if (!confirm('Delete this vendor template?')) return;
+    delete _vendorTemplates[id];
+    try { localStorage.removeItem('vtpl_img_' + id); } catch(e) {}
+    if (db && userPIN) {
+        db.ref('vendorTemplates/' + hashPIN(userPIN) + '/' + id).remove();
+    }
+    scanRenderVendorList();
+}
+
+// Generate a branded invoice using the vendor template layout
+function vendorGenerate(tplId) {
+    var tpl = _vendorTemplates[tplId];
+    if (!tpl) return;
+
+    var brand = getBrand();
+    var sq = gn('sqft');
+    var distItems = getDistMatItems();
+    var distSub = 0;
+    distItems.forEach(function(i) { distSub += (parseFloat(i.qty) || 1) * i.price; });
+    var distName = gv('distName') || tpl.vendorName;
+    var distPO = gv('distPO') || '';
+    var clientName = gv('clientName') || '[Client]';
+    var estimateDate = fd(gv('estimateDate'));
+    var layout = tpl.layoutHints || {};
+
+    // Build vendor-branded invoice HTML
+    var thumbSrc = '';
+    try { thumbSrc = localStorage.getItem('vtpl_img_' + tplId) || ''; } catch(e) {}
+
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + E(tpl.vendorName) + ' Invoice - ' + E(clientName) + '</title>';
+    h += '<style>';
+    h += 'body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:0 auto;padding:20px;color:#333;font-size:11pt;}';
+    h += '.v-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #e67e22;padding-bottom:15px;margin-bottom:20px;}';
+    h += '.v-logo{max-height:80px;max-width:200px;opacity:0.9;}';
+    h += '.v-company h1{font-size:20pt;color:#e67e22;margin:0 0 4px 0;}';
+    h += '.v-company p{font-size:9pt;color:#666;margin:0;}';
+    h += '.v-badge{background:#e67e22;color:white;padding:8px 20px;font-size:12pt;font-weight:bold;text-align:center;border-radius:4px;}';
+    h += '.v-badge small{display:block;font-size:8pt;font-weight:normal;opacity:0.8;}';
+    h += '.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}';
+    h += '.v-box{background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;padding:10px 14px;}';
+    h += '.v-box label{font-size:8pt;text-transform:uppercase;color:#999;display:block;margin-bottom:2px;}';
+    h += '.v-box .v-val{font-size:11pt;font-weight:600;color:#333;}';
+    h += 'table{width:100%;border-collapse:collapse;margin-bottom:20px;}';
+    h += 'thead th{background:#e67e22;color:white;padding:8px 10px;text-align:left;font-size:9pt;text-transform:uppercase;}';
+    h += 'thead th:last-child,thead th:nth-child(3),thead th:nth-child(4){text-align:right;}';
+    h += 'tbody td{padding:8px 10px;border-bottom:1px solid #eee;font-size:10pt;}';
+    h += 'tbody td:last-child,tbody td:nth-child(3),tbody td:nth-child(4){text-align:right;}';
+    h += '.v-total-row td{border-top:3px double #e67e22;font-weight:700;font-size:13pt;color:#e67e22;padding-top:12px;}';
+    h += '.v-sub-row td{border-top:2px solid #e67e22;font-weight:700;font-size:11pt;padding-top:10px;}';
+    h += '.v-terms{background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;padding:14px;margin-top:20px;font-size:9pt;color:#666;}';
+    h += '.v-terms h4{color:#333;margin:0 0 8px 0;font-size:10pt;}';
+    h += '.v-footer{margin-top:30px;text-align:center;font-size:8pt;color:#aaa;border-top:1px solid #dee2e6;padding-top:10px;}';
+    h += '.toolbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:100;border-radius:0 0 8px 8px;}';
+    h += '.toolbar .tbt{color:#e67e22;font-weight:700;font-size:13px;margin-right:auto;}';
+    h += '.toolbar .tbp{background:#e67e22;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
+    h += '.toolbar .tbe{background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
+    h += '@media print{.toolbar{display:none!important;}body{padding-top:0!important;}}';
+    h += '</style></head><body>';
+
+    // Toolbar
+    h += '<div class="toolbar"><span class="tbt">' + E(tpl.vendorName).toUpperCase() + ' INVOICE</span>';
+    h += '<button class="tbp" onclick="exportPDF()">Download PDF</button>';
+    h += '<button class="tbe" onclick="emailQuote()">Email</button>';
+    h += '<button class="tbe" onclick="window.print()">Print</button></div>';
+
+    // Header
+    h += '<div class="v-header"><div class="v-company"><h1>' + E(tpl.vendorName) + '</h1>';
+    h += '<p>Material Supplier Invoice</p></div>';
+    h += '<div class="v-badge">INVOICE<br><small>MATERIALS</small></div></div>';
+
+    // Info grid
+    h += '<div class="v-grid">';
+    h += '<div class="v-box"><label>Bill To</label><div class="v-val">' + E(clientName) + '</div></div>';
+    h += '<div class="v-box"><label>Invoice Date</label><div class="v-val">' + E(estimateDate) + '</div></div>';
+    h += '<div class="v-box"><label>Project Location</label><div class="v-val">' + E(loc()) + '</div></div>';
+    h += '<div class="v-box"><label>PO / Reference</label><div class="v-val">' + E(distPO || tpl.invoiceNumFormat || 'N/A') + '</div></div>';
+    h += '</div>';
+
+    // Line items table
+    h += '<table><thead><tr><th>#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
+    var useItems = distItems.length > 0 ? distItems : (tpl.sampleItems || []);
+    var runTotal = 0;
+    useItems.forEach(function(item, i) {
+        var qty = parseFloat(item.qty) || 1;
+        var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
+        var lineTotal = qty * price;
+        runTotal += lineTotal;
+        h += '<tr><td>' + (i + 1) + '</td><td><strong>' + E(item.desc) + '</strong></td><td>' + E(item.qty || '1') + '</td><td>$' + f(price) + '</td><td><strong>$' + f(lineTotal) + '</strong></td></tr>';
+    });
+    h += '<tr class="v-sub-row"><td></td><td colspan="3">SUBTOTAL</td><td>$' + f(runTotal) + '</td></tr>';
+    h += '<tr class="v-total-row"><td></td><td colspan="3">TOTAL DUE</td><td>$' + f(runTotal) + '</td></tr>';
+    h += '</tbody></table>';
+
+    // Terms section if detected
+    if (layout.hasTerms) {
+        h += '<div class="v-terms"><h4>Terms &amp; Conditions</h4><p>Payment due upon receipt unless otherwise agreed. All materials remain property of ' + E(tpl.vendorName) + ' until paid in full.</p></div>';
+    }
+
+    h += '<div class="v-footer">' + E(tpl.vendorName) + ' &mdash; Material Supplier Invoice &mdash; Generated ' + new Date().toLocaleDateString() + '</div>';
+    h += docJS() + '</body></html>';
+
+    openDoc(h, _lastInvoiceId);
+    closeScanner();
+}
+
+// Load scanner data from Firebase
+function loadScannerData() {
+    if (!db || !userPIN) return;
+    var hashedPIN = hashPIN(userPIN);
+
+    db.ref('vendorTemplates/' + hashedPIN).once('value').then(function(snap) {
+        if (snap.exists()) {
+            _vendorTemplates = snap.val() || {};
+        }
+    });
+
+    db.ref('scanHistory/' + hashedPIN).once('value').then(function(snap) {
+        if (snap.exists()) {
+            var data = snap.val() || {};
+            _scanHistory = Object.values(data).sort(function(a, b) {
+                return new Date(b.scanDate) - new Date(a.scanDate);
+            });
+        }
     });
 }
 

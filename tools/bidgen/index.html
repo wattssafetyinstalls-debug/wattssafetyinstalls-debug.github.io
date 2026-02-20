@@ -59,14 +59,16 @@
         .trade-badge.plumbing { background: #2980b9; color: white; }
         .trade-badge.electrical { background: #f39c12; color: #1a1a1a; }
         .trade-badge.custom { background: #7f8c8d; color: white; }
-        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 100px 110px; gap: 8px; margin-bottom: 8px; align-items: center; }
-        #laborItemsContainer .li-row input { font-size: 12px; padding: 7px 8px; min-width: 0; }
-        #matItemsContainer .mi-row { display: grid; grid-template-columns: 1fr 70px 110px; gap: 8px; margin-bottom: 8px; align-items: center; }
-        #matItemsContainer .mi-row input { font-size: 12px; padding: 7px 8px; min-width: 0; }
-        .item-header { display: grid; gap: 8px; margin-bottom: 6px; font-size: 10px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
-        .item-header.labor { grid-template-columns: 1fr 100px 110px; }
-        .item-header.mat { grid-template-columns: 1fr 70px 110px; }
-        .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px; }
+        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 120px 120px; gap: 6px; margin-bottom: 6px; align-items: center; }
+        #laborItemsContainer .li-row input { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
+        #laborItemsContainer .li-row input:focus { outline: none; border-color: #3498db; }
+        #matItemsContainer .mi-row, #distMatContainer .di-row { display: grid; grid-template-columns: 1fr 90px 120px; gap: 6px; margin-bottom: 6px; align-items: center; }
+        #matItemsContainer .mi-row input, #distMatContainer .di-row input { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
+        #matItemsContainer .mi-row input:focus, #distMatContainer .di-row input:focus { outline: none; border-color: #3498db; }
+        .item-header { display: grid; gap: 6px; margin-bottom: 6px; font-size: 10px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 2px; }
+        .item-header.labor { grid-template-columns: 1fr 120px 120px; }
+        .item-header.mat { grid-template-columns: 1fr 90px 120px; }
+        .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 6px; width: 100%; }
         .add-row-btn:hover { border-color: #3498db; color: #3498db; }
         .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
         /* Autocomplete dropdown */
@@ -665,6 +667,18 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
         <div class="item-header mat"><span>Material</span><span>Qty</span><span>Price</span></div>
         <div id="matItemsContainer"></div>
         <button class="add-row-btn" onclick="addMatRow('','','')">+ Add Material Item</button>
+    </div>
+
+    <!-- SECTION 4B: DISTRIBUTOR MATERIALS -->
+    <div class="card">
+        <h2><span class="icon">4B</span> Distributor Materials <span style="font-size:11px;color:#7f8c8d;font-weight:400">(separate supplier invoice)</span></h2>
+        <div class="form-grid" style="margin-bottom:14px;">
+            <div class="form-group"><label>Distributor / Supplier Name</label><input type="text" id="distName" placeholder="e.g. Scranton Flooring, HD Supply, Ferguson"></div>
+            <div class="form-group"><label>Distributor PO / Account #</label><input type="text" id="distPO" placeholder="e.g. PO-4421 or Acct #88712"></div>
+        </div>
+        <div class="item-header mat"><span>Material</span><span>Qty</span><span>Price</span></div>
+        <div id="distMatContainer"></div>
+        <button class="add-row-btn" onclick="addDistMatRow('','','')">+ Add Distributor Material</button>
     </div>
 
     <!-- SECTION 5 -->
@@ -1828,6 +1842,16 @@ function addMatRow(desc, qty, price) {
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'materials');
 }
+function addDistMatRow(desc, qty, price) {
+    const c = document.getElementById('distMatContainer');
+    const row = document.createElement('div');
+    row.className = 'di-row';
+    row.innerHTML = '<input type="text" placeholder="Material" value="'+esc(desc)+'">'
+        + '<input type="text" placeholder="Qty" value="'+esc(qty)+'">'
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.di-row\').remove()">&times;</button></div>';
+    c.appendChild(row);
+    attachAutocomplete(row.querySelector('input'), 'materials');
+}
 function esc(s) { return String(s||'').replace(/"/g, '&quot;'); }
 
 // ========== GATHER DATA ==========
@@ -1840,6 +1864,13 @@ function getLaborItems() {
 }
 function getMatItems() {
     const rows = document.querySelectorAll('#matItemsContainer .mi-row');
+    return Array.from(rows).map(r => {
+        const inputs = r.querySelectorAll('input');
+        return { desc: inputs[0].value, qty: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
+    }).filter(i => i.desc);
+}
+function getDistMatItems() {
+    const rows = document.querySelectorAll('#distMatContainer .di-row');
     return Array.from(rows).map(r => {
         const inputs = r.querySelectorAll('input');
         return { desc: inputs[0].value, qty: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
@@ -2043,7 +2074,11 @@ function generateMaterials() {
     var sub = 0; items.forEach(function(i){ sub += (parseFloat(i.qty) || 1) * i.price; });
     var ma = sub * (mk/100), mt = sub + ma;
     var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
-    var grand = labTot + mt;
+    var distItems = getDistMatItems();
+    var distSub = 0; distItems.forEach(function(i){ distSub += (parseFloat(i.qty) || 1) * i.price; });
+    var distName = gv('distName');
+    var distPO = gv('distPO');
+    var grand = labTot + mt + distSub;
     var ad = gv('areaDesc') || '[Area]';
     var sn = gv('supplierNote');
     var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Materials Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS(brand)+'</style></head><body>';
@@ -2061,9 +2096,24 @@ function generateMaterials() {
     h += '<tr class="markup-row"><td></td><td colspan="3"><strong>Contractor Markup (<span data-editable data-markup-pct>'+mk+'</span>%)</strong></td><td><span data-markup-amt>$'+f(ma)+'</span></td></tr>';
     h += '<tr class="total-row"><td></td><td colspan="3">TOTAL MATERIALS &mdash; ESTIMATE B</td><td><span data-mat-total>$'+f(mt)+'</span></td></tr>';
     h += '</tbody></table>';
+    // Distributor Materials Section
+    if (distItems.length > 0) {
+        h += '<div style="margin-top:24px;border-top:2px solid #dee2e6;padding-top:16px">';
+        h += '<h3 style="font-size:12pt;color:'+brand.dark+';margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">Distributor Materials'+(distName?' &mdash; '+E(distName):'')+'</h3>';
+        if (distPO) h += '<p style="font-size:9pt;color:#6c757d;margin-bottom:12px">PO / Account: '+E(distPO)+'</p>';
+        h += '<table><thead><tr><th style="width:30px">#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
+        distItems.forEach(function(item, i){
+            var qtyNum = parseFloat(item.qty) || 1;
+            var lineTotal = qtyNum * item.price;
+            h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty)+'</td><td>$'+f(item.price)+'</td><td><strong>$'+f(lineTotal)+'</strong></td></tr>';
+        });
+        h += '<tr class="subtotal-row"><td></td><td colspan="3">DISTRIBUTOR MATERIALS SUBTOTAL</td><td>$'+f(distSub)+'</td></tr>';
+        h += '</tbody></table></div>';
+    }
     h += '<div class="combined"><h3>Combined Project Total</h3><table>';
     h += '<tr><td>Estimate A &mdash; Labor</td><td><span data-combined-labor>$'+f(labTot)+'</span></td></tr>';
     h += '<tr><td>Estimate B &mdash; Materials</td><td><span data-combined-mat>$'+f(mt)+'</span></td></tr>';
+    if (distItems.length > 0) h += '<tr><td>Distributor Materials'+(distName?' ('+E(distName)+')':'')+'</td><td>$'+f(distSub)+'</td></tr>';
     if (sn) h += '<tr><td style="color:#6c757d;font-style:italic;">Third-Party Supplied Materials (paid separately)</td><td style="color:#6c757d;font-style:italic;">Not Included</td></tr>';
     h += '<tr class="grand"><td>TOTAL PROJECT PRICE</td><td><span data-grand-total>$'+f(grand)+'</span></td></tr>';
     h += '<tr class="psf"><td>Per Square Foot (<span data-sqft>'+sq+'</span> sq ft)</td><td><span data-per-sqft>$'+f(grand/sq)+' /sq ft</span></td></tr>';

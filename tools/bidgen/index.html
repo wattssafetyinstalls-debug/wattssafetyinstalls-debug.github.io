@@ -4099,7 +4099,7 @@ async function _buildVendorHTML(imageData) {
             '• The main line-items table MUST have id="itemsTable".',
             '• Every line-item <tr> inside the tbody MUST have the attribute data-row.',
             '• Inside each data-row <tr>, tag the cells:',
-            '  – item description cell: add data-field="item-desc"',
+            '  – item description cell: add data-field="item-desc" — but do NOT set contenteditable on it. Standard template descriptions (like "Demo shower pan", "Install grab bars", etc.) are FIXED labels that must stay as-is.',
             '  – quantity cell: add data-field="item-qty"',
             '  – unit price cell: add data-field="item-price"',
             '  – line total cell: add data-field="item-total"',
@@ -4112,7 +4112,9 @@ async function _buildVendorHTML(imageData) {
             '  – Subtotal → data-field="subtotal"',
             '  – Tax → data-field="tax"',
             '  – Grand total → data-field="total"',
-            '• Set every data-field element to contenteditable="true".',
+            '• IMPORTANT: Item description cells (data-field="item-desc") must NOT have contenteditable. They are standard template labels that stay locked.',
+            '• Set contenteditable="true" ONLY on pricing/value fields: item-qty, item-price, item-total, subtotal, tax, total, invoice-num, date, bill-to, location.',
+            '• Do NOT set contenteditable on vendor name or item descriptions — those are fixed template content.',
             '',
             'OUTPUT: Return ONLY the raw HTML. No markdown fences, no commentary, just the <!DOCTYPE html>…</html>.'
         ].join('\n');
@@ -4316,53 +4318,79 @@ function vendorGenerate(tplId) {
         els.forEach(function(el) { if (singles[key]) el.textContent = singles[key]; });
     });
 
-    // Auto-fill line items into the table
+    // Auto-fill line items — only fill PRICING fields, leave template descriptions intact
     var tbody = doc.querySelector('#itemsTable tbody');
-    if (tbody && fillItems.length > 0) {
-        // Grab one existing row as a structural template, then clear
+    if (tbody) {
         var existingRows = tbody.querySelectorAll('[data-row]');
-        var rowTemplate = existingRows.length > 0 ? existingRows[0].cloneNode(true) : null;
 
-        // Remove old data-row rows (keep non-data rows like subtotal/total)
-        existingRows.forEach(function(r) { r.remove(); });
+        // If there are existing template rows, fill pricing INTO those rows (don't replace descriptions)
+        if (existingRows.length > 0) {
+            var subTotal = 0;
+            existingRows.forEach(function(row, i) {
+                // DO NOT touch item-desc — those are standard template labels
+                var qtyEl   = row.querySelector('[data-field="item-qty"]');
+                var priceEl = row.querySelector('[data-field="item-price"]');
+                var totalEl = row.querySelector('[data-field="item-total"]');
 
-        var subTotal = 0;
-        fillItems.forEach(function(item, i) {
-            var qty = parseFloat(item.qty) || 1;
-            var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
-            var lineTotal = qty * price;
-            subTotal += lineTotal;
+                // If we have bid data for this row index, fill pricing only
+                if (i < fillItems.length) {
+                    var qty = parseFloat(fillItems[i].qty) || 1;
+                    var price = parseFloat(String(fillItems[i].price || fillItems[i].amount || '0').replace(/[^0-9.]/g, '')) || 0;
+                    var lineTotal = qty * price;
+                    subTotal += lineTotal;
+                    if (qtyEl)   qtyEl.textContent = qty;
+                    if (priceEl) priceEl.textContent = '$' + price.toFixed(2);
+                    if (totalEl) totalEl.textContent = '$' + lineTotal.toFixed(2);
+                } else {
+                    // No bid data for this row — clear pricing but keep description
+                    if (qtyEl)   qtyEl.textContent = '';
+                    if (priceEl) priceEl.textContent = '';
+                    if (totalEl) totalEl.textContent = '';
+                }
+            });
 
-            var tr;
-            if (rowTemplate) {
-                tr = rowTemplate.cloneNode(true);
-                // Fill cells by data-field or by position
-                var descEl = tr.querySelector('[data-field="item-desc"]');
-                var qtyEl  = tr.querySelector('[data-field="item-qty"]');
-                var priceEl= tr.querySelector('[data-field="item-price"]');
-                var totalEl= tr.querySelector('[data-field="item-total"]');
-                if (descEl)  descEl.textContent = item.desc;
-                if (qtyEl)   qtyEl.textContent = qty;
-                if (priceEl) priceEl.textContent = '$' + price.toFixed(2);
-                if (totalEl) totalEl.textContent = '$' + lineTotal.toFixed(2);
-                // Update row number cell if it exists (first td without data-field)
-                var firstTd = tr.querySelector('td');
-                if (firstTd && !firstTd.hasAttribute('data-field') && /^\d+$/.test(firstTd.textContent.trim()))
-                    firstTd.textContent = (i + 1);
-            } else {
-                tr = doc.createElement('tr');
+            // If we have MORE bid items than template rows, append extras
+            if (fillItems.length > existingRows.length) {
+                var rowTemplate = existingRows[0].cloneNode(true);
+                for (var ei = existingRows.length; ei < fillItems.length; ei++) {
+                    var qty = parseFloat(fillItems[ei].qty) || 1;
+                    var price = parseFloat(String(fillItems[ei].price || fillItems[ei].amount || '0').replace(/[^0-9.]/g, '')) || 0;
+                    var lineTotal = qty * price;
+                    subTotal += lineTotal;
+                    var tr = rowTemplate.cloneNode(true);
+                    var descEl  = tr.querySelector('[data-field="item-desc"]');
+                    var qtyEl   = tr.querySelector('[data-field="item-qty"]');
+                    var priceEl = tr.querySelector('[data-field="item-price"]');
+                    var totalEl = tr.querySelector('[data-field="item-total"]');
+                    if (descEl)  descEl.textContent = fillItems[ei].desc || 'Additional item';
+                    if (qtyEl)   qtyEl.textContent = qty;
+                    if (priceEl) priceEl.textContent = '$' + price.toFixed(2);
+                    if (totalEl) totalEl.textContent = '$' + lineTotal.toFixed(2);
+                    var insertBefore = tbody.querySelector('tr:not([data-row])');
+                    if (insertBefore) tbody.insertBefore(tr, insertBefore);
+                    else tbody.appendChild(tr);
+                }
+            }
+        } else if (fillItems.length > 0) {
+            // No template rows at all — build from scratch
+            var subTotal = 0;
+            fillItems.forEach(function(item, i) {
+                var qty = parseFloat(item.qty) || 1;
+                var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
+                var lineTotal = qty * price;
+                subTotal += lineTotal;
+                var tr = doc.createElement('tr');
                 tr.setAttribute('data-row', '');
                 tr.innerHTML = '<td>' + (i+1) + '</td>'
-                    + '<td data-field="item-desc" contenteditable="true">' + escHtml(item.desc) + '</td>'
+                    + '<td data-field="item-desc">' + escHtml(item.desc) + '</td>'
                     + '<td data-field="item-qty" contenteditable="true">' + qty + '</td>'
                     + '<td data-field="item-price" contenteditable="true">$' + price.toFixed(2) + '</td>'
-                    + '<td data-field="item-total" contenteditable="true">$' + lineTotal.toFixed(2) + '</td>';
-            }
-            // Insert before any non-data-row rows (subtotal/total rows)
-            var insertBefore = tbody.querySelector('tr:not([data-row])');
-            if (insertBefore) tbody.insertBefore(tr, insertBefore);
-            else tbody.appendChild(tr);
-        });
+                    + '<td data-field="item-total">$' + lineTotal.toFixed(2) + '</td>';
+                var insertBefore = tbody.querySelector('tr:not([data-row])');
+                if (insertBefore) tbody.insertBefore(tr, insertBefore);
+                else tbody.appendChild(tr);
+            });
+        }
 
         // Update subtotal / total cells
         var subEl = doc.querySelector('[data-field="subtotal"]');
@@ -4392,7 +4420,7 @@ function vendorGenerate(tplId) {
     h += '.vb-add{background:#27ae60;color:#fff;}';
     h += '.vb-calc{background:#3498db;color:#fff;}';
     h += '.vb-print{background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c !important;}';
-    h += '[contenteditable="true"]{outline:2px dashed #e67e22;outline-offset:1px;min-width:20px;display:inline-block;}';
+    h += '[contenteditable="true"]{outline:2px dashed #e67e22;outline-offset:1px;min-width:20px;display:inline-block;}[data-field="item-desc"]{background:#f8f9fa;}';
     h += '@media print{#vtpl-bar{display:none!important;}[contenteditable]{outline:none!important;}}';
     h += '</style>';
     h += '</head><body>';
@@ -4400,7 +4428,7 @@ function vendorGenerate(tplId) {
     // Toolbar
     h += '<div id="vtpl-bar">';
     h += '<span>' + escHtml(tpl.vendorName).toUpperCase() + '</span>';
-    h += '<button class="vb-edit" id="vEditBtn" onclick="vToggleEdit()">Edit All Fields</button>';
+    h += '<button class="vb-edit" id="vEditBtn" onclick="vToggleEdit()">Edit Pricing</button>';
     h += '<button class="vb-add" onclick="vAddRow()">+ Add Row</button>';
     h += '<button class="vb-calc" onclick="vRecalc()">Recalculate</button>';
     h += '<button class="vb-print" onclick="window.print()">Print</button>';
@@ -4414,15 +4442,19 @@ function vendorGenerate(tplId) {
     h += 'var vEdit=true;';
     h += 'function vToggleEdit(){';
     h += '  vEdit=!vEdit;';
-    h += '  document.querySelectorAll("[data-field]").forEach(function(el){el.contentEditable=vEdit?"true":"false";});';
-    h += '  document.getElementById("vEditBtn").textContent=vEdit?"Lock Fields":"Edit All Fields";';
-    h += '  document.getElementById("vEditBtn").style.background=vEdit?"#c0392b":"#e67e22";';
+    h += '  document.querySelectorAll("[data-field]").forEach(function(el){';
+    h += '    var f=el.getAttribute("data-field");';
+    h += '    if(f==="item-desc"||f==="vendor")return;';
+    h += '    el.contentEditable=vEdit?"true":"false";';
+    h += '  });';
+    h += '  document.getElementById("vEditBtn").textContent=vEdit?"Lock Fields":"Edit Pricing";';
+    h += '  document.getElementById("vEditBtn").style.background=vEdit?"#c0392b":"#e67e22";
     h += '}';
     h += 'function vAddRow(){';
     h += '  var tb=document.querySelector("#itemsTable tbody");if(!tb)return;';
     h += '  var rows=tb.querySelectorAll("[data-row]");var n=rows.length+1;';
     h += '  var tr=document.createElement("tr");tr.setAttribute("data-row","");';
-    h += '  tr.innerHTML=\'<td>\'+n+\'</td><td data-field="item-desc" contenteditable="true">New item</td><td data-field="item-qty" contenteditable="true">1</td><td data-field="item-price" contenteditable="true">$0.00</td><td data-field="item-total">$0.00</td>\';';
+    h += '  tr.innerHTML=\'<td>\'+n+\'</td><td data-field="item-desc">New item</td><td data-field="item-qty" contenteditable="true">1</td><td data-field="item-price" contenteditable="true">$0.00</td><td data-field="item-total">$0.00</td>\';';
     h += '  var anchor=tb.querySelector("tr:not([data-row])");';
     h += '  if(anchor)tb.insertBefore(tr,anchor);else tb.appendChild(tr);';
     h += '}';

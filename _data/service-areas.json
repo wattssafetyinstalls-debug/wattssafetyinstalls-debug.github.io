@@ -1,0 +1,129 @@
+{
+  "serviceArea": {
+    "center": "Norfolk, Nebraska",
+    "radius": "100 miles",
+    "radiusNote": "We service the 100-mile radius surrounding Norfolk, Nebraska. No job is too far — travel expenses or service-call fees may apply depending on distance.",
+    "coordinates": {
+      "latitude": 42.032,
+      "longitude": -97.418
+    },
+    "nebraska": {
+      "state": "Nebraska",
+      "counties": [
+        {
+          "name": "Madison County",
+          "towns": ["Norfolk", "Madison", "Battle Creek", "Tilden", "Newman Grove", "Meadow Grove"]
+        },
+        {
+          "name": "Pierce County",
+          "towns": ["Pierce", "Plainview", "Osmond", "Foster", "Hadar", "McLean"]
+        },
+        {
+          "name": "Stanton County",
+          "towns": ["Stanton", "Pilger"]
+        },
+        {
+          "name": "Wayne County",
+          "towns": ["Wayne", "Winside", "Carroll", "Hoskins"]
+        },
+        {
+          "name": "Antelope County",
+          "towns": ["Neligh", "Elgin", "Oakdale", "Clearwater", "Orchard", "Brunswick", "Royal"]
+        },
+        {
+          "name": "Boone County",
+          "towns": ["Albion", "St. Edward", "Petersburg", "Cedar Rapids", "Primrose"]
+        },
+        {
+          "name": "Platte County",
+          "towns": ["Columbus", "Humphrey", "Creston", "Lindsay", "Monroe", "Duncan", "Platte Center"]
+        },
+        {
+          "name": "Colfax County",
+          "towns": ["Schuyler", "Clarkson", "Howells", "Leigh", "Rogers"]
+        },
+        {
+          "name": "Cuming County",
+          "towns": ["West Point", "Beemer", "Bancroft", "Wisner"]
+        },
+        {
+          "name": "Burt County",
+          "towns": ["Tekamah", "Oakland", "Lyons", "Craig", "Decatur"]
+        },
+        {
+          "name": "Thurston County",
+          "towns": ["Pender", "Walthill", "Winnebago", "Emerson", "Rosalie"]
+        },
+        {
+          "name": "Dakota County",
+          "towns": ["South Sioux City", "Dakota City", "Homer", "Jackson", "Hubbard"]
+        },
+        {
+          "name": "Dixon County",
+          "towns": ["Ponca", "Allen", "Newcastle", "Dixon", "Concord", "Waterbury", "Maskell", "Martinsburg", "Wakefield"]
+        },
+        {
+          "name": "Cedar County",
+          "towns": ["Hartington", "Coleridge", "Laurel", "Randolph", "Belden", "Fordyce", "Wynot", "St. Helena", "Obert", "Magnet"]
+        },
+        {
+          "name": "Knox County",
+          "towns": ["Center", "Creighton", "Niobrara", "Bloomfield", "Crofton", "Wausa", "Verdigre", "Santee"]
+        },
+        {
+          "name": "Holt County",
+          "towns": ["O'Neill", "Atkinson", "Stuart", "Chambers", "Ewing", "Page", "Inman"]
+        },
+        {
+          "name": "Wheeler County",
+          "towns": ["Bartlett", "Ericson"]
+        },
+        {
+          "name": "Nance County",
+          "towns": ["Fullerton", "Genoa", "Belgrade"]
+        },
+        {
+          "name": "Greeley County",
+          "towns": ["Greeley", "Spalding", "Scotia", "Wolbach"]
+        },
+        {
+          "name": "Merrick County",
+          "towns": ["Central City", "Palmer", "Chapman", "Clarks", "Silver Creek"]
+        },
+        {
+          "name": "Dodge County",
+          "towns": ["Fremont", "North Bend", "Scribner", "Hooper", "Dodge", "Snyder", "Uehling", "Winslow", "Ames"]
+        },
+        {
+          "name": "Washington County",
+          "towns": ["Blair", "Fort Calhoun", "Arlington", "Kennard", "Herman"]
+        },
+        {
+          "name": "Butler County",
+          "towns": ["David City", "Brainard", "Rising City", "Surprise", "Bellwood", "Octavia", "Abie", "Dwight", "Bruno", "Linwood"]
+        },
+        {
+          "name": "Saunders County",
+          "towns": ["Wahoo", "Ashland", "Yutan", "Ceresco", "Valparaiso", "Prague", "Colon", "Memphis", "Cedar Bluffs", "Ithaca", "Mead", "Malmo", "Weston"]
+        }
+      ]
+    },
+    "iowa": {
+      "state": "Iowa",
+      "counties": [
+        {
+          "name": "Woodbury County",
+          "towns": ["Sioux City", "Sergeant Bluff", "Moville", "Correctionville", "Anthon", "Sloan", "Smithland", "Salix", "Lawton", "Bronson", "Danbury", "Pierson", "Cushing", "Hornick"]
+        },
+        {
+          "name": "Monona County",
+          "towns": ["Onawa", "Mapleton", "Whiting", "Blencoe", "Moorhead", "Castana", "Turin", "Soldier", "Ute", "Rodney"]
+        },
+        {
+          "name": "Plymouth County",
+          "towns": ["Le Mars", "Akron", "Kingsley", "Remsen", "Merrill", "Hinton", "Brunsville", "Oyens", "Westfield", "James"]
+        }
+      ]
+    }
+  }
+}

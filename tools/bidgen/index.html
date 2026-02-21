@@ -4022,19 +4022,20 @@ function scanSaveToLibrary() {
     showNotification('Document saved to scan history', 'success');
 }
 
-// Save as vendor template — Gemini generates the actual HTML that reproduces the invoice
-async function scanSaveAsVendorTemplate() {
+// Save as vendor template — stores the original scanned image as the template
+function scanSaveAsVendorTemplate() {
     var vendorName = document.getElementById('scanVendor').value.trim();
     if (!vendorName) {
         vendorName = prompt('Enter the vendor/company name for this template:');
         if (!vendorName) return;
     }
 
-    var tplId = 'vtpl_' + Date.now();
-    showNotification('Generating exact template for "' + vendorName + '"... (Gemini is building the HTML)', 'info');
+    if (!_scanImageData) {
+        showNotification('No scanned image available. Scan a document first.', 'error');
+        return;
+    }
 
-    // Ask Gemini to generate the actual HTML/CSS that reproduces this invoice
-    var htmlTemplate = await generateVendorHTML(_scanImageData, vendorName);
+    var tplId = 'vtpl_' + Date.now();
 
     var tpl = {
         id: tplId,
@@ -4042,108 +4043,28 @@ async function scanSaveAsVendorTemplate() {
         createdDate: new Date().toISOString(),
         sampleItems: _scanData.items || [],
         invoiceNumFormat: document.getElementById('scanInvNum').value,
-        htmlTemplate: htmlTemplate,
-        hasImage: !!_scanImageData
+        scanTotal: document.getElementById('scanTotal').value,
+        scanDate: document.getElementById('scanDate').value,
+        hasImage: true
     };
 
     _vendorTemplates[tplId] = tpl;
 
-    // Save image
-    if (_scanImageData) {
-        try { localStorage.setItem('vtpl_img_' + tplId, _scanImageData); } catch(e) {}
+    // Save image to localStorage
+    try { localStorage.setItem('vtpl_img_' + tplId, _scanImageData); } catch(e) {
+        console.warn('Image too large for localStorage, template will rely on Firebase');
     }
 
-    // Save to Firebase (htmlTemplate can be large, but Firebase handles it)
+    // Save to Firebase
     if (db && userPIN) {
         var hashedPIN = hashPIN(userPIN);
         db.ref('vendorTemplates/' + hashedPIN + '/' + tplId).set(tpl);
+        // Save image to Firebase too (base64)
+        try { db.ref('vendorTemplateImages/' + hashedPIN + '/' + tplId).set(_scanImageData); } catch(e) {}
     }
 
     scanRenderVendorList();
-    showNotification('Template "' + vendorName + '" created — exact layout captured!', 'success');
-}
-
-// Ask Gemini to generate complete HTML/CSS that visually reproduces the scanned invoice
-async function generateVendorHTML(imageData, vendorName) {
-    var geminiKey = '', geminiModel = '';
-    try {
-        geminiKey = localStorage.getItem('gemini_api_key') || '';
-        geminiModel = localStorage.getItem('gemini_model') || '';
-    } catch(e) {}
-
-    if (!imageData || !geminiKey || !geminiModel) return '';
-
-    try {
-        var base64 = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
-        var mimeType = imageData.match(/^data:(image\/[a-z]+);/);
-        mimeType = mimeType ? mimeType[1] : 'image/jpeg';
-
-        var prompt = 'You are an expert HTML/CSS developer. Look at this invoice/estimate document image and generate a COMPLETE, SELF-CONTAINED HTML document (with inline CSS in a <style> tag) that VISUALLY REPRODUCES this invoice as closely as possible.\n\n'
-            + 'CRITICAL RULES:\n'
-            + '1. Match the EXACT visual layout: logo position, font styles, colors, borders, spacing, table grid lines, header/footer structure.\n'
-            + '2. If there is a company logo or decorative text, reproduce it using CSS (styled text, borders, font choices) — do NOT use <img> tags.\n'
-            + '3. Use the EXACT same colors from the document (sample them precisely).\n'
-            + '4. Keep all text content exactly as shown in the original (company name, address, column headers, terms, etc.).\n'
-            + '5. For line item DATA VALUES (descriptions, quantities, prices, totals, dates, invoice numbers, bill-to info), wrap each editable value in a <span> with these data attributes:\n'
-            + '   - data-field="vendor" for the vendor/company name\n'
-            + '   - data-field="date" for dates\n'
-            + '   - data-field="invoice-num" for invoice/estimate numbers\n'
-            + '   - data-field="bill-to" for the bill-to/client name\n'
-            + '   - data-field="location" for project address/location\n'
-            + '   - data-field="item-desc" for line item descriptions\n'
-            + '   - data-field="item-qty" for quantities\n'
-            + '   - data-field="item-price" for unit prices\n'
-            + '   - data-field="item-total" for line totals\n'
-            + '   - data-field="subtotal" for subtotal\n'
-            + '   - data-field="tax" for tax amount\n'
-            + '   - data-field="total" for grand total\n'
-            + '6. Each line item row (<tr>) should have a data-row attribute.\n'
-            + '7. The table should have id="itemsTable".\n'
-            + '8. Make it max-width 800px, centered, print-friendly.\n'
-            + '9. Return ONLY the HTML — no explanation, no markdown fences, just the raw <!DOCTYPE html>.....</html> code.\n'
-            + '10. Include ALL content from the original: headers, subheaders, info boxes, line items with actual data, subtotals, tax if present, totals, terms, footer — everything.\n\n'
-            + 'The goal is that if someone printed both the original and your HTML side by side, they would look virtually identical.';
-
-        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + geminiModel + ':generateContent?key=' + geminiKey;
-        var res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [
-                    { text: prompt },
-                    { inline_data: { mime_type: mimeType, data: base64 } }
-                ] }],
-                generationConfig: { temperature: 0.2, maxOutputTokens: 16384 }
-            })
-        });
-
-        if (!res.ok) {
-            console.warn('Template generation failed:', res.status);
-            return '';
-        }
-
-        var data = await res.json();
-        var text = '';
-        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            text = data.candidates[0].content.parts[0].text || '';
-        }
-
-        // Strip markdown code fences if Gemini wrapped it
-        text = text.replace(/```html\s*/gi, '').replace(/```\s*/g, '').trim();
-
-        // Validate it looks like HTML
-        if (text.indexOf('<') === -1 || text.indexOf('>') === -1) {
-            console.error('Gemini did not return HTML:', text.substring(0, 200));
-            return '';
-        }
-
-        console.log('Gemini generated template HTML:', text.length, 'chars');
-        return text;
-
-    } catch(err) {
-        console.error('Template generation error:', err);
-        return '';
-    }
+    showNotification('Template "' + vendorName + '" saved — exact image captured!', 'success');
 }
 
 // Import scanned data into the bid form
@@ -4259,79 +4180,87 @@ function vendorDelete(id) {
     scanRenderVendorList();
 }
 
-// Generate invoice from vendor template — uses the Gemini-generated HTML directly
+// Generate invoice from vendor template — shows the exact original scanned image
 function vendorGenerate(tplId) {
     var tpl = _vendorTemplates[tplId];
     if (!tpl) return;
 
-    var htmlTemplate = tpl.htmlTemplate || '';
-    if (!htmlTemplate) {
-        showNotification('This template has no saved layout. Delete it and re-scan the invoice.', 'error');
+    // Get the stored image
+    var imgData = '';
+    try { imgData = localStorage.getItem('vtpl_img_' + tplId) || ''; } catch(e) {}
+
+    if (!imgData) {
+        showNotification('No saved image for this template. Delete and re-scan.', 'error');
         return;
     }
 
-    // Inject current form data into the template's data-field spans
-    var clientName = gv('clientName') || '[Client]';
-    var estimateDate = fd(gv('estimateDate'));
-    var location = loc();
-    var distPO = gv('distPO') || tpl.invoiceNumFormat || '';
+    var vendorName = escHtml(tpl.vendorName);
+    var items = tpl.sampleItems || [];
 
-    // Use a temporary DOM to manipulate the template
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(htmlTemplate, 'text/html');
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + vendorName + ' Invoice</title>';
+    h += '<style>';
+    h += 'body{margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif;}';
+    h += '.toolbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:100;flex-wrap:wrap;}';
+    h += '.toolbar .tbt{color:#e67e22;font-weight:700;font-size:13px;margin-right:auto;}';
+    h += '.toolbar button{border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
+    h += '.btn-primary{background:#e67e22;color:white;}';
+    h += '.btn-secondary{background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c !important;}';
+    h += '.invoice-img{display:block;max-width:100%;margin:0 auto;background:white;box-shadow:0 2px 20px rgba(0,0,0,0.15);}';
+    h += '.img-container{padding:20px;text-align:center;}';
+    h += '.edit-section{max-width:800px;margin:20px auto;background:white;border-radius:8px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);display:none;}';
+    h += '.edit-section h3{margin:0 0 12px 0;font-size:14px;color:#333;border-bottom:2px solid #e67e22;padding-bottom:8px;}';
+    h += '.edit-section table{width:100%;border-collapse:collapse;font-size:11px;}';
+    h += '.edit-section th{background:#1a1a2e;color:#ccc;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;}';
+    h += '.edit-section td{padding:6px 8px;border-bottom:1px solid #eee;}';
+    h += '.edit-section td input{border:1px solid #ddd;padding:4px 6px;border-radius:3px;width:100%;box-sizing:border-box;font-size:11px;}';
+    h += '.edit-section .add-btn{background:#27ae60;color:white;border:none;padding:6px 12px;border-radius:4px;font-size:11px;cursor:pointer;margin-top:8px;}';
+    h += '.edit-section .total-row{font-weight:700;border-top:2px solid #333;font-size:12px;}';
+    h += '@media print{.toolbar,.edit-section{display:none!important;}.img-container{padding:0;}.invoice-img{box-shadow:none;max-width:100%;}}';
+    h += '</style></head><body>';
 
-    // Update data fields with current form values
-    var fieldMap = {
-        'bill-to': clientName,
-        'date': estimateDate,
-        'location': location,
-        'invoice-num': distPO
-    };
-    Object.keys(fieldMap).forEach(function(field) {
-        var els = doc.querySelectorAll('[data-field="' + field + '"]');
-        els.forEach(function(el) { if (fieldMap[field]) el.textContent = fieldMap[field]; });
+    // Toolbar
+    h += '<div class="toolbar">';
+    h += '<span class="tbt">' + vendorName.toUpperCase() + '</span>';
+    h += '<button class="btn-secondary" onclick="toggleEditPanel()">Edit Line Items</button>';
+    h += '<button class="btn-primary" onclick="window.print()">Print Invoice</button>';
+    h += '</div>';
+
+    // Original image — this IS the identical template
+    h += '<div class="img-container">';
+    h += '<img class="invoice-img" src="' + imgData + '" alt="' + vendorName + ' Invoice">';
+    h += '</div>';
+
+    // Editable line items panel (hidden by default, toggled by button)
+    h += '<div class="edit-section" id="editPanel">';
+    h += '<h3>Edit Line Items (for reference / re-calculation)</h3>';
+    h += '<table id="editTable"><thead><tr><th>Description</th><th style="width:60px">Qty</th><th style="width:80px">Price</th><th style="width:80px">Total</th><th style="width:30px"></th></tr></thead><tbody>';
+    var runTotal = 0;
+    items.forEach(function(item, i) {
+        var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
+        var qty = parseFloat(item.qty) || 1;
+        var lt = qty * price;
+        runTotal += lt;
+        h += '<tr data-row><td><input type="text" value="' + escHtml(item.desc) + '"></td>';
+        h += '<td><input type="number" value="' + qty + '" style="width:50px" onchange="vtplRecalc()"></td>';
+        h += '<td><input type="number" step="0.01" value="' + price.toFixed(2) + '" style="width:70px" onchange="vtplRecalc()"></td>';
+        h += '<td class="line-total">$' + price.toFixed(2) + '</td>';
+        h += '<td><button onclick="this.closest(\'tr\').remove();vtplRecalc()" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px">&times;</button></td></tr>';
     });
+    h += '</tbody></table>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">';
+    h += '<button class="add-btn" onclick="vtplAddRow()">+ Add Row</button>';
+    h += '<div style="font-size:14px;font-weight:700">Total: <span id="vtplTotal">$' + runTotal.toFixed(2) + '</span></div>';
+    h += '</div></div>';
 
-    // Make all data-field spans contenteditable (off by default, toggled by edit button)
-    doc.querySelectorAll('[data-field]').forEach(function(el) {
-        el.setAttribute('contenteditable', 'false');
-    });
-
-    // Inject toolbar before body content
-    var toolbarHTML = '<div id="vtpl-toolbar" style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:100;border-radius:0 0 8px 8px;margin-bottom:12px;flex-wrap:wrap">'
-        + '<span style="color:#e67e22;font-weight:700;font-size:13px;margin-right:auto">' + escHtml(tpl.vendorName).toUpperCase() + '</span>'
-        + '<button onclick="toggleVEdit()" id="vEditBtn" style="background:#e67e22;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Edit Values</button>'
-        + '<button onclick="window.print()" style="background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Print</button>'
-        + '</div>';
-
-    // Inject toolbar and edit JS
-    var editJS = '<' + 'script>'
-        + 'var vEditMode=false;'
-        + 'function toggleVEdit(){'
-        + '  vEditMode=!vEditMode;'
-        + '  document.querySelectorAll("[data-field]").forEach(function(el){el.contentEditable=vEditMode?"true":"false";});'
-        + '  document.getElementById("vEditBtn").textContent=vEditMode?"Lock Values":"Edit Values";'
-        + '  document.getElementById("vEditBtn").style.background=vEditMode?"#c0392b":"#e67e22";'
-        + '}'
-        + '</' + 'script>';
-
-    // Inject print-hide CSS
-    var printCSS = '<style>'
-        + '#vtpl-toolbar{display:flex!important;}'
-        + '[contenteditable=true]{outline:2px dashed #e67e22;outline-offset:2px;}'
-        + '@media print{#vtpl-toolbar{display:none!important;}[contenteditable]{outline:none!important;}}'
-        + '</style>';
-
-    // Build final HTML
-    var bodyContent = doc.body ? doc.body.innerHTML : htmlTemplate;
-    var headContent = doc.head ? doc.head.innerHTML : '';
-
-    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8">' + headContent + printCSS + '</head><body>';
-    h += toolbarHTML;
-    h += bodyContent;
-    h += editJS;
-    h += docJS();
-    h += '</body></html>';
+    // JS for edit panel
+    h += '<'+'script>';
+    h += 'function toggleEditPanel(){var p=document.getElementById("editPanel");p.style.display=p.style.display==="none"?"block":"block";if(p.style.display==="block"&&p.getAttribute("data-shown")){p.style.display="none";p.removeAttribute("data-shown")}else{p.setAttribute("data-shown","1")}}';
+    h += 'function vtplRecalc(){var rows=document.querySelectorAll("[data-row]");var t=0;rows.forEach(function(r){var inputs=r.querySelectorAll("input[type=number]");if(inputs.length>=2){var q=parseFloat(inputs[0].value)||1;var p=parseFloat(inputs[1].value)||0;var lt=q*p;t+=lt;r.querySelector(".line-total").textContent="$"+lt.toFixed(2)}});document.getElementById("vtplTotal").textContent="$"+t.toFixed(2)}';
+    h += 'function vtplAddRow(){var tb=document.querySelector("#editTable tbody");var tr=document.createElement("tr");tr.setAttribute("data-row","");';
+    h += 'tr.innerHTML=\'<td><input type="text" value="New item"></td><td><input type="number" value="1" style="width:50px" onchange="vtplRecalc()"></td><td><input type="number" step="0.01" value="0.00" style="width:70px" onchange="vtplRecalc()"></td><td class="line-total">$0.00</td><td><button onclick="this.closest(\\\'tr\\\').remove();vtplRecalc()" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px">&times;</button></td>\';';
+    h += 'tb.appendChild(tr)}';
+    h += '</'+'script>';
+    h += docJS() + '</body></html>';
 
     openDoc(h, _lastInvoiceId);
     closeScanner();

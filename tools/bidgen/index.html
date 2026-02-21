@@ -4022,20 +4022,23 @@ function scanSaveToLibrary() {
     showNotification('Document saved to scan history', 'success');
 }
 
-// Save as vendor template — stores the original scanned image as the template
-function scanSaveAsVendorTemplate() {
+// Save as vendor template — Gemini builds editable HTML that reproduces the scanned document
+async function scanSaveAsVendorTemplate() {
     var vendorName = document.getElementById('scanVendor').value.trim();
     if (!vendorName) {
         vendorName = prompt('Enter the vendor/company name for this template:');
         if (!vendorName) return;
     }
-
     if (!_scanImageData) {
         showNotification('No scanned image available. Scan a document first.', 'error');
         return;
     }
 
     var tplId = 'vtpl_' + Date.now();
+    showNotification('Building editable template for "' + vendorName + '"… this takes a few seconds.', 'info');
+
+    // Ask Gemini to produce editable HTML that matches the scanned document
+    var htmlTemplate = await _buildVendorHTML(_scanImageData);
 
     var tpl = {
         id: tplId,
@@ -4045,26 +4048,109 @@ function scanSaveAsVendorTemplate() {
         invoiceNumFormat: document.getElementById('scanInvNum').value,
         scanTotal: document.getElementById('scanTotal').value,
         scanDate: document.getElementById('scanDate').value,
-        hasImage: true
+        htmlTemplate: htmlTemplate,
+        hasImage: !!_scanImageData
     };
 
     _vendorTemplates[tplId] = tpl;
 
-    // Save image to localStorage
-    try { localStorage.setItem('vtpl_img_' + tplId, _scanImageData); } catch(e) {
-        console.warn('Image too large for localStorage, template will rely on Firebase');
+    // Save image thumbnail for the card preview
+    if (_scanImageData) {
+        try { localStorage.setItem('vtpl_img_' + tplId, _scanImageData); } catch(e) {}
     }
-
-    // Save to Firebase
+    // Persist template to Firebase
     if (db && userPIN) {
         var hashedPIN = hashPIN(userPIN);
         db.ref('vendorTemplates/' + hashedPIN + '/' + tplId).set(tpl);
-        // Save image to Firebase too (base64)
-        try { db.ref('vendorTemplateImages/' + hashedPIN + '/' + tplId).set(_scanImageData); } catch(e) {}
     }
 
     scanRenderVendorList();
-    showNotification('Template "' + vendorName + '" saved — exact image captured!', 'success');
+    showNotification(htmlTemplate
+        ? 'Template "' + vendorName + '" saved — editable layout ready!'
+        : 'Template "' + vendorName + '" saved (Gemini unavailable — image-only fallback).', htmlTemplate ? 'success' : 'warning');
+}
+
+// ---- helper: ask Gemini to generate the full editable HTML for a scanned document ----
+async function _buildVendorHTML(imageData) {
+    var geminiKey = '', geminiModel = '';
+    try {
+        geminiKey  = localStorage.getItem('gemini_api_key') || '';
+        geminiModel = localStorage.getItem('gemini_model') || '';
+    } catch(e) {}
+    if (!imageData || !geminiKey || !geminiModel) return '';
+
+    try {
+        var base64 = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
+        var mime = (imageData.match(/^data:(image\/[a-z]+);/) || [])[1] || 'image/jpeg';
+
+        var prompt = [
+            'You are an expert front-end developer. I am giving you an image of a real invoice, estimate, or quote document.',
+            'Your job: produce a COMPLETE standalone HTML page (<!DOCTYPE html> through </html>) with embedded CSS that reproduces the document as closely as possible.',
+            '',
+            'VISUAL FIDELITY RULES — follow every one:',
+            '• Reproduce the EXACT layout: header arrangement, logo/text positioning, info boxes, table structure, footer.',
+            '• Match colors precisely (sample hex values from the image).',
+            '• Match fonts as closely as possible (use web-safe families).',
+            '• Match borders, spacing, alignment, row shading exactly.',
+            '• If there is a logo or decorative company name, recreate it with styled HTML/CSS text — do NOT use <img> tags.',
+            '• Include EVERY piece of visible content: company name, address, phone, email, taglines, column headers, line items with their data, subtotals, tax, total, terms, footer.',
+            '',
+            'EDITABILITY RULES — these make the template reusable:',
+            '• The main line-items table MUST have id="itemsTable".',
+            '• Every line-item <tr> inside the tbody MUST have the attribute data-row.',
+            '• Inside each data-row <tr>, tag the cells:',
+            '  – item description cell: add data-field="item-desc"',
+            '  – quantity cell: add data-field="item-qty"',
+            '  – unit price cell: add data-field="item-price"',
+            '  – line total cell: add data-field="item-total"',
+            '• Tag these single-value fields with data-field="…":',
+            '  – Company/vendor name → data-field="vendor"',
+            '  – Invoice/estimate number → data-field="invoice-num"',
+            '  – Date → data-field="date"',
+            '  – Bill-to / client name → data-field="bill-to"',
+            '  – Project address / location → data-field="location"',
+            '  – Subtotal → data-field="subtotal"',
+            '  – Tax → data-field="tax"',
+            '  – Grand total → data-field="total"',
+            '• Set every data-field element to contenteditable="true".',
+            '',
+            'OUTPUT: Return ONLY the raw HTML. No markdown fences, no commentary, just the <!DOCTYPE html>…</html>.'
+        ].join('\n');
+
+        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + geminiModel + ':generateContent?key=' + geminiKey;
+        var res = await fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                contents:[{parts:[
+                    {text: prompt},
+                    {inline_data:{mime_type:mime, data:base64}}
+                ]}],
+                generationConfig:{temperature:0.15, maxOutputTokens:30000}
+            })
+        });
+        if (!res.ok) { console.warn('Gemini template build HTTP', res.status); return ''; }
+
+        var data = await res.json();
+        var text = '';
+        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts)
+            text = data.candidates[0].content.parts[0].text || '';
+
+        // Strip markdown code fences if present
+        text = text.replace(/```html\s*/gi,'').replace(/```\s*/g,'').trim();
+        if (text.indexOf('<!') === -1 && text.indexOf('<html') === -1) {
+            // try to extract HTML from surrounding commentary
+            var m = text.match(/<(!DOCTYPE|html)[\s\S]*/i);
+            if (m) text = m[0];
+        }
+        if (text.indexOf('<') === -1) { console.error('Gemini returned no HTML'); return ''; }
+
+        console.log('Gemini vendor HTML generated:', text.length, 'chars');
+        return text;
+    } catch(err) {
+        console.error('_buildVendorHTML error:', err);
+        return '';
+    }
 }
 
 // Import scanned data into the bid form
@@ -4180,85 +4266,181 @@ function vendorDelete(id) {
     scanRenderVendorList();
 }
 
-// Generate invoice from vendor template — shows the exact original scanned image
+// Generate invoice from vendor template — auto-fills bid data into the editable HTML template
 function vendorGenerate(tplId) {
     var tpl = _vendorTemplates[tplId];
     if (!tpl) return;
 
-    // Get the stored image
-    var imgData = '';
-    try { imgData = localStorage.getItem('vtpl_img_' + tplId) || ''; } catch(e) {}
+    var htmlTemplate = tpl.htmlTemplate || '';
 
-    if (!imgData) {
-        showNotification('No saved image for this template. Delete and re-scan.', 'error');
+    // ---- fallback: no HTML template, show image with warning ----
+    if (!htmlTemplate) {
+        var imgFallback = '';
+        try { imgFallback = localStorage.getItem('vtpl_img_' + tplId) || ''; } catch(e) {}
+        if (!imgFallback) {
+            showNotification('This template has no saved layout. Delete it and re-scan the document.', 'error');
+            return;
+        }
+        showNotification('No editable template available — showing image only. Delete and re-scan to get an editable version.', 'warning');
+        var fb = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + escHtml(tpl.vendorName) + '</title>';
+        fb += '<style>body{margin:0;background:#f5f5f5;text-align:center;padding:20px}img{max-width:100%;background:white;box-shadow:0 2px 20px rgba(0,0,0,.15)}</style>';
+        fb += '</head><body><img src="' + imgFallback + '"></body></html>';
+        openDoc(fb, _lastInvoiceId);
+        closeScanner();
         return;
     }
 
-    var vendorName = escHtml(tpl.vendorName);
-    var items = tpl.sampleItems || [];
+    // ---- Gather current bid-generator data for auto-fill ----
+    var clientName   = gv('clientName') || '';
+    var estimateDate = fd(gv('estimateDate'));
+    var projLoc      = loc();
+    var distPO       = gv('distPO') || tpl.invoiceNumFormat || '';
+    var distItems    = getDistMatItems();        // distributor line items from form
+    var matItems     = getMatItems();            // main material items from form
+    // Use distributor items first; if empty fall back to main material items; then sample
+    var fillItems = distItems.length > 0 ? distItems : (matItems.length > 0 ? matItems : tpl.sampleItems || []);
 
-    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + vendorName + ' Invoice</title>';
+    // ---- Parse the stored HTML and inject bid data ----
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlTemplate, 'text/html');
+
+    // Auto-fill single-value fields
+    var singles = {
+        'bill-to': clientName,
+        'date': estimateDate,
+        'location': projLoc,
+        'invoice-num': distPO
+    };
+    Object.keys(singles).forEach(function(key) {
+        var els = doc.querySelectorAll('[data-field="' + key + '"]');
+        els.forEach(function(el) { if (singles[key]) el.textContent = singles[key]; });
+    });
+
+    // Auto-fill line items into the table
+    var tbody = doc.querySelector('#itemsTable tbody');
+    if (tbody && fillItems.length > 0) {
+        // Grab one existing row as a structural template, then clear
+        var existingRows = tbody.querySelectorAll('[data-row]');
+        var rowTemplate = existingRows.length > 0 ? existingRows[0].cloneNode(true) : null;
+
+        // Remove old data-row rows (keep non-data rows like subtotal/total)
+        existingRows.forEach(function(r) { r.remove(); });
+
+        var subTotal = 0;
+        fillItems.forEach(function(item, i) {
+            var qty = parseFloat(item.qty) || 1;
+            var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
+            var lineTotal = qty * price;
+            subTotal += lineTotal;
+
+            var tr;
+            if (rowTemplate) {
+                tr = rowTemplate.cloneNode(true);
+                // Fill cells by data-field or by position
+                var descEl = tr.querySelector('[data-field="item-desc"]');
+                var qtyEl  = tr.querySelector('[data-field="item-qty"]');
+                var priceEl= tr.querySelector('[data-field="item-price"]');
+                var totalEl= tr.querySelector('[data-field="item-total"]');
+                if (descEl)  descEl.textContent = item.desc;
+                if (qtyEl)   qtyEl.textContent = qty;
+                if (priceEl) priceEl.textContent = '$' + price.toFixed(2);
+                if (totalEl) totalEl.textContent = '$' + lineTotal.toFixed(2);
+                // Update row number cell if it exists (first td without data-field)
+                var firstTd = tr.querySelector('td');
+                if (firstTd && !firstTd.hasAttribute('data-field') && /^\d+$/.test(firstTd.textContent.trim()))
+                    firstTd.textContent = (i + 1);
+            } else {
+                tr = doc.createElement('tr');
+                tr.setAttribute('data-row', '');
+                tr.innerHTML = '<td>' + (i+1) + '</td>'
+                    + '<td data-field="item-desc" contenteditable="true">' + escHtml(item.desc) + '</td>'
+                    + '<td data-field="item-qty" contenteditable="true">' + qty + '</td>'
+                    + '<td data-field="item-price" contenteditable="true">$' + price.toFixed(2) + '</td>'
+                    + '<td data-field="item-total" contenteditable="true">$' + lineTotal.toFixed(2) + '</td>';
+            }
+            // Insert before any non-data-row rows (subtotal/total rows)
+            var insertBefore = tbody.querySelector('tr:not([data-row])');
+            if (insertBefore) tbody.insertBefore(tr, insertBefore);
+            else tbody.appendChild(tr);
+        });
+
+        // Update subtotal / total cells
+        var subEl = doc.querySelector('[data-field="subtotal"]');
+        if (subEl) subEl.textContent = '$' + subTotal.toFixed(2);
+        var totEl = doc.querySelector('[data-field="total"]');
+        if (totEl) totEl.textContent = '$' + subTotal.toFixed(2);
+        // If there's a tax cell, recalculate
+        var taxEl = doc.querySelector('[data-field="tax"]');
+        if (taxEl) {
+            var taxVal = parseFloat(taxEl.textContent.replace(/[^0-9.]/g,'')) || 0;
+            if (totEl && taxVal > 0) totEl.textContent = '$' + (subTotal + taxVal).toFixed(2);
+        }
+    }
+
+    // ---- Build the final document with toolbar ----
+    var bodyHTML = doc.body ? doc.body.innerHTML : htmlTemplate;
+    var headHTML = doc.head ? doc.head.innerHTML : '';
+
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8">' + headHTML;
+
+    // Inject extra CSS for editability and toolbar
     h += '<style>';
-    h += 'body{margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif;}';
-    h += '.toolbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:100;flex-wrap:wrap;}';
-    h += '.toolbar .tbt{color:#e67e22;font-weight:700;font-size:13px;margin-right:auto;}';
-    h += '.toolbar button{border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
-    h += '.btn-primary{background:#e67e22;color:white;}';
-    h += '.btn-secondary{background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c !important;}';
-    h += '.invoice-img{display:block;max-width:100%;margin:0 auto;background:white;box-shadow:0 2px 20px rgba(0,0,0,0.15);}';
-    h += '.img-container{padding:20px;text-align:center;}';
-    h += '.edit-section{max-width:800px;margin:20px auto;background:white;border-radius:8px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);display:none;}';
-    h += '.edit-section h3{margin:0 0 12px 0;font-size:14px;color:#333;border-bottom:2px solid #e67e22;padding-bottom:8px;}';
-    h += '.edit-section table{width:100%;border-collapse:collapse;font-size:11px;}';
-    h += '.edit-section th{background:#1a1a2e;color:#ccc;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;}';
-    h += '.edit-section td{padding:6px 8px;border-bottom:1px solid #eee;}';
-    h += '.edit-section td input{border:1px solid #ddd;padding:4px 6px;border-radius:3px;width:100%;box-sizing:border-box;font-size:11px;}';
-    h += '.edit-section .add-btn{background:#27ae60;color:white;border:none;padding:6px 12px;border-radius:4px;font-size:11px;cursor:pointer;margin-top:8px;}';
-    h += '.edit-section .total-row{font-weight:700;border-top:2px solid #333;font-size:12px;}';
-    h += '@media print{.toolbar,.edit-section{display:none!important;}.img-container{padding:0;}.invoice-img{box-shadow:none;max-width:100%;}}';
-    h += '</style></head><body>';
+    h += '#vtpl-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:9999;flex-wrap:wrap;}';
+    h += '#vtpl-bar span{color:#e67e22;font-weight:700;font-size:13px;margin-right:auto;}';
+    h += '#vtpl-bar button{border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
+    h += '.vb-edit{background:#e67e22;color:#fff;}';
+    h += '.vb-add{background:#27ae60;color:#fff;}';
+    h += '.vb-calc{background:#3498db;color:#fff;}';
+    h += '.vb-print{background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c !important;}';
+    h += '[contenteditable="true"]{outline:2px dashed #e67e22;outline-offset:1px;min-width:20px;display:inline-block;}';
+    h += '@media print{#vtpl-bar{display:none!important;}[contenteditable]{outline:none!important;}}';
+    h += '</style>';
+    h += '</head><body>';
 
     // Toolbar
-    h += '<div class="toolbar">';
-    h += '<span class="tbt">' + vendorName.toUpperCase() + '</span>';
-    h += '<button class="btn-secondary" onclick="toggleEditPanel()">Edit Line Items</button>';
-    h += '<button class="btn-primary" onclick="window.print()">Print Invoice</button>';
+    h += '<div id="vtpl-bar">';
+    h += '<span>' + escHtml(tpl.vendorName).toUpperCase() + '</span>';
+    h += '<button class="vb-edit" id="vEditBtn" onclick="vToggleEdit()">Edit All Fields</button>';
+    h += '<button class="vb-add" onclick="vAddRow()">+ Add Row</button>';
+    h += '<button class="vb-calc" onclick="vRecalc()">Recalculate</button>';
+    h += '<button class="vb-print" onclick="window.print()">Print</button>';
     h += '</div>';
 
-    // Original image — this IS the identical template
-    h += '<div class="img-container">';
-    h += '<img class="invoice-img" src="' + imgData + '" alt="' + vendorName + ' Invoice">';
-    h += '</div>';
+    // Template body
+    h += bodyHTML;
 
-    // Editable line items panel (hidden by default, toggled by button)
-    h += '<div class="edit-section" id="editPanel">';
-    h += '<h3>Edit Line Items (for reference / re-calculation)</h3>';
-    h += '<table id="editTable"><thead><tr><th>Description</th><th style="width:60px">Qty</th><th style="width:80px">Price</th><th style="width:80px">Total</th><th style="width:30px"></th></tr></thead><tbody>';
-    var runTotal = 0;
-    items.forEach(function(item, i) {
-        var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
-        var qty = parseFloat(item.qty) || 1;
-        var lt = qty * price;
-        runTotal += lt;
-        h += '<tr data-row><td><input type="text" value="' + escHtml(item.desc) + '"></td>';
-        h += '<td><input type="number" value="' + qty + '" style="width:50px" onchange="vtplRecalc()"></td>';
-        h += '<td><input type="number" step="0.01" value="' + price.toFixed(2) + '" style="width:70px" onchange="vtplRecalc()"></td>';
-        h += '<td class="line-total">$' + price.toFixed(2) + '</td>';
-        h += '<td><button onclick="this.closest(\'tr\').remove();vtplRecalc()" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px">&times;</button></td></tr>';
-    });
-    h += '</tbody></table>';
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">';
-    h += '<button class="add-btn" onclick="vtplAddRow()">+ Add Row</button>';
-    h += '<div style="font-size:14px;font-weight:700">Total: <span id="vtplTotal">$' + runTotal.toFixed(2) + '</span></div>';
-    h += '</div></div>';
-
-    // JS for edit panel
+    // Inline JS for edit/add/recalc
     h += '<'+'script>';
-    h += 'function toggleEditPanel(){var p=document.getElementById("editPanel");p.style.display=p.style.display==="none"?"block":"block";if(p.style.display==="block"&&p.getAttribute("data-shown")){p.style.display="none";p.removeAttribute("data-shown")}else{p.setAttribute("data-shown","1")}}';
-    h += 'function vtplRecalc(){var rows=document.querySelectorAll("[data-row]");var t=0;rows.forEach(function(r){var inputs=r.querySelectorAll("input[type=number]");if(inputs.length>=2){var q=parseFloat(inputs[0].value)||1;var p=parseFloat(inputs[1].value)||0;var lt=q*p;t+=lt;r.querySelector(".line-total").textContent="$"+lt.toFixed(2)}});document.getElementById("vtplTotal").textContent="$"+t.toFixed(2)}';
-    h += 'function vtplAddRow(){var tb=document.querySelector("#editTable tbody");var tr=document.createElement("tr");tr.setAttribute("data-row","");';
-    h += 'tr.innerHTML=\'<td><input type="text" value="New item"></td><td><input type="number" value="1" style="width:50px" onchange="vtplRecalc()"></td><td><input type="number" step="0.01" value="0.00" style="width:70px" onchange="vtplRecalc()"></td><td class="line-total">$0.00</td><td><button onclick="this.closest(\\\'tr\\\').remove();vtplRecalc()" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px">&times;</button></td>\';';
-    h += 'tb.appendChild(tr)}';
+    h += 'var vEdit=true;';
+    h += 'function vToggleEdit(){';
+    h += '  vEdit=!vEdit;';
+    h += '  document.querySelectorAll("[data-field]").forEach(function(el){el.contentEditable=vEdit?"true":"false";});';
+    h += '  document.getElementById("vEditBtn").textContent=vEdit?"Lock Fields":"Edit All Fields";';
+    h += '  document.getElementById("vEditBtn").style.background=vEdit?"#c0392b":"#e67e22";';
+    h += '}';
+    h += 'function vAddRow(){';
+    h += '  var tb=document.querySelector("#itemsTable tbody");if(!tb)return;';
+    h += '  var rows=tb.querySelectorAll("[data-row]");var n=rows.length+1;';
+    h += '  var tr=document.createElement("tr");tr.setAttribute("data-row","");';
+    h += '  tr.innerHTML=\'<td>\'+n+\'</td><td data-field="item-desc" contenteditable="true">New item</td><td data-field="item-qty" contenteditable="true">1</td><td data-field="item-price" contenteditable="true">$0.00</td><td data-field="item-total">$0.00</td>\';';
+    h += '  var anchor=tb.querySelector("tr:not([data-row])");';
+    h += '  if(anchor)tb.insertBefore(tr,anchor);else tb.appendChild(tr);';
+    h += '}';
+    h += 'function vRecalc(){';
+    h += '  var rows=document.querySelectorAll("[data-row]");var t=0;';
+    h += '  rows.forEach(function(r){';
+    h += '    var qEl=r.querySelector("[data-field=item-qty]");';
+    h += '    var pEl=r.querySelector("[data-field=item-price]");';
+    h += '    var tEl=r.querySelector("[data-field=item-total]");';
+    h += '    if(qEl&&pEl){';
+    h += '      var q=parseFloat(qEl.textContent.replace(/[^0-9.]/g,""))||1;';
+    h += '      var p=parseFloat(pEl.textContent.replace(/[^0-9.]/g,""))||0;';
+    h += '      var lt=q*p;t+=lt;';
+    h += '      if(tEl)tEl.textContent="$"+lt.toFixed(2);';
+    h += '    }});';
+    h += '  var sEl=document.querySelector("[data-field=subtotal]");if(sEl)sEl.textContent="$"+t.toFixed(2);';
+    h += '  var tEl=document.querySelector("[data-field=total]");if(tEl)tEl.textContent="$"+t.toFixed(2);';
+    h += '}';
     h += '</'+'script>';
     h += docJS() + '</body></html>';
 

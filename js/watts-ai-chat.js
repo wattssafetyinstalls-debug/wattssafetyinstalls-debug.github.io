@@ -14,7 +14,7 @@
   // CONFIGURATION — UPDATE AFTER DEPLOYING PROXY
   // ═══════════════════════════════════════════
   const PROXY_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
-  const GEMINI_MODEL = 'gemini-2.0-flash';
+  const GEMINI_MODEL = 'gemini-2.5-flash';
 
   // Brand detection with unique colors for each
   const isSafetyInstalls = window.location.pathname.startsWith('/safety-installs');
@@ -23,19 +23,27 @@
         name: 'Watts Safety Installs',
         tagline: 'Bringing Peace of Mind to Your Doorstep',
         services: 'kitchen & bath remodeling, painting, gutters, handyman services, electronics & TV mounting, property maintenance, snow removal, and lawn care',
-        color: '#00C4B4', // Teal
-        colorDark: '#009e91',
-        colorLight: '#E0F7F6',
-        gradient: 'linear-gradient(135deg, #00C4B4, #009e91)',
+        color: '#dc2626',
+        colorDark: '#b91c1c',
+        colorLight: '#fef2f2',
+        gradient: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+        headerBg: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
+        bubbleBg: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+        msgBg: '#f5f5dc',
+        textOnHeader: '#f5f5dc',
       }
     : {
         name: 'Watts ATP Contractor',
         tagline: 'ATP Approved Contractor',
         services: 'wheelchair ramp installation, grab bar installation, non-slip flooring, bathroom accessibility modifications, and ADA-compliant safety solutions',
-        color: '#FFD700', // Gold for ATP
-        colorDark: '#F4C430',
-        colorLight: '#FFF9E6',
-        gradient: 'linear-gradient(135deg, #FFD700, #F4C430)',
+        color: '#00C4B4',
+        colorDark: '#009e91',
+        colorLight: '#E0F7FA',
+        gradient: 'linear-gradient(135deg, #00C4B4, #009e91)',
+        headerBg: 'linear-gradient(135deg, #0A1D37, #16213e)',
+        bubbleBg: 'linear-gradient(135deg, #00C4B4, #009e91)',
+        msgBg: '#f8f9fa',
+        textOnHeader: '#FFD700',
       };
 
   const SYSTEM_PROMPT = `You are the friendly, professional AI assistant for ${BRAND.name} based in Norfolk, Nebraska.
@@ -87,7 +95,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
     #watts-chat-bubble {
       position:fixed; bottom:24px; right:24px; z-index:99999;
       width:68px; height:68px; border-radius:50%;
-      background:${BRAND.gradient}; color:#fff;
+      background:${BRAND.bubbleBg}; color:#fff;
       border:3px solid #fff; cursor:pointer;
       box-shadow:0 6px 24px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
       display:flex; align-items:center; justify-content:center;
@@ -147,7 +155,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
 
     /* Header — Professional */
     #watts-chat-header {
-      background:${BRAND.gradient}; padding:20px; position:relative;
+      background:${BRAND.headerBg}; padding:20px; position:relative;
       display:flex; align-items:center; gap:14px;
     }
     #watts-chat-header::before {
@@ -162,11 +170,11 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
       border:2px solid rgba(255,255,255,0.3);
     }
     #watts-chat-header .info h3 { 
-      color:#fff; font-size:16px; font-weight:600; 
+      color:${BRAND.textOnHeader}; font-size:16px; font-weight:600; 
       text-shadow:0 1px 2px rgba(0,0,0,0.1);
     }
     #watts-chat-header .info p { 
-      color:rgba(255,255,255,0.9); font-size:12px; margin-top:2px;
+      color:rgba(255,255,255,0.85); font-size:12px; margin-top:2px;
       display:flex; align-items:center; gap:6px;
     }
     #watts-chat-header .status { 
@@ -184,7 +192,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
     #watts-chat-messages {
       flex:1; overflow-y:auto; padding:20px;
       display:flex; flex-direction:column; gap:14px;
-      background:#f8f9fa;
+      background:${BRAND.msgBg};
       scrollbar-width:thin; scrollbar-color:rgba(0,0,0,0.1) transparent;
     }
     #watts-chat-messages::-webkit-scrollbar { width:6px; }
@@ -210,7 +218,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
       box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .watts-msg.user {
-      background:${BRAND.gradient}; color:#fff; align-self:flex-end;
+      background:${BRAND.bubbleBg}; color:#fff; align-self:flex-end;
       border-bottom-right-radius:6px;
       box-shadow:0 2px 8px rgba(0,0,0,0.15);
     }
@@ -240,7 +248,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
     /* Quick Actions — Professional Pills */
     .watts-quick-actions {
       display:flex; flex-wrap:wrap; gap:8px; padding:0 20px 12px;
-      background:#f8f9fa;
+      background:${BRAND.msgBg};
     }
     .watts-quick-btn {
       background:#fff; border:1px solid #e0e0e0; color:#666;
@@ -272,7 +280,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
     }
     #watts-chat-send {
       width:44px; height:44px; border-radius:50%;
-      background:${BRAND.gradient}; border:none; cursor:pointer;
+      background:${BRAND.bubbleBg}; border:none; cursor:pointer;
       display:flex; align-items:center; justify-content:center;
       transition:all 0.2s; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.15);
     }
@@ -285,7 +293,7 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
 
     /* CTA Banner — Elegant */
     .watts-cta-banner {
-      background:${BRAND.gradient}; padding:12px 20px; text-align:center;
+      background:${BRAND.bubbleBg}; padding:12px 20px; text-align:center;
       font-size:13px; color:#fff; font-weight:600;
       cursor:pointer; transition:all 0.2s;
       position:relative; overflow:hidden;

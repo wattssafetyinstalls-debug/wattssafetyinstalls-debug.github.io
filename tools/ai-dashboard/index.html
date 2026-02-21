@@ -17,14 +17,11 @@
         .topbar .api-dot { width:8px; height:8px; border-radius:50%; background:#e74c3c; }
         .topbar .api-dot.connected { background:#2ecc71; }
 
-        /* API Key Setup */
-        .api-setup { background:#16213e; border:1px solid #1a3a5c; border-radius:12px; padding:20px; margin:20px 24px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-        .api-setup label { font-size:13px; color:#aaa; white-space:nowrap; }
-        .api-setup input { flex:1; min-width:280px; background:#0f1a33; border:1px solid #2a3a5c; border-radius:8px; padding:10px 14px; color:#eee; font-size:13px; font-family:monospace; }
-        .api-setup input:focus { outline:none; border-color:#00C4B4; }
-        .api-setup button { background:#00C4B4; color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; font-size:13px; }
-        .api-setup button:hover { background:#009e91; }
-        .api-setup .hint { width:100%; font-size:11px; color:#555; margin-top:4px; }
+        /* API Status Banner */
+        .api-connected-banner { background:#16213e; border:1px solid #1a3a5c; border-radius:12px; padding:14px 24px; margin:20px 24px; display:flex; align-items:center; gap:10px; }
+        .api-connected-banner .dot { width:10px; height:10px; border-radius:50%; background:#2ecc71; box-shadow:0 0 8px rgba(46,204,113,0.5); }
+        .api-connected-banner span { color:#aaa; font-size:13px; }
+        .api-connected-banner strong { color:#2ecc71; }
 
         /* Tabs */
         .tabs { display:flex; gap:4px; padding:0 24px; margin-top:16px; overflow-x:auto; flex-wrap:nowrap; }
@@ -109,11 +106,9 @@
     </div>
 </div>
 
-<div class="api-setup" id="apiSetup">
-    <label>Gemini API Key:</label>
-    <input type="password" id="apiKeyInput" placeholder="Paste your Gemini paid API key..." />
-    <button onclick="connectAPI()">Connect</button>
-    <div class="hint">Your key is stored in this browser session only — never saved to any server. Get a key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#00C4B4">aistudio.google.com/apikey</a></div>
+<div class="api-connected-banner">
+    <div class="dot"></div>
+    <span><strong>AI Connected</strong> — Powered by Gemini 2.5 Flash via secure proxy</span>
 </div>
 
 <div class="tabs" id="tabBar">
@@ -458,9 +453,9 @@
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let API_KEY = '';
+let API_KEY = 'proxy'; // API key managed securely by Cloudflare Worker proxy
 const PROXY_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 
 const BRAND_INFO = {
     atp: {
@@ -486,25 +481,11 @@ const BRAND_INFO = {
 };
 
 // ═══════════════════════════════════════════
-// API CONNECTION
+// API — Auto-connected via Cloudflare Worker proxy
 // ═══════════════════════════════════════════
-function connectAPI() {
-    API_KEY = document.getElementById('apiKeyInput').value.trim();
-    if (!API_KEY) return alert('Please enter your API key');
-    document.getElementById('apiDot').classList.add('connected');
-    document.getElementById('apiStatusText').textContent = 'Connected';
-    document.getElementById('apiSetup').style.display = 'none';
-    sessionStorage.setItem('watts-gemini-key', API_KEY);
-}
-
-// Restore session
 (function() {
-    const saved = sessionStorage.getItem('watts-gemini-key');
-    if (saved) {
-        API_KEY = saved;
-        document.getElementById('apiKeyInput').value = saved;
-        connectAPI();
-    }
+    document.getElementById('apiDot').classList.add('connected');
+    document.getElementById('apiStatusText').textContent = 'Connected via Proxy';
     loadLeads();
 })();
 
@@ -524,7 +505,7 @@ document.getElementById('tabBar').addEventListener('click', (e) => {
 // GEMINI API CALL
 // ═══════════════════════════════════════════
 async function callGemini(prompt, outputId, maxTokens = 2048) {
-    if (!API_KEY) { alert('Please connect your API key first.'); return null; }
+    // API key is managed by Cloudflare Worker proxy — no client-side key needed
     const el = document.getElementById(outputId);
     el.innerHTML = '<div style="color:#555;text-align:center;padding:20px;">Generating...</div>';
 

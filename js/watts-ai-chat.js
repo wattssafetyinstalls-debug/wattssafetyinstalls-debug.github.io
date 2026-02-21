@@ -13,7 +13,7 @@
   // ═══════════════════════════════════════════
   // CONFIGURATION — UPDATE AFTER DEPLOYING PROXY
   // ═══════════════════════════════════════════
-  const PROXY_URL = 'https://watts-ai-proxy.YOUR_SUBDOMAIN.workers.dev';
+  const PROXY_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
   const GEMINI_MODEL = 'gemini-2.0-flash';
 
   // Brand detection

@@ -459,7 +459,8 @@
 // STATE
 // ═══════════════════════════════════════════
 let API_KEY = '';
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const PROXY_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
+const GEMINI_MODEL = 'gemini-2.0-flash';
 
 const BRAND_INFO = {
     atp: {
@@ -528,7 +529,7 @@ async function callGemini(prompt, outputId, maxTokens = 2048) {
     el.innerHTML = '<div style="color:#555;text-align:center;padding:20px;">Generating...</div>';
 
     try {
-        const res = await fetch(`${GEMINI_URL}?key=${API_KEY}`, {
+        const res = await fetch(`${PROXY_URL}?model=${GEMINI_MODEL}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

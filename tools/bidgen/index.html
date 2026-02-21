@@ -4022,7 +4022,7 @@ function scanSaveToLibrary() {
     showNotification('Document saved to scan history', 'success');
 }
 
-// Save as vendor template — uses Gemini to analyze the exact visual layout
+// Save as vendor template — Gemini generates the actual HTML that reproduces the invoice
 async function scanSaveAsVendorTemplate() {
     var vendorName = document.getElementById('scanVendor').value.trim();
     if (!vendorName) {
@@ -4031,19 +4031,18 @@ async function scanSaveAsVendorTemplate() {
     }
 
     var tplId = 'vtpl_' + Date.now();
-    showNotification('Analyzing layout for "' + vendorName + '"...', 'info');
+    showNotification('Generating exact template for "' + vendorName + '"... (Gemini is building the HTML)', 'info');
 
-    // Use Gemini to analyze the visual layout of the scanned invoice
-    var layoutData = await analyzeVendorLayout(_scanImageData);
+    // Ask Gemini to generate the actual HTML/CSS that reproduces this invoice
+    var htmlTemplate = await generateVendorHTML(_scanImageData, vendorName);
 
     var tpl = {
         id: tplId,
         vendorName: vendorName,
         createdDate: new Date().toISOString(),
         sampleItems: _scanData.items || [],
-        sampleText: document.getElementById('scanRawText').value,
         invoiceNumFormat: document.getElementById('scanInvNum').value,
-        layout: layoutData,
+        htmlTemplate: htmlTemplate,
         hasImage: !!_scanImageData
     };
 
@@ -4054,77 +4053,56 @@ async function scanSaveAsVendorTemplate() {
         try { localStorage.setItem('vtpl_img_' + tplId, _scanImageData); } catch(e) {}
     }
 
-    // Save to Firebase
+    // Save to Firebase (htmlTemplate can be large, but Firebase handles it)
     if (db && userPIN) {
         var hashedPIN = hashPIN(userPIN);
         db.ref('vendorTemplates/' + hashedPIN + '/' + tplId).set(tpl);
     }
 
     scanRenderVendorList();
-    showNotification('Vendor template "' + vendorName + '" created with layout!', 'success');
+    showNotification('Template "' + vendorName + '" created — exact layout captured!', 'success');
 }
 
-// Use Gemini to analyze the exact visual layout/structure of the scanned invoice
-async function analyzeVendorLayout(imageData) {
-    var fallback = {
-        primaryColor: '#e67e22', secondaryColor: '#333333', accentColor: '#f8f9fa',
-        companyName: '', companySubtitle: '', companyAddress: '', companyPhone: '',
-        documentType: 'Invoice', headerLayout: 'left',
-        logoDescription: '', logoStyle: 'text',
-        columnHeaders: ['#', 'Description', 'Qty', 'Unit Price', 'Total'],
-        hasTax: false, taxRate: '', hasSubtotal: true, hasTerms: false,
-        termsText: '', footerText: '', style: 'modern', borderStyle: 'solid',
-        headerBgColor: '', headerTextColor: '#ffffff',
-        tableBorderColor: '#dee2e6', altRowColor: '#f8f9fa'
-    };
-
-    if (!imageData) return fallback;
-
-    var geminiKey = '';
-    var geminiModel = '';
+// Ask Gemini to generate complete HTML/CSS that visually reproduces the scanned invoice
+async function generateVendorHTML(imageData, vendorName) {
+    var geminiKey = '', geminiModel = '';
     try {
         geminiKey = localStorage.getItem('gemini_api_key') || '';
         geminiModel = localStorage.getItem('gemini_model') || '';
     } catch(e) {}
 
-    if (!geminiKey || !geminiModel) return fallback;
+    if (!imageData || !geminiKey || !geminiModel) return '';
 
     try {
         var base64 = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
         var mimeType = imageData.match(/^data:(image\/[a-z]+);/);
         mimeType = mimeType ? mimeType[1] : 'image/jpeg';
 
-        var prompt = 'Analyze the VISUAL LAYOUT and DESIGN of this invoice/estimate document image. '
-            + 'I need to recreate its exact structure as an HTML template.\n\n'
-            + 'Return ONLY valid JSON (no markdown, no code fences):\n'
-            + '{\n'
-            + '  "primaryColor": "#hex of the main brand/header color",\n'
-            + '  "secondaryColor": "#hex of secondary/text color",\n'
-            + '  "accentColor": "#hex of background/accent color",\n'
-            + '  "companyName": "exact company name as displayed",\n'
-            + '  "companySubtitle": "tagline or subtitle under the name, or empty",\n'
-            + '  "companyAddress": "full address if visible",\n'
-            + '  "companyPhone": "phone number if visible",\n'
-            + '  "documentType": "Estimate or Invoice or Quote etc as shown",\n'
-            + '  "headerLayout": "left or center or right - where is the logo/company name positioned",\n'
-            + '  "logoDescription": "describe the logo style - e.g. script font with underline, bold block letters, etc",\n'
-            + '  "logoStyle": "script or bold or serif or sans-serif or decorative",\n'
-            + '  "columnHeaders": ["exact column header names from the table in order"],\n'
-            + '  "hasTax": true/false,\n'
-            + '  "taxRate": "tax rate percentage if shown, e.g. 7.5%",\n'
-            + '  "hasSubtotal": true/false,\n'
-            + '  "hasTerms": true/false,\n'
-            + '  "termsText": "payment terms or conditions text if visible",\n'
-            + '  "footerText": "any footer text",\n'
-            + '  "style": "modern or classic or minimal or decorative",\n'
-            + '  "borderStyle": "solid or dashed or none - table border style",\n'
-            + '  "headerBgColor": "#hex of the table header row background",\n'
-            + '  "headerTextColor": "#hex of the table header text color",\n'
-            + '  "tableBorderColor": "#hex of table grid line color",\n'
-            + '  "altRowColor": "#hex of alternating row shading or empty"\n'
-            + '}\n\n'
-            + 'Be precise with colors — sample them from the actual image. '
-            + 'For columnHeaders, list them exactly as they appear on the document.';
+        var prompt = 'You are an expert HTML/CSS developer. Look at this invoice/estimate document image and generate a COMPLETE, SELF-CONTAINED HTML document (with inline CSS in a <style> tag) that VISUALLY REPRODUCES this invoice as closely as possible.\n\n'
+            + 'CRITICAL RULES:\n'
+            + '1. Match the EXACT visual layout: logo position, font styles, colors, borders, spacing, table grid lines, header/footer structure.\n'
+            + '2. If there is a company logo or decorative text, reproduce it using CSS (styled text, borders, font choices) — do NOT use <img> tags.\n'
+            + '3. Use the EXACT same colors from the document (sample them precisely).\n'
+            + '4. Keep all text content exactly as shown in the original (company name, address, column headers, terms, etc.).\n'
+            + '5. For line item DATA VALUES (descriptions, quantities, prices, totals, dates, invoice numbers, bill-to info), wrap each editable value in a <span> with these data attributes:\n'
+            + '   - data-field="vendor" for the vendor/company name\n'
+            + '   - data-field="date" for dates\n'
+            + '   - data-field="invoice-num" for invoice/estimate numbers\n'
+            + '   - data-field="bill-to" for the bill-to/client name\n'
+            + '   - data-field="location" for project address/location\n'
+            + '   - data-field="item-desc" for line item descriptions\n'
+            + '   - data-field="item-qty" for quantities\n'
+            + '   - data-field="item-price" for unit prices\n'
+            + '   - data-field="item-total" for line totals\n'
+            + '   - data-field="subtotal" for subtotal\n'
+            + '   - data-field="tax" for tax amount\n'
+            + '   - data-field="total" for grand total\n'
+            + '6. Each line item row (<tr>) should have a data-row attribute.\n'
+            + '7. The table should have id="itemsTable".\n'
+            + '8. Make it max-width 800px, centered, print-friendly.\n'
+            + '9. Return ONLY the HTML — no explanation, no markdown fences, just the raw <!DOCTYPE html>.....</html> code.\n'
+            + '10. Include ALL content from the original: headers, subheaders, info boxes, line items with actual data, subtotals, tax if present, totals, terms, footer — everything.\n\n'
+            + 'The goal is that if someone printed both the original and your HTML side by side, they would look virtually identical.';
 
         var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + geminiModel + ':generateContent?key=' + geminiKey;
         var res = await fetch(url, {
@@ -4135,13 +4113,13 @@ async function analyzeVendorLayout(imageData) {
                     { text: prompt },
                     { inline_data: { mime_type: mimeType, data: base64 } }
                 ] }],
-                generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+                generationConfig: { temperature: 0.2, maxOutputTokens: 16384 }
             })
         });
 
         if (!res.ok) {
-            console.warn('Layout analysis failed:', res.status);
-            return fallback;
+            console.warn('Template generation failed:', res.status);
+            return '';
         }
 
         var data = await res.json();
@@ -4149,23 +4127,22 @@ async function analyzeVendorLayout(imageData) {
         if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
             text = data.candidates[0].content.parts[0].text || '';
         }
-        text = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
 
-        var parsed;
-        try { parsed = JSON.parse(text); } catch(e) {
-            var m = text.match(/\{[\s\S]*\}/);
-            if (m) parsed = JSON.parse(m[0]); else return fallback;
+        // Strip markdown code fences if Gemini wrapped it
+        text = text.replace(/```html\s*/gi, '').replace(/```\s*/g, '').trim();
+
+        // Validate it looks like HTML
+        if (text.indexOf('<') === -1 || text.indexOf('>') === -1) {
+            console.error('Gemini did not return HTML:', text.substring(0, 200));
+            return '';
         }
 
-        // Merge with fallback to fill any missing fields
-        for (var key in fallback) {
-            if (parsed[key] === undefined || parsed[key] === null) parsed[key] = fallback[key];
-        }
-        return parsed;
+        console.log('Gemini generated template HTML:', text.length, 'chars');
+        return text;
 
     } catch(err) {
-        console.error('Layout analysis error:', err);
-        return fallback;
+        console.error('Template generation error:', err);
+        return '';
     }
 }
 
@@ -4282,180 +4259,79 @@ function vendorDelete(id) {
     scanRenderVendorList();
 }
 
-// Generate a branded invoice using the vendor template layout — faithful reproduction
+// Generate invoice from vendor template — uses the Gemini-generated HTML directly
 function vendorGenerate(tplId) {
     var tpl = _vendorTemplates[tplId];
     if (!tpl) return;
 
-    var L = tpl.layout || {};
-    var pc = L.primaryColor || '#e67e22';
-    var sc = L.secondaryColor || '#333333';
-    var ac = L.accentColor || '#f8f9fa';
-    var hbg = L.headerBgColor || pc;
-    var htc = L.headerTextColor || '#ffffff';
-    var tbc = L.tableBorderColor || '#dee2e6';
-    var arc = L.altRowColor || '#f8f9fa';
-    var bdr = L.borderStyle || 'solid';
-    var cols = L.columnHeaders || ['#', 'Description', 'Qty', 'Unit Price', 'Total'];
+    var htmlTemplate = tpl.htmlTemplate || '';
+    if (!htmlTemplate) {
+        showNotification('This template has no saved layout. Delete it and re-scan the invoice.', 'error');
+        return;
+    }
 
-    var distItems = getDistMatItems();
-    var distPO = gv('distPO') || '';
+    // Inject current form data into the template's data-field spans
     var clientName = gv('clientName') || '[Client]';
     var estimateDate = fd(gv('estimateDate'));
-    var companyName = L.companyName || tpl.vendorName;
-    var docType = L.documentType || 'Invoice';
+    var location = loc();
+    var distPO = gv('distPO') || tpl.invoiceNumFormat || '';
 
-    // Font family based on logo style
-    var logoFont = 'Arial, Helvetica, sans-serif';
-    if (L.logoStyle === 'script' || L.logoStyle === 'decorative') logoFont = 'Georgia, "Brush Script MT", cursive';
-    else if (L.logoStyle === 'serif') logoFont = 'Georgia, "Times New Roman", serif';
-    else if (L.logoStyle === 'bold') logoFont = '"Arial Black", "Helvetica Neue", sans-serif';
+    // Use a temporary DOM to manipulate the template
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlTemplate, 'text/html');
 
-    // Determine header alignment
-    var hdrJustify = 'space-between';
-    var hdrDir = 'row';
-    if (L.headerLayout === 'center') { hdrJustify = 'center'; hdrDir = 'column'; }
-    else if (L.headerLayout === 'right') { hdrJustify = 'space-between'; hdrDir = 'row-reverse'; }
-
-    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + E(companyName) + ' ' + E(docType) + ' - ' + E(clientName) + '</title>';
-    h += '<style>';
-    h += 'body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:0 auto;padding:20px;color:' + sc + ';font-size:11pt;}';
-    h += '.v-header{display:flex;flex-direction:' + hdrDir + ';justify-content:' + hdrJustify + ';align-items:' + (L.headerLayout === 'center' ? 'center' : 'flex-start') + ';border-bottom:3px solid ' + pc + ';padding-bottom:15px;margin-bottom:20px;}';
-    h += '.v-company h1{font-family:' + logoFont + ';font-size:22pt;color:' + pc + ';margin:0 0 4px 0;' + (L.logoStyle === 'script' ? 'font-style:italic;' : '') + '}';
-    h += '.v-company .v-subtitle{font-size:10pt;color:' + pc + ';margin:0 0 2px 0;font-weight:600;text-transform:uppercase;letter-spacing:1px;}';
-    h += '.v-company p{font-size:9pt;color:#666;margin:0;line-height:1.4;}';
-    h += '.v-badge{background:' + pc + ';color:' + htc + ';padding:8px 20px;font-size:12pt;font-weight:bold;text-align:center;border-radius:4px;}';
-    h += '.v-badge small{display:block;font-size:8pt;font-weight:normal;opacity:0.8;}';
-    h += '.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}';
-    h += '.v-box{background:' + ac + ';border:1px ' + bdr + ' ' + tbc + ';border-radius:4px;padding:10px 14px;}';
-    h += '.v-box label{font-size:8pt;text-transform:uppercase;color:#999;display:block;margin-bottom:2px;}';
-    h += '.v-box .v-val{font-size:11pt;font-weight:600;color:' + sc + ';}';
-    h += 'table{width:100%;border-collapse:collapse;margin-bottom:20px;}';
-    h += 'thead th{background:' + hbg + ';color:' + htc + ';padding:8px 10px;text-align:left;font-size:9pt;text-transform:uppercase;border:1px ' + bdr + ' ' + tbc + ';}';
-    h += 'thead th:last-child,thead th:nth-child(n+3){text-align:right;}';
-    h += 'tbody td{padding:8px 10px;border:1px ' + bdr + ' ' + tbc + ';font-size:10pt;}';
-    h += 'tbody td:last-child,tbody td:nth-child(n+3){text-align:right;}';
-    h += 'tbody tr:nth-child(even){background:' + arc + ';}';
-    h += '.v-total-row td{border-top:3px double ' + pc + ';font-weight:700;font-size:13pt;color:' + pc + ';padding-top:12px;background:#fff !important;}';
-    h += '.v-sub-row td{border-top:2px solid ' + pc + ';font-weight:700;font-size:11pt;padding-top:10px;background:#fff !important;}';
-    h += '.v-tax-row td{font-weight:600;color:#666;font-size:10pt;background:#fff !important;}';
-    h += '.v-terms{background:' + ac + ';border:1px ' + bdr + ' ' + tbc + ';border-radius:4px;padding:14px;margin-top:20px;font-size:9pt;color:#666;}';
-    h += '.v-terms h4{color:' + sc + ';margin:0 0 8px 0;font-size:10pt;}';
-    h += '.v-footer{margin-top:30px;text-align:center;font-size:8pt;color:#aaa;border-top:1px solid ' + tbc + ';padding-top:10px;}';
-    h += '.toolbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:100;border-radius:0 0 8px 8px;}';
-    h += '.toolbar .tbt{color:' + pc + ';font-weight:700;font-size:13px;margin-right:auto;}';
-    h += '.toolbar .tbp{background:' + pc + ';color:' + htc + ';border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
-    h += '.toolbar .tbe{background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}';
-    h += '[contenteditable=true]{outline:2px dashed ' + pc + ';outline-offset:2px;min-width:30px;display:inline-block;}';
-    h += '.edit-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}';
-    h += '.edit-controls button{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;}';
-    h += '@media print{.toolbar,.edit-controls{display:none!important;}body{padding-top:0!important;}[contenteditable]{outline:none!important;}}';
-    h += '</style></head><body>';
-
-    // Toolbar
-    h += '<div class="toolbar"><span class="tbt">' + E(companyName).toUpperCase() + ' ' + E(docType).toUpperCase() + '</span>';
-    h += '<button class="tbp" onclick="exportPDF()">Download PDF</button>';
-    h += '<button class="tbe" onclick="emailQuote()">Email</button>';
-    h += '<button class="tbe" onclick="window.print()">Print</button></div>';
-
-    // Edit controls
-    h += '<div class="edit-controls">';
-    h += '<button onclick="toggleEditMode()" id="editBtn" style="background:' + pc + ';color:' + htc + '">Edit Values</button>';
-    h += '<button onclick="addRow()" style="background:#27ae60;color:white">+ Add Row</button>';
-    h += '<button onclick="recalcTotals()" style="background:#3498db;color:white">Recalculate</button>';
-    h += '<span id="editStatus" style="font-size:11px;color:#999;align-self:center"></span>';
-    h += '</div>';
-
-    // Header — matches original layout
-    h += '<div class="v-header">';
-    h += '<div class="v-company">';
-    h += '<h1>' + E(companyName) + '</h1>';
-    if (L.companySubtitle) h += '<p class="v-subtitle">' + E(L.companySubtitle) + '</p>';
-    var contactLine = '';
-    if (L.companyAddress) contactLine += E(L.companyAddress);
-    if (L.companyPhone) contactLine += (contactLine ? '<br>' : '') + E(L.companyPhone);
-    if (contactLine) h += '<p>' + contactLine + '</p>';
-    h += '</div>';
-    h += '<div class="v-badge">' + E(docType) + '<br><small>MATERIALS</small></div>';
-    h += '</div>';
-
-    // Info grid
-    h += '<div class="v-grid">';
-    h += '<div class="v-box"><label>Bill To</label><div class="v-val" contenteditable="false">' + E(clientName) + '</div></div>';
-    h += '<div class="v-box"><label>' + E(docType) + ' Date</label><div class="v-val" contenteditable="false">' + E(estimateDate) + '</div></div>';
-    h += '<div class="v-box"><label>Project Location</label><div class="v-val" contenteditable="false">' + E(loc()) + '</div></div>';
-    h += '<div class="v-box"><label>PO / Reference</label><div class="v-val" contenteditable="false">' + E(distPO || tpl.invoiceNumFormat || 'N/A') + '</div></div>';
-    h += '</div>';
-
-    // Line items table — uses original column headers
-    h += '<table id="itemsTable"><thead><tr>';
-    cols.forEach(function(col) { h += '<th>' + E(col) + '</th>'; });
-    h += '</tr></thead><tbody>';
-
-    var useItems = distItems.length > 0 ? distItems : (tpl.sampleItems || []);
-    var runTotal = 0;
-    useItems.forEach(function(item, i) {
-        var qty = parseFloat(item.qty) || 1;
-        var price = parseFloat(String(item.price || item.amount || '0').replace(/[^0-9.]/g, '')) || 0;
-        var lineTotal = qty * price;
-        runTotal += lineTotal;
-        h += '<tr data-row>';
-        // Match columns to data — first col is #, last is total, fill middle dynamically
-        if (cols.length <= 5) {
-            h += '<td>' + (i + 1) + '</td>';
-            h += '<td contenteditable="false"><strong>' + E(item.desc) + '</strong></td>';
-            h += '<td contenteditable="false" data-qty>' + E(item.qty || '1') + '</td>';
-            h += '<td contenteditable="false" data-price>$' + f(price) + '</td>';
-            h += '<td data-line-total><strong>$' + f(lineTotal) + '</strong></td>';
-        } else {
-            h += '<td>' + (i + 1) + '</td>';
-            for (var ci = 1; ci < cols.length - 1; ci++) {
-                if (ci === 1) h += '<td contenteditable="false"><strong>' + E(item.desc) + '</strong></td>';
-                else if (ci === cols.length - 3) h += '<td contenteditable="false" data-qty>' + E(item.qty || '1') + '</td>';
-                else if (ci === cols.length - 2) h += '<td contenteditable="false" data-price>$' + f(price) + '</td>';
-                else h += '<td contenteditable="false"></td>';
-            }
-            h += '<td data-line-total><strong>$' + f(lineTotal) + '</strong></td>';
-        }
-        h += '</tr>';
+    // Update data fields with current form values
+    var fieldMap = {
+        'bill-to': clientName,
+        'date': estimateDate,
+        'location': location,
+        'invoice-num': distPO
+    };
+    Object.keys(fieldMap).forEach(function(field) {
+        var els = doc.querySelectorAll('[data-field="' + field + '"]');
+        els.forEach(function(el) { if (fieldMap[field]) el.textContent = fieldMap[field]; });
     });
 
-    // Subtotal
-    if (L.hasSubtotal !== false) {
-        h += '<tr class="v-sub-row"><td></td><td colspan="' + (cols.length - 2) + '">SUBTOTAL</td><td id="subtotalCell">$' + f(runTotal) + '</td></tr>';
-    }
-    // Tax
-    if (L.hasTax && L.taxRate) {
-        var taxPct = parseFloat(L.taxRate) || 0;
-        var taxAmt = runTotal * (taxPct / 100);
-        h += '<tr class="v-tax-row"><td></td><td colspan="' + (cols.length - 2) + '">Sales Tax (' + E(L.taxRate) + ')</td><td id="taxCell">$' + f(taxAmt) + '</td></tr>';
-        h += '<tr class="v-total-row"><td></td><td colspan="' + (cols.length - 2) + '">TOTAL DUE</td><td id="totalCell">$' + f(runTotal + taxAmt) + '</td></tr>';
-    } else {
-        h += '<tr class="v-total-row"><td></td><td colspan="' + (cols.length - 2) + '">TOTAL DUE</td><td id="totalCell">$' + f(runTotal) + '</td></tr>';
-    }
-    h += '</tbody></table>';
+    // Make all data-field spans contenteditable (off by default, toggled by edit button)
+    doc.querySelectorAll('[data-field]').forEach(function(el) {
+        el.setAttribute('contenteditable', 'false');
+    });
 
-    // Terms
-    if (L.hasTerms && L.termsText) {
-        h += '<div class="v-terms"><h4>Terms &amp; Conditions</h4><p>' + E(L.termsText) + '</p></div>';
-    } else if (L.hasTerms) {
-        h += '<div class="v-terms"><h4>Terms &amp; Conditions</h4><p>Payment due upon receipt unless otherwise agreed. All materials remain property of ' + E(companyName) + ' until paid in full.</p></div>';
-    }
+    // Inject toolbar before body content
+    var toolbarHTML = '<div id="vtpl-toolbar" style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#1a1a2e;position:sticky;top:0;z-index:100;border-radius:0 0 8px 8px;margin-bottom:12px;flex-wrap:wrap">'
+        + '<span style="color:#e67e22;font-weight:700;font-size:13px;margin-right:auto">' + escHtml(tpl.vendorName).toUpperCase() + '</span>'
+        + '<button onclick="toggleVEdit()" id="vEditBtn" style="background:#e67e22;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Edit Values</button>'
+        + '<button onclick="window.print()" style="background:#2a3a5c;color:#bbb;border:1px solid #3a4a6c;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Print</button>'
+        + '</div>';
 
-    // Footer
-    h += '<div class="v-footer">' + E(L.footerText || (companyName + ' — ' + docType)) + ' &mdash; Generated ' + new Date().toLocaleDateString() + '</div>';
+    // Inject toolbar and edit JS
+    var editJS = '<' + 'script>'
+        + 'var vEditMode=false;'
+        + 'function toggleVEdit(){'
+        + '  vEditMode=!vEditMode;'
+        + '  document.querySelectorAll("[data-field]").forEach(function(el){el.contentEditable=vEditMode?"true":"false";});'
+        + '  document.getElementById("vEditBtn").textContent=vEditMode?"Lock Values":"Edit Values";'
+        + '  document.getElementById("vEditBtn").style.background=vEditMode?"#c0392b":"#e67e22";'
+        + '}'
+        + '</' + 'script>';
 
-    // Inline edit/recalc JS
-    h += '<'+'script>';
-    h += 'var editMode=false;';
-    h += 'function toggleEditMode(){editMode=!editMode;document.querySelectorAll("[contenteditable]").forEach(function(el){el.contentEditable=editMode?"true":"false";});document.getElementById("editBtn").textContent=editMode?"Lock Values":"Edit Values";document.getElementById("editStatus").textContent=editMode?"Click any value to edit":"";};';
-    h += "function addRow(){var tb=document.querySelector('#itemsTable tbody');var rows=tb.querySelectorAll('[data-row]');var n=rows.length+1;var tr=document.createElement('tr');tr.setAttribute('data-row','');tr.innerHTML='<td>'+n+'</td><td contenteditable=\"true\"><strong>New item</strong></td><td contenteditable=\"true\" data-qty>1</td><td contenteditable=\"true\" data-price>$0.00</td><td data-line-total><strong>$0.00</strong></td>';var subRow=tb.querySelector('.v-sub-row,.v-total-row');if(subRow)tb.insertBefore(tr,subRow);else tb.appendChild(tr);};";
-    h += 'function recalcTotals(){var rows=document.querySelectorAll("[data-row]");var total=0;rows.forEach(function(r,i){var qEl=r.querySelector("[data-qty]");var pEl=r.querySelector("[data-price]");if(qEl&&pEl){var q=parseFloat(qEl.textContent.replace(/[^0-9.]/g,""))||1;var p=parseFloat(pEl.textContent.replace(/[^0-9.]/g,""))||0;var lt=q*p;total+=lt;var ltEl=r.querySelector("[data-line-total]");if(ltEl)ltEl.innerHTML="<strong>$"+lt.toFixed(2)+"</strong>";}});';
-    h += 'var subEl=document.getElementById("subtotalCell");if(subEl)subEl.textContent="$"+total.toFixed(2);';
-    h += 'var taxEl=document.getElementById("taxCell");var taxRate=' + (parseFloat(L.taxRate) || 0) + ';var tax=total*(taxRate/100);if(taxEl)taxEl.textContent="$"+tax.toFixed(2);';
-    h += 'var totEl=document.getElementById("totalCell");if(totEl)totEl.textContent="$"+(total+tax).toFixed(2);};';
-    h += '</'+'script>';
-    h += docJS() + '</body></html>';
+    // Inject print-hide CSS
+    var printCSS = '<style>'
+        + '#vtpl-toolbar{display:flex!important;}'
+        + '[contenteditable=true]{outline:2px dashed #e67e22;outline-offset:2px;}'
+        + '@media print{#vtpl-toolbar{display:none!important;}[contenteditable]{outline:none!important;}}'
+        + '</style>';
+
+    // Build final HTML
+    var bodyContent = doc.body ? doc.body.innerHTML : htmlTemplate;
+    var headContent = doc.head ? doc.head.innerHTML : '';
+
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8">' + headContent + printCSS + '</head><body>';
+    h += toolbarHTML;
+    h += bodyContent;
+    h += editJS;
+    h += docJS();
+    h += '</body></html>';
 
     openDoc(h, _lastInvoiceId);
     closeScanner();

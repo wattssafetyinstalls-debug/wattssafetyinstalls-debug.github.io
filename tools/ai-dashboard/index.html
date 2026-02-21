@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watts AI Command Center</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',system-ui,sans-serif; background:#0f0f1a; color:#e0e0e0; min-height:100vh; }
+
+        /* Top bar */
+        .topbar { background:#0A1D37; border-bottom:1px solid #1a3a5c; padding:12px 24px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:100; }
+        .topbar h1 { font-size:18px; color:#fff; }
+        .topbar h1 span { color:#00C4B4; }
+        .topbar .api-status { margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12px; color:#7f8c8d; }
+        .topbar .api-dot { width:8px; height:8px; border-radius:50%; background:#e74c3c; }
+        .topbar .api-dot.connected { background:#2ecc71; }
+
+        /* API Key Setup */
+        .api-setup { background:#16213e; border:1px solid #1a3a5c; border-radius:12px; padding:20px; margin:20px 24px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+        .api-setup label { font-size:13px; color:#aaa; white-space:nowrap; }
+        .api-setup input { flex:1; min-width:280px; background:#0f1a33; border:1px solid #2a3a5c; border-radius:8px; padding:10px 14px; color:#eee; font-size:13px; font-family:monospace; }
+        .api-setup input:focus { outline:none; border-color:#00C4B4; }
+        .api-setup button { background:#00C4B4; color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; font-size:13px; }
+        .api-setup button:hover { background:#009e91; }
+        .api-setup .hint { width:100%; font-size:11px; color:#555; margin-top:4px; }
+
+        /* Tabs */
+        .tabs { display:flex; gap:4px; padding:0 24px; margin-top:16px; overflow-x:auto; flex-wrap:nowrap; }
+        .tab { padding:10px 18px; background:transparent; border:1px solid transparent; border-bottom:none; color:#7f8c8d; font-size:13px; font-weight:500; cursor:pointer; border-radius:8px 8px 0 0; white-space:nowrap; transition:all 0.2s; }
+        .tab:hover { color:#ccc; background:#16213e; }
+        .tab.active { background:#16213e; color:#00C4B4; border-color:#1a3a5c; }
+        .tab .badge { background:#e74c3c; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; margin-left:6px; }
+
+        /* Content panels */
+        .panel-container { padding:0 24px 40px; }
+        .panel { display:none; background:#16213e; border:1px solid #1a3a5c; border-radius:0 12px 12px 12px; padding:24px; margin-top:0; }
+        .panel.active { display:block; }
+
+        /* Shared form styles */
+        .form-row { display:flex; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+        .form-group { flex:1; min-width:200px; display:flex; flex-direction:column; }
+        .form-group.full { flex-basis:100%; }
+        .form-group label { font-size:11px; text-transform:uppercase; color:#7f8c8d; letter-spacing:0.5px; margin-bottom:4px; }
+        .form-group input, .form-group textarea, .form-group select {
+            background:#0f1a33; border:1px solid #2a3a5c; border-radius:8px; padding:10px 12px;
+            color:#eee; font-size:13px; font-family:inherit; transition:border-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline:none; border-color:#00C4B4; }
+        .form-group textarea { min-height:100px; resize:vertical; }
+        .form-group select option { background:#0f1a33; }
+
+        .btn { padding:10px 20px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px; }
+        .btn-primary { background:#00C4B4; color:#fff; }
+        .btn-primary:hover { background:#009e91; }
+        .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+        .btn-secondary { background:#2a3a5c; color:#ccc; }
+        .btn-secondary:hover { background:#3a4a6c; color:#fff; }
+        .btn-danger { background:#c0392b; color:#fff; }
+        .btn-danger:hover { background:#e74c3c; }
+        .btn-copy { background:#2c3e50; color:#ccc; font-size:12px; padding:6px 12px; }
+        .btn-copy:hover { background:#34495e; color:#fff; }
+
+        .output-area {
+            background:#0a0f1a; border:1px solid #1a2a3c; border-radius:10px; padding:16px;
+            margin-top:16px; min-height:120px; white-space:pre-wrap; font-size:13.5px;
+            line-height:1.7; color:#ccc; position:relative;
+        }
+        .output-area .copy-btn { position:absolute; top:8px; right:8px; }
+        .output-area.loading { display:flex; align-items:center; justify-content:center; color:#555; }
+        .output-area h4 { color:#00C4B4; font-size:14px; margin-bottom:8px; }
+
+        .section-title { font-size:16px; color:#fff; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid #1a3a5c; }
+        .section-desc { font-size:12px; color:#7f8c8d; margin-bottom:16px; }
+
+        /* Leads panel */
+        .lead-card { background:#0f1a33; border:1px solid #1a3a5c; border-radius:10px; padding:14px; margin-bottom:10px; }
+        .lead-card .lead-name { color:#fff; font-weight:600; font-size:14px; }
+        .lead-card .lead-phone { color:#00C4B4; font-size:13px; margin-top:2px; }
+        .lead-card .lead-meta { color:#555; font-size:11px; margin-top:6px; }
+        .lead-card .lead-convo { font-size:12px; color:#888; margin-top:8px; border-top:1px solid #1a2a3c; padding-top:8px; max-height:120px; overflow-y:auto; }
+
+        /* Stats */
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+        .stat-card { background:#0f1a33; border:1px solid #1a3a5c; border-radius:10px; padding:16px; text-align:center; }
+        .stat-card .stat-num { font-size:28px; font-weight:700; color:#00C4B4; }
+        .stat-card .stat-label { font-size:11px; color:#7f8c8d; text-transform:uppercase; letter-spacing:0.5px; margin-top:4px; }
+
+        .chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+        .chip { padding:4px 12px; background:#0f1a33; border:1px solid #2a3a5c; border-radius:16px; font-size:12px; color:#aaa; cursor:pointer; transition:all 0.2s; }
+        .chip:hover, .chip.active { background:#00C4B4; color:#fff; border-color:#00C4B4; }
+
+        @media(max-width:640px) {
+            .tabs { padding:0 12px; }
+            .panel-container { padding:0 12px 40px; }
+            .form-row { flex-direction:column; }
+            .form-group { min-width:100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <h1><span>WATTS</span> AI Command Center</h1>
+    <div class="api-status">
+        <div class="api-dot" id="apiDot"></div>
+        <span id="apiStatusText">Not connected</span>
+    </div>
+</div>
+
+<div class="api-setup" id="apiSetup">
+    <label>Gemini API Key:</label>
+    <input type="password" id="apiKeyInput" placeholder="Paste your Gemini paid API key..." />
+    <button onclick="connectAPI()">Connect</button>
+    <div class="hint">Your key is stored in this browser session only — never saved to any server. Get a key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#00C4B4">aistudio.google.com/apikey</a></div>
+</div>
+
+<div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="content">Content Generator</div>
+    <div class="tab" data-tab="gbp">GBP Posts</div>
+    <div class="tab" data-tab="estimate">Estimate Builder</div>
+    <div class="tab" data-tab="reviews">Review Responder</div>
+    <div class="tab" data-tab="followup">Follow-Up Emails</div>
+    <div class="tab" data-tab="seo">SEO Keywords</div>
+    <div class="tab" data-tab="landing">Landing Pages</div>
+    <div class="tab" data-tab="leads">Leads <span class="badge" id="leadsBadge">0</span></div>
+</div>
+
+<div class="panel-container">
+
+<!-- ═══════════════ CONTENT GENERATOR ═══════════════ -->
+<div class="panel active" id="panel-content">
+    <div class="section-title">AI Content Generator</div>
+    <div class="section-desc">Generate blog posts, service descriptions, social media content, and more. All content is optimized for your brand and local SEO.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Brand</label>
+            <select id="contentBrand">
+                <option value="atp">Watts ATP Contractor</option>
+                <option value="si">Watts Safety Installs</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Content Type</label>
+            <select id="contentType">
+                <option value="blog">Blog Post (800-1200 words)</option>
+                <option value="service-desc">Service Description (300 words)</option>
+                <option value="social-fb">Facebook Post</option>
+                <option value="social-ig">Instagram Caption</option>
+                <option value="email-newsletter">Email Newsletter</option>
+                <option value="flyer-text">Flyer / Door Hanger Text</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group full">
+            <label>Topic / Brief</label>
+            <textarea id="contentTopic" placeholder="e.g. 'Benefits of grab bars for seniors in winter', 'Spring lawn care tips for Norfolk homeowners', 'Why ADA ramps increase home value'"></textarea>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Target Keywords (optional)</label>
+            <input id="contentKeywords" placeholder="e.g. grab bar installation Norfolk NE" />
+        </div>
+        <div class="form-group">
+            <label>Tone</label>
+            <select id="contentTone">
+                <option value="professional">Professional & Trustworthy</option>
+                <option value="friendly">Friendly & Conversational</option>
+                <option value="urgent">Urgent & Action-Oriented</option>
+                <option value="educational">Educational & Informative</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateContent()">Generate Content</button>
+    <div class="output-area" id="contentOutput">Generated content will appear here...</div>
+</div>
+
+<!-- ═══════════════ GBP POSTS ═══════════════ -->
+<div class="panel" id="panel-gbp">
+    <div class="section-title">Google Business Profile Post Generator</div>
+    <div class="section-desc">Generate optimized GBP posts with CTAs. Posts are 150-300 words with local keywords baked in.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Brand</label>
+            <select id="gbpBrand">
+                <option value="atp">Watts ATP Contractor</option>
+                <option value="si">Watts Safety Installs</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Post Type</label>
+            <select id="gbpType">
+                <option value="update">What's New / Update</option>
+                <option value="offer">Offer / Promotion</option>
+                <option value="event">Event</option>
+                <option value="product">Service Spotlight</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group full">
+            <label>Topic</label>
+            <textarea id="gbpTopic" rows="3" placeholder="e.g. 'Completed wheelchair ramp project in Madison', 'Winter snow removal signup now open', 'New 5-star review from a grab bar installation client'"></textarea>
+        </div>
+    </div>
+    <div class="chips">
+        <div class="chip" onclick="gbpQuick('seasonal')">Seasonal Tip</div>
+        <div class="chip" onclick="gbpQuick('promo')">Current Promo</div>
+        <div class="chip" onclick="gbpQuick('project')">Recent Project</div>
+        <div class="chip" onclick="gbpQuick('review')">Review Highlight</div>
+        <div class="chip" onclick="gbpQuick('safety')">Safety Tip</div>
+    </div>
+    <button class="btn btn-primary" onclick="generateGBP()">Generate GBP Post</button>
+    <button class="btn btn-secondary" onclick="generateGBP();generateGBP();generateGBP();">Generate 3 Variations</button>
+    <div class="output-area" id="gbpOutput">GBP post will appear here...</div>
+</div>
+
+<!-- ═══════════════ ESTIMATE BUILDER ═══════════════ -->
+<div class="panel" id="panel-estimate">
+    <div class="section-title">AI Estimate Builder</div>
+    <div class="section-desc">Generate professional ballpark estimates. AI creates a formatted estimate breakdown based on project details. Always verify pricing before sending to client.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Service Type</label>
+            <select id="estService">
+                <option value="wheelchair-ramp">Wheelchair Ramp Installation</option>
+                <option value="grab-bars">Grab Bar Installation</option>
+                <option value="bathroom-mod">Bathroom Accessibility Modification</option>
+                <option value="non-slip-floor">Non-Slip Flooring</option>
+                <option value="kitchen-remodel">Kitchen Remodel</option>
+                <option value="bath-remodel">Bathroom Remodel</option>
+                <option value="painting-int">Interior Painting</option>
+                <option value="painting-ext">Exterior Painting</option>
+                <option value="gutters">Gutter Install/Repair</option>
+                <option value="tv-mount">TV Mounting</option>
+                <option value="handyman">Handyman Work</option>
+                <option value="snow-removal">Snow Removal (Seasonal)</option>
+                <option value="lawn-care">Lawn Care (Seasonal)</option>
+                <option value="property-maint">Property Maintenance</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Client Name</label>
+            <input id="estClient" placeholder="John Smith" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group full">
+            <label>Project Description</label>
+            <textarea id="estDesc" placeholder="e.g. 'Install 24ft wooden wheelchair ramp with 2 landings, 4ft rise, existing concrete pad at entry. Client needs handrails on both sides. Home is a ranch-style single story.'"></textarea>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Location</label>
+            <input id="estLocation" placeholder="Norfolk, NE" value="Norfolk, NE" />
+        </div>
+        <div class="form-group">
+            <label>Urgency</label>
+            <select id="estUrgency">
+                <option value="standard">Standard Timeline</option>
+                <option value="rush">Rush / Urgent</option>
+                <option value="flexible">Flexible / No Rush</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateEstimate()">Generate Estimate</button>
+    <div class="output-area" id="estOutput">Estimate will appear here...</div>
+</div>
+
+<!-- ═══════════════ REVIEW RESPONDER ═══════════════ -->
+<div class="panel" id="panel-reviews">
+    <div class="section-title">AI Review Response Generator</div>
+    <div class="section-desc">Generate professional, personalized responses to Google reviews. Maintains your reputation and boosts engagement.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Star Rating</label>
+            <select id="reviewStars">
+                <option value="5">5 Stars ⭐⭐⭐⭐⭐</option>
+                <option value="4">4 Stars ⭐⭐⭐⭐</option>
+                <option value="3">3 Stars ⭐⭐⭐</option>
+                <option value="2">2 Stars ⭐⭐</option>
+                <option value="1">1 Star ⭐</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Reviewer Name</label>
+            <input id="reviewName" placeholder="Jane D." />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group full">
+            <label>Review Text</label>
+            <textarea id="reviewText" placeholder="Paste the customer's review here..."></textarea>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateReviewResponse()">Generate Response</button>
+    <button class="btn btn-secondary" onclick="generateReviewResponse('formal')">Formal Tone</button>
+    <button class="btn btn-secondary" onclick="generateReviewResponse('warm')">Extra Warm Tone</button>
+    <div class="output-area" id="reviewOutput">Response will appear here...</div>
+</div>
+
+<!-- ═══════════════ FOLLOW-UP EMAILS ═══════════════ -->
+<div class="panel" id="panel-followup">
+    <div class="section-title">AI Follow-Up Email Generator</div>
+    <div class="section-desc">Generate follow-up email sequences to convert leads into booked jobs. Includes initial follow-up, 3-day, 7-day, and win-back templates.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Lead Name</label>
+            <input id="fuName" placeholder="John Smith" />
+        </div>
+        <div class="form-group">
+            <label>Service Discussed</label>
+            <input id="fuService" placeholder="e.g. Wheelchair ramp, Kitchen remodel" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Email Type</label>
+            <select id="fuType">
+                <option value="initial">Initial Follow-Up (same day)</option>
+                <option value="3day">3-Day Follow-Up</option>
+                <option value="7day">7-Day Follow-Up</option>
+                <option value="30day">30-Day Win-Back</option>
+                <option value="post-job">Post-Job Thank You + Review Ask</option>
+                <option value="referral">Referral Request</option>
+                <option value="seasonal">Seasonal Check-In</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Brand</label>
+            <select id="fuBrand">
+                <option value="atp">Watts ATP Contractor</option>
+                <option value="si">Watts Safety Installs</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group full">
+            <label>Additional Context (optional)</label>
+            <textarea id="fuContext" rows="2" placeholder="e.g. 'They seemed interested but wanted to check with their spouse', 'Gave estimate of $2,400 for ramp'"></textarea>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateFollowUp()">Generate Email</button>
+    <button class="btn btn-secondary" onclick="generateFullSequence()">Generate Full Sequence (4 emails)</button>
+    <div class="output-area" id="fuOutput">Email will appear here...</div>
+</div>
+
+<!-- ═══════════════ SEO KEYWORDS ═══════════════ -->
+<div class="panel" id="panel-seo">
+    <div class="section-title">AI SEO Keyword Generator</div>
+    <div class="section-desc">Find high-value local keywords for content, GBP posts, and landing pages. Includes search intent and content ideas.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Seed Keyword / Service</label>
+            <input id="seoSeed" placeholder="e.g. wheelchair ramp installation" />
+        </div>
+        <div class="form-group">
+            <label>Target Location</label>
+            <input id="seoLocation" placeholder="Norfolk NE" value="Norfolk NE" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Brand</label>
+            <select id="seoBrand">
+                <option value="atp">Watts ATP Contractor</option>
+                <option value="si">Watts Safety Installs</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Focus</label>
+            <select id="seoFocus">
+                <option value="local">Local SEO (city + service)</option>
+                <option value="longtail">Long-tail / Questions</option>
+                <option value="competitor">Competitor Keywords</option>
+                <option value="content">Content Ideas / Topics</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateSEOKeywords()">Generate Keywords</button>
+    <div class="output-area" id="seoOutput">Keywords will appear here...</div>
+</div>
+
+<!-- ═══════════════ LANDING PAGES ═══════════════ -->
+<div class="panel" id="panel-landing">
+    <div class="section-title">AI Landing Page Generator</div>
+    <div class="section-desc">Generate service × town landing page content. Creates SEO-optimized HTML content for location-specific service pages.</div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Service</label>
+            <select id="lpService">
+                <option value="wheelchair-ramp-installation">Wheelchair Ramp Installation</option>
+                <option value="grab-bar-installation">Grab Bar Installation</option>
+                <option value="bathroom-accessibility">Bathroom Accessibility</option>
+                <option value="non-slip-flooring">Non-Slip Flooring</option>
+                <option value="kitchen-remodeling">Kitchen Remodeling</option>
+                <option value="bathroom-remodeling">Bathroom Remodeling</option>
+                <option value="painting">Painting Services</option>
+                <option value="gutter-services">Gutter Services</option>
+                <option value="handyman">Handyman Services</option>
+                <option value="tv-mounting">TV Mounting & Electronics</option>
+                <option value="snow-removal">Snow Removal</option>
+                <option value="lawn-care">Lawn Care</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Town / City</label>
+            <input id="lpTown" placeholder="e.g. Madison, Wayne, Columbus" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Brand</label>
+            <select id="lpBrand">
+                <option value="atp">Watts ATP Contractor</option>
+                <option value="si">Watts Safety Installs</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Output Format</label>
+            <select id="lpFormat">
+                <option value="full-html">Full HTML Page</option>
+                <option value="content-only">Content Only (paste into template)</option>
+                <option value="meta-only">Meta Tags + Schema Only</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateLandingPage()">Generate Landing Page</button>
+    <button class="btn btn-secondary" onclick="batchLandingPages()">Batch Generate (5 towns)</button>
+    <div class="output-area" id="lpOutput">Landing page content will appear here...</div>
+</div>
+
+<!-- ═══════════════ LEADS PANEL ═══════════════ -->
+<div class="panel" id="panel-leads">
+    <div class="section-title">Captured Leads</div>
+    <div class="section-desc">Leads captured by the AI chatbot widget on your website. Stored locally in your browser.</div>
+
+    <div class="stats-grid" id="leadStats"></div>
+    <div id="leadsList"></div>
+    <button class="btn btn-secondary" onclick="exportLeads()" style="margin-top:12px;">Export as CSV</button>
+    <button class="btn btn-danger" onclick="clearLeads()" style="margin-top:12px; margin-left:8px;">Clear All Leads</button>
+</div>
+
+</div><!-- panel-container -->
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let API_KEY = '';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+const BRAND_INFO = {
+    atp: {
+        name: 'Watts ATP Contractor',
+        tagline: 'ATP Approved Contractor',
+        services: 'wheelchair ramp installation, grab bar installation, non-slip flooring solutions, bathroom accessibility modifications, ADA-compliant safety solutions',
+        phone: '(405) 410-6402',
+        email: 'Justin.Watts@WattsATPContractor.com',
+        address: '507 West Omaha Ave Suite B, Norfolk, Nebraska',
+        license: 'NE #54690-25',
+        url: 'https://wattsatpcontractor.com',
+    },
+    si: {
+        name: 'Watts Safety Installs',
+        tagline: 'Bringing Peace of Mind to Your Doorstep',
+        services: 'kitchen & bath remodeling, painting, gutters, handyman services, electronics & TV mounting, property maintenance, snow removal, lawn care',
+        phone: '(405) 410-6402',
+        email: 'Justin.Watts@WattsATPContractor.com',
+        address: '507 West Omaha Ave Suite B, Norfolk, Nebraska',
+        license: 'NE #54690-25',
+        url: 'https://wattsatpcontractor.com/safety-installs/',
+    }
+};
+
+// ═══════════════════════════════════════════
+// API CONNECTION
+// ═══════════════════════════════════════════
+function connectAPI() {
+    API_KEY = document.getElementById('apiKeyInput').value.trim();
+    if (!API_KEY) return alert('Please enter your API key');
+    document.getElementById('apiDot').classList.add('connected');
+    document.getElementById('apiStatusText').textContent = 'Connected';
+    document.getElementById('apiSetup').style.display = 'none';
+    sessionStorage.setItem('watts-gemini-key', API_KEY);
+}
+
+// Restore session
+(function() {
+    const saved = sessionStorage.getItem('watts-gemini-key');
+    if (saved) {
+        API_KEY = saved;
+        document.getElementById('apiKeyInput').value = saved;
+        connectAPI();
+    }
+    loadLeads();
+})();
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+document.getElementById('tabBar').addEventListener('click', (e) => {
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+});
+
+// ═══════════════════════════════════════════
+// GEMINI API CALL
+// ═══════════════════════════════════════════
+async function callGemini(prompt, outputId, maxTokens = 2048) {
+    if (!API_KEY) { alert('Please connect your API key first.'); return null; }
+    const el = document.getElementById(outputId);
+    el.innerHTML = '<div style="color:#555;text-align:center;padding:20px;">Generating...</div>';
+
+    try {
+        const res = await fetch(`${GEMINI_URL}?key=${API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.8, maxOutputTokens: maxTokens, topP: 0.9 },
+            }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            el.innerHTML = `<div style="color:#e74c3c;">Error: ${err.error?.message || 'API error'}</div>`;
+            return null;
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+        el.innerHTML = formatOutput(text);
+        return text;
+    } catch (err) {
+        el.innerHTML = `<div style="color:#e74c3c;">Connection error: ${err.message}</div>`;
+        return null;
+    }
+}
+
+function formatOutput(text) {
+    let html = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^### (.*$)/gm, '<h4 style="color:#00C4B4;margin:12px 0 6px;">$1</h4>')
+        .replace(/^## (.*$)/gm, '<h4 style="color:#fff;font-size:15px;margin:14px 0 6px;">$1</h4>')
+        .replace(/^- (.*$)/gm, '&bull; $1')
+        .replace(/\n/g, '<br>');
+    return `<button class="btn btn-copy copy-btn" onclick="copyOutput(this)">Copy</button>${html}`;
+}
+
+function copyOutput(btn) {
+    const text = btn.parentElement.innerText.replace('Copy', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+}
+
+function getBrand(selectId) {
+    return BRAND_INFO[document.getElementById(selectId).value];
+}
+
+// ═══════════════════════════════════════════
+// CONTENT GENERATOR
+// ═══════════════════════════════════════════
+function generateContent() {
+    const brand = getBrand('contentBrand');
+    const type = document.getElementById('contentType').value;
+    const topic = document.getElementById('contentTopic').value;
+    const keywords = document.getElementById('contentKeywords').value;
+    const tone = document.getElementById('contentTone').value;
+
+    const typeMap = {
+        'blog': 'an SEO-optimized blog post (800-1200 words) with H2/H3 headings, internal link suggestions, and a strong CTA',
+        'service-desc': 'a compelling service description (250-350 words) for the website with benefits, process, and CTA',
+        'social-fb': 'a Facebook post (100-200 words) with emoji, hashtags, and engagement hook',
+        'social-ig': 'an Instagram caption (150 words max) with relevant hashtags, emoji, and CTA',
+        'email-newsletter': 'an email newsletter (300-500 words) with subject line, preview text, body, and CTA button text',
+        'flyer-text': 'flyer/door hanger text (150 words max) with headline, 3-4 bullet points, and strong CTA',
+    };
+
+    const prompt = `You are a professional content writer for ${brand.name}, a contractor in Norfolk, Nebraska.
+
+BUSINESS: ${brand.name} | ${brand.tagline}
+Services: ${brand.services}
+Phone: ${brand.phone} | License: ${brand.license}
+Service Area: Norfolk NE and 100 miles of Northeast Nebraska
+
+Write ${typeMap[type]}.
+
+Topic: ${topic || 'general service promotion'}
+${keywords ? `Target Keywords: ${keywords}` : ''}
+Tone: ${tone}
+
+RULES:
+- Write for a local Norfolk NE audience
+- Include local references naturally
+- Include the phone number ${brand.phone} as the CTA
+- Mention the 100-mile service area
+- Use the brand name "${brand.name}" naturally
+- Make it actionable and conversion-focused
+- DO NOT use placeholder text — write real, ready-to-publish content`;
+
+    callGemini(prompt, 'contentOutput', type === 'blog' ? 4096 : 1024);
+}
+
+// ═══════════════════════════════════════════
+// GBP POST GENERATOR
+// ═══════════════════════════════════════════
+function gbpQuick(type) {
+    const topics = {
+        seasonal: 'Write a seasonal tip relevant to the current month for homeowners in Norfolk NE',
+        promo: 'Write about the referral program — earn $100 credit + 10% OFF by referring a friend',
+        project: 'Write about a recently completed project (make it realistic for the service area)',
+        review: 'Highlight a recent 5-star review and thank the customer',
+        safety: 'Write a home safety tip related to our services',
+    };
+    document.getElementById('gbpTopic').value = topics[type] || '';
+}
+
+function generateGBP() {
+    const brand = getBrand('gbpBrand');
+    const type = document.getElementById('gbpType').value;
+    const topic = document.getElementById('gbpTopic').value;
+
+    const prompt = `You are writing a Google Business Profile post for ${brand.name} in Norfolk, Nebraska.
+
+BUSINESS: ${brand.name} | ${brand.tagline}
+Services: ${brand.services}
+Phone: ${brand.phone}
+Service Area: 100 miles of Northeast Nebraska
+
+Post Type: ${type}
+Topic: ${topic || 'general business update'}
+
+RULES:
+- 150-300 words maximum
+- Start with an attention-grabbing first line
+- Include a clear CTA (call, visit website, book estimate)
+- Include the phone number ${brand.phone}
+- Use 2-3 relevant emoji naturally
+- Include 3-5 relevant hashtags at the end
+- Optimize for local search (mention Norfolk NE, Northeast Nebraska)
+- Make it feel authentic and personal, not corporate
+- Write as if Justin Watts is posting`;
+
+    callGemini(prompt, 'gbpOutput', 1024);
+}
+
+// ═══════════════════════════════════════════
+// ESTIMATE BUILDER
+// ═══════════════════════════════════════════
+function generateEstimate() {
+    const service = document.getElementById('estService').value;
+    const client = document.getElementById('estClient').value;
+    const desc = document.getElementById('estDesc').value;
+    const location = document.getElementById('estLocation').value;
+    const urgency = document.getElementById('estUrgency').value;
+
+    const prompt = `You are creating a professional project estimate for ${BRAND_INFO.atp.name}.
+
+BUSINESS: Watts ATP Contractor / Watts Safety Installs
+License: NE #54690-25 | Phone: (405) 410-6402
+Address: 507 West Omaha Ave Suite B, Norfolk, Nebraska
+
+Generate a detailed but professional estimate breakdown:
+
+Service: ${service}
+Client: ${client || 'Valued Customer'}
+Project: ${desc}
+Location: ${location}
+Timeline: ${urgency}
+
+FORMAT THE ESTIMATE AS:
+## Project Estimate — ${client || 'Valued Customer'}
+**Date:** [today's date]
+**Service:** [service name]
+**Location:** ${location}
+
+### Scope of Work
+[Bulleted list of what's included]
+
+### Estimated Cost Breakdown
+| Item | Estimated Cost |
+[Line items with realistic Nebraska pricing]
+
+**Estimated Total: $X,XXX - $X,XXX**
+
+### Timeline
+[Estimated duration]
+
+### Terms
+- Free on-site consultation and measurement
+- 50% deposit, 50% on completion
+- All work licensed & insured (NE #54690-25)
+- 1-year workmanship warranty
+
+*This is a preliminary estimate. Final pricing confirmed after on-site assessment.*
+**${BRAND_INFO.atp.phone}** | ${BRAND_INFO.atp.email}
+
+RULES:
+- Use realistic pricing for Nebraska (not coastal city pricing)
+- Be specific with line items
+- Include materials AND labor separately
+- Give a range, not a single number
+- Be professional but not overly formal`;
+
+    callGemini(prompt, 'estOutput', 2048);
+}
+
+// ═══════════════════════════════════════════
+// REVIEW RESPONDER
+// ═══════════════════════════════════════════
+function generateReviewResponse(toneOverride) {
+    const stars = document.getElementById('reviewStars').value;
+    const name = document.getElementById('reviewName').value;
+    const text = document.getElementById('reviewText').value;
+
+    const tone = toneOverride || 'balanced';
+
+    const prompt = `You are Justin Watts, owner of Watts ATP Contractor / Watts Safety Installs in Norfolk, Nebraska. Write a response to this Google review.
+
+Reviewer: ${name || 'Customer'}
+Rating: ${stars} stars
+Review: "${text || 'No review text provided'}"
+
+Response Tone: ${tone}
+
+RULES:
+- Keep it 2-4 sentences
+- Thank them by name if provided
+- If positive (4-5 stars): Express genuine gratitude, mention the specific service if referenced, invite them to recommend you
+- If neutral (3 stars): Thank them, address any concerns professionally, offer to make it right
+- If negative (1-2 stars): Stay professional, acknowledge their experience, offer to resolve offline with a phone call to (405) 410-6402
+- Sign off as "— Justin Watts, ${BRAND_INFO.atp.name}"
+- NEVER be defensive or argumentative
+- Sound like a real person, not corporate`;
+
+    callGemini(prompt, 'reviewOutput', 512);
+}
+
+// ═══════════════════════════════════════════
+// FOLLOW-UP EMAILS
+// ═══════════════════════════════════════════
+function generateFollowUp() {
+    const name = document.getElementById('fuName').value;
+    const service = document.getElementById('fuService').value;
+    const type = document.getElementById('fuType').value;
+    const brand = getBrand('fuBrand');
+    const context = document.getElementById('fuContext').value;
+
+    const typeMap = {
+        'initial': 'Same-day follow-up after initial contact/estimate. Warm, brief, confirm next steps.',
+        '3day': '3-day follow-up. Gentle check-in, add urgency without being pushy.',
+        '7day': '7-day follow-up. Provide additional value (tip, info), soft reminder.',
+        '30day': '30-day win-back. Re-engage a cold lead with a special offer or seasonal hook.',
+        'post-job': 'Post-job thank you + ask for a Google review. Include direct review link placeholder.',
+        'referral': 'Referral request. Mention the $100 credit + 10% OFF referral program.',
+        'seasonal': 'Seasonal check-in. Relevant to current season, offer maintenance or new service.',
+    };
+
+    const prompt = `Write a professional follow-up email for ${brand.name}.
+
+BUSINESS: ${brand.name} | ${brand.phone}
+FROM: Justin Watts
+
+EMAIL TYPE: ${typeMap[type]}
+
+LEAD INFO:
+- Name: ${name || 'Valued Customer'}
+- Service Discussed: ${service || 'general inquiry'}
+${context ? `- Additional Context: ${context}` : ''}
+
+FORMAT:
+**Subject:** [compelling subject line]
+**Preview Text:** [40-90 chars for email preview]
+
+---
+
+[Email body - 100-200 words max]
+
+[Signature]
+Justin Watts
+${brand.name}
+${brand.phone}
+${brand.email}
+
+RULES:
+- Sound like a real person, not a template
+- Be concise — busy homeowners don't read long emails
+- Include one clear CTA (reply, call, schedule)
+- Reference the specific service discussed
+- Don't be pushy but create gentle urgency
+- Include the phone number for easy callback`;
+
+    callGemini(prompt, 'fuOutput', 1024);
+}
+
+function generateFullSequence() {
+    const name = document.getElementById('fuName').value || 'Customer';
+    const service = document.getElementById('fuService').value || 'service';
+    const brand = getBrand('fuBrand');
+    const context = document.getElementById('fuContext').value;
+
+    const prompt = `Write a complete 4-email follow-up sequence for ${brand.name}.
+
+BUSINESS: ${brand.name} | ${brand.phone} | ${brand.email}
+LEAD: ${name} | Service: ${service}
+${context ? `Context: ${context}` : ''}
+
+Generate 4 emails:
+1. **Same-Day Follow-Up** — warm, confirm interest
+2. **3-Day Follow-Up** — gentle check-in, add value
+3. **7-Day Follow-Up** — provide a tip/insight, soft reminder
+4. **14-Day Final Follow-Up** — last touch, leave door open
+
+FORMAT each email with:
+**Email #X — [Type] (Send: [timing])**
+**Subject:** [line]
+[Body - 100-150 words each]
+
+RULES:
+- Each email should feel different, not repetitive
+- Progressive urgency without being pushy
+- Reference the specific service
+- Each email has ONE clear CTA
+- Sign each as Justin Watts`;
+
+    callGemini(prompt, 'fuOutput', 4096);
+}
+
+// ═══════════════════════════════════════════
+// SEO KEYWORDS
+// ═══════════════════════════════════════════
+function generateSEOKeywords() {
+    const seed = document.getElementById('seoSeed').value;
+    const location = document.getElementById('seoLocation').value;
+    const brand = getBrand('seoBrand');
+    const focus = document.getElementById('seoFocus').value;
+
+    const focusMap = {
+        'local': 'Generate 30+ local SEO keywords combining the service with cities/towns within 100 miles of Norfolk NE. Format: keyword | search intent | estimated difficulty',
+        'longtail': 'Generate 25+ long-tail keywords and questions people ask about this service. Include "People Also Ask" style questions. Format: keyword/question | intent | content type to target it',
+        'competitor': 'Generate keywords a competitor would target, plus gaps we can exploit. Include "near me" and "vs" keywords. Format: keyword | opportunity level | suggested action',
+        'content': 'Generate 20+ content topic ideas (blog posts, guides, videos) around this service for local SEO. Format: title idea | target keyword | content type | estimated word count',
+    };
+
+    const prompt = `You are an SEO expert for ${brand.name} in Norfolk, Nebraska.
+
+BUSINESS: ${brand.name}
+Services: ${brand.services}
+Service Area: Norfolk NE and 100 miles of Northeast Nebraska
+Nearby Cities: Madison, Wayne, Columbus, Fremont, South Sioux City, West Point, O'Neill, Albion, Neligh, Stanton, Pierce, Laurel, Hartington, Plainview, Creighton
+
+Seed Keyword: ${seed || brand.services.split(',')[0]}
+Location: ${location}
+
+TASK: ${focusMap[focus]}
+
+RULES:
+- Focus on keywords a local contractor can actually rank for
+- Include monthly search volume estimates where possible
+- Prioritize commercial intent keywords (people ready to buy)
+- Include some informational keywords for blog content
+- Consider seasonality for Nebraska
+- Format as a clean, organized table`;
+
+    callGemini(prompt, 'seoOutput', 2048);
+}
+
+// ═══════════════════════════════════════════
+// LANDING PAGE GENERATOR
+// ═══════════════════════════════════════════
+function generateLandingPage() {
+    const service = document.getElementById('lpService').value;
+    const serviceName = document.getElementById('lpService').options[document.getElementById('lpService').selectedIndex].text;
+    const town = document.getElementById('lpTown').value;
+    const brand = getBrand('lpBrand');
+    const format = document.getElementById('lpFormat').value;
+
+    const formatInstructions = {
+        'full-html': 'Generate a complete HTML page with head (title, meta description, canonical, schema), styles matching the existing site (navy #0A1D37, teal #00C4B4, gold #FFD700), and body content.',
+        'content-only': 'Generate just the main content (H1, intro, service details, benefits, FAQ section with 5 Q&As, CTA section). Use HTML tags for formatting.',
+        'meta-only': 'Generate meta title, meta description, canonical URL, and JSON-LD schema (Service + FAQPage + LocalBusiness) for this page.',
+    };
+
+    const prompt = `Generate a landing page for ${brand.name} targeting "${serviceName} in ${town || 'Norfolk'}, NE".
+
+BUSINESS: ${brand.name}
+URL Pattern: ${brand.url}/${service}-${(town || 'norfolk').toLowerCase().replace(/\s/g, '-')}-ne
+Phone: ${brand.phone} | License: ${brand.license}
+Service Area: 100 miles from Norfolk NE
+Rating: 5.0 stars (12 reviews)
+
+OUTPUT FORMAT: ${formatInstructions[format]}
+
+PAGE STRUCTURE:
+1. **H1**: "${serviceName} in ${town || 'Norfolk'}, NE | ${brand.name}"
+2. **Hero section**: Service-specific intro mentioning ${town || 'Norfolk'} and surrounding areas (150 words)
+3. **Why Choose Us**: 4 benefits with icons (licensed, insured, 5-star rated, free estimates)
+4. **Service Details**: What's included, process, materials (200 words)
+5. **Service Area Mention**: "${town || 'Norfolk'} and surrounding communities within our 100-mile service area"
+6. **FAQ Section**: 5 locally-relevant Q&As for this service in ${town || 'Norfolk'}
+7. **CTA**: "Call ${brand.phone} for your free ${serviceName.toLowerCase()} estimate in ${town || 'Norfolk'}, NE"
+8. **Schema**: Service + FAQPage JSON-LD
+
+RULES:
+- Write unique content — do NOT duplicate from other pages
+- Naturally include "${serviceName} ${town || 'Norfolk'} NE" and variations
+- Mention nearby towns for geo-relevance
+- Include trust signals (license, rating, years of experience)
+- Make it 100% ready to publish`;
+
+    callGemini(prompt, 'lpOutput', format === 'full-html' ? 8192 : 4096);
+}
+
+function batchLandingPages() {
+    const towns = ['Madison', 'Wayne', 'Columbus', 'Fremont', 'West Point'];
+    const service = document.getElementById('lpService').value;
+    const serviceName = document.getElementById('lpService').options[document.getElementById('lpService').selectedIndex].text;
+    const brand = getBrand('lpBrand');
+
+    const prompt = `Generate meta tags and brief content outlines for 5 landing pages for ${brand.name}:
+
+Service: ${serviceName}
+Towns: ${towns.join(', ')}
+Phone: ${brand.phone}
+
+For EACH town, provide:
+1. **Page Title** (60 chars max)
+2. **Meta Description** (155 chars max)
+3. **H1 Tag**
+4. **Canonical URL**: ${brand.url}/${service}-[town]-ne
+5. **Key content themes** (3 bullet points, unique per town)
+6. **5 FAQ questions** (unique per town)
+
+Make each page distinct — Google penalizes duplicate content across location pages.`;
+
+    callGemini(prompt, 'lpOutput', 4096);
+}
+
+// ═══════════════════════════════════════════
+// LEADS MANAGEMENT
+// ═══════════════════════════════════════════
+function loadLeads() {
+    const leads = JSON.parse(localStorage.getItem('watts-ai-leads') || '[]');
+    const sessions = JSON.parse(localStorage.getItem('watts-ai-sessions') || '[]');
+    
+    document.getElementById('leadsBadge').textContent = leads.length;
+
+    const statsEl = document.getElementById('leadStats');
+    statsEl.innerHTML = `
+        <div class="stat-card"><div class="stat-num">${leads.length}</div><div class="stat-label">Total Leads</div></div>
+        <div class="stat-card"><div class="stat-num">${sessions.length}</div><div class="stat-label">Chat Sessions</div></div>
+        <div class="stat-card"><div class="stat-num">${leads.filter(l=>l.phone).length}</div><div class="stat-label">With Phone #</div></div>
+        <div class="stat-card"><div class="stat-num">${leads.filter(l=>l.brand==='Watts ATP Contractor').length}</div><div class="stat-label">ATP Leads</div></div>
+    `;
+
+    const listEl = document.getElementById('leadsList');
+    if (leads.length === 0) {
+        listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">No leads captured yet. The chatbot will capture leads here as visitors interact with it.</div>';
+        return;
+    }
+
+    listEl.innerHTML = leads.reverse().map(l => `
+        <div class="lead-card">
+            <div class="lead-name">${l.name || 'Unknown'}</div>
+            <div class="lead-phone">${l.phone || 'No phone captured'}</div>
+            <div class="lead-meta">${l.brand} &bull; ${l.page} &bull; ${new Date(l.timestamp).toLocaleString()}</div>
+            ${l.conversation ? `<div class="lead-convo">${l.conversation.map(m => `<strong>${m.role}:</strong> ${m.text}`).join('<br>')}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function exportLeads() {
+    const leads = JSON.parse(localStorage.getItem('watts-ai-leads') || '[]');
+    if (!leads.length) return alert('No leads to export');
+    const csv = 'Name,Phone,Brand,Page,Timestamp\n' + leads.map(l =>
+        `"${l.name||''}","${l.phone||''}","${l.brand||''}","${l.page||''}","${l.timestamp||''}"`
+    ).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `watts-leads-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+}
+
+function clearLeads() {
+    if (!confirm('Delete all captured leads? This cannot be undone.')) return;
+    localStorage.removeItem('watts-ai-leads');
+    localStorage.removeItem('watts-ai-sessions');
+    loadLeads();
+}
+</script>
+</body>
+</html>

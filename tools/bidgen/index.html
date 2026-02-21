@@ -827,14 +827,18 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
             <div id="aiChatLog" style="background:#080f1e;border:1px solid #1a2744;border-radius:8px;min-height:260px;max-height:400px;overflow-y:auto;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px">
                 <div style="color:#7f8c8d;font-size:12px;text-align:center;padding:40px 10px">Send a message to start a conversation with Gemini AI.<br>It has context about your current scan, bid data, and templates.</div>
             </div>
+            <div id="aiFilePreview" style="display:none;margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap"></div>
             <div style="display:flex;gap:8px">
-                <textarea id="aiChatInput" placeholder="Ask Gemini anything about your quotes, scans, pricing..." style="flex:1;background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:10px 12px;color:#ecf0f1;font-size:13px;resize:none;height:44px;font-family:inherit" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSendMessage()}"></textarea>
+                <button onclick="document.getElementById('aiFileInput').click()" title="Attach file" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:10px 12px;border-radius:8px;font-size:16px;cursor:pointer;flex-shrink:0">📎</button>
+                <input type="file" id="aiFileInput" multiple accept="image/*,.pdf,.csv,.txt,.html,.htm,.json,.xml,.md,.doc,.docx,.xls,.xlsx,.rtf,.log" style="display:none">
+                <textarea id="aiChatInput" placeholder="Ask Gemini anything — attach files with 📎" style="flex:1;background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:10px 12px;color:#ecf0f1;font-size:13px;resize:none;height:44px;font-family:inherit" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSendMessage()}"></textarea>
                 <button onclick="aiSendMessage()" style="background:linear-gradient(135deg,#8e44ad,#3498db);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Send 🚀</button>
             </div>
-            <div style="display:flex;gap:8px;margin-top:8px">
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">
                 <label style="font-size:11px;color:#7f8c8d;display:flex;align-items:center;gap:4px"><input type="checkbox" id="aiIncludeScan" checked> Include scan data</label>
                 <label style="font-size:11px;color:#7f8c8d;display:flex;align-items:center;gap:4px"><input type="checkbox" id="aiIncludeBid" checked> Include bid data</label>
                 <label style="font-size:11px;color:#7f8c8d;display:flex;align-items:center;gap:4px"><input type="checkbox" id="aiIncludeImage"> Send scanned image</label>
+                <span style="font-size:10px;color:#3a5a8c" id="aiFileTypes" title="Supported: images, PDF, CSV, HTML, TXT, JSON, XML, MD, DOC, XLS, RTF">📎 Accepts: img, pdf, csv, html, txt, json, doc, xls +more</span>
                 <button onclick="aiClearChat()" style="margin-left:auto;background:none;border:1px solid #2a3a5c;color:#7f8c8d;padding:3px 10px;border-radius:4px;font-size:10px;cursor:pointer">Clear Chat</button>
             </div>
         </div>
@@ -4532,7 +4536,147 @@ function loadScannerData() {
 // AI ASSISTANT CHAT — talk to Gemini with context from scans/bids
 // =====================================================================
 
-var _aiChatHistory = []; // array of {role:'user'|'ai', text:string}
+var _aiChatHistory = []; // array of {role:'user'|'ai', text:string, files:[]}
+var _aiStagedFiles = [];  // files queued to send: {name, type, dataUrl, textContent}
+
+// File input handler
+document.addEventListener('DOMContentLoaded', function() {
+    var fi = document.getElementById('aiFileInput');
+    if (fi) fi.addEventListener('change', function(e) {
+        if (e.target.files) Array.from(e.target.files).forEach(function(f) { aiStageFile(f); });
+        e.target.value = '';
+    });
+    // Drag-and-drop on chat log
+    var cl = document.getElementById('aiChatLog');
+    if (cl) {
+        cl.addEventListener('dragover', function(e) { e.preventDefault(); cl.style.borderColor = '#8e44ad'; });
+        cl.addEventListener('dragleave', function() { cl.style.borderColor = '#1a2744'; });
+        cl.addEventListener('drop', function(e) {
+            e.preventDefault(); cl.style.borderColor = '#1a2744';
+            if (e.dataTransfer.files) Array.from(e.dataTransfer.files).forEach(function(f) { aiStageFile(f); });
+        });
+    }
+});
+
+function aiStageFile(file) {
+    var maxSize = 20 * 1024 * 1024; // 20MB
+    if (file.size > maxSize) {
+        showNotification('File too large (max 20MB): ' + file.name, 'error');
+        return;
+    }
+    var ext = file.name.split('.').pop().toLowerCase();
+    var imageTypes = ['jpg','jpeg','png','gif','webp','bmp','svg','tiff','ico'];
+    var textTypes = ['csv','txt','html','htm','json','xml','md','rtf','log','css','js','py','yaml','yml','ini','cfg','tsv'];
+
+    if (ext === 'pdf') {
+        // Render PDF to image via pdf.js
+        _aiProcessPDF(file);
+    } else if (imageTypes.indexOf(ext) >= 0 || file.type.startsWith('image/')) {
+        // Read image as data URL
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            _aiStagedFiles.push({ name: file.name, type: 'image', mime: file.type || 'image/jpeg', dataUrl: e.target.result });
+            _aiRenderStagedFiles();
+        };
+        reader.readAsDataURL(file);
+    } else if (textTypes.indexOf(ext) >= 0 || file.type.startsWith('text/')) {
+        // Read as text
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            _aiStagedFiles.push({ name: file.name, type: 'text', textContent: e.target.result });
+            _aiRenderStagedFiles();
+        };
+        reader.readAsText(file);
+    } else if (ext === 'doc' || ext === 'docx' || ext === 'xls' || ext === 'xlsx') {
+        // Binary office files — read as base64, Gemini can often handle these
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            _aiStagedFiles.push({ name: file.name, type: 'binary', mime: file.type || 'application/octet-stream', dataUrl: e.target.result });
+            _aiRenderStagedFiles();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // Try reading as text for anything else
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            _aiStagedFiles.push({ name: file.name, type: 'text', textContent: e.target.result });
+            _aiRenderStagedFiles();
+        };
+        reader.onerror = function() {
+            showNotification('Cannot read file: ' + file.name, 'error');
+        };
+        reader.readAsText(file);
+    }
+}
+
+async function _aiProcessPDF(file) {
+    // Load pdf.js if needed
+    if (typeof pdfjsLib === 'undefined') {
+        await new Promise(function(res) {
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload = res;
+            document.head.appendChild(s);
+        });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+    try {
+        var arrayBuf = await file.arrayBuffer();
+        var pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+        var numPages = Math.min(pdf.numPages, 5); // Max 5 pages
+        for (var p = 1; p <= numPages; p++) {
+            var page = await pdf.getPage(p);
+            var vp = page.getViewport({ scale: 1.5 });
+            var canvas = document.createElement('canvas');
+            canvas.width = vp.width; canvas.height = vp.height;
+            var ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport: vp }).promise;
+            var dataUrl = canvas.toDataURL('image/png');
+            _aiStagedFiles.push({
+                name: file.name + (numPages > 1 ? ' (p' + p + ')' : ''),
+                type: 'image', mime: 'image/png', dataUrl: dataUrl
+            });
+        }
+        // Also try extracting text from the PDF
+        var allText = '';
+        for (var p = 1; p <= numPages; p++) {
+            var page = await pdf.getPage(p);
+            var tc = await page.getTextContent();
+            var pageText = tc.items.map(function(i) { return i.str; }).join(' ');
+            if (pageText.trim()) allText += (allText ? '\n--- Page ' + p + ' ---\n' : '') + pageText;
+        }
+        if (allText.trim()) {
+            _aiStagedFiles.push({ name: file.name + ' (text)', type: 'text', textContent: allText });
+        }
+        _aiRenderStagedFiles();
+    } catch(err) {
+        console.error('PDF processing error:', err);
+        showNotification('Could not read PDF: ' + err.message, 'error');
+    }
+}
+
+function _aiRenderStagedFiles() {
+    var container = document.getElementById('aiFilePreview');
+    if (_aiStagedFiles.length === 0) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+    }
+    container.style.display = 'flex';
+    container.innerHTML = _aiStagedFiles.map(function(f, i) {
+        var icon = f.type === 'image' ? '🖼️' : (f.type === 'text' ? '📄' : '📦');
+        var size = f.dataUrl ? Math.round(f.dataUrl.length / 1370) + 'KB' : (f.textContent ? Math.round(f.textContent.length / 1024) + 'KB' : '');
+        return '<div style="background:#1a2744;border:1px solid #2a3a5c;border-radius:6px;padding:4px 8px;font-size:11px;color:#bdc3c7;display:flex;align-items:center;gap:4px">'
+            + icon + ' ' + f.name.substring(0, 25) + (f.name.length > 25 ? '...' : '') + ' <span style="color:#3a5a8c">' + size + '</span>'
+            + '<button onclick="_aiRemoveStagedFile(' + i + ')" style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:12px;padding:0 2px">&times;</button>'
+            + '</div>';
+    }).join('');
+}
+
+function _aiRemoveStagedFile(idx) {
+    _aiStagedFiles.splice(idx, 1);
+    _aiRenderStagedFiles();
+}
 
 function aiQuickPrompt(text) {
     document.getElementById('aiChatInput').value = text;
@@ -4541,11 +4685,13 @@ function aiQuickPrompt(text) {
 
 function aiClearChat() {
     _aiChatHistory = [];
+    _aiStagedFiles = [];
+    _aiRenderStagedFiles();
     var log = document.getElementById('aiChatLog');
     log.innerHTML = '<div style="color:#7f8c8d;font-size:12px;text-align:center;padding:40px 10px">Send a message to start a conversation with Gemini AI.<br>It has context about your current scan, bid data, and templates.</div>';
 }
 
-function _aiRenderMessage(role, text) {
+function _aiRenderMessage(role, text, fileNames) {
     var log = document.getElementById('aiChatLog');
     // Clear placeholder if first message
     if (_aiChatHistory.length <= 1 && role === 'user') {
@@ -4560,6 +4706,18 @@ function _aiRenderMessage(role, text) {
     label.style.cssText = 'font-size:10px;font-weight:700;margin-bottom:4px;color:' + (role === 'user' ? '#e67e22' : '#8e44ad');
     label.textContent = role === 'user' ? 'YOU' : 'GEMINI AI';
     div.appendChild(label);
+    // Show file badges if any
+    if (fileNames && fileNames.length > 0) {
+        var fDiv = document.createElement('div');
+        fDiv.style.cssText = 'margin-bottom:6px;display:flex;gap:4px;flex-wrap:wrap;';
+        fileNames.forEach(function(fn) {
+            var badge = document.createElement('span');
+            badge.style.cssText = 'background:#0d2137;border:1px solid #2a3a5c;border-radius:4px;padding:2px 6px;font-size:10px;color:#8e44ad;';
+            badge.textContent = '📎 ' + fn;
+            fDiv.appendChild(badge);
+        });
+        div.appendChild(fDiv);
+    }
     var body = document.createElement('div');
     body.textContent = text;
     div.appendChild(body);
@@ -4592,7 +4750,6 @@ function _aiGatherContext() {
         var ed = gv('estimateDate'); if (ed) ctx += 'Date: ' + ed + '\n';
         var pl = loc(); if (pl) ctx += 'Location: ' + pl + '\n';
         var po = gv('distPO'); if (po) ctx += 'PO#: ' + po + '\n';
-        // Material items
         var mats = getMatItems();
         if (mats.length > 0) {
             ctx += 'Material Items:\n';
@@ -4600,7 +4757,6 @@ function _aiGatherContext() {
                 ctx += '  ' + (i+1) + '. ' + (m.desc || '') + ' — Qty: ' + (m.qty || '1') + ' — Price: ' + (m.price || m.amount || '') + '\n';
             });
         }
-        // Distributor items
         var dists = getDistMatItems();
         if (dists.length > 0) {
             ctx += 'Distributor Items:\n';
@@ -4615,7 +4771,8 @@ function _aiGatherContext() {
 async function aiSendMessage() {
     var input = document.getElementById('aiChatInput');
     var userMsg = input.value.trim();
-    if (!userMsg) return;
+    if (!userMsg && _aiStagedFiles.length === 0) return;
+    if (!userMsg) userMsg = 'Analyze the attached file(s).';
 
     var geminiKey = '', geminiModel = '';
     try {
@@ -4627,17 +4784,34 @@ async function aiSendMessage() {
         return;
     }
 
+    // Capture staged files and clear
+    var sendFiles = _aiStagedFiles.slice();
+    var fileNames = sendFiles.map(function(f) { return f.name; });
+    _aiStagedFiles = [];
+    _aiRenderStagedFiles();
+
     input.value = '';
     input.disabled = true;
 
-    // Add user message to history and render
-    _aiChatHistory.push({ role: 'user', text: userMsg });
-    _aiRenderMessage('user', userMsg);
+    // Build text content from text-type files to append to the message
+    var fileTextParts = '';
+    sendFiles.forEach(function(f) {
+        if (f.type === 'text' && f.textContent) {
+            fileTextParts += '\n\n--- FILE: ' + f.name + ' ---\n' + f.textContent.substring(0, 15000) + '\n--- END FILE ---';
+        }
+    });
+
+    var fullMsg = userMsg + (fileTextParts ? fileTextParts : '');
+    var displayMsg = userMsg + (fileNames.length > 0 ? '' : '');
+
+    // Add to history and render
+    _aiChatHistory.push({ role: 'user', text: fullMsg, files: fileNames });
+    _aiRenderMessage('user', userMsg, fileNames);
 
     // Show typing indicator
     var typingDiv = document.createElement('div');
     typingDiv.style.cssText = 'color:#8e44ad;font-size:12px;padding:8px;font-style:italic;';
-    typingDiv.textContent = 'Gemini is thinking...';
+    typingDiv.textContent = 'Gemini is thinking' + (sendFiles.length > 0 ? ' (processing ' + sendFiles.length + ' file' + (sendFiles.length > 1 ? 's' : '') + ')' : '') + '...';
     typingDiv.id = 'aiTyping';
     document.getElementById('aiChatLog').appendChild(typingDiv);
     document.getElementById('aiChatLog').scrollTop = document.getElementById('aiChatLog').scrollHeight;
@@ -4647,14 +4821,14 @@ async function aiSendMessage() {
         var systemCtx = 'You are an AI assistant embedded in a bid generator tool for a safety/accessibility contractor business (Watts Safety Installs). '
             + 'You help with quotes, pricing, invoice analysis, Nebraska ATP quote forms, material estimation, and bid preparation. '
             + 'Be concise, practical, and specific. If providing pricing, note these are estimates. '
-            + 'The user works with accessibility modifications: grab bars, shower pans, ramps, stairlifts, door widening, bathroom remodels, etc.';
+            + 'The user works with accessibility modifications: grab bars, shower pans, ramps, stairlifts, door widening, bathroom remodels, etc. '
+            + 'When the user attaches files, analyze them thoroughly and provide useful insights about pricing, line items, and how they relate to the current bid.';
 
         var context = _aiGatherContext();
         if (context) systemCtx += '\n' + context;
 
-        // Build conversation for Gemini (include recent history for back-and-forth)
+        // Build conversation for Gemini
         var contents = [];
-        // System message as first user turn
         contents.push({ role: 'user', parts: [{ text: systemCtx + '\n\nPlease acknowledge you understand the context and are ready to help.' }] });
         contents.push({ role: 'model', parts: [{ text: 'Understood. I have your current bid and scan data. How can I help?' }] });
 
@@ -4664,11 +4838,22 @@ async function aiSendMessage() {
             var entry = histSlice[i];
             if (entry.role === 'user') {
                 var parts = [{ text: entry.text }];
-                // Include image on the latest user message if checkbox is checked
-                if (i === histSlice.length - 1 && document.getElementById('aiIncludeImage').checked && _scanImageData) {
-                    var base64 = _scanImageData.replace(/^data:image\/[a-z]+;base64,/, '');
-                    var mime = (_scanImageData.match(/^data:(image\/[a-z]+);/) || [])[1] || 'image/jpeg';
-                    parts.push({ inline_data: { mime_type: mime, data: base64 } });
+                // For the LATEST user message, attach image files and scanned image
+                if (i === histSlice.length - 1) {
+                    // Attach uploaded image files
+                    sendFiles.forEach(function(f) {
+                        if ((f.type === 'image' || f.type === 'binary') && f.dataUrl) {
+                            var b64 = f.dataUrl.replace(/^data:[^;]+;base64,/, '');
+                            var mType = f.mime || 'image/png';
+                            parts.push({ inline_data: { mime_type: mType, data: b64 } });
+                        }
+                    });
+                    // Also attach scanned image if checkbox checked
+                    if (document.getElementById('aiIncludeImage').checked && _scanImageData) {
+                        var b64s = _scanImageData.replace(/^data:image\/[a-z]+;base64,/, '');
+                        var mimes = (_scanImageData.match(/^data:(image\/[a-z]+);/) || [])[1] || 'image/jpeg';
+                        parts.push({ inline_data: { mime_type: mimes, data: b64s } });
+                    }
                 }
                 contents.push({ role: 'user', parts: parts });
             } else {
@@ -4682,11 +4867,10 @@ async function aiSendMessage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: contents,
-                generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+                generationConfig: { temperature: 0.7, maxOutputTokens: 4096 }
             })
         });
 
-        // Remove typing indicator
         var ti = document.getElementById('aiTyping');
         if (ti) ti.remove();
 

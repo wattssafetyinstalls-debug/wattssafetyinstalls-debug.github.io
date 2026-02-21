@@ -99,9 +99,15 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
       box-shadow:0 8px 32px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05);
     }
     #watts-chat-bubble:active { transform:scale(0.95); }
-    #watts-chat-bubble svg { width:32px; height:32px; transition:transform 0.3s; }
+    #watts-chat-bubble svg { 
+      width:32px; height:32px; transition:all 0.3s; 
+      position:absolute; 
+    }
     #watts-chat-bubble:hover svg { transform:scale(1.1); }
-    #watts-chat-bubble .close-icon { display:none; }
+    #watts-chat-bubble .close-icon { 
+      display:none; 
+      width:24px; height:24px; /* Smaller close icon */
+    }
     #watts-chat-bubble.open .chat-icon { display:none; }
     #watts-chat-bubble.open .close-icon { display:block; }
     @keyframes watts-float {
@@ -294,12 +300,27 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
 
     /* Mobile Optimizations */
     @media(max-width:480px) {
-      #watts-chat-window { bottom:0; right:0; width:100%; height:100vh; max-height:100vh; border-radius:0; }
-      #watts-chat-bubble { bottom:20px; right:20px; width:60px; height:60px; }
+      #watts-chat-window { 
+        bottom:0; right:0; width:100%; height:100vh; max-height:100vh; 
+        border-radius:20px 20px 0 0; 
+      }
+      #watts-chat-bubble { 
+        bottom:20px; right:20px; width:60px; height:60px; 
+        border-width:2px;
+      }
       #watts-chat-bubble svg { width:28px; height:28px; }
-      #watts-chat-messages { padding:16px; }
-      #watts-chat-header { padding:16px; }
-      #watts-chat-input-area { padding:12px 16px; }
+      #watts-chat-messages { padding:16px; gap:12px; }
+      #watts-chat-header { padding:16px; gap:12px; }
+      #watts-chat-header .avatar { width:40px; height:40px; font-size:18px; }
+      #watts-chat-header .info h3 { font-size:15px; }
+      #watts-chat-header .info p { font-size:11px; }
+      #watts-chat-input-area { padding:12px 16px; gap:10px; }
+      #watts-chat-input { font-size:16px; /* Prevents zoom on iOS */ }
+      #watts-chat-send { width:40px; height:40px; }
+      #watts-chat-send svg { width:18px; height:18px; }
+      .watts-quick-actions { padding:0 16px 10px; gap:6px; }
+      .watts-quick-btn { padding:6px 12px; font-size:12px; }
+      .watts-cta-banner { padding:10px 16px; font-size:12px; }
     }
   `;
   document.head.appendChild(style);
@@ -478,21 +499,52 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
       ],
     };
 
-    const res = await fetch(`${PROXY_URL}?model=${GEMINI_MODEL}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    // Retry logic for connection issues
+    const maxRetries = 3;
+    let lastError;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const res = await fetch(`${PROXY_URL}?model=${GEMINI_MODEL}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(10000), // 10 second timeout
+        });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'API error');
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          // Don't retry on client errors (4xx)
+          if (res.status >= 400 && res.status < 500) {
+            throw new Error(err.error?.message || `API error (${res.status})`);
+          }
+          throw new Error(err.error || 'Server error');
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) throw new Error('No response from AI');
+        return text;
+        
+      } catch (err) {
+        lastError = err;
+        console.warn(`Chat attempt ${attempt} failed:`, err.message);
+        
+        // Don't retry on abort or network errors that won't resolve
+        if (err.name === 'AbortError' || err.message.includes('Failed to fetch')) {
+          break;
+        }
+        
+        // Wait before retry (exponential backoff)
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, 1000 * attempt));
+        }
+      }
     }
-
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('No response');
-    return text;
+    
+    // Return a friendly fallback message instead of throwing
+    console.error('Chat failed after retries:', lastError);
+    return `I'm having some technical difficulties right now. Please call us directly at **(405) 410-6402** — we'd love to help you immediately!`;
   }
 
   function extractLeadInfo(text) {

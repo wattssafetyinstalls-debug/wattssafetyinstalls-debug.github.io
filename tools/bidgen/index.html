@@ -4468,9 +4468,11 @@ function vendorGenerate(tplId) {
     // Template body
     h += bodyHTML;
 
-    // Inline JS for edit/add/recalc
+    // Inline JS for edit/add/recalc with LIVE auto-calculation
     h += '<'+'script>';
     h += 'var vEdit=true;';
+
+    // Toggle edit mode
     h += 'function vToggleEdit(){';
     h += '  vEdit=!vEdit;';
     h += '  document.querySelectorAll("[data-field]").forEach(function(el){';
@@ -4480,7 +4482,10 @@ function vendorGenerate(tplId) {
     h += '  });';
     h += '  document.getElementById("vEditBtn").textContent=vEdit?"Lock Fields":"Edit Pricing";';
     h += '  document.getElementById("vEditBtn").style.background=vEdit?"#c0392b":"#e67e22";';
+    h += '  if(vEdit)vBindListeners();';
     h += '}';
+
+    // Add a new row and bind listeners
     h += 'function vAddRow(){';
     h += '  var tb=document.querySelector("#itemsTable tbody");if(!tb)return;';
     h += '  var rows=tb.querySelectorAll("[data-row]");var n=rows.length+1;';
@@ -4488,22 +4493,61 @@ function vendorGenerate(tplId) {
     h += '  tr.innerHTML=\'<td>\'+n+\'</td><td data-field="item-desc">New item</td><td data-field="item-qty" contenteditable="true">1</td><td data-field="item-price" contenteditable="true">$0.00</td><td data-field="item-total">$0.00</td>\';';
     h += '  var anchor=tb.querySelector("tr:not([data-row])");';
     h += '  if(anchor)tb.insertBefore(tr,anchor);else tb.appendChild(tr);';
+    h += '  vBindListeners();vRecalc();';
     h += '}';
+
+    // Parse a dollar/number string to float
+    h += 'function vNum(s){return parseFloat(String(s).replace(/[^0-9.\\-]/g,""))||0;}';
+
+    // Recalculate all line totals → subtotal → tax → grand total
     h += 'function vRecalc(){';
-    h += '  var rows=document.querySelectorAll("[data-row]");var t=0;';
+    h += '  var rows=document.querySelectorAll("[data-row]");var sub=0;';
     h += '  rows.forEach(function(r){';
     h += '    var qEl=r.querySelector("[data-field=item-qty]");';
     h += '    var pEl=r.querySelector("[data-field=item-price]");';
     h += '    var tEl=r.querySelector("[data-field=item-total]");';
     h += '    if(qEl&&pEl){';
-    h += '      var q=parseFloat(qEl.textContent.replace(/[^0-9.]/g,""))||1;';
-    h += '      var p=parseFloat(pEl.textContent.replace(/[^0-9.]/g,""))||0;';
-    h += '      var lt=q*p;t+=lt;';
+    h += '      var q=vNum(qEl.textContent)||1;';
+    h += '      var p=vNum(pEl.textContent)||0;';
+    h += '      var lt=q*p;sub+=lt;';
     h += '      if(tEl)tEl.textContent="$"+lt.toFixed(2);';
     h += '    }});';
-    h += '  var sEl=document.querySelector("[data-field=subtotal]");if(sEl)sEl.textContent="$"+t.toFixed(2);';
-    h += '  var tEl=document.querySelector("[data-field=total]");if(tEl)tEl.textContent="$"+t.toFixed(2);';
+    // Subtotal
+    h += '  var sEl=document.querySelector("[data-field=subtotal]");';
+    h += '  if(sEl)sEl.textContent="$"+sub.toFixed(2);';
+    // Tax — if user typed a tax amount, use it; otherwise check for a tax rate
+    h += '  var txEl=document.querySelector("[data-field=tax]");';
+    h += '  var taxAmt=0;';
+    h += '  if(txEl){';
+    h += '    var txRaw=txEl.textContent.trim();';
+    h += '    if(txRaw.indexOf("%")>=0){';
+    h += '      var rate=vNum(txRaw)/100;taxAmt=sub*rate;';
+    h += '    }else{taxAmt=vNum(txRaw);}';
+    h += '  }';
+    // Grand total = subtotal + tax
+    h += '  var gEl=document.querySelector("[data-field=total]");';
+    h += '  if(gEl)gEl.textContent="$"+(sub+taxAmt).toFixed(2);';
     h += '}';
+
+    // Bind input listeners to all editable pricing fields for live recalc
+    h += 'function vBindListeners(){';
+    h += '  var fields=["item-qty","item-price","tax"];';
+    h += '  fields.forEach(function(fn){';
+    h += '    document.querySelectorAll("[data-field="+fn+"]").forEach(function(el){';
+    h += '      if(!el._vBound){';
+    h += '        el._vBound=true;';
+    h += '        el.addEventListener("input",function(){vRecalc();});';
+    h += '        el.addEventListener("blur",function(){vRecalc();});';
+    h += '      }';
+    h += '    });';
+    h += '  });';
+    h += '}';
+
+    // Auto-bind on page load
+    h += 'document.addEventListener("DOMContentLoaded",function(){vBindListeners();vRecalc();});';
+    // Fallback: also bind after short delay in case DOM isn't ready
+    h += 'setTimeout(function(){vBindListeners();vRecalc();},500);';
+
     h += '</'+'script>';
     h += docJS() + '</body></html>';
 

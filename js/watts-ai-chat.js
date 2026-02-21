@@ -16,22 +16,26 @@
   const PROXY_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
   const GEMINI_MODEL = 'gemini-2.0-flash';
 
-  // Brand detection
+  // Brand detection with unique colors for each
   const isSafetyInstalls = window.location.pathname.startsWith('/safety-installs');
   const BRAND = isSafetyInstalls
     ? {
         name: 'Watts Safety Installs',
         tagline: 'Bringing Peace of Mind to Your Doorstep',
         services: 'kitchen & bath remodeling, painting, gutters, handyman services, electronics & TV mounting, property maintenance, snow removal, and lawn care',
-        color: '#00C4B4',
+        color: '#00C4B4', // Teal
         colorDark: '#009e91',
+        colorLight: '#E0F7F6',
+        gradient: 'linear-gradient(135deg, #00C4B4, #009e91)',
       }
     : {
         name: 'Watts ATP Contractor',
         tagline: 'ATP Approved Contractor',
         services: 'wheelchair ramp installation, grab bar installation, non-slip flooring, bathroom accessibility modifications, and ADA-compliant safety solutions',
-        color: '#00C4B4',
-        colorDark: '#009e91',
+        color: '#FFD700', // Gold for ATP
+        colorDark: '#F4C430',
+        colorLight: '#FFF9E6',
+        gradient: 'linear-gradient(135deg, #FFD700, #F4C430)',
       };
 
   const SYSTEM_PROMPT = `You are the friendly, professional AI assistant for ${BRAND.name} based in Norfolk, Nebraska.
@@ -73,147 +77,229 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
   let leadCaptured = { name: null, phone: null, project: null };
 
   // ═══════════════════════════════════════════
-  // STYLES
+  // STYLES — Professional & Polished Design
   // ═══════════════════════════════════════════
   const style = document.createElement('style');
   style.textContent = `
     #watts-chat-widget * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+    
+    /* Chat Bubble — More Professional */
     #watts-chat-bubble {
       position:fixed; bottom:24px; right:24px; z-index:99999;
-      width:64px; height:64px; border-radius:50%;
-      background:${BRAND.color}; color:#fff;
-      border:none; cursor:pointer;
-      box-shadow:0 4px 20px rgba(0,196,180,0.4);
+      width:68px; height:68px; border-radius:50%;
+      background:${BRAND.gradient}; color:#fff;
+      border:3px solid #fff; cursor:pointer;
+      box-shadow:0 6px 24px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
       display:flex; align-items:center; justify-content:center;
-      transition:transform 0.3s, box-shadow 0.3s;
-      animation:watts-pulse 3s infinite;
+      transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation:watts-float 3s ease-in-out infinite;
     }
-    #watts-chat-bubble:hover { transform:scale(1.1); box-shadow:0 6px 28px rgba(0,196,180,0.6); }
-    #watts-chat-bubble svg { width:30px; height:30px; }
+    #watts-chat-bubble:hover { 
+      transform:scale(1.05) translateY(-2px); 
+      box-shadow:0 8px 32px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05);
+    }
+    #watts-chat-bubble:active { transform:scale(0.95); }
+    #watts-chat-bubble svg { width:32px; height:32px; transition:transform 0.3s; }
+    #watts-chat-bubble:hover svg { transform:scale(1.1); }
     #watts-chat-bubble .close-icon { display:none; }
     #watts-chat-bubble.open .chat-icon { display:none; }
     #watts-chat-bubble.open .close-icon { display:block; }
-    @keyframes watts-pulse {
-      0%,100% { box-shadow:0 4px 20px rgba(0,196,180,0.4); }
-      50% { box-shadow:0 4px 30px rgba(0,196,180,0.7); }
+    @keyframes watts-float {
+      0%,100% { transform:translateY(0); }
+      50% { transform:translateY(-5px); }
     }
 
+    /* Notification Badge */
     #watts-chat-badge {
-      position:absolute; top:-4px; right:-4px;
-      background:#e74c3c; color:#fff; font-size:11px; font-weight:700;
-      width:22px; height:22px; border-radius:50%;
+      position:absolute; top:-2px; right:-2px;
+      background:#e74c3c; color:#fff; font-size:10px; font-weight:700;
+      width:24px; height:24px; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
-      border:2px solid #0A1D37;
+      border:3px solid #fff;
+      animation:watts-badgePulse 2s infinite;
+    }
+    @keyframes watts-badgePulse {
+      0%,100% { transform:scale(1); }
+      50% { transform:scale(1.1); }
     }
 
+    /* Chat Window — Premium Design */
     #watts-chat-window {
       position:fixed; bottom:100px; right:24px; z-index:99998;
-      width:380px; max-width:calc(100vw - 32px);
-      height:520px; max-height:calc(100vh - 140px);
-      background:#0A1D37; border:1px solid #1a3a5c;
-      border-radius:16px; overflow:hidden;
-      display:none; flex-direction:column;
-      box-shadow:0 12px 48px rgba(0,0,0,0.5);
-      animation:watts-slideUp 0.3s ease;
+      width:400px; max-width:calc(100vw - 32px);
+      height:560px; max-height:calc(100vh - 140px);
+      background:#fff; border-radius:20px;
+      overflow:hidden; display:none; flex-direction:column;
+      box-shadow:0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+      animation:watts-windowOpen 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #watts-chat-window.open { display:flex; }
-    @keyframes watts-slideUp {
-      from { opacity:0; transform:translateY(20px); }
-      to { opacity:1; transform:translateY(0); }
+    @keyframes watts-windowOpen {
+      from { opacity:0; transform:translateY(20px) scale(0.95); }
+      to { opacity:1; transform:translateY(0) scale(1); }
     }
 
+    /* Header — Professional */
     #watts-chat-header {
-      background:linear-gradient(135deg,#0A1D37,#16213e);
-      padding:16px 20px; border-bottom:1px solid #1a3a5c;
-      display:flex; align-items:center; gap:12px;
+      background:${BRAND.gradient}; padding:20px; position:relative;
+      display:flex; align-items:center; gap:14px;
+    }
+    #watts-chat-header::before {
+      content:''; position:absolute; bottom:0; left:0; right:0;
+      height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     }
     #watts-chat-header .avatar {
-      width:40px; height:40px; border-radius:50%;
-      background:${BRAND.color}; display:flex; align-items:center; justify-content:center;
-      font-size:18px; font-weight:700; color:#fff; flex-shrink:0;
+      width:48px; height:48px; border-radius:50%;
+      background:rgba(255,255,255,0.2); backdrop-filter:blur(10px);
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; font-weight:700; color:#fff; flex-shrink:0;
+      border:2px solid rgba(255,255,255,0.3);
     }
-    #watts-chat-header .info h3 { color:#fff; font-size:14px; font-weight:600; }
-    #watts-chat-header .info p { color:#7f8c8d; font-size:11px; margin-top:2px; }
-    #watts-chat-header .status { width:8px; height:8px; border-radius:50%; background:#2ecc71; margin-left:auto; flex-shrink:0; }
+    #watts-chat-header .info h3 { 
+      color:#fff; font-size:16px; font-weight:600; 
+      text-shadow:0 1px 2px rgba(0,0,0,0.1);
+    }
+    #watts-chat-header .info p { 
+      color:rgba(255,255,255,0.9); font-size:12px; margin-top:2px;
+      display:flex; align-items:center; gap:6px;
+    }
+    #watts-chat-header .status { 
+      width:10px; height:10px; border-radius:50%; 
+      background:#2ecc71; margin-left:auto; flex-shrink:0;
+      box-shadow:0 0 10px rgba(46,204,113,0.5);
+      animation:watts-statusGlow 2s infinite;
+    }
+    @keyframes watts-statusGlow {
+      0%,100% { box-shadow:0 0 10px rgba(46,204,113,0.5); }
+      50% { box-shadow:0 0 20px rgba(46,204,113,0.8); }
+    }
 
+    /* Messages Area */
     #watts-chat-messages {
-      flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;
-      scrollbar-width:thin; scrollbar-color:#1a3a5c transparent;
+      flex:1; overflow-y:auto; padding:20px;
+      display:flex; flex-direction:column; gap:14px;
+      background:#f8f9fa;
+      scrollbar-width:thin; scrollbar-color:rgba(0,0,0,0.1) transparent;
     }
     #watts-chat-messages::-webkit-scrollbar { width:6px; }
     #watts-chat-messages::-webkit-scrollbar-track { background:transparent; }
-    #watts-chat-messages::-webkit-scrollbar-thumb { background:#1a3a5c; border-radius:3px; }
+    #watts-chat-messages::-webkit-scrollbar-thumb { 
+      background:rgba(0,0,0,0.1); border-radius:3px;
+    }
+    #watts-chat-messages::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,0.2); }
 
+    /* Message Bubbles — Modern Design */
     .watts-msg {
-      max-width:85%; padding:10px 14px; border-radius:14px;
-      font-size:13.5px; line-height:1.5; word-wrap:break-word;
+      max-width:80%; padding:12px 16px; border-radius:18px;
+      font-size:14px; line-height:1.5; word-wrap:break-word;
+      animation:watts-msgIn 0.3s ease;
+    }
+    @keyframes watts-msgIn {
+      from { opacity:0; transform:translateY(10px); }
+      to { opacity:1; transform:translateY(0); }
     }
     .watts-msg.bot {
-      background:#16213e; color:#ddd; align-self:flex-start;
-      border-bottom-left-radius:4px;
+      background:#fff; color:#333; align-self:flex-start;
+      border-bottom-left-radius:6px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .watts-msg.user {
-      background:${BRAND.color}; color:#fff; align-self:flex-end;
-      border-bottom-right-radius:4px;
+      background:${BRAND.gradient}; color:#fff; align-self:flex-end;
+      border-bottom-right-radius:6px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
     }
-    .watts-msg.bot a { color:${BRAND.color}; text-decoration:underline; }
+    .watts-msg.bot a { 
+      color:${BRAND.color}; text-decoration:none; font-weight:500;
+      border-bottom:1px solid transparent; transition:border-color 0.2s;
+    }
+    .watts-msg.bot a:hover { border-bottom-color:${BRAND.color}; }
 
-    .watts-typing { align-self:flex-start; display:flex; gap:4px; padding:12px 16px; }
+    /* Typing Indicator — Refined */
+    .watts-typing { 
+      align-self:flex-start; display:flex; gap:4px; 
+      padding:14px 18px; background:#fff; border-radius:18px;
+      border-bottom-left-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
     .watts-typing span {
-      width:7px; height:7px; border-radius:50%; background:#3a5a7c;
-      animation:watts-typingDot 1.4s infinite;
+      width:8px; height:8px; border-radius:50%; background:${BRAND.color};
+      animation:watts-typingDot 1.2s infinite;
     }
-    .watts-typing span:nth-child(2) { animation-delay:0.2s; }
-    .watts-typing span:nth-child(3) { animation-delay:0.4s; }
+    .watts-typing span:nth-child(2) { animation-delay:0.15s; }
+    .watts-typing span:nth-child(3) { animation-delay:0.3s; }
     @keyframes watts-typingDot {
-      0%,60%,100% { opacity:0.3; transform:translateY(0); }
-      30% { opacity:1; transform:translateY(-4px); }
+      0%,60%,100% { transform:translateY(0); opacity:0.4; }
+      30% { transform:translateY(-8px); opacity:1; }
     }
 
+    /* Quick Actions — Professional Pills */
     .watts-quick-actions {
-      display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 8px;
+      display:flex; flex-wrap:wrap; gap:8px; padding:0 20px 12px;
+      background:#f8f9fa;
     }
     .watts-quick-btn {
-      background:#16213e; border:1px solid #1a3a5c; color:#aaa;
-      padding:6px 12px; border-radius:20px; font-size:12px;
-      cursor:pointer; transition:all 0.2s;
+      background:#fff; border:1px solid #e0e0e0; color:#666;
+      padding:8px 16px; border-radius:20px; font-size:13px;
+      cursor:pointer; transition:all 0.2s; font-weight:500;
+      box-shadow:0 2px 4px rgba(0,0,0,0.04);
     }
-    .watts-quick-btn:hover { background:#1a3a5c; color:#fff; border-color:${BRAND.color}; }
+    .watts-quick-btn:hover { 
+      background:${BRAND.colorLight}; border-color:${BRAND.color}; 
+      color:${BRAND.colorDark}; transform:translateY(-1px);
+      box-shadow:0 4px 8px rgba(0,0,0,0.1);
+    }
 
+    /* Input Area — Clean Design */
     #watts-chat-input-area {
-      padding:12px 16px; border-top:1px solid #1a3a5c;
-      display:flex; gap:8px; align-items:center; background:#0d1829;
+      padding:16px 20px; border-top:1px solid #e0e0e0;
+      display:flex; gap:12px; align-items:center; background:#fff;
     }
     #watts-chat-input {
-      flex:1; background:#16213e; border:1px solid #1a3a5c;
-      border-radius:24px; padding:10px 16px; color:#eee;
-      font-size:13.5px; outline:none; resize:none;
-      max-height:80px; line-height:1.4;
+      flex:1; background:#f8f9fa; border:1px solid #e0e0e0;
+      border-radius:24px; padding:12px 18px; color:#333;
+      font-size:14px; outline:none; resize:none;
+      max-height:80px; line-height:1.4; transition:all 0.2s;
     }
-    #watts-chat-input::placeholder { color:#4a5a6c; }
-    #watts-chat-input:focus { border-color:${BRAND.color}; }
+    #watts-chat-input::placeholder { color:#999; }
+    #watts-chat-input:focus { 
+      background:#fff; border-color:${BRAND.color}; 
+      box-shadow:0 0 0 3px ${BRAND.colorLight};
+    }
     #watts-chat-send {
-      width:38px; height:38px; border-radius:50%;
-      background:${BRAND.color}; border:none; cursor:pointer;
+      width:44px; height:44px; border-radius:50%;
+      background:${BRAND.gradient}; border:none; cursor:pointer;
       display:flex; align-items:center; justify-content:center;
-      transition:background 0.2s; flex-shrink:0;
+      transition:all 0.2s; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.15);
     }
-    #watts-chat-send:hover { background:${BRAND.colorDark}; }
-    #watts-chat-send:disabled { opacity:0.4; cursor:not-allowed; }
-    #watts-chat-send svg { width:18px; height:18px; fill:#fff; }
+    #watts-chat-send:hover { 
+      transform:scale(1.05); box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
+    #watts-chat-send:active { transform:scale(0.95); }
+    #watts-chat-send:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    #watts-chat-send svg { width:20px; height:20px; fill:#fff; }
 
+    /* CTA Banner — Elegant */
     .watts-cta-banner {
-      background:linear-gradient(90deg,${BRAND.color},${BRAND.colorDark});
-      padding:8px 16px; text-align:center;
-      font-size:12px; color:#fff; font-weight:600;
-      cursor:pointer;
+      background:${BRAND.gradient}; padding:12px 20px; text-align:center;
+      font-size:13px; color:#fff; font-weight:600;
+      cursor:pointer; transition:all 0.2s;
+      position:relative; overflow:hidden;
     }
-    .watts-cta-banner:hover { filter:brightness(1.1); }
+    .watts-cta-banner::before {
+      content:''; position:absolute; top:0; left:-100%;
+      width:100%; height:100%; background:rgba(255,255,255,0.2);
+      transition:left 0.3s;
+    }
+    .watts-cta-banner:hover::before { left:100%; }
+    .watts-cta-banner:hover { filter:brightness(1.05); }
 
+    /* Mobile Optimizations */
     @media(max-width:480px) {
       #watts-chat-window { bottom:0; right:0; width:100%; height:100vh; max-height:100vh; border-radius:0; }
-      #watts-chat-bubble { bottom:16px; right:16px; width:56px; height:56px; }
-      #watts-chat-bubble svg { width:26px; height:26px; }
+      #watts-chat-bubble { bottom:20px; right:20px; width:60px; height:60px; }
+      #watts-chat-bubble svg { width:28px; height:28px; }
+      #watts-chat-messages { padding:16px; }
+      #watts-chat-header { padding:16px; }
+      #watts-chat-input-area { padding:12px 16px; }
     }
   `;
   document.head.appendChild(style);
@@ -244,16 +330,16 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
       </div>
       <div id="watts-chat-messages"></div>
       <div class="watts-quick-actions" id="watts-quick-actions">
-        <button class="watts-quick-btn" data-msg="I need a free estimate">Free Estimate</button>
-        <button class="watts-quick-btn" data-msg="What services do you offer?">Services</button>
-        <button class="watts-quick-btn" data-msg="What areas do you serve?">Service Area</button>
-        <button class="watts-quick-btn" data-msg="I'd like to schedule a consultation">Schedule</button>
+        <button class="watts-quick-btn" data-msg="I need a free estimate">💬 Get Free Estimate</button>
+        <button class="watts-quick-btn" data-msg="What services do you offer?">🔧 Our Services</button>
+        <button class="watts-quick-btn" data-msg="What areas do you serve?">📍 Service Area</button>
+        <button class="watts-quick-btn" data-msg="I'd like to schedule a consultation">📅 Schedule Visit</button>
       </div>
       <div class="watts-cta-banner" onclick="window.location.href='tel:+14054106402'">
         Call Now: (405) 410-6402 &mdash; Free Estimates
       </div>
       <div id="watts-chat-input-area">
-        <input id="watts-chat-input" type="text" placeholder="Type your message..." autocomplete="off" />
+        <input id="watts-chat-input" type="text" placeholder="Ask me anything about our services..." autocomplete="off" />
         <button id="watts-chat-send" aria-label="Send message">
           <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
@@ -326,8 +412,8 @@ OPENING: Greet warmly and ask how you can help. Mention the free estimate offer.
     await sleep(800);
     hideTyping();
     const greeting = isSafetyInstalls
-      ? `Hey there! Welcome to Watts Safety Installs. I'm here to help with any questions about our home services — remodeling, painting, handyman work, snow removal, you name it. Looking for a **free estimate**? I can help with that!`
-      : `Hi! Welcome to Watts ATP Contractor. I'm here to help with ADA accessibility questions — wheelchair ramps, grab bars, bathroom modifications, and more. We offer **free estimates** for all projects. How can I help you today?`;
+      ? `Hello! 👋 Welcome to Watts Safety Installs. I'm your personal assistant here to help with any questions about our home services. Whether you're considering a remodel, need repairs, or want to prepare your home for the seasons — I'm here to help! Would you like a **free estimate** on any project?`
+      : `Hi there! 👋 Welcome to Watts ATP Contractor. I'm here to help make your home safer and more accessible. From wheelchair ramps and grab bars to complete bathroom modifications, we're here to serve your family. Can I help you with a **free estimate** or answer any questions?`;
 
     addMessage(greeting, 'bot');
     chatHistory.push({ role: 'model', parts: [{ text: greeting }] });

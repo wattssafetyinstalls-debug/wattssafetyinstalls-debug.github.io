@@ -21,12 +21,14 @@ Disallow: /test-*
 Disallow: /html-test.html
 Disallow: /index-backup.html
 Disallow: /idex.html
-Disallow: /*.txt
 Disallow: /notepad.txt
 Disallow: /python.txt
 Disallow: /about.txt
 Disallow: /homepage-css.txt
 Disallow: /service-structure.txt
+
+# Allow IndexNow key file
+Allow: /a1b2c3d4e5f6g7h8.txt
 
 # Allow all important content
 Allow: /about.html
@@ -40,11 +42,16 @@ Allow: /sitemap.xml
 Allow: /robots.txt
 Allow: /safety-installs/
 
-# Sitemap location
-Sitemap: https://wattsatpcontractor.com/sitemap.xml
+# Allow RSS feeds
+Allow: /feed.xml
+Allow: /safety-installs/feed.xml
 
-# Crawl delay (be nice to servers)
-Crawl-delay: 1
+# Allow Web Stories
+Allow: /stories/
+Allow: /safety-installs/stories/
+
+# Sitemap locations
+Sitemap: https://wattsatpcontractor.com/sitemap.xml
 
 # Allow favicon files for Google
 Allow: /favicon.ico

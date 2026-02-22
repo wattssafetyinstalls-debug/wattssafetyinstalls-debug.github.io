@@ -8,8 +8,8 @@
  */
 (function() {
   // ── CONFIGURATION ──
-  // Replace with your OneSignal App ID after signup
-  var APP_ID = window.ONESIGNAL_APP_ID || '';
+  // OneSignal App ID — configured 2026-02-22
+  var APP_ID = window.ONESIGNAL_APP_ID || 'HF0DTHmToceAs9DPGm14v2yOPDrnpaxW5gqq6uH5YNF685b9Pzvwhtnh';
   
   if (!APP_ID) return; // Skip if no App ID configured yet
 

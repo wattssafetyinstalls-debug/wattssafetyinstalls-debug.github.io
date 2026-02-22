@@ -2,8 +2,10 @@ name: Auto-Post to Google Business Profile
 
 on:
   schedule:
-    # Every Wednesday at 10 AM Central (16:00 UTC)
+    # Monday, Wednesday, Friday at 10 AM Central (16:00 UTC)
+    - cron: '0 16 * * 1'
     - cron: '0 16 * * 3'
+    - cron: '0 16 * * 5'
   workflow_dispatch: # Allow manual trigger
 
 permissions:
@@ -26,10 +28,25 @@ jobs:
           GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
           GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
           GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: node tools/gbp-auto-poster.js
 
-      - name: Log result
+      - name: Commit post log
         run: |
-          if [ -f gbp-result.txt ]; then
-            cat gbp-result.txt
+          git config user.name "Watts AI Content Bot"
+          git config user.email "bot@wattsatpcontractor.com"
+          if [ -f tools/gbp-post-log.txt ]; then
+            git add tools/gbp-post-log.txt
+            if ! git diff --staged --quiet; then
+              git commit -m "GBP auto-post log update [skip ci]"
+              git push
+            fi
+          fi
+
+      - name: Show result
+        if: always()
+        run: |
+          if [ -f tools/gbp-post-log.txt ]; then
+            head -20 tools/gbp-post-log.txt
           fi

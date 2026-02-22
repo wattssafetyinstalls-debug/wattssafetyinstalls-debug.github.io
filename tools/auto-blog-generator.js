@@ -20,51 +20,71 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-// ── TOPIC POOLS ──
+// ── TOPIC POOLS (30+ per brand for months of unique content) ──
 const ATP_TOPICS = [
-  'Benefits of wheelchair ramps for aging in place in Nebraska',
-  'How grab bars prevent falls: a guide for Nebraska seniors',
-  'ADA bathroom modifications: what every Nebraska homeowner should know',
-  'Non-slip flooring options for safer homes in Northeast Nebraska',
-  'Planning home accessibility modifications before winter in Nebraska',
-  'How to choose the right wheelchair ramp material for Nebraska weather',
-  'Bathroom safety checklist for seniors living in Norfolk NE',
-  'Understanding ADA compliance for residential homes in Nebraska',
-  'Top 5 home modifications for aging in place safely',
-  'Why professional grab bar installation matters: avoiding DIY mistakes',
-  'Stair safety solutions for multi-level Nebraska homes',
-  'How accessibility modifications increase home value in Nebraska',
-  'Medicare and Medicaid coverage for home accessibility in Nebraska',
-  'Preparing your Norfolk NE home for a family member with mobility needs',
-  'Seasonal home safety tips for seniors in Northeast Nebraska',
-  'The complete guide to walk-in shower conversions in Nebraska',
-  'How to make your Nebraska home wheelchair accessible on a budget',
-  'Fall prevention strategies for Nebraska seniors: room by room guide',
-  'Choosing between wood and aluminum wheelchair ramps in Nebraska',
-  'Home accessibility assessment: what to expect from Watts ATP Contractor',
+  { title: 'Benefits of wheelchair ramps for aging in place in Nebraska', links: ['/wheelchair-ramp-installation', '/accessibility-safety-solutions'] },
+  { title: 'How grab bars prevent falls: a guide for Nebraska seniors', links: ['/grab-bar-installation', '/bathroom-accessibility'] },
+  { title: 'ADA bathroom modifications: what every Nebraska homeowner should know', links: ['/bathroom-accessibility', '/grab-bar-installation'] },
+  { title: 'Non-slip flooring options for safer homes in Northeast Nebraska', links: ['/non-slip-flooring-solutions', '/accessibility-safety-solutions'] },
+  { title: 'Planning home accessibility modifications before winter in Nebraska', links: ['/services', '/contact'] },
+  { title: 'How to choose the right wheelchair ramp material for Nebraska weather', links: ['/wheelchair-ramp-installation', '/services'] },
+  { title: 'Bathroom safety checklist for seniors living in Norfolk NE', links: ['/bathroom-accessibility', '/grab-bar-installation'] },
+  { title: 'Understanding ADA compliance for residential homes in Nebraska', links: ['/accessibility-safety-solutions', '/services'] },
+  { title: 'Top 5 home modifications for aging in place safely', links: ['/services', '/grab-bar-installation'] },
+  { title: 'Why professional grab bar installation matters: avoiding DIY mistakes', links: ['/grab-bar-installation', '/contact'] },
+  { title: 'Stair safety solutions for multi-level Nebraska homes', links: ['/accessibility-safety-solutions', '/services'] },
+  { title: 'How accessibility modifications increase home value in Nebraska', links: ['/services', '/wheelchair-ramp-installation'] },
+  { title: 'Medicare and Medicaid coverage for home accessibility in Nebraska', links: ['/accessibility-safety-solutions', '/contact'] },
+  { title: 'Preparing your Norfolk NE home for a family member with mobility needs', links: ['/services', '/bathroom-accessibility'] },
+  { title: 'Seasonal home safety tips for seniors in Northeast Nebraska', links: ['/accessibility-safety-solutions', '/grab-bar-installation'] },
+  { title: 'The complete guide to walk-in shower conversions in Nebraska', links: ['/bathroom-accessibility', '/services'] },
+  { title: 'How to make your Nebraska home wheelchair accessible on a budget', links: ['/wheelchair-ramp-installation', '/contact'] },
+  { title: 'Fall prevention strategies for Nebraska seniors: room by room guide', links: ['/non-slip-flooring-solutions', '/grab-bar-installation'] },
+  { title: 'Choosing between wood and aluminum wheelchair ramps in Nebraska', links: ['/wheelchair-ramp-installation', '/services'] },
+  { title: 'Home accessibility assessment: what to expect from Watts ATP Contractor', links: ['/contact', '/services'] },
+  { title: 'How to prepare your bathroom for a senior family member in Nebraska', links: ['/bathroom-accessibility', '/grab-bar-installation'] },
+  { title: 'Threshold ramps: the small upgrade that makes a big difference', links: ['/wheelchair-ramp-installation', '/accessibility-safety-solutions'] },
+  { title: 'What Nebraska families need to know about aging-in-place renovations', links: ['/services', '/contact'] },
+  { title: 'Portable vs permanent wheelchair ramps: which is right for your Nebraska home', links: ['/wheelchair-ramp-installation', '/services'] },
+  { title: 'How to talk to aging parents about home safety modifications', links: ['/accessibility-safety-solutions', '/contact'] },
+  { title: 'The real cost of falls for Nebraska seniors and how to prevent them', links: ['/non-slip-flooring-solutions', '/grab-bar-installation'] },
+  { title: 'VA benefits for home accessibility: a guide for Nebraska veterans', links: ['/accessibility-safety-solutions', '/contact'] },
+  { title: 'Bathroom grab bar placement guide: where they matter most', links: ['/grab-bar-installation', '/bathroom-accessibility'] },
+  { title: 'How Nebraska weather affects wheelchair ramp maintenance', links: ['/wheelchair-ramp-installation', '/services'] },
+  { title: 'Creating a safe entryway for wheelchair users in Norfolk NE homes', links: ['/wheelchair-ramp-installation', '/accessibility-safety-solutions'] },
 ];
 
 const SI_TOPICS = [
-  'Kitchen remodeling trends for Nebraska homes in 2025',
-  'How to choose the right paint colors for your Norfolk NE home',
-  'Gutter maintenance guide for Northeast Nebraska homeowners',
-  'Top handyman projects that increase home value in Nebraska',
-  'TV mounting tips: choosing the right wall and height',
-  'Preparing your Norfolk NE home for winter: a complete checklist',
-  'Bathroom remodeling ideas for small Nebraska homes',
-  'When to replace vs repair your gutters in Northeast Nebraska',
-  'Smart home upgrades every Norfolk NE homeowner should consider',
-  'Spring home maintenance checklist for Nebraska homeowners',
-  'How to budget for a kitchen remodel in Norfolk Nebraska',
-  'Interior painting preparation: the steps most homeowners skip',
-  'Gutter guard systems: are they worth it in Nebraska weather',
-  'Handyman vs contractor: when to call which for your Nebraska home',
-  'Outdoor TV mounting: weatherproofing tips for Nebraska',
-  'Energy efficient home improvements for Nebraska winters',
-  'Deck staining and maintenance for Northeast Nebraska homes',
-  'Cabinet refinishing vs replacement: a cost comparison for Nebraska',
-  'How to prevent ice dams on your Norfolk NE home',
-  'Summer home improvement projects for Northeast Nebraska',
+  { title: 'Kitchen remodeling trends Nebraska homeowners love in 2026', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'How to choose the right paint colors for your Norfolk NE home', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Gutter maintenance guide for Northeast Nebraska homeowners', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Top handyman projects that increase home value in Nebraska', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'TV mounting tips: choosing the right wall and height', links: ['/safety-installs/services/electronics', '/safety-installs/services'] },
+  { title: 'Preparing your Norfolk NE home for winter: a complete checklist', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Bathroom remodeling ideas for small Nebraska homes', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'When to replace vs repair your gutters in Northeast Nebraska', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Smart home upgrades every Norfolk NE homeowner should consider', links: ['/safety-installs/services/electronics', '/safety-installs/services'] },
+  { title: 'Spring home maintenance checklist for Nebraska homeowners', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'How to budget for a kitchen remodel in Norfolk Nebraska', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Interior painting preparation: the steps most homeowners skip', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Gutter guard systems: are they worth it in Nebraska weather', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Handyman vs contractor: when to call which for your Nebraska home', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Outdoor TV mounting: weatherproofing tips for Nebraska', links: ['/safety-installs/services/electronics', '/safety-installs/services'] },
+  { title: 'Energy efficient home improvements for Nebraska winters', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Deck staining and maintenance for Northeast Nebraska homes', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Cabinet refinishing vs replacement: a cost comparison for Nebraska', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'How to prevent ice dams on your Norfolk NE home', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Summer home improvement projects for Northeast Nebraska', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Lawn care tips for Northeast Nebraska: seasonal guide', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Snow removal best practices for Norfolk NE driveways', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'How to choose the right TV mount for your living room', links: ['/safety-installs/services/electronics', '/safety-installs/services'] },
+  { title: 'Property maintenance schedule every Nebraska landlord needs', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Bathroom vanity upgrades that transform your Norfolk NE home', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Why regular gutter cleaning saves thousands in Nebraska', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Home theater setup guide for Nebraska families', links: ['/safety-installs/services/electronics', '/safety-installs/services'] },
+  { title: 'Exterior painting: best time of year for Norfolk NE homes', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Small bathroom remodel ideas that maximize space', links: ['/safety-installs/services', '/safety-installs/contact'] },
+  { title: 'Emergency home repairs: what Norfolk NE homeowners should know', links: ['/safety-installs/services', '/safety-installs/contact'] },
 ];
 
 // ── PICK TOPIC ──
@@ -110,19 +130,38 @@ function callGemini(prompt) {
 }
 
 // ── GENERATE BLOG POST ──
-async function generatePost(brand, topic, outDir, brandConfig) {
-  var prompt = 'Write a 600-800 word SEO blog post for ' + brandConfig.name + ' in Norfolk, Nebraska.\n\n' +
+async function generatePost(brand, topicObj, outDir, brandConfig) {
+  var topic = topicObj.title;
+  var internalLinks = topicObj.links || [];
+  var month = ['January','February','March','April','May','June','July','August','September','October','November','December'][new Date().getMonth()];
+
+  var linkInstructions = '';
+  if (internalLinks.length > 0) {
+    linkInstructions = '- IMPORTANT: Include these internal links naturally within the article text (as markdown links):\n';
+    for (var i = 0; i < internalLinks.length; i++) {
+      linkInstructions += '  - [relevant anchor text](https://wattsatpcontractor.com' + internalLinks[i] + ')\n';
+    }
+  }
+
+  var prompt = 'You are Justin Watts, owner of ' + brandConfig.name + ' in Norfolk, Nebraska (License #54690-25). ' +
+    'You are writing a blog post for your company website. Write as yourself — knowledgeable, warm, hands-on, authoritative.\n\n' +
     'TOPIC: ' + topic + '\n\n' +
+    'CONTEXT: It is ' + month + '. You serve a 100-mile radius across Northeast Nebraska and Northwest Iowa. ' +
+    'Phone: (405) 410-6402. You have 5-star reviews and years of experience.\n\n' +
     'REQUIREMENTS:\n' +
-    '- Write for homeowners in Northeast Nebraska\n' +
-    '- Include the city "Norfolk, NE" and "Northeast Nebraska" naturally 2-3 times\n' +
-    '- Mention ' + brandConfig.name + ' by name once or twice\n' +
-    '- Include a call-to-action to call (405) 410-6402 for a free estimate\n' +
-    '- Use H2 subheadings (## format) to break up sections\n' +
-    '- Be helpful, informative, and warm — not salesy\n' +
-    '- Include practical tips homeowners can use\n' +
-    '- Mention Nebraska License #54690-25 once\n' +
-    '- End with a strong CTA paragraph\n\n' +
+    '- 700-900 words. Substantial, helpful content — not filler.\n' +
+    '- Write in first person as Justin. Sound like a real contractor sharing expertise, not a marketing agency.\n' +
+    '- Open with a compelling hook — a story, question, or surprising statistic.\n' +
+    '- Use ## H2 subheadings to break up sections (3-4 sections).\n' +
+    '- Include "Norfolk, NE" and "Northeast Nebraska" naturally 2-3 times.\n' +
+    '- Include at least 3 specific, actionable tips the reader can use.\n' +
+    '- Reference real Nebraska conditions (weather, housing styles, local context).\n' +
+    '- Mention ' + brandConfig.name + ' by name 1-2 times naturally.\n' +
+    '- Reference license #54690-25 once.\n' +
+    linkInstructions +
+    '- End with a strong CTA paragraph: call (405) 410-6402 for a free estimate.\n' +
+    '- If seasonal, reference current ' + month + ' conditions.\n' +
+    '- NO fluff, NO generic advice. Every paragraph should teach something specific.\n\n' +
     'OUTPUT FORMAT: Return ONLY the blog content in markdown format. Start with a # title.';
 
   console.log('Generating: ' + topic);
@@ -137,6 +176,7 @@ async function generatePost(brand, topic, outDir, brandConfig) {
 
   // Convert markdown to HTML
   var htmlContent = content
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
     .replace(/^# (.+)/gm, '<h1>$1</h1>')
     .replace(/^## (.+)/gm, '<h2>$1</h2>')
     .replace(/^### (.+)/gm, '<h3>$1</h3>')
@@ -215,8 +255,10 @@ async function main() {
   console.log('🤖 Watts Auto Blog Generator');
   console.log('============================\n');
 
-  var atpTopic = pickTopic(ATP_TOPICS);
-  var siTopic = pickTopic(SI_TOPICS);
+  var atpTopicObj = pickTopic(ATP_TOPICS);
+  var siTopicObj = pickTopic(SI_TOPICS);
+  console.log('ATP topic: ' + atpTopicObj.title);
+  console.log('SI topic: ' + siTopicObj.title);
 
   var atpConfig = {
     name: 'Watts ATP Contractor',
@@ -245,8 +287,8 @@ async function main() {
   };
 
   try {
-    var atp = await generatePost('atp', atpTopic, '.', atpConfig);
-    var si = await generatePost('si', siTopic, 'safety-installs', siConfig);
+    var atp = await generatePost('atp', atpTopicObj, '.', atpConfig);
+    var si = await generatePost('si', siTopicObj, 'safety-installs', siConfig);
 
     // Update sitemap
     var smPath = path.join(ROOT, 'sitemap.xml');

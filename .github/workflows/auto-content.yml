@@ -47,12 +47,25 @@ jobs:
             git push
           fi
 
-      - name: Ping search engines (IndexNow + Sitemap)
+      - name: Collect new URLs
+        id: urls
         run: |
-          # Collect new URLs from git diff
           NEW_URLS=$(git log -1 --name-only --pretty=format: | grep -E '\.(html|xml)$' | grep -v '_' | sed 's|^|https://wattsatpcontractor.com/|' | head -20)
-          if [ -n "$NEW_URLS" ]; then
-            node tools/ping-indexnow.js $NEW_URLS
+          echo "urls=$NEW_URLS" >> $GITHUB_OUTPUT
+
+      - name: Ping IndexNow + Sitemap (Bing, Yandex, Google)
+        run: |
+          if [ -n "${{ steps.urls.outputs.urls }}" ]; then
+            node tools/ping-indexnow.js ${{ steps.urls.outputs.urls }}
           else
             node tools/ping-indexnow.js
+          fi
+
+      - name: Google Indexing API (force Google crawl)
+        if: ${{ env.GOOGLE_INDEXING_KEY != '' }}
+        env:
+          GOOGLE_INDEXING_KEY: ${{ secrets.GOOGLE_INDEXING_KEY }}
+        run: |
+          if [ -n "${{ steps.urls.outputs.urls }}" ]; then
+            node tools/google-indexing-api.js ${{ steps.urls.outputs.urls }}
           fi

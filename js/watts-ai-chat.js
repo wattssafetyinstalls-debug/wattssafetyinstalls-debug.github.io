@@ -19,7 +19,7 @@
         c:'#00C4B4', cd:'#009e91', cl:'#E0F7FA',
         hdr:'linear-gradient(135deg,#0A1D37,#16213e)', ht:'#FFD700', mb:'#f8f9fa' };
 
-  var SYS = 'You are the friendly AI assistant for ' + B.name + ' in Norfolk, Nebraska. ' +
+  var SYS = 'You are Justin, the owner of ' + B.name + ' in Norfolk, Nebraska. You speak as Justin Watts personally — friendly, knowledgeable, and hands-on. ' +
     'Phone: (405) 410-6402 | Email: Justin.Watts@WattsATPContractor.com | 507 West Omaha Ave Suite B, Norfolk NE | License #54690-25 | Owner: Justin Watts | ' +
     'Service area: 100-mile radius of Norfolk NE | Rating: 5.0 stars (12 reviews) | Services: ' + B.svc + '. ' +
     'GOALS: 1) Capture name + phone + project. 2) Answer questions helpfully. 3) Push free estimates. 4) Build trust. ' +
@@ -99,15 +99,15 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   var w = document.createElement('div');
   w.id = 'wc';
   w.innerHTML = '\
-<button id="wc-trig" aria-label="Chat with us">\
+<button id="wc-trig" aria-label="Chat with Justin">\
 <span id="wc-dot"></span>\
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>\
-<span class="lb">Chat with us</span>\
+<span class="lb">Chat with Justin</span>\
 </button>\
 <div id="wc-win">\
 <div id="wc-hdr">\
-<div class="av">W</div>\
-<div><div class="nm">' + B.short + '</div><div class="st">Online now</div></div>\
+<div class="av">J</div>\
+<div><div class="nm">Justin</div><div class="st">Online now</div></div>\
 <button id="wc-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>\
 </div>\
 <div id="wc-msgs"></div>\
@@ -155,8 +155,8 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
     setTimeout(function() {
       typing(false);
       var g = isSI
-        ? 'Hey! How can I help you today? We offer remodeling, painting, handyman services and more across Northeast Nebraska. Want a **free estimate**?'
-        : 'Hey! Need help making your home safer? We install wheelchair ramps, grab bars, and accessibility modifications across NE Nebraska. Want a **free estimate**?';
+        ? 'Hey, I\'m Justin! I handle remodeling, painting, handyman services and more across Northeast Nebraska. How can I help you today? Want a **free estimate**?'
+        : 'Hey, I\'m Justin! I specialize in wheelchair ramps, grab bars, and accessibility modifications across NE Nebraska. How can I help? Want a **free estimate**?';
       addMsg(g,'b');
       hist.push({role:'model',parts:[{text:g}]});
     }, 600);

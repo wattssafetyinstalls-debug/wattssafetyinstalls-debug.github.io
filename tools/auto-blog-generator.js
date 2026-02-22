@@ -253,6 +253,8 @@ async function generatePost(brand, topicObj, outDir, brandConfig) {
     '</article>\n' +
     '<footer><p>&copy; ' + new Date().getFullYear() + ' ' + brandConfig.name + ' — Nebraska Licensed #54690-25</p>' +
     '<p style="margin-top:6px"><a href="' + brandConfig.homeUrl + '">Home</a> · <a href="' + brandConfig.homeUrl + (brandConfig.homeUrl === '/' ? '' : '/') + 'services">Services</a> · <a href="' + brandConfig.homeUrl + (brandConfig.homeUrl === '/' ? '' : '/') + 'contact">Contact</a></p></footer>\n' +
+    '<script src="/js/watts-lead-engine.js" defer></script>\n' +
+    '<script src="/js/watts-push.js" defer></script>\n' +
     '<script src="/js/watts-ai-chat.js" defer></script>\n' +
     '</body>\n</html>';
 

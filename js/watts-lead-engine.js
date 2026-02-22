@@ -436,6 +436,66 @@
     }
   }
 
+  // ══════════════════════════════════════
+  // 7. SERVICE WORKER REGISTRATION
+  // Faster repeat visits + offline fallback
+  // ══════════════════════════════════════
+  function registerSW() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(function() {});
+    }
+  }
+
+  // ══════════════════════════════════════
+  // 8. SOCIAL PROOF BANNER
+  // Shows recent activity to build urgency
+  // ══════════════════════════════════════
+  function createSocialProof() {
+    // Don't show on contact page (they're already converting)
+    if (window.location.pathname.includes('contact')) return;
+    // Only show once per session
+    if (sessionStorage.getItem('watts_proof_shown')) return;
+
+    var messages = [
+      '🏠 Someone in Norfolk just requested a free estimate',
+      '⭐ 5-star rated — 12 reviews on Google',
+      '📞 3 people called this week about grab bars',
+      '🔧 Justin completed a ramp install in Wayne yesterday',
+      '✅ Free in-home safety assessments — no obligation',
+      '📍 Serving 25+ cities across Northeast Nebraska'
+    ];
+
+    var delay = 15000 + Math.random() * 15000; // 15-30 seconds
+
+    setTimeout(function() {
+      var msg = messages[Math.floor(Math.random() * messages.length)];
+      var toast = document.createElement('div');
+      toast.id = 'watts-social-proof';
+      toast.style.cssText = 'position:fixed;bottom:' + (window.innerWidth <= 768 ? '70px' : '24px') + ';left:24px;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 8px 30px rgba(0,0,0,0.15);z-index:9997;max-width:340px;font-family:Inter,sans-serif;font-size:0.95rem;color:#1E293B;transform:translateX(-120%);transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);border-left:4px solid #00C4B4;';
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+
+      // Slide in
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          toast.style.transform = 'translateX(0)';
+        });
+      });
+
+      // Slide out after 6 seconds
+      setTimeout(function() {
+        toast.style.transform = 'translateX(-120%)';
+        setTimeout(function() { toast.remove(); }, 600);
+      }, 6000);
+
+      sessionStorage.setItem('watts_proof_shown', '1');
+
+      if (typeof gtag === 'function') {
+        gtag('event', 'social_proof_shown', { event_category: 'Engagement', event_label: msg });
+      }
+    }, delay);
+  }
+
   function boot() {
     createStickyCTA();
     trackPhoneCalls();
@@ -443,6 +503,8 @@
     createCallbackWidget();
     trackEngagement();
     trackContactForm();
+    registerSW();
+    createSocialProof();
   }
 
   init();

@@ -119,7 +119,7 @@ function postToGBP(accessToken, postData) {
   return new Promise(function(resolve, reject) {
     // First, we need to get the account/location ID
     // For now, we'll use a placeholder - in production, you'd fetch this from the API
-    var locationId = 'YOUR_LOCATION_ID'; // You'll need to replace this
+    var locationId = '09996134269287007529';
     
     var body = JSON.stringify({
       topicType: 'STANDARD',

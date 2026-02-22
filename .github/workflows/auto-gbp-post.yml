@@ -44,6 +44,9 @@ jobs:
             fi
           fi
 
+      - name: Ping search engines (sitemap update)
+        run: node tools/ping-indexnow.js
+
       - name: Show result
         if: always()
         run: |

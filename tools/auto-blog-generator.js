@@ -203,6 +203,14 @@ async function generatePost(brand, topicObj, outDir, brandConfig) {
     '<meta content="' + title + ' | ' + brandConfig.name + '" property="og:title"/>\n' +
     '<meta content="' + metaDesc + '" property="og:description"/>\n' +
     '<meta content="article" property="og:type"/>\n' +
+    '<meta content="' + canonical + '" property="og:url"/>\n' +
+    '<meta content="summary_large_image" name="twitter:card"/>\n' +
+    '<meta content="' + title + '" name="twitter:title"/>\n' +
+    '<meta content="' + metaDesc + '" name="twitter:description"/>\n' +
+    '<meta content="article" property="article:section"/>\n' +
+    '<meta content="' + date + '" property="article:published_time"/>\n' +
+    '<meta content="Justin Watts" property="article:author"/>\n' +
+    '<link href="' + brandConfig.baseUrl + '/feed.xml" rel="alternate" type="application/rss+xml" title="' + brandConfig.name + ' Blog"/>\n' +
     '<meta content="index, follow" name="robots"/>\n' +
     '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet"/>\n' +
     '<style>\n' + brandConfig.css + '\n' +

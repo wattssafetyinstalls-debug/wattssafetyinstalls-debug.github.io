@@ -1,4 +1,4 @@
-name: Auto-Generate Weekly Blog Post
+name: Auto-Generate Weekly Content
 
 on:
   schedule:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  generate-blog:
+  generate-content:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -21,20 +21,38 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Generate blog post
+      - name: Generate blog posts
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node tools/auto-blog-generator.js
+
+      - name: Generate Web Stories
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: node tools/generate-web-stories.js
+
+      - name: Generate RSS feeds
+        run: node tools/generate-rss.js
 
       - name: Commit and push
         run: |
           git config user.name "Watts AI Content Bot"
           git config user.email "bot@wattsatpcontractor.com"
           git add -A
-          # Only commit if there are changes
           if git diff --staged --quiet; then
             echo "No new content generated"
           else
-            git commit -m "Auto-generated weekly blog post [skip ci]"
+            git commit -m "Weekly content: blog posts + web stories + RSS [skip ci]"
             git push
+          fi
+
+      - name: Ping search engines (IndexNow + Sitemap)
+        run: |
+          # Collect new URLs from git diff
+          NEW_URLS=$(git log -1 --name-only --pretty=format: | grep -E '\.(html|xml)$' | grep -v '_' | sed 's|^|https://wattsatpcontractor.com/|' | head -20)
+          if [ -n "$NEW_URLS" ]; then
+            node tools/ping-indexnow.js $NEW_URLS
+          else
+            node tools/ping-indexnow.js
           fi

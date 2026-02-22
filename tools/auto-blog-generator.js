@@ -232,8 +232,13 @@ async function generatePost(brand, topicObj, outDir, brandConfig) {
     'footer a{color:' + brandConfig.footerLink + ';text-decoration:none}\n' +
     '@media(max-width:600px){article h1{font-size:1.5rem}}\n' +
     '</style>\n' +
+    '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
     '<script type="application/ld+json">\n' +
-    '{"@context":"https://schema.org","@type":"BlogPosting","headline":"' + title.replace(/"/g, '\\"') + '","datePublished":"' + date + '","author":{"@type":"Organization","name":"' + brandConfig.name + '"},"publisher":{"@type":"Organization","name":"' + brandConfig.name + '"}}\n' +
+    '{"@context":"https://schema.org","@type":"BlogPosting","headline":"' + title.replace(/"/g, '\\"') + '","datePublished":"' + date + '","author":{"@type":"Person","name":"Justin Watts"},"publisher":{"@type":"Organization","name":"' + brandConfig.name + '","logo":{"@type":"ImageObject","url":"https://wattsatpcontractor.com/favicon-96x96.png"}},"mainEntityOfPage":"' + canonical + '"}\n' +
+    '</script>\n' +
+    '<script type="application/ld+json">\n' +
+    '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"' + brandConfig.baseUrl + '"},{"@type":"ListItem","position":2,"name":"Blog","item":"' + brandConfig.baseUrl + '/blog"},{"@type":"ListItem","position":3,"name":"' + title.replace(/"/g, '\\"') + '","item":"' + canonical + '"}]}\n' +
     '</script>\n' +
     '</head>\n<body>\n' +
     '<header><div class="nav-c"><a class="logo" href="' + brandConfig.homeUrl + '">' + brandConfig.logoText + '</a></div></header>\n' +

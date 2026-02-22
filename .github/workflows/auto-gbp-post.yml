@@ -1,0 +1,35 @@
+name: Auto-Post to Google Business Profile
+
+on:
+  schedule:
+    # Every Wednesday at 10 AM Central (16:00 UTC)
+    - cron: '0 16 * * 3'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  post-to-gbp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate and post GBP update
+        env:
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+        run: node tools/gbp-auto-poster.js
+
+      - name: Log result
+        run: |
+          if [ -f gbp-result.txt ]; then
+            cat gbp-result.txt
+          fi

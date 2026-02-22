@@ -35,6 +35,9 @@ jobs:
       - name: Generate RSS feeds
         run: node tools/generate-rss.js
 
+      - name: Refresh sitemap dates
+        run: node tools/refresh-sitemap.js
+
       - name: Commit and push
         run: |
           git config user.name "Watts AI Content Bot"

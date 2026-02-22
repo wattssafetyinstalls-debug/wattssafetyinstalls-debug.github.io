@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Leave a Review | Watts ATP Contractor | Norfolk NE</title>
+<meta content="Had a great experience with Watts ATP Contractor? Leave us a review on Google! Your feedback helps other Nebraska homeowners find trusted accessibility solutions." name="description"/>
+<link href="https://wattsatpcontractor.com/review" rel="canonical"/>
+<meta content="noindex, follow" name="robots"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root { --teal: #00C4B4; --navy: #0A1D37; --gold: #FFD700; --white: #FFFFFF; --warm-light: #FEF7ED; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--warm-light); color: #1E293B; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+.review-card { background: var(--white); border-radius: 20px; padding: 50px 40px; max-width: 520px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+.review-card h1 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--navy); margin-bottom: 12px; }
+.review-card p { color: #64748B; font-size: 1.05rem; line-height: 1.7; margin-bottom: 30px; }
+.stars { font-size: 3rem; margin-bottom: 20px; letter-spacing: 8px; }
+.review-btn { display: inline-block; background: var(--teal); color: var(--white); padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1.15rem; transition: all 0.3s; margin-bottom: 15px; }
+.review-btn:hover { background: #00b3a4; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,196,180,0.3); }
+.review-btn.yelp { background: #d32323; }
+.review-btn.yelp:hover { background: #b91c1c; box-shadow: 0 8px 25px rgba(211,35,35,0.3); }
+.review-btn.facebook { background: #1877F2; }
+.review-btn.facebook:hover { background: #1565C0; box-shadow: 0 8px 25px rgba(24,119,242,0.3); }
+.btn-group { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.divider { color: #94a3b8; font-size: 0.85rem; margin: 20px 0; }
+.thank-you { font-size: 0.9rem; color: #94a3b8; margin-top: 20px; }
+.logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--teal); margin-bottom: 30px; text-decoration: none; display: block; }
+@media (max-width: 480px) {
+  .review-card { padding: 35px 25px; }
+  .review-card h1 { font-size: 1.6rem; }
+  .review-btn { padding: 16px 30px; font-size: 1rem; width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="review-card">
+  <a class="logo" href="/">WATTS</a>
+  <div class="stars">⭐⭐⭐⭐⭐</div>
+  <h1>How Did We Do?</h1>
+  <p>Thank you for choosing Watts ATP Contractor! Your review helps other Nebraska homeowners find trusted accessibility solutions.</p>
+  
+  <div class="btn-group">
+    <a class="review-btn" href="https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review" target="_blank" rel="noopener" id="google-review-btn">
+      ⭐ Leave a Google Review
+    </a>
+    <a class="review-btn yelp" href="https://www.yelp.com/writeareview/biz/watts-safety-installs-norfolk" target="_blank" rel="noopener" id="yelp-review-btn">
+      Leave a Yelp Review
+    </a>
+  </div>
+  
+  <p class="divider">— or —</p>
+  
+  <div style="text-align:left;background:#f8fafc;border-radius:12px;padding:25px;margin-bottom:20px;">
+    <p style="font-weight:600;color:#0A1D37;margin-bottom:12px;">Had an issue? Let us make it right first:</p>
+    <p style="margin-bottom:8px;">📞 <a href="tel:+14054106402" style="color:#00C4B4;font-weight:600;text-decoration:none;">(405) 410-6402</a></p>
+    <p>📧 <a href="mailto:Justin.Watts@WattsATPContractor.com" style="color:#00C4B4;font-weight:600;text-decoration:none;">Justin.Watts@WattsATPContractor.com</a></p>
+  </div>
+  
+  <p class="thank-you">— Justin Watts, Owner</p>
+</div>
+
+<script>
+// Track review clicks
+document.getElementById('google-review-btn').addEventListener('click', function() {
+  if (typeof gtag === 'function') gtag('event', 'review_click', { event_category: 'Review', event_label: 'google' });
+  if (window.dataLayer) window.dataLayer.push({ event: 'review_click', platform: 'google' });
+});
+document.getElementById('yelp-review-btn').addEventListener('click', function() {
+  if (typeof gtag === 'function') gtag('event', 'review_click', { event_category: 'Review', event_label: 'yelp' });
+  if (window.dataLayer) window.dataLayer.push({ event: 'review_click', platform: 'yelp' });
+});
+</script>
+</body>
+</html>

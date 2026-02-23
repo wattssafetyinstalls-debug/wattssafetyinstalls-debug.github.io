@@ -331,6 +331,13 @@
 </form>
 </div>
 </div>
+<!-- Book Online Section -->
+<div style="background: var(--white); padding: 50px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 40px; text-align: center;">
+<h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--navy); margin-bottom: 10px;">Book Your Free Estimate Online</h2>
+<p style="color: var(--gray); margin-bottom: 24px; font-size: 1.1rem;">Pick a time that works for you — no phone tag, no waiting. Justin will confirm within the hour.</p>
+<div id="cal-embed" style="width:100%;min-height:500px;overflow:hidden;border-radius:12px;border:1px solid #e2e8f0;"></div>
+</div>
+
 <div class="service-areas">
 <h2>Service Areas</h2>
 <p>We proudly serve Norfolk and surrounding communities throughout Nebraska</p>
@@ -392,6 +399,8 @@
     document.addEventListener('click', function(event) { if (!event.target.closest('.nav-container')) { navLinks.classList.remove('active'); } });
     document.getElementById('current-year').textContent = new Date().getFullYear();
 </script>
+<!-- Cal.com Embed -->
+<script>(function(C,A,L){let p=A.createElement("script");p.src="https://app.cal.com/embed/embed.js";p.async=true;A.head.appendChild(p);p.onload=function(){C.Cal("init",{origin:"https://app.cal.com"});C.Cal("inline",{elementOrSelector:"#cal-embed",calLink:"justin-watts-pmakc1",config:{layout:"month_view",theme:"light"}});C.Cal("ui",{hideEventTypeDetails:false,layout:"month_view"})}})(window,document)</script>
 <script src="/js/watts-ai-chat.js" defer></script>
 <script src="js/watts-lead-engine.js" defer></script>
 <script src="js/watts-push.js" defer></script>

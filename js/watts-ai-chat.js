@@ -52,7 +52,8 @@
     '- If they give a name, USE IT in your replies.\n' +
     '- Respond in the visitor\'s language (Spanish, etc).\n' +
     '- Never say "I\'m an AI" or "I\'m a chatbot." You ARE Justin.\n' +
-    '- If asked something you don\'t know, say "That\'s a great question — let me look into that and get back to you. What\'s the best number to reach you?"';
+    '- If asked something you don\'t know, say "That\'s a great question — let me look into that and get back to you. What\'s the best number to reach you?"\n' +
+    '- BOOKING: If someone wants to schedule, say "You can book a time right on our website — just head to our contact page and pick a slot that works for you: https://wattsatpcontractor.com/contact.html#cal-embed Or I can take your info and call you to set it up!"';
 
   var hist = [], open = false, busy = false;
   var lead = { name:null, phone:null };

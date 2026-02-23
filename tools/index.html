@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Watts Command Center | Internal Tools</title>
+<meta name="robots" content="noindex, nofollow"/>
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"/>
+<link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png"/>
+<link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png"/>
+<link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" type="image/png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="msapplication-TileColor" content="#0A1D37"/>
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
+<meta name="theme-color" content="#0A1D37"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0a14;color:#e0e0e0;min-height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,#0A1D37 0%,#16213e 50%,#1a2744 100%);border-bottom:1px solid #1a3a5c;padding:32px 24px 28px;text-align:center}
+.header h1{font-size:28px;color:#fff;margin-bottom:6px;letter-spacing:-0.5px}
+.header h1 span{color:#00C4B4}
+.header p{color:#7f8c8d;font-size:14px}
+.header .badge{display:inline-block;background:rgba(0,196,180,0.15);color:#00C4B4;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;margin-top:10px;border:1px solid rgba(0,196,180,0.25)}
+
+/* Grid */
+.container{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#00C4B4;margin-bottom:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#1a3a5c,transparent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:40px}
+
+/* Cards */
+.card{background:#111827;border:1px solid #1e2d4a;border-radius:14px;padding:24px;transition:all 0.25s ease;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.card:hover{border-color:#00C4B4;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,196,180,0.1)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent,#00C4B4),transparent);opacity:0;transition:opacity 0.25s}
+.card:hover::before{opacity:1}
+.card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;flex-shrink:0}
+.card h3{font-size:16px;color:#fff;margin-bottom:6px;font-weight:600}
+.card p{font-size:13px;color:#8899aa;line-height:1.6;flex:1}
+.card .tag{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:3px 8px;border-radius:6px;margin-top:12px}
+
+/* Card color variants */
+.card-ai .card-icon{background:rgba(139,92,246,0.15);color:#a78bfa}
+.card-ai .tag{background:rgba(139,92,246,0.15);color:#a78bfa}
+.card-ai{--accent:#a78bfa}
+
+.card-bid .card-icon{background:rgba(59,130,246,0.15);color:#60a5fa}
+.card-bid .tag{background:rgba(59,130,246,0.15);color:#60a5fa}
+.card-bid{--accent:#60a5fa}
+
+.card-seo .card-icon{background:rgba(16,185,129,0.15);color:#34d399}
+.card-seo .tag{background:rgba(16,185,129,0.15);color:#34d399}
+.card-seo{--accent:#34d399}
+
+.card-auto .card-icon{background:rgba(251,191,36,0.15);color:#fbbf24}
+.card-auto .tag{background:rgba(251,191,36,0.15);color:#fbbf24}
+.card-auto{--accent:#fbbf24}
+
+.card-data .card-icon{background:rgba(244,63,94,0.15);color:#fb7185}
+.card-data .tag{background:rgba(244,63,94,0.15);color:#fb7185}
+.card-data{--accent:#fb7185}
+
+/* Status dots */
+.status{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:10px;color:#6b7280}
+.status .dot{width:7px;height:7px;border-radius:50%}
+.dot-live{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.4)}
+.dot-beta{background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,0.4)}
+.dot-dev{background:#6b7280}
+
+/* Quick links bar */
+.quick-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.quick-link{background:rgba(255,255,255,0.05);border:1px solid #1e2d4a;color:#8899aa;padding:8px 16px;border-radius:8px;font-size:12px;text-decoration:none;font-weight:500;transition:all 0.2s}
+.quick-link:hover{border-color:#00C4B4;color:#00C4B4;background:rgba(0,196,180,0.05)}
+
+/* Footer */
+.footer{text-align:center;padding:20px;color:#3a4a5c;font-size:12px;border-top:1px solid #111827}
+
+@media(max-width:600px){
+  .header h1{font-size:22px}
+  .grid{grid-template-columns:1fr}
+  .container{padding:20px 14px 40px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Watts <span>Command Center</span></h1>
+  <p>Internal tools for Watts ATP Contractor & Watts Safety Installs</p>
+  <div class="badge">Owner Access Only</div>
+  <div class="quick-bar">
+    <a href="/" class="quick-link">ATP Site</a>
+    <a href="/safety-installs/" class="quick-link">Safety Installs Site</a>
+    <a href="https://dash.cloudflare.com" target="_blank" class="quick-link">Cloudflare</a>
+    <a href="https://github.com/wattssafetyinstalls-debug/wattssafetyinstalls-debug.github.io" target="_blank" class="quick-link">GitHub Repo</a>
+    <a href="https://business.google.com" target="_blank" class="quick-link">Google Business</a>
+    <a href="https://analytics.google.com" target="_blank" class="quick-link">GA4 Analytics</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- AI TOOLS -->
+  <div class="section-title">AI Tools</div>
+  <div class="grid">
+    <a href="/tools/ai-dashboard/" class="card card-ai">
+      <div class="card-icon">🧠</div>
+      <h3>AI Command Center</h3>
+      <p>Content generator, GBP post writer, review responder, cost estimator, SEO keyword planner, and landing page builder — all powered by Gemini 2.5 Flash.</p>
+      <div class="status"><span class="dot dot-live"></span> Live — Proxy Connected</div>
+      <span class="tag">AI Powered</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-ai" onclick="alert('The AI chatbot (Justin) is embedded on every page of both sites. Visit any page to test it.')">
+      <div class="card-icon">💬</div>
+      <h3>AI Chatbot — Justin</h3>
+      <p>Live on every page. Page-aware greetings, lead capture, smart conversation flow, price guidance, and appointment booking. Speaks as Justin Watts.</p>
+      <div class="status"><span class="dot dot-live"></span> Live on All Pages</div>
+      <span class="tag">Lead Capture</span>
+    </a>
+  </div>
+
+  <!-- BID GENERATION -->
+  <div class="section-title">Bid & Quote Tools</div>
+  <div class="grid">
+    <a href="/tools/bidgen/" class="card card-bid">
+      <div class="card-icon">📋</div>
+      <h3>Bid Document Generator</h3>
+      <p>Create professional bid documents for both brands. Auto-calculates labor, materials, and markup. Saves to Firebase for quick retrieval.</p>
+      <div class="status"><span class="dot dot-live"></span> Live</div>
+      <span class="tag">Core Tool</span>
+    </a>
+    <a href="/tools/bidgen/dual-brand-bid-system.html" class="card card-bid">
+      <div class="card-icon">🏢</div>
+      <h3>Dual-Brand Bid System</h3>
+      <p>Generate bids under either Watts ATP Contractor or Watts Safety Installs branding with proper license badges, colors, and letterhead.</p>
+      <div class="status"><span class="dot dot-live"></span> Live</div>
+      <span class="tag">Dual Brand</span>
+    </a>
+    <a href="/tools/bidgen/atp-file-scanner.html" class="card card-bid">
+      <div class="card-icon">📄</div>
+      <h3>ATP File Scanner</h3>
+      <p>Scan and parse Nebraska ATP standard quote forms (Bathroom, Entrance, Misc, Stairlift) to auto-fill bid data.</p>
+      <div class="status"><span class="dot dot-beta"></span> Beta</div>
+      <span class="tag">ATP Forms</span>
+    </a>
+    <a href="/tools/bidgen/bulk-atp-import.html" class="card card-bid">
+      <div class="card-icon">📦</div>
+      <h3>Bulk ATP Import</h3>
+      <p>Import multiple ATP quote forms at once for batch processing and bid generation.</p>
+      <div class="status"><span class="dot dot-beta"></span> Beta</div>
+      <span class="tag">Batch</span>
+    </a>
+    <a href="/tools/bidgen/google-integration.html" class="card card-bid">
+      <div class="card-icon">🔗</div>
+      <h3>Google Integration</h3>
+      <p>Connect bids to Google Sheets and Drive for cloud storage, sharing, and team access.</p>
+      <div class="status"><span class="dot dot-beta"></span> Beta</div>
+      <span class="tag">Google API</span>
+    </a>
+    <a href="/tools/bidgen/bid-import-enhancement.html" class="card card-bid">
+      <div class="card-icon">⬆️</div>
+      <h3>Bid Import Enhancement</h3>
+      <p>Enhanced import tool with smart field detection and auto-mapping for faster bid entry.</p>
+      <div class="status"><span class="dot dot-beta"></span> Beta</div>
+      <span class="tag">Import</span>
+    </a>
+  </div>
+
+  <!-- SEO & CONTENT -->
+  <div class="section-title">SEO & Content Automation</div>
+  <div class="grid">
+    <a href="javascript:void(0)" class="card card-seo" onclick="alert('This runs as a GitHub Action every Monday. Check Actions tab in GitHub.')">
+      <div class="card-icon">📝</div>
+      <h3>Auto Blog Generator</h3>
+      <p>AI-generated weekly blog posts optimized for local SEO. Runs automatically via GitHub Actions every Monday at 9 AM Central.</p>
+      <div class="status"><span class="dot dot-live"></span> Auto — Weekly</div>
+      <span class="tag">Automated</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-seo" onclick="alert('This runs as a GitHub Action Mon/Wed/Fri. Check Actions tab in GitHub.')">
+      <div class="card-icon">📍</div>
+      <h3>GBP Auto-Poster</h3>
+      <p>Automatically generates and posts updates to Google Business Profile 3x per week. Seasonal, service-focused content.</p>
+      <div class="status"><span class="dot dot-beta"></span> Needs GBP API Setup</div>
+      <span class="tag">Automated</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-seo" onclick="alert('Run via: node tools/generate-town-pages.js')">
+      <div class="card-icon">🗺️</div>
+      <h3>Town Page Generator</h3>
+      <p>Generate service × town landing pages for local SEO domination. Currently 125+ town pages across 5 service types.</p>
+      <div class="status"><span class="dot dot-live"></span> 125+ Pages Live</div>
+      <span class="tag">Local SEO</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-seo" onclick="alert('Run via: node tools/ping-indexnow.js')">
+      <div class="card-icon">🔔</div>
+      <h3>IndexNow Pinger</h3>
+      <p>Instantly notify Bing, Yandex, and Google when new pages are published. Pages indexed in minutes instead of weeks.</p>
+      <div class="status"><span class="dot dot-live"></span> Live</div>
+      <span class="tag">Indexing</span>
+    </a>
+  </div>
+
+  <!-- AUTOMATION -->
+  <div class="section-title">Automation & Utilities</div>
+  <div class="grid">
+    <a href="/tools/bidgen/cta-buttons.html" class="card card-auto">
+      <div class="card-icon">🎯</div>
+      <h3>CTA Button Generator</h3>
+      <p>Generate branded call-to-action buttons with proper colors, phone links, and tracking for either brand.</p>
+      <div class="status"><span class="dot dot-live"></span> Live</div>
+      <span class="tag">Design</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-auto" onclick="alert('Proxy running at: https://watts-ai-proxy.wattssafetyinstalls.workers.dev')">
+      <div class="card-icon">🔒</div>
+      <h3>Cloudflare AI Proxy</h3>
+      <p>Secure Cloudflare Worker that proxies Gemini API requests. Handles CORS, rate limiting, and keeps your API key encrypted.</p>
+      <div class="status"><span class="dot dot-live"></span> Deployed — workers.dev</div>
+      <span class="tag">Security</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-data" onclick="alert('Web Stories run via GitHub Action with auto-content workflow.')">
+      <div class="card-icon">📱</div>
+      <h3>Web Stories Generator</h3>
+      <p>Auto-generate Google Web Stories with professional images from Pexels. Optimized for mobile discovery and Google Discover.</p>
+      <div class="status"><span class="dot dot-beta"></span> Needs Pexels API Key</div>
+      <span class="tag">Content</span>
+    </a>
+    <a href="javascript:void(0)" class="card card-data" onclick="alert('Lead data is stored in browser localStorage. View in AI Command Center → Leads tab.')">
+      <div class="card-icon">👥</div>
+      <h3>Lead Engine</h3>
+      <p>Captures visitor leads from the AI chatbot — names, phone numbers, emails, conversation history. Export to CSV from the AI Command Center.</p>
+      <div class="status"><span class="dot dot-live"></span> Capturing Leads</div>
+      <span class="tag">Leads</span>
+    </a>
+  </div>
+
+</div>
+
+<div class="footer">
+  Watts Command Center &bull; Internal Use Only &bull; Not indexed by search engines
+</div>
+
+</body>
+</html>

@@ -19,11 +19,40 @@
         c:'#00C4B4', cd:'#009e91', cl:'#E0F7FA',
         hdr:'linear-gradient(135deg,#0A1D37,#16213e)', ht:'#FFD700', mb:'#f8f9fa' };
 
-  var SYS = 'You are Justin, the owner of ' + B.name + ' in Norfolk, Nebraska. You speak as Justin Watts personally — friendly, knowledgeable, and hands-on. ' +
-    'Phone: (405) 410-6402 | Email: Justin.Watts@WattsATPContractor.com | 507 West Omaha Ave Suite B, Norfolk NE | License #54690-25 | Owner: Justin Watts | ' +
-    'Service area: 100-mile radius of Norfolk NE | Rating: 5.0 stars (12 reviews) | Services: ' + B.svc + '. ' +
-    'GOALS: 1) Capture name + phone + project. 2) Answer questions helpfully. 3) Push free estimates. 4) Build trust. ' +
-    'RULES: Keep replies to 2-3 SHORT sentences. Be warm like a friendly receptionist. Never give exact pricing. Always try to collect contact info. Respond in the visitor\'s language.';
+  var SYS = 'You are Justin Watts, the owner of ' + B.name + ' in Norfolk, Nebraska. You\'re a real person — a hands-on contractor who personally shows up to every job. You\'re friendly, confident, and genuinely care about helping people.\n\n' +
+    'BUSINESS INFO:\n' +
+    '- Phone: (405) 410-6402 | Email: Justin.Watts@WattsATPContractor.com\n' +
+    '- Address: 507 West Omaha Ave Suite B, Norfolk NE 68701\n' +
+    '- License: Nebraska #54690-25 | Fully insured\n' +
+    '- Service area: 100-mile radius of Norfolk NE (Norfolk, Columbus, Fremont, Wayne, Madison, West Point, O\'Neill, South Sioux City, and everywhere in between)\n' +
+    '- Rating: 5.0 stars (12 Google reviews)\n' +
+    '- Services: ' + B.svc + '\n\n' +
+    'YOUR PERSONALITY:\n' +
+    '- Talk like a real Nebraska contractor, not a corporate chatbot. Use casual language.\n' +
+    '- Share quick stories or examples: "Just finished a grab bar job in Columbus last week — the homeowner was thrilled."\n' +
+    '- Show expertise by mentioning specifics: ADA slope requirements, material brands, common problems you solve.\n' +
+    '- Use humor occasionally — you\'re approachable and down-to-earth.\n' +
+    '- If someone seems hesitant, reassure them: "No pressure at all — the estimate is 100% free and I can usually get out there within a day or two."\n' +
+    '- Mirror the visitor\'s energy — if they\'re urgent, be responsive. If they\'re browsing, be relaxed.\n\n' +
+    'CONVERSATION STRATEGY:\n' +
+    '1. FIRST MESSAGE: Answer their question helpfully. Build rapport.\n' +
+    '2. SECOND MESSAGE: Naturally ask about their specific situation. "Is this for yourself or a family member?"\n' +
+    '3. THIRD MESSAGE: Suggest a free estimate and ask for their name. "I\'d love to take a look — what\'s your name so I can get you on my schedule?"\n' +
+    '4. AFTER NAME: Ask for phone number. "What\'s the best number to reach you at? I\'ll give you a call to set up a time."\n' +
+    '5. AFTER PHONE: Confirm and close warm. "Perfect, [name]! I\'ll give you a call [today/tomorrow]. Looking forward to helping you out."\n\n' +
+    'SMART RESPONSES:\n' +
+    '- Pricing questions: "Every job is different, but I can tell you [service] typically runs between $X-$Y depending on the specifics. The best way to get an exact number is a free on-site estimate — takes about 15 minutes."\n' +
+    '- Price ranges to reference (NEVER give exact quotes): Grab bars $150-400, Wheelchair ramps $1,500-8,000, Bathroom mods $2,000-15,000, Non-slip flooring $500-3,000\n' +
+    '- Timeline questions: "Most jobs I can start within 1-2 weeks of the estimate. Smaller jobs like grab bars I can sometimes do same-week."\n' +
+    '- Insurance/ATP questions: "Yes, I work directly with ATP (Assistive Technology Partnership) and can handle all the paperwork. I\'m one of the few approved contractors in the area."\n' +
+    '- Competitor comparisons: Never badmouth competitors. Say "I can\'t speak for others, but here\'s what you get with me: licensed, insured, 5-star rated, and I personally do the work — no subcontractors."\n\n' +
+    'RULES:\n' +
+    '- Keep replies to 2-4 sentences. Be concise but warm.\n' +
+    '- ALWAYS try to move toward capturing name + phone + project type.\n' +
+    '- If they give a name, USE IT in your replies.\n' +
+    '- Respond in the visitor\'s language (Spanish, etc).\n' +
+    '- Never say "I\'m an AI" or "I\'m a chatbot." You ARE Justin.\n' +
+    '- If asked something you don\'t know, say "That\'s a great question — let me look into that and get back to you. What\'s the best number to reach you?"';
 
   var hist = [], open = false, busy = false;
   var lead = { name:null, phone:null };
@@ -113,7 +142,8 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
 <div id="wc-msgs"></div>\
 <div id="wc-qr">\
 <button class="qr" data-m="I need a free estimate">Free Estimate</button>\
-<button class="qr" data-m="What services do you offer?">Services</button>\
+<button class="qr" data-m="How much does this cost?">Pricing</button>\
+<button class="qr" data-m="How soon can you start?">Timeline</button>\
 <button class="qr" data-m="What areas do you serve?">Service Area</button>\
 </div>\
 <div id="wc-cta" onclick="window.location.href=\'tel:+14054106402\'">Call (405) 410-6402 — Free Estimate</div>\
@@ -154,9 +184,25 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
     typing(true);
     setTimeout(function() {
       typing(false);
-      var g = isSI
-        ? 'Hey, I\'m Justin! I handle remodeling, painting, handyman services and more across Northeast Nebraska. How can I help you today? Want a **free estimate**?'
-        : 'Hey, I\'m Justin! I specialize in wheelchair ramps, grab bars, and accessibility modifications across NE Nebraska. How can I help? Want a **free estimate**?';
+      var pg = window.location.pathname.toLowerCase();
+      var g;
+      if (pg.indexOf('grab-bar') !== -1) {
+        g = 'Hey there! I\'m Justin — I\'ve installed hundreds of grab bars across NE Nebraska. Bathroom, shower, hallway — you name it. What are you looking to get done? I can give you a **free estimate** this week.';
+      } else if (pg.indexOf('wheelchair-ramp') !== -1) {
+        g = 'Hey! I\'m Justin — wheelchair ramps are one of my specialties. ADA-compliant, built to last, and I handle all the permits. What\'s the situation? I\'d love to come take a look for **free**.';
+      } else if (pg.indexOf('bathroom') !== -1) {
+        g = 'Hey! I\'m Justin — I do a lot of bathroom accessibility work. Walk-in showers, grab bars, raised toilets, the whole nine yards. What are you thinking about? **Free estimates** always.';
+      } else if (pg.indexOf('non-slip') !== -1) {
+        g = 'Hey! Justin here — non-slip flooring is a game-changer for safety. I\'ve done kitchens, bathrooms, entryways, you name it. What area are you looking at? I can come measure for **free**.';
+      } else if (pg.indexOf('service-area') !== -1) {
+        g = 'Hey! I\'m Justin — I cover a 100-mile radius from Norfolk. Columbus, Fremont, Wayne, South Sioux City, and everywhere in between. Where are you located? I\'ll let you know if I can get out there.';
+      } else if (pg.indexOf('contact') !== -1) {
+        g = 'Hey! I\'m Justin — glad you\'re reaching out. You can fill out the form or just tell me what you need right here and I\'ll get you taken care of. What\'s going on?';
+      } else if (isSI) {
+        g = 'Hey, I\'m Justin! I handle remodeling, painting, gutters, handyman work, and more across Northeast Nebraska. What can I help you with? **Free estimates** — always.';
+      } else {
+        g = 'Hey, I\'m Justin! I specialize in wheelchair ramps, grab bars, and accessibility modifications across NE Nebraska. What brings you here today? **Free estimates** — no pressure.';
+      }
       addMsg(g,'b');
       hist.push({role:'model',parts:[{text:g}]});
     }, 600);
@@ -187,7 +233,7 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
     var body = {
       system_instruction:{parts:[{text:SYS}]},
       contents:h,
-      generationConfig:{temperature:.7,maxOutputTokens:200,topP:.9},
+      generationConfig:{temperature:.8,maxOutputTokens:300,topP:.9},
       safetySettings:[
         {category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_ONLY_HIGH'},
         {category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_ONLY_HIGH'},
@@ -210,8 +256,10 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   function getLead(t) {
     var ph = t.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
     if (ph) lead.phone=ph[1];
-    var nm = t.match(/(?:my name is|i'm|i am|this is|name:?)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/i);
+    var nm = t.match(/(?:my name is|i'm|i am|this is|name:?|call me|it's|hey i'm|hey im)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/i);
     if (nm) lead.name=nm[1];
+    var em = t.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    if (em) lead.email=em[0];
   }
 
   function saveLead() {

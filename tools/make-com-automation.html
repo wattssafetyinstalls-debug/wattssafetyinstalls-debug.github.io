@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make.com Automation Guide | Watts Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0A1D37;
+            --secondary: #00C4B4;
+            --accent: #FFD700;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --dark: #343a40;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --make-blue: #3b82f6;
+            --make-purple: #8b5cf6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2 i {
+            color: var(--make-blue);
+        }
+        
+        .step {
+            background: var(--light);
+            border-left: 4px solid var(--make-blue);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .step h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .code .comment {
+            color: #64748b;
+        }
+        
+        .code .string {
+            color: #22c55e;
+        }
+        
+        .code .number {
+            color: #f59e0b;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background: #00a898;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+        }
+        
+        .btn-make {
+            background: var(--make-blue);
+        }
+        
+        .btn-make:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .warning i {
+            margin-right: 10px;
+        }
+        
+        .success {
+            background: #d1fae5;
+            border: 1px solid #22c55e;
+            color: #065f46;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .success i {
+            margin-right: 10px;
+        }
+        
+        .workflow {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .workflow h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .workflow-step {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .workflow-step strong {
+            color: #fbbf24;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .template-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        
+        .template-card:hover {
+            border-color: var(--make-blue);
+            box-shadow: 0 4px 20px rgba(59,130,246,0.1);
+        }
+        
+        .template-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .template-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            transition: gap 0.3s;
+        }
+        
+        .back-link:hover {
+            gap: 15px;
+        }
+        
+        .webhook-info {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            color: #0c4a6e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .webhook-info code {
+            background: #e0f2fe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-project-diagram"></i> Make.com Automation Guide</h1>
+            <p>Connect all your tools and automate your workflow</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <a href="/tools/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Tools
+        </a>
+        
+        <div class="card">
+            <h2><i class="fas fa-rocket"></i> Getting Started with Make.com</h2>
+            
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Free Tier Limit:</strong> 100 operations/month. Consider the Core plan ($9/month) for 1,000 operations.
+            </div>
+            
+            <div class="step">
+                <h3>Step 1: Create Make.com Account</h3>
+                <p>Sign up at <a href="https://www.make.com/en/register" target="_blank">make.com</a></p>
+                <ul>
+                    <li>Start with free tier (100 operations/month)</li>
+                    <li>Connect your email (Gmail/Outlook)</li>
+                    <li>Connect your phone (Twilio for SMS)</li>
+                    <li>Connect Cal.com for calendar integration</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>Step 2: Set Up Webhook Endpoint</h3>
+                <p>Create a webhook to receive data from your website:</p>
+                <div class="webhook-info">
+                    <strong>Webhook URL:</strong> <code>https://hook.make.com/YOUR_WEBHOOK_KEY</code><br>
+                    <strong>Method:</strong> POST<br>
+                    <strong>Headers:</strong> Content-Type: application/json
+                </div>
+            </div>
+            
+            <div class="step">
+                <h3>Step 3: Install Website Webhook Script</h3>
+                <p>Add this to your contact forms to trigger automations:</p>
+                <div class="code">
+<span class="comment">// Add to your contact form submission handler</span>
+<span class="keyword">async function</span> submitToMake(formData) {
+    <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://hook.make.com/YOUR_WEBHOOK_KEY'</span>, {
+        method: <span class="string">'POST'</span>,
+        headers: {
+            <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+        },
+        body: JSON.stringify({
+            timestamp: <span class="keyword">new</span> Date().toISOString(),
+            source: <span class="string">'watts_website'</span>,
+            lead: {
+                name: formData.name,
+                phone: formData.phone,
+                email: formData.email,
+                service: formData.service,
+                message: formData.message,
+                urgency: formData.timeline
+            },
+            metadata: {
+                page: window.location.pathname,
+                userAgent: navigator.userAgent,
+                referrer: document.referrer
+            }
+        })
+    });
+    
+    <span class="keyword">return</span> response.ok;
+}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-cogs"></i> Automation Workflows</h2>
+            
+            <div class="workflow">
+                <h3><i class="fas fa-bolt"></i> New Lead Automation</h3>
+                <div class="workflow-step">
+                    <strong>Trigger:</strong> Webhook receives new lead from website
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 1:</strong> Send SMS to Justin: "New lead: [Name] - [Service] - Call [Phone]"
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 2:</strong> Add lead to Google Sheets (CRM tracker)
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 3:</strong> Send auto-email to client: "Thanks for reaching out! We'll call within 2 hours."
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 4:</strong> Create task in Asana/Trello for follow-up
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 5:</strong> If service="Accessibility", create PandaDoc contract draft
+                </div>
+            </div>
+            
+            <div class="workflow" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h3><i class="fas fa-calendar-check"></i> Booking Confirmation Automation</h3>
+                <div class="workflow-step">
+                    <strong>Trigger:</strong> Cal.com new appointment booked
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 1:</strong> Send confirmation SMS with appointment details
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 2:</strong> Add to Google Calendar with reminder 1 day before
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 3:</strong> Check weather forecast 24h before appointment
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 4:</strong> If bad weather, send rescheduling options
+                </div>
+            </div>
+            
+            <div class="workflow" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <h3><i class="fas fa-file-invoice"></i> Bid Follow-up Automation</h3>
+                <div class="workflow-step">
+                    <strong>Trigger:</strong> New bid created (daily check at 9 AM)
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 1:</strong> Send bid email with PDF attachment
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 2:</strong> Schedule follow-up in 3 days if no response
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 3:</strong> After 7 days, send final follow-up with discount offer
+                </div>
+                <div class="workflow-step">
+                    <strong>Action 4:</strong> Mark as "cold lead" after 14 days
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-plug"></i> Integration Setup</h2>
+            
+            <div class="grid">
+                <div class="template-card">
+                    <h3><i class="fas fa-envelope"></i> Email Integration</h3>
+                    <p>Connect Gmail or Outlook for automated emails</p>
+                    <ul>
+                        <li>Send instant lead confirmations</li>
+                        <li>Follow-up sequences</li>
+                        <li>Appointment reminders</li>
+                        <li>Seasonal promotions</li>
+                    </ul>
+                    <a href="https://www.make.com/en/integrations/gmail" target="_blank" class="btn btn-make">
+                        Connect Gmail
+                    </a>
+                </div>
+                
+                <div class="template-card">
+                    <h3><i class="fas fa-sms"></i> SMS Integration</h3>
+                    <p>Use Twilio for text message automation</p>
+                    <ul>
+                        <li>Instant lead notifications</li>
+                        <li>Appointment confirmations</li>
+                        <li>Service reminders</li>
+                        <li>Emergency alerts</li>
+                    </ul>
+                    <a href="https://www.make.com/en/integrations/twilio" target="_blank" class="btn btn-make">
+                        Connect Twilio
+                    </a>
+                </div>
+                
+                <div class="template-card">
+                    <h3><i class="fas fa-calendar"></i> Calendar Integration</h3>
+                    <p>Sync with Google Calendar</p>
+                    <ul>
+                        <li>Auto-create appointments</li>
+                        <li>Travel time calculations</li>
+                        <li>Conflict detection</li>
+                        <li>Team scheduling</li>
+                    </ul>
+                    <a href="https://www.make.com/en/integrations/google-calendar" target="_blank" class="btn btn-make">
+                        Connect Calendar
+                    </a>
+                </div>
+                
+                <div class="template-card">
+                    <h3><i class="fas fa-table"></i> Spreadsheet Integration</h3>
+                    <p>Google Sheets as simple CRM</p>
+                    <ul>
+                        <li>Lead tracking</li>
+                        <li>Job status updates</li>
+                        <li>Revenue reporting</li>
+                        <li>Analytics dashboard</li>
+                    </ul>
+                    <a href="https://www.make.com/en/integrations/google-sheets" target="_blank" class="btn btn-make">
+                        Connect Sheets
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-code"></i> Advanced Scenarios</h2>
+            
+            <h3 style="margin-top: 30px; color: var(--primary);">Weather-Based Automation</h3>
+            <div class="code">
+<span class="comment">// Check weather and adjust schedule</span>
+{
+  <span class="string">"trigger"</span>: <span class="string">"schedule"</span>,
+  <span class="string">"schedule"</span>: <span class="string">"0 6 * * *"</span>, <span class="comment">// Daily at 6 AM</span>
+  <span class="string">"actions"</span>: [
+    {
+      <span class="string">"app"</span>: <span class="string">"weather"</span>,
+      <span class="string">"action"</span>: <span class="string">"get_forecast"</span>,
+      <span class="string">"location"</span>: <span class="string">"Norfolk, NE"</span>
+    },
+    {
+      <span class="string">"condition"</span>: <span class="string">"weather.precipitation > 0.5"</span>,
+      <span class="string">"then"</span>: [
+        {
+          <span class="string">"app"</span>: <span class="string">"gmail"</span>,
+          <span class="string">"action"</span>: <span class="string">"send_email"</span>,
+          <span class="string">"to"</span>: <span class="string">"justin@example.com"</span>,
+          <span class="string">"subject"</span>: <span class="string">"⚠️ Weather Alert - Reschedule Outdoor Jobs"</span>
+        }
+      ]
+    }
+  ]
+}
+            </div>
+            
+            <h3 style="margin-top: 30px; color: var(--primary);">Lead Scoring Automation</h3>
+            <div class="code">
+<span class="comment">// Score leads based on service type and urgency</span>
+{
+  <span class="string">"trigger"</span>: <span class="string">"webhook"</span>,
+  <span class="string">"actions"</span>: [
+    {
+      <span class="string">"function"</span>: <span class="string">"calculate_score"</span>,
+      <span class="string">"rules"</span>: {
+        <span class="string">"accessibility"</span>: <span class="number">10</span>,
+        <span class="string">"snow_removal"</span>: <span class="number">8</span>,
+        <span class="string">"immediately"</span>: <span class="number">10</span>,
+        <span class="string">"1-2 weeks"</span>: <span class="number">5</span>,
+        <span class="string">"phone_provided"</span>: <span class="number">5</span>,
+        <span class="string">"message_length > 50"</span>: <span class="number">3</span>
+      }
+    },
+    {
+      <span class="string">"condition"</span>: <span class="string">"score > 20"</span>,
+      <span class="string">"then"</span>: [
+        {
+          <span class="string">"app"</span>: <span class="string">"twilio"</span>,
+          <span class="string">"action"</span>: <span class="string">"send_sms"</span>,
+          <span class="string">"message"</span>: <span class="string">"🔥 Hot Lead! [Name] - [Service] - Score: [score]"</span>
+        }
+      ]
+    }
+  ]
+}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-chart-line"></i> Monitoring & Analytics</h2>
+            
+            <div class="success">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Pro Tip:</strong> Create a dashboard to track automation performance
+            </div>
+            
+            <h3>Key Metrics to Track:</h3>
+            <ul style="margin-left: 20px; margin-top: 15px;">
+                <li><strong>Lead Response Time:</strong> Average time from submission to first contact</li>
+                <li><strong>Conversion Rate:</strong> Leads → Appointments → Signed Contracts</li>
+                <li><strong>Automation Success Rate:</strong> Failed scenarios and error logs</li>
+                <li><strong>Operation Usage:</strong> Stay within Make.com limits</li>
+                <li><strong>ROI per Channel:</strong> Track which marketing brings best leads</li>
+            </ul>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                <h4>Sample Google Sheets Dashboard Layout:</h4>
+                <table style="width: 100%; margin-top: 10px; border-collapse: collapse;">
+                    <tr style="background: #e2e8f0;">
+                        <th style="padding: 10px; text-align: left;">Date</th>
+                        <th style="padding: 10px; text-align: left;">Leads</th>
+                        <th style="padding: 10px; text-align: left;">Appts</th>
+                        <th style="padding: 10px; text-align: left;">Contracts</th>
+                        <th style="padding: 10px; text-align: left;">Revenue</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">=TODAY()-1</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">=COUNTIF(Leads!A:A, TODAY()-1)</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">=COUNTIF(Appts!A:A, TODAY()-1)</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">=COUNTIF(Contracts!A:A, TODAY()-1)</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">=SUMIF(Contracts!A:A, TODAY()-1, Contracts!D:D)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-shield-alt"></i> Security & Best Practices</h2>
+            
+            <ul style="margin-left: 20px;">
+                <li><strong>Secure Webhooks:</strong> Use unique URLs and verify source</li>
+                <li><strong>Data Privacy:</strong> Don't store sensitive data in Make logs</li>
+                <li><strong>Error Handling:</strong> Set up notifications for failed scenarios</li>
+                <li><strong>Rate Limiting:</strong> Stagger API calls to avoid limits</li>
+                <li><strong>Backup Plans:</strong> Manual processes for critical functions</li>
+                <li><strong>Documentation:</strong> Keep a map of all active automations</li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://www.make.com/en/signup" target="_blank" class="btn btn-make" style="font-size: 1.1rem; padding: 15px 40px;">
+                    <i class="fas fa-rocket"></i> Start Automating with Make.com
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <footer style="background: var(--primary); color: white; padding: 40px 0; margin-top: 60px; text-align: center;">
+        <div class="container">
+            <p>&copy; 2024 Watts ATP Contractor. All rights reserved.</p>
+            <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
+        </div>
+    </footer>
+</body>
+</html>

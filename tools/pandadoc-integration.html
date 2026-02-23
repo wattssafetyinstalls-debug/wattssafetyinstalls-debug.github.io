@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PandaDoc E-Signature Integration | Watts Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0A1D37;
+            --secondary: #00C4B4;
+            --accent: #FFD700;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --dark: #343a40;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2 i {
+            color: var(--secondary);
+        }
+        
+        .step {
+            background: var(--light);
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .step h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .code .comment {
+            color: #64748b;
+        }
+        
+        .code .string {
+            color: #22c55e;
+        }
+        
+        .code .number {
+            color: #f59e0b;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background: #00a898;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: #0a1d30;
+            box-shadow: 0 4px 15px rgba(10,29,55,0.3);
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .warning i {
+            margin-right: 10px;
+        }
+        
+        .success {
+            background: #d1fae5;
+            border: 1px solid #22c55e;
+            color: #065f46;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .success i {
+            margin-right: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .template-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        
+        .template-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 4px 20px rgba(0,196,180,0.1);
+        }
+        
+        .template-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .template-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            transition: gap 0.3s;
+        }
+        
+        .back-link:hover {
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-file-signature"></i> PandaDoc E-Signature Integration</h1>
+            <p>Send contracts, bids, and change orders for electronic signature</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <a href="/tools/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Tools
+        </a>
+        
+        <div class="card">
+            <h2><i class="fas fa-rocket"></i> Quick Setup Guide</h2>
+            
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Important:</strong> PandaDoc API requires a paid plan. The free tier allows manual document creation but not API access.
+            </div>
+            
+            <div class="step">
+                <h3>Step 1: Create PandaDoc Account</h3>
+                <p>Sign up at <a href="https://app.pandadoc.com/signup" target="_blank">pandadoc.com</a></p>
+                <ul>
+                    <li>Choose Business plan ($19/month) for API access</li>
+                    <li>Verify your email and complete profile</li>
+                    <li>Upload your business logo</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>Step 2: Get API Credentials</h3>
+                <p>Navigate to Settings → Integrations → API</p>
+                <ul>
+                    <li>Copy your API Key (starts with "pdoc_")</li>
+                    <li>Note your Sandbox vs Production keys</li>
+                    <li>Set webhook URL: <code>https://wattsatpcontractor.com/tools/webhooks/pandadoc</code></li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>Step 3: Create Document Templates</h3>
+                <p>Create reusable templates for common documents:</p>
+                <ul>
+                    <li>Service Agreement / Contract</li>
+                    <li>Change Order Form</li>
+                    <li>Bid Proposal</li>
+                    <li>Invoice Template</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>Step 4: Store API Key Securely</h3>
+                <p>Never store API keys in client-side code. Use environment variables:</p>
+                <div class="code">
+<span class="comment"># .env file (NEVER commit to git)</span>
+PANDADOC_API_KEY=pdoc_your_api_key_here
+PANDADOC_ENVIRONMENT=production
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-code"></i> Implementation Examples</h2>
+            
+            <h3 style="margin-top: 30px; color: var(--primary);">Send Contract for Signature</h3>
+            <div class="code">
+<span class="comment">// Node.js example</span>
+const pandadoc = require('pandadoc-api-sdk');
+
+async function sendContract(clientEmail, clientName, bidAmount) {
+    const templateId = 'your_template_id_here';
+    
+    const document = await pandadoc.documents.create({
+        name: `Service Agreement - ${clientName}`,
+        template_uuid: templateId,
+        recipients: [
+            {
+                email: clientEmail,
+                first_name: clientName.split(' ')[0],
+                last_name: clientName.split(' ')[1] || '',
+                role: 'client'
+            }
+        ],
+        tokens: {
+            client_name: clientName,
+            bid_amount: <span class="string">`$${bidAmount}`</span>,
+            contractor_name: <span class="string">'Watts ATP Contractor'</span>,
+            license_number: <span class="string">'#54690-25'</span>,
+            date: new Date().toLocaleDateString()
+        },
+        metadata: {
+            source: 'watts_website',
+            bid_amount: bidAmount
+        }
+    });
+    
+    return document;
+}
+            </div>
+            
+            <h3 style="margin-top: 30px; color: var(--primary);">Webhook Handler (Express.js)</h3>
+            <div class="code">
+<span class="comment">// Handle PandaDoc webhooks</span>
+app.post(<span class="string">'/webhooks/pandadoc'</span>, (req, res) => {
+    <span class="keyword">const</span> { status, data } = req.body;
+    
+    <span class="keyword">if</span> (status === <span class="string">'document.completed'</span>) {
+        <span class="comment">// Document was signed!</span>
+        <span class="keyword">const</span> { id, metadata } = data.document;
+        
+        <span class="comment">// Update your database</span>
+        <span class="keyword">await</span> updateBidStatus(metadata.bid_id, <span class="string">'contract_signed'</span>);
+        
+        <span class="comment">// Send confirmation email</span>
+        <span class="keyword">await</span> sendConfirmationEmail(data.recipients[<span class="number">0</span>].email);
+        
+        <span class="comment">// Notify Justin</span>
+        <span class="keyword">await</span> sendSMS(<span class="string">'(405) 410-6402'</span>, 
+            <span class="string">`Contract signed: ${data.name}`</span>);
+    }
+    
+    res.status(<span class="number">200</span>).send(<span class="string">'OK'</span>);
+});
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-file-alt"></i> Document Templates</h2>
+            <p>These templates should be created in your PandaDoc account:</p>
+            
+            <div class="grid">
+                <div class="template-card">
+                    <h3><i class="fas fa-handshake"></i> Service Agreement</h3>
+                    <p>Standard contract for accessibility and safety installations</p>
+                    <strong>Variables:</strong>
+                    <ul>
+                        <li>{{client_name}}</li>
+                        <li>{{project_address}}</li>
+                        <li>{{bid_amount}}</li>
+                        <li>{{start_date}}</li>
+                        <li>{{completion_date}}</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3><i class="fas fa-exchange-alt"></i> Change Order</h3>
+                    <p>For project modifications and additional work</p>
+                    <strong>Variables:</strong>
+                    <ul>
+                        <li>{{original_contract}}</li>
+                        <li>{{change_description}}</li>
+                        <li>{{additional_cost}}</li>
+                        <li>{{reason}}</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3><i class="fas fa-file-invoice-dollar"></i> Bid Proposal</h3>
+                    <p>Detailed project estimate and scope of work</p>
+                    <strong>Variables:</strong>
+                    <ul>
+                        <li>{{client_name}}</li>
+                        <li>{{project_description}}</li>
+                        <li>{{itemized_costs}}</li>
+                        <li>{{total_bid}}</li>
+                        <li>{{valid_until}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-plug"></i> Integration with Bid Generator</h2>
+            <p>Connect PandaDoc to your existing bid system:</p>
+            
+            <div class="success">
+                <i class="fas fa-check-circle"></i>
+                <strong>Recommended Flow:</strong> After generating a bid, automatically send contract for signature
+            </div>
+            
+            <ol style="margin-left: 20px; margin-top: 20px;">
+                <li>Client submits bid request on website</li>
+                <li>Bid generator creates PDF estimate</li>
+                <li>System creates PandaDoc contract from template</li>
+                <li>Contract sent to client for e-signature</li>
+                <li>Webhook updates bid status when signed</li>
+                <li>Automatic notifications to Justin</li>
+            </ol>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="/tools/bidgen/" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Go to Bid Generator
+                </a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-shield-alt"></i> Security & Best Practices</h2>
+            
+            <ul style="margin-left: 20px;">
+                <li><strong>API Key Security:</strong> Never expose in frontend code</li>
+                <li><strong>Webhook Verification:</strong> Always verify webhook signatures</li>
+                <li><strong>Document Retention:</strong> Keep signed documents for 7 years (NE law)</li>
+                <li><strong>Backup Strategy:</strong> Download signed PDFs to local storage</li>
+                <li><strong>Access Control:</strong> Limit template editing to authorized users</li>
+            </ul>
+            
+            <div class="code" style="margin-top: 20px;">
+<span class="comment">// Verify webhook signature</span>
+<span class="keyword">const</span> crypto = require(<span class="string">'crypto'</span>);
+
+<span class="keyword">function</span> verifyWebhook(req) {
+    <span class="keyword">const</span> signature = req.headers[<span class="string">'x-pandadoc-signature'</span>];
+    <span class="keyword">const</span> secret = process.env.PANDADOC_WEBHOOK_SECRET;
+    <span class="keyword">const</span> payload = JSON.stringify(req.body);
+    
+    <span class="keyword">const</span> expectedSignature = crypto
+        .createHmac(<span class="string">'sha256'</span>, secret)
+        .update(payload)
+        .digest(<span class="string">'hex'</span>);
+    
+    <span class="keyword">return</span> signature === expectedSignature;
+}
+            </div>
+        </div>
+    </div>
+    
+    <footer style="background: var(--primary); color: white; padding: 40px 0; margin-top: 60px; text-align: center;">
+        <div class="container">
+            <p>&copy; 2024 Watts ATP Contractor. All rights reserved.</p>
+            <p>Nebraska License #54690-25 • ATP Approved Contractor</p>
+        </div>
+    </footer>
+</body>
+</html>

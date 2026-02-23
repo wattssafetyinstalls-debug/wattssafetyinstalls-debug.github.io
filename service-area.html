@@ -789,6 +789,12 @@
 <h1>Our Service Area</h1>
 <p>Providing professional accessibility and safety solutions throughout Norfolk NE and surrounding areas</p>
 </section>
+<!-- Distance Widget -->
+<section style="padding: 20px 0; background: var(--warm-light);">
+<div class="breadcrumb-container" style="text-align: center;">
+<div id="watts-distance" style="display: inline-block;"></div>
+</div>
+</section>
 <!-- Service Area Content -->
 <section class="service-area-content">
 <div class="service-area-container">
@@ -982,7 +988,8 @@ document.addEventListener('DOMContentLoaded', function() {
       {"@type": "City", "name": "Norfolk, NE"}, {"@type": "City", "name": "Columbus, NE"}, {"@type": "City", "name": "Fremont, NE"}, {"@type": "City", "name": "South Sioux City, NE"}, {"@type": "City", "name": "Wayne, NE"}, {"@type": "City", "name": "O'Neill, NE"}, {"@type": "City", "name": "West Point, NE"}, {"@type": "City", "name": "Schuyler, NE"}, {"@type": "City", "name": "Sioux City, IA"}, {"@type": "City", "name": "Le Mars, IA"}, {"@type": "City", "name": "Onawa, IA"}
     ]
   }
-}</script><script src="/js/watts-ai-chat.js" defer></script>
+}</script><script src="/js/watts-distance.js" data-maps-key="YOUR_GOOGLE_MAPS_API_KEY" defer></script>
+<script src="/js/watts-ai-chat.js" defer></script>
 <script src="js/watts-lead-engine.js" defer></script>
 <script src="js/watts-push.js" defer></script>
 </body>

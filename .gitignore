@@ -69,8 +69,20 @@ website-backup-*/
 audit_report.txt
 changes.log
 
-# Credentials / secrets
+# Credentials / secrets — NEVER commit API keys to this public repo
 tools/credentials-*.txt
+*.secret
+*.secrets
+*-secrets.*
+api-keys.*
+.env.*
+.env.local
+.env.production
+.env.development
+secrets.json
+credentials.json
+service-account*.json
+*-key.json
 
 # Local Netlify folder
 .netlify

@@ -115,6 +115,24 @@ pointer-events:none;z-index:0}
 /* Footer */
 .footer{text-align:center;padding:24px;color:#2a3342;font-size:12px;border-top:1px solid rgba(255,255,255,0.03);font-weight:500;letter-spacing:0.5px}
 
+/* Login Overlay */
+#toolsLogin{position:fixed;top:0;left:0;right:0;bottom:0;background:#06080f;z-index:99999;display:flex;align-items:center;justify-content:center}
+#toolsLogin .login-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:48px 40px;text-align:center;max-width:420px;width:90%;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+#toolsLogin .login-card::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;border-radius:20px;background:radial-gradient(ellipse at 50% 0%,rgba(0,196,180,0.08),transparent 60%);pointer-events:none}
+#toolsLogin .login-card{position:relative}
+#toolsLogin .login-icon{font-size:48px;margin-bottom:16px}
+#toolsLogin h2{color:#fff;font-size:24px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
+#toolsLogin h2 span{background:linear-gradient(135deg,#00C4B4,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#toolsLogin .login-sub{color:#4a5568;font-size:13px;margin-bottom:28px}
+#toolsLogin input{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px 20px;color:#fff;font-size:22px;text-align:center;letter-spacing:10px;width:220px;font-family:'Inter',monospace;font-weight:700;outline:none;transition:border-color 0.3s}
+#toolsLogin input:focus{border-color:#00C4B4;box-shadow:0 0 20px rgba(0,196,180,0.15)}
+#toolsLogin input::placeholder{color:#2a3342;letter-spacing:4px;font-size:18px}
+#toolsLogin .login-btn{display:block;width:100%;margin-top:18px;padding:16px;background:linear-gradient(135deg,#00C4B4,#0A1D37);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;letter-spacing:0.5px}
+#toolsLogin .login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,196,180,0.25)}
+#toolsLogin .login-err{color:#ef4444;font-size:13px;margin-top:14px;min-height:20px;font-weight:600}
+#toolsLogin .login-hint{color:#2a3342;font-size:11px;margin-top:20px}
+#toolsLogin .lock-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,196,180,0.08);color:#00C4B4;font-size:10px;font-weight:700;padding:5px 14px;border-radius:20px;border:1px solid rgba(0,196,180,0.15);margin-top:20px;text-transform:uppercase;letter-spacing:1px}
+
 @media(max-width:700px){
   .header h1{font-size:26px}
   .grid{grid-template-columns:1fr}
@@ -125,7 +143,21 @@ pointer-events:none;z-index:0}
 </head>
 <body>
 
-<div class="header">
+<!-- PIN LOGIN OVERLAY -->
+<div id="toolsLogin">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+    <h2>Command <span>Center</span></h2>
+    <p class="login-sub">Enter your PIN to access internal tools</p>
+    <input type="password" id="toolsPinInput" maxlength="6" placeholder="••••" autofocus>
+    <button class="login-btn" id="toolsLoginBtn">Unlock</button>
+    <div class="login-err" id="toolsLoginErr"></div>
+    <div class="login-hint">First time? Enter a new 4-6 digit PIN to create access.</div>
+    <div class="lock-badge">🔒 AES-256 Encrypted</div>
+  </div>
+</div>
+
+<div class="header" style="display:none" id="toolsApp">
   <div class="header-logo">Watts Enterprises</div>
   <h1>Command <span>Center</span></h1>
   <p>Private tools and systems for Watts ATP Contractor & Watts Safety Installs</p>
@@ -144,7 +176,7 @@ pointer-events:none;z-index:0}
   </div>
 </div>
 
-<div class="container">
+<div class="container" style="display:none">
 
   <!-- ═══ AI TOOLS ═══ -->
   <div class="section-title t-purple"><div class="section-icon">🧠</div><div class="section-text">AI Tools</div><div class="section-line"></div></div>
@@ -283,19 +315,94 @@ pointer-events:none;z-index:0}
 
 </div>
 
-<div class="footer">
+<div class="footer" id="toolsFooter" style="display:none">
   Watts Command Center &bull; Internal Use Only &bull; Not Indexed by Search Engines
 </div>
 
 <script>
-// Card glow follows mouse
-document.querySelectorAll('.card').forEach(function(card){
-  card.addEventListener('mousemove',function(e){
-    var r=card.getBoundingClientRect();
-    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
-    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
-  });
+// ═══════════════════════════════════════
+// PIN AUTHENTICATION SYSTEM
+// ═══════════════════════════════════════
+var TOOLS_STORAGE_KEY = 'watts_tools_pin_hash';
+var TOOLS_SESSION_KEY = 'watts_tools_session';
+
+async function hashPinSHA256(pin) {
+  var data = new TextEncoder().encode(pin + '_watts_cc_salt_2026');
+  var hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+
+document.getElementById('toolsPinInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') toolsLogin();
 });
+document.getElementById('toolsLoginBtn').addEventListener('click', toolsLogin);
+
+async function toolsLogin() {
+  var pin = document.getElementById('toolsPinInput').value.trim();
+  var errEl = document.getElementById('toolsLoginErr');
+  if (pin.length < 4) { errEl.textContent = 'PIN must be at least 4 digits.'; return; }
+  
+  var hashed = await hashPinSHA256(pin);
+  var stored = localStorage.getItem(TOOLS_STORAGE_KEY);
+  
+  if (stored) {
+    if (hashed === stored) {
+      sessionStorage.setItem(TOOLS_SESSION_KEY, 'unlocked');
+      unlockTools();
+    } else {
+      errEl.textContent = 'Wrong PIN. Try again.';
+      document.getElementById('toolsPinInput').value = '';
+      document.getElementById('toolsPinInput').focus();
+      // Rate limiting — add delay after failed attempts
+      var fails = parseInt(sessionStorage.getItem('tools_fail_count') || '0') + 1;
+      sessionStorage.setItem('tools_fail_count', String(fails));
+      if (fails >= 3) {
+        var btn = document.getElementById('toolsLoginBtn');
+        btn.disabled = true;
+        btn.textContent = 'Locked (' + Math.min(fails * 5, 30) + 's)';
+        setTimeout(function() { btn.disabled = false; btn.textContent = 'Unlock'; }, Math.min(fails * 5000, 30000));
+      }
+    }
+  } else {
+    // First time setup — create PIN
+    if (!confirm('No PIN set. Create access with PIN "' + pin.charAt(0) + '***"?')) return;
+    localStorage.setItem(TOOLS_STORAGE_KEY, hashed);
+    sessionStorage.setItem(TOOLS_SESSION_KEY, 'unlocked');
+    unlockTools();
+  }
+}
+
+function unlockTools() {
+  document.getElementById('toolsLogin').style.display = 'none';
+  document.getElementById('toolsApp').style.display = '';
+  document.getElementById('toolsApp').nextElementSibling.style.display = '';
+  // Show everything between header and footer
+  var container = document.querySelector('.container');
+  if (container) container.style.display = '';
+  var footer = document.getElementById('toolsFooter');
+  if (footer) footer.style.display = '';
+  initCardGlow();
+}
+
+// Auto-unlock if session is active
+(function() {
+  if (sessionStorage.getItem(TOOLS_SESSION_KEY) === 'unlocked' && localStorage.getItem(TOOLS_STORAGE_KEY)) {
+    unlockTools();
+  }
+})();
+
+// ═══════════════════════════════════════
+// CARD GLOW EFFECT
+// ═══════════════════════════════════════
+function initCardGlow() {
+  document.querySelectorAll('.card').forEach(function(card){
+    card.addEventListener('mousemove',function(e){
+      var r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+    });
+  });
+}
 </script>
 </body>
 </html>

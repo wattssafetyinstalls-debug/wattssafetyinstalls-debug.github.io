@@ -77,7 +77,7 @@ export default {
     try {
       const body = await request.json();
       const url = new URL(request.url);
-      const model = url.searchParams.get('model') || 'gemini-2.5-flash';
+      const model = url.searchParams.get('model') || 'gemini-2.5-pro';
 
       // Validate request structure
       if (!body.contents || !Array.isArray(body.contents)) {

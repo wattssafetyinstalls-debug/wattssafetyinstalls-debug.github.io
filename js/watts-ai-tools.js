@@ -8,7 +8,7 @@
   'use strict';
 
   var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
-  var MODEL = 'gemini-2.5-flash';
+  var MODEL = 'gemini-2.5-pro';
   var isSI = window.location.pathname.startsWith('/safety-installs');
 
   var TOWNS = ['Norfolk','Columbus','Fremont','Wayne','South Sioux City','West Point','Schuyler',

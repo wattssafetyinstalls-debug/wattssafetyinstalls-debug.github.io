@@ -4,3 +4,11 @@ compatibility_date = "2024-01-01"
 
 [vars]
 # GEMINI_API_KEY is set via: wrangler secret put GEMINI_API_KEY
+# CONTRACT_HMAC_SECRET is set via: wrangler secret put CONTRACT_HMAC_SECRET
+
+# KV namespace for secure contract storage (one-time e-sign links)
+# Create with: wrangler kv namespace create CONTRACTS
+# Then paste the id below
+[[kv_namespaces]]
+binding = "CONTRACTS"
+id = "PLACEHOLDER_REPLACE_AFTER_KV_CREATE"

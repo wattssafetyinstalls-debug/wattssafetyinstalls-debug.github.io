@@ -5995,6 +5995,8 @@ function invViewDetails(invoiceId) {
             </div>
             ` : ''}
             
+            ${typeof getContractStatusHTML === 'function' ? getContractStatusHTML(invoice) : '<button class="invoice-btn view" onclick="sendContractToClient(\''+invoice.id+'\')" style="background:#8e44ad;color:white">📧 Send to Client</button>'}
+            
             <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}')" style="background:#3498db;color:white">📄 Reopen Document</button>
                 ${invoice.status === 'temporary' ? `
@@ -6151,5 +6153,6 @@ generateChangeOrder = function() {
 
 </script>
 <script src="bidgen-ai.js" defer></script>
+<script src="contract-delivery.js" defer></script>
 </body>
 </html>

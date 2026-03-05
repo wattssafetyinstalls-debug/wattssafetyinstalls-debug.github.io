@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Watts Command Center | Internal Tools</title>
 <meta name="robots" content="noindex, nofollow"/>
-<!-- Favicon -->
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"/>
 <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png"/>
 <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png"/>
@@ -16,277 +15,287 @@
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
 <meta name="theme-color" content="#0A1D37"/>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0a14;color:#e0e0e0;min-height:100vh}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06080f;color:#c8cdd5;min-height:100vh;overflow-x:hidden}
+
+/* Animated background mesh */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:
+  radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,196,180,0.06),transparent),
+  radial-gradient(ellipse 50% 50% at 80% 80%,rgba(139,92,246,0.05),transparent),
+  radial-gradient(ellipse 40% 30% at 50% 50%,rgba(59,130,246,0.04),transparent);
+pointer-events:none;z-index:0}
 
 /* Header */
-.header{background:linear-gradient(135deg,#0A1D37 0%,#16213e 50%,#1a2744 100%);border-bottom:1px solid #1a3a5c;padding:32px 24px 28px;text-align:center}
-.header h1{font-size:28px;color:#fff;margin-bottom:6px;letter-spacing:-0.5px}
-.header h1 span{color:#00C4B4}
-.header p{color:#7f8c8d;font-size:14px}
-.header .badge{display:inline-block;background:rgba(0,196,180,0.15);color:#00C4B4;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;margin-top:10px;border:1px solid rgba(0,196,180,0.25)}
+.header{position:relative;padding:48px 24px 40px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.04);overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(0,196,180,0.08) 0%,rgba(10,29,55,0.3) 40%,transparent 100%);z-index:0}
+.header *{position:relative;z-index:1}
+.header-logo{font-size:11px;text-transform:uppercase;letter-spacing:4px;color:#00C4B4;font-weight:700;margin-bottom:12px}
+.header h1{font-size:38px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-1px}
+.header h1 span{background:linear-gradient(135deg,#00C4B4,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:#6b7a8d;font-size:15px;max-width:500px;margin:0 auto 20px}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,196,180,0.08);color:#00C4B4;font-size:11px;font-weight:600;padding:5px 14px;border-radius:20px;border:1px solid rgba(0,196,180,0.15);backdrop-filter:blur(8px)}
+.badge-warn{background:rgba(251,191,36,0.08);color:#fbbf24;border-color:rgba(251,191,36,0.15)}
+
+/* Quick links */
+.quick-bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.quick-link{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:#6b7a8d;padding:8px 18px;border-radius:10px;font-size:12px;text-decoration:none;font-weight:600;transition:all 0.3s;backdrop-filter:blur(4px)}
+.quick-link:hover{border-color:rgba(0,196,180,0.4);color:#00C4B4;background:rgba(0,196,180,0.06);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,196,180,0.08)}
+
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1}
+
+/* Section headers */
+.section-title{display:flex;align-items:center;gap:12px;margin-bottom:20px;margin-top:8px}
+.section-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.section-text{font-size:14px;text-transform:uppercase;letter-spacing:2px;font-weight:700}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.08),transparent)}
 
 /* Grid */
-.container{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
-.section-title{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#00C4B4;margin-bottom:16px;font-weight:600;display:flex;align-items:center;gap:8px}
-.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#1a3a5c,transparent)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:48px}
 
-/* Cards */
-.card{background:#111827;border:1px solid #1e2d4a;border-radius:14px;padding:24px;transition:all 0.25s ease;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;overflow:hidden}
-.card:hover{border-color:#00C4B4;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,196,180,0.1)}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent,#00C4B4),transparent);opacity:0;transition:opacity 0.25s}
+/* Glass Cards */
+.card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:26px;transition:all 0.35s cubic-bezier(.4,0,.2,1);cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;overflow:hidden;backdrop-filter:blur(12px)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--glow,#00C4B4),transparent 80%);opacity:0;transition:opacity 0.35s}
+.card::after{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(var(--glow-rgb,0,196,180),0.06),transparent 60%);opacity:0;transition:opacity 0.35s;pointer-events:none}
+.card:hover{border-color:rgba(var(--glow-rgb,0,196,180),0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3),0 0 30px rgba(var(--glow-rgb,0,196,180),0.06)}
 .card:hover::before{opacity:1}
-.card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;flex-shrink:0}
-.card h3{font-size:16px;color:#fff;margin-bottom:6px;font-weight:600}
-.card p{font-size:13px;color:#8899aa;line-height:1.6;flex:1}
-.card .tag{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:3px 8px;border-radius:6px;margin-top:12px}
+.card:hover::after{opacity:1}
 
-/* Card color variants */
-.card-ai .card-icon{background:rgba(139,92,246,0.15);color:#a78bfa}
-.card-ai .tag{background:rgba(139,92,246,0.15);color:#a78bfa}
-.card-ai{--accent:#a78bfa}
+.card-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:transform 0.35s}
+.card:hover .card-icon{transform:scale(1.08)}
+.card h3{font-size:16px;color:#fff;font-weight:700;letter-spacing:-0.3px}
+.card p{font-size:13px;color:#6b7a8d;line-height:1.65;flex:1}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:4px 10px;border-radius:8px}
+.status{display:flex;align-items:center;gap:6px;font-size:11px;color:#4a5568;font-weight:500}
+.status .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-live{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.5);animation:pulse 2s infinite}
+.dot-beta{background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,0.4)}
+.dot-setup{background:#ef4444;box-shadow:0 0 8px rgba(239,68,68,0.4)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-.card-bid .card-icon{background:rgba(59,130,246,0.15);color:#60a5fa}
-.card-bid .tag{background:rgba(59,130,246,0.15);color:#60a5fa}
-.card-bid{--accent:#60a5fa}
+/* Color themes */
+.t-purple{--glow:#a78bfa;--glow-rgb:167,139,250}
+.t-purple .card-icon{background:rgba(139,92,246,0.12);color:#a78bfa}
+.t-purple .tag{background:rgba(139,92,246,0.12);color:#a78bfa}
+.t-purple .section-icon{background:rgba(139,92,246,0.12);color:#a78bfa}
+.t-purple .section-text{color:#a78bfa}
 
-.card-seo .card-icon{background:rgba(16,185,129,0.15);color:#34d399}
-.card-seo .tag{background:rgba(16,185,129,0.15);color:#34d399}
-.card-seo{--accent:#34d399}
+.t-blue{--glow:#60a5fa;--glow-rgb:96,165,250}
+.t-blue .card-icon{background:rgba(59,130,246,0.12);color:#60a5fa}
+.t-blue .tag{background:rgba(59,130,246,0.12);color:#60a5fa}
+.t-blue .section-icon{background:rgba(59,130,246,0.12);color:#60a5fa}
+.t-blue .section-text{color:#60a5fa}
 
-.card-auto .card-icon{background:rgba(251,191,36,0.15);color:#fbbf24}
-.card-auto .tag{background:rgba(251,191,36,0.15);color:#fbbf24}
-.card-auto{--accent:#fbbf24}
+.t-green{--glow:#34d399;--glow-rgb:52,211,153}
+.t-green .card-icon{background:rgba(16,185,129,0.12);color:#34d399}
+.t-green .tag{background:rgba(16,185,129,0.12);color:#34d399}
+.t-green .section-icon{background:rgba(16,185,129,0.12);color:#34d399}
+.t-green .section-text{color:#34d399}
 
-.card-data .card-icon{background:rgba(244,63,94,0.15);color:#fb7185}
-.card-data .tag{background:rgba(244,63,94,0.15);color:#fb7185}
-.card-data{--accent:#fb7185}
+.t-amber{--glow:#fbbf24;--glow-rgb:251,191,36}
+.t-amber .card-icon{background:rgba(251,191,36,0.12);color:#fbbf24}
+.t-amber .tag{background:rgba(251,191,36,0.12);color:#fbbf24}
+.t-amber .section-icon{background:rgba(251,191,36,0.12);color:#fbbf24}
+.t-amber .section-text{color:#fbbf24}
 
-/* Status dots */
-.status{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:10px;color:#6b7280}
-.status .dot{width:7px;height:7px;border-radius:50%}
-.dot-live{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.4)}
-.dot-beta{background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,0.4)}
-.dot-dev{background:#6b7280}
+.t-rose{--glow:#fb7185;--glow-rgb:251,113,133}
+.t-rose .card-icon{background:rgba(244,63,94,0.12);color:#fb7185}
+.t-rose .tag{background:rgba(244,63,94,0.12);color:#fb7185}
+.t-rose .section-icon{background:rgba(244,63,94,0.12);color:#fb7185}
+.t-rose .section-text{color:#fb7185}
 
-/* Quick links bar */
-.quick-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
-.quick-link{background:rgba(255,255,255,0.05);border:1px solid #1e2d4a;color:#8899aa;padding:8px 16px;border-radius:8px;font-size:12px;text-decoration:none;font-weight:500;transition:all 0.2s}
-.quick-link:hover{border-color:#00C4B4;color:#00C4B4;background:rgba(0,196,180,0.05)}
+.t-teal{--glow:#00C4B4;--glow-rgb:0,196,180}
+.t-teal .card-icon{background:rgba(0,196,180,0.12);color:#00C4B4}
+.t-teal .tag{background:rgba(0,196,180,0.12);color:#00C4B4}
 
 /* Footer */
-.footer{text-align:center;padding:20px;color:#3a4a5c;font-size:12px;border-top:1px solid #111827}
+.footer{text-align:center;padding:24px;color:#2a3342;font-size:12px;border-top:1px solid rgba(255,255,255,0.03);font-weight:500;letter-spacing:0.5px}
 
-@media(max-width:600px){
-  .header h1{font-size:22px}
+@media(max-width:700px){
+  .header h1{font-size:26px}
   .grid{grid-template-columns:1fr}
-  .container{padding:20px 14px 40px}
+  .container{padding:24px 14px 40px}
+  .card{padding:20px}
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Watts <span>Command Center</span></h1>
-  <p>Internal tools for Watts ATP Contractor & Watts Safety Installs</p>
-  <div class="badge">Owner Access Only</div>
+  <div class="header-logo">Watts Enterprises</div>
+  <h1>Command <span>Center</span></h1>
+  <p>Private tools and systems for Watts ATP Contractor & Watts Safety Installs</p>
+  <div class="badge-row">
+    <div class="badge">🔒 Owner Access Only</div>
+    <div class="badge">⚡ Gemini 2.5 Pro</div>
+    <div class="badge">☁️ Cloud Synced</div>
+  </div>
   <div class="quick-bar">
-    <a href="/" class="quick-link">ATP Site</a>
-    <a href="/safety-installs/" class="quick-link">Safety Installs Site</a>
+    <a href="/" class="quick-link">ATP Site →</a>
+    <a href="/safety-installs/" class="quick-link">Safety Installs →</a>
     <a href="https://dash.cloudflare.com" target="_blank" class="quick-link">Cloudflare</a>
-    <a href="https://github.com/wattssafetyinstalls-debug/wattssafetyinstalls-debug.github.io" target="_blank" class="quick-link">GitHub Repo</a>
-    <a href="https://business.google.com" target="_blank" class="quick-link">Google Business</a>
-    <a href="https://analytics.google.com" target="_blank" class="quick-link">GA4 Analytics</a>
+    <a href="https://github.com/wattssafetyinstalls-debug/wattssafetyinstalls-debug.github.io" target="_blank" class="quick-link">GitHub</a>
+    <a href="https://business.google.com" target="_blank" class="quick-link">GBP</a>
+    <a href="https://analytics.google.com" target="_blank" class="quick-link">GA4</a>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- AI TOOLS -->
-  <div class="section-title">AI Tools</div>
+  <!-- ═══ AI TOOLS ═══ -->
+  <div class="section-title t-purple"><div class="section-icon">🧠</div><div class="section-text">AI Tools</div><div class="section-line"></div></div>
   <div class="grid">
-    <a href="/tools/ai-dashboard/" class="card card-ai">
-      <div class="card-icon">🧠</div>
-      <h3>AI Command Center</h3>
-      <p>Content generator, GBP post writer, review responder, cost estimator, SEO keyword planner, and landing page builder — all powered by Gemini 2.5 Flash.</p>
-      <div class="status"><span class="dot dot-live"></span> Live — Proxy Connected</div>
-      <span class="tag">AI Powered</span>
+    <a href="/tools/ai-dashboard/" class="card t-purple">
+      <div class="card-top"><div class="card-icon">🧠</div><h3>AI Command Center</h3></div>
+      <p>Content generator, GBP posts, review responder, estimate builder, SEO keywords, landing pages, analytics — all powered by Gemini 2.5 Pro.</p>
+      <div class="card-foot"><span class="tag">AI Powered</span><div class="status"><span class="dot dot-live"></span> Live</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-ai" onclick="alert('The AI chatbot (Justin) is embedded on every page of both sites. Visit any page to test it.')">
-      <div class="card-icon">💬</div>
-      <h3>AI Chatbot — Justin</h3>
-      <p>Live on every page. Page-aware greetings, lead capture, smart conversation flow, price guidance, and appointment booking. Speaks as Justin Watts.</p>
-      <div class="status"><span class="dot dot-live"></span> Live on All Pages</div>
-      <span class="tag">Lead Capture</span>
+    <a href="/" class="card t-purple">
+      <div class="card-top"><div class="card-icon">💬</div><h3>AI Chatbot — Justin</h3></div>
+      <p>Live on every page. Contextual greetings, lead capture, pricing guidance, appointment booking. Responds as Justin Watts — your AI persona.</p>
+      <div class="card-foot"><span class="tag">Lead Capture</span><div class="status"><span class="dot dot-live"></span> All Pages</div></div>
     </a>
   </div>
 
-  <!-- BID GENERATION -->
-  <div class="section-title">Bid & Quote Tools</div>
+  <!-- ═══ BID & QUOTE ═══ -->
+  <div class="section-title t-blue"><div class="section-icon">📋</div><div class="section-text">Bid & Quote Tools</div><div class="section-line"></div></div>
   <div class="grid">
-    <a href="/tools/bidgen/" class="card card-bid">
-      <div class="card-icon">📋</div>
-      <h3>Bid Document Generator</h3>
-      <p>Create professional bid documents for both brands. Auto-calculates labor, materials, and markup. Saves to Firebase for quick retrieval.</p>
-      <div class="status"><span class="dot dot-live"></span> Live</div>
-      <span class="tag">Core Tool</span>
+    <a href="/tools/bidgen/" class="card t-blue">
+      <div class="card-top"><div class="card-icon">📋</div><h3>Bid Document Generator</h3></div>
+      <p>Professional bid documents for both brands. Auto-calculates labor, materials, markup. Firebase cloud sync, e-signatures, PDF export.</p>
+      <div class="card-foot"><span class="tag">Core Tool</span><div class="status"><span class="dot dot-live"></span> Live</div></div>
     </a>
-    <a href="/tools/bidgen/dual-brand-bid-system.html" class="card card-bid">
-      <div class="card-icon">🏢</div>
-      <h3>Dual-Brand Bid System</h3>
-      <p>Generate bids under either Watts ATP Contractor or Watts Safety Installs branding with proper license badges, colors, and letterhead.</p>
-      <div class="status"><span class="dot dot-live"></span> Live</div>
-      <span class="tag">Dual Brand</span>
+    <a href="/tools/bidgen/dual-brand-bid-system.html" class="card t-blue">
+      <div class="card-top"><div class="card-icon">🏢</div><h3>Dual-Brand Bid System</h3></div>
+      <p>Generate bids under ATP or Safety Installs branding — proper license badges, colors, letterhead, and legal disclaimers.</p>
+      <div class="card-foot"><span class="tag">Dual Brand</span><div class="status"><span class="dot dot-live"></span> Live</div></div>
     </a>
-    <a href="/tools/bidgen/atp-file-scanner.html" class="card card-bid">
-      <div class="card-icon">📄</div>
-      <h3>ATP File Scanner</h3>
-      <p>Scan and parse Nebraska ATP standard quote forms (Bathroom, Entrance, Misc, Stairlift) to auto-fill bid data.</p>
-      <div class="status"><span class="dot dot-beta"></span> Beta</div>
-      <span class="tag">ATP Forms</span>
+    <a href="/tools/bidgen/atp-file-scanner.html" class="card t-blue">
+      <div class="card-top"><div class="card-icon">📄</div><h3>ATP File Scanner</h3></div>
+      <p>Scan Nebraska ATP standard quote forms (Bathroom, Entrance, Misc, Stairlift) to auto-fill bid data instantly.</p>
+      <div class="card-foot"><span class="tag">ATP Forms</span><div class="status"><span class="dot dot-beta"></span> Beta</div></div>
     </a>
-    <a href="/tools/bidgen/bulk-atp-import.html" class="card card-bid">
-      <div class="card-icon">📦</div>
-      <h3>Bulk ATP Import</h3>
-      <p>Import multiple ATP quote forms at once for batch processing and bid generation.</p>
-      <div class="status"><span class="dot dot-beta"></span> Beta</div>
-      <span class="tag">Batch</span>
+    <a href="/tools/bidgen/bulk-atp-import.html" class="card t-blue">
+      <div class="card-top"><div class="card-icon">📦</div><h3>Bulk ATP Import</h3></div>
+      <p>Import multiple ATP quote forms at once for batch processing and rapid bid generation.</p>
+      <div class="card-foot"><span class="tag">Batch</span><div class="status"><span class="dot dot-beta"></span> Beta</div></div>
     </a>
-    <a href="/tools/bidgen/google-integration.html" class="card card-bid">
-      <div class="card-icon">🔗</div>
-      <h3>Google Integration</h3>
-      <p>Connect bids to Google Sheets and Drive for cloud storage, sharing, and team access.</p>
-      <div class="status"><span class="dot dot-beta"></span> Beta</div>
-      <span class="tag">Google API</span>
+    <a href="/tools/bidgen/google-integration.html" class="card t-blue">
+      <div class="card-top"><div class="card-icon">🔗</div><h3>Google Sheets Integration</h3></div>
+      <p>Connect bids to Google Sheets and Drive. Cloud storage, sharing, and team access for your bid data.</p>
+      <div class="card-foot"><span class="tag">Google API</span><div class="status"><span class="dot dot-beta"></span> Beta</div></div>
     </a>
-    <a href="/tools/bidgen/bid-import-enhancement.html" class="card card-bid">
-      <div class="card-icon">⬆️</div>
-      <h3>Bid Import Enhancement</h3>
-      <p>Enhanced import tool with smart field detection and auto-mapping for faster bid entry.</p>
-      <div class="status"><span class="dot dot-beta"></span> Beta</div>
-      <span class="tag">Import</span>
+    <a href="/tools/bidgen/bid-import-enhancement.html" class="card t-blue">
+      <div class="card-top"><div class="card-icon">⬆️</div><h3>Bid Import Enhancement</h3></div>
+      <p>Smart field detection and auto-mapping for faster bid entry from external sources.</p>
+      <div class="card-foot"><span class="tag">Import</span><div class="status"><span class="dot dot-beta"></span> Beta</div></div>
     </a>
   </div>
 
-  <!-- SEO & CONTENT -->
-  <div class="section-title">SEO & Content Automation</div>
+  <!-- ═══ SEO & CONTENT ═══ -->
+  <div class="section-title t-green"><div class="section-icon">📈</div><div class="section-text">SEO & Content Automation</div><div class="section-line"></div></div>
   <div class="grid">
-    <a href="javascript:void(0)" class="card card-seo" onclick="alert('This runs as a GitHub Action every Monday. Check Actions tab in GitHub.')">
-      <div class="card-icon">📝</div>
-      <h3>Auto Blog Generator</h3>
-      <p>AI-generated weekly blog posts optimized for local SEO. Runs automatically via GitHub Actions every Monday at 9 AM Central.</p>
-      <div class="status"><span class="dot dot-live"></span> Auto — Weekly</div>
-      <span class="tag">Automated</span>
+    <a href="javascript:void(0)" class="card t-green" onclick="alert('GitHub Action: runs every Monday. Check Actions tab.')">
+      <div class="card-top"><div class="card-icon">📝</div><h3>Auto Blog Generator</h3></div>
+      <p>AI-generated weekly blog posts optimized for local SEO. Runs via GitHub Actions every Monday at 9 AM Central.</p>
+      <div class="card-foot"><span class="tag">Automated</span><div class="status"><span class="dot dot-live"></span> Weekly</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-seo" onclick="alert('This runs as a GitHub Action Mon/Wed/Fri. Check Actions tab in GitHub.')">
-      <div class="card-icon">📍</div>
-      <h3>GBP Auto-Poster</h3>
-      <p>Automatically generates and posts updates to Google Business Profile 3x per week. Seasonal, service-focused content.</p>
-      <div class="status"><span class="dot dot-beta"></span> Needs GBP API Setup</div>
-      <span class="tag">Automated</span>
+    <a href="javascript:void(0)" class="card t-green" onclick="alert('GitHub Action: Mon/Wed/Fri at 10 AM Central. Needs GBP secrets in GitHub.')">
+      <div class="card-top"><div class="card-icon">📍</div><h3>GBP Auto-Poster</h3></div>
+      <p>Generates and posts Google Business Profile updates 3x/week. AI-written, seasonal, service-focused content with stock photos.</p>
+      <div class="card-foot"><span class="tag">Automated</span><div class="status"><span class="dot dot-beta"></span> Needs Secrets</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-seo" onclick="alert('Run via: node tools/generate-town-pages.js')">
-      <div class="card-icon">🗺️</div>
-      <h3>Town Page Generator</h3>
-      <p>Generate service × town landing pages for local SEO domination. Currently 125+ town pages across 5 service types.</p>
-      <div class="status"><span class="dot dot-live"></span> 125+ Pages Live</div>
-      <span class="tag">Local SEO</span>
+    <a href="javascript:void(0)" class="card t-green" onclick="alert('Run: node tools/generate-town-pages.js')">
+      <div class="card-top"><div class="card-icon">🗺️</div><h3>Town Page Generator</h3></div>
+      <p>Service × town landing pages for local SEO. 125+ pages across 5 service types covering your 100-mile radius.</p>
+      <div class="card-foot"><span class="tag">Local SEO</span><div class="status"><span class="dot dot-live"></span> 125+ Pages</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-seo" onclick="alert('Run via: node tools/ping-indexnow.js')">
-      <div class="card-icon">🔔</div>
-      <h3>IndexNow Pinger</h3>
-      <p>Instantly notify Bing, Yandex, and Google when new pages are published. Pages indexed in minutes instead of weeks.</p>
-      <div class="status"><span class="dot dot-live"></span> Live</div>
-      <span class="tag">Indexing</span>
+    <a href="javascript:void(0)" class="card t-green" onclick="alert('Run: node tools/ping-indexnow.js')">
+      <div class="card-top"><div class="card-icon">🔔</div><h3>IndexNow Pinger</h3></div>
+      <p>Instant notifications to Bing, Yandex, and Google when pages publish. Indexed in minutes, not weeks.</p>
+      <div class="card-foot"><span class="tag">Indexing</span><div class="status"><span class="dot dot-live"></span> Live</div></div>
     </a>
   </div>
 
-  <!-- INTEGRATIONS -->
-  <div class="section-title">Integrations & APIs</div>
+  <!-- ═══ INTEGRATIONS ═══ -->
+  <div class="section-title t-rose"><div class="section-icon">🔌</div><div class="section-text">Integrations & APIs</div><div class="section-line"></div></div>
   <div class="grid">
-    <a href="/contact.html" class="card card-data">
-      <div class="card-icon">📅</div>
-      <h3>Cal.com Booking</h3>
-      <p>Customers book free estimate appointments directly from the contact page. No phone tag — they pick a time, you get notified.</p>
-      <div class="status"><span class="dot dot-live"></span> Live on Both Contact Pages</div>
-      <span class="tag">Scheduling</span>
+    <a href="/contact.html" class="card t-rose">
+      <div class="card-top"><div class="card-icon">📅</div><h3>Cal.com Booking</h3></div>
+      <p>Customers book free estimate appointments from your contact pages. No phone tag — they pick a time, you get notified.</p>
+      <div class="card-foot"><span class="tag">Scheduling</span><div class="status"><span class="dot dot-live"></span> Live</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-seo" onclick="alert('Add your OpenWeatherMap API key to the script tag: data-weather-key=YOUR_KEY. Get a free key at openweathermap.org/api')">
-      <div class="card-icon">🌤️</div>
-      <h3>Weather Job Planner</h3>
-      <p>Real-time Norfolk NE weather with job-planning alerts. Warns about rain (no concrete), extreme cold, high winds, and snow removal conditions.</p>
-      <div class="status"><span class="dot dot-beta"></span> Needs OpenWeatherMap Key</div>
-      <span class="tag">Operations</span>
+    <a href="javascript:void(0)" class="card t-rose" onclick="alert('Needs OpenWeatherMap API key. Get free at openweathermap.org/api — then add via proxy.')">
+      <div class="card-top"><div class="card-icon">🌤️</div><h3>Weather Job Planner</h3></div>
+      <p>Real-time Norfolk NE weather with job-planning alerts. Rain, extreme cold, high winds, and snow removal conditions.</p>
+      <div class="card-foot"><span class="tag">Operations</span><div class="status"><span class="dot dot-setup"></span> Needs Key</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-auto" onclick="alert('Add Cloudinary cloud name + upload preset to the script tag. Sign up free at cloudinary.com')">
-      <div class="card-icon">📸</div>
-      <h3>Photo Upload for Quotes</h3>
-      <p>Customers upload photos of their project area for faster, more accurate estimates. Drag-and-drop, auto-uploads to Cloudinary CDN.</p>
-      <div class="status"><span class="dot dot-beta"></span> Needs Cloudinary Account</div>
-      <span class="tag">Customer Experience</span>
+    <a href="javascript:void(0)" class="card t-rose" onclick="alert('Needs Cloudinary account. Sign up free at cloudinary.com — cloud name + upload preset.')">
+      <div class="card-top"><div class="card-icon">📸</div><h3>Photo Upload for Quotes</h3></div>
+      <p>Customers upload project photos for faster, more accurate estimates. Drag-and-drop to Cloudinary CDN.</p>
+      <div class="card-foot"><span class="tag">Customer UX</span><div class="status"><span class="dot dot-setup"></span> Needs Key</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-bid" onclick="alert('Add your Google Maps API key to the script tag: data-maps-key=YOUR_KEY. Get a key at console.cloud.google.com with Distance Matrix API enabled')">
-      <div class="card-icon">📍</div>
-      <h3>Distance Calculator</h3>
-      <p>Shows customers "X minutes from you" based on their location. Live on both service area pages with Google Maps integration.</p>
-      <div class="status"><span class="dot dot-live"></span> Live on Service Area Pages</div>
-      <span class="tag">Operations</span>
+    <a href="javascript:void(0)" class="card t-rose" onclick="alert('Needs Google Maps API key with Distance Matrix enabled. Add via proxy for security.')">
+      <div class="card-top"><div class="card-icon">📍</div><h3>Distance Calculator</h3></div>
+      <p>Shows visitors "X minutes from you" on service area pages. Google Maps Distance Matrix integration.</p>
+      <div class="card-foot"><span class="tag">Operations</span><div class="status"><span class="dot dot-setup"></span> Needs Key</div></div>
     </a>
-    <a href="/tools/pandadoc-integration.html" class="card card-data">
-      <div class="card-icon">✍️</div>
-      <h3>E-Signatures (PandaDoc)</h3>
-      <p>Send contracts and change orders for e-signature. Customer signs on their phone — legally binding, timestamped, done in 60 seconds.</p>
-      <div class="status"><span class="dot dot-beta"></span> Setup Guide Available</div>
-      <span class="tag">Contracts</span>
+    <a href="/tools/pandadoc-integration.html" class="card t-rose">
+      <div class="card-top"><div class="card-icon">✍️</div><h3>E-Signatures (PandaDoc)</h3></div>
+      <p>Send contracts for e-signature. Customer signs on their phone — legally binding, timestamped, done in 60 seconds.</p>
+      <div class="card-foot"><span class="tag">Contracts</span><div class="status"><span class="dot dot-beta"></span> Guide</div></div>
     </a>
-    <a href="/tools/make-com-automation.html" class="card card-auto">
-      <div class="card-icon">⚡</div>
-      <h3>Make.com Automations</h3>
-      <p>Connect everything: new lead → auto-text → add to calendar → create invoice draft → send follow-up email. All automatic, zero effort.</p>
-      <div class="status"><span class="dot dot-beta"></span> Setup Guide Available</div>
-      <span class="tag">Automation</span>
+    <a href="/tools/make-com-automation.html" class="card t-amber">
+      <div class="card-top"><div class="card-icon">⚡</div><h3>Make.com Automations</h3></div>
+      <p>New lead → auto-text → calendar → invoice draft → follow-up email. Everything connected, zero effort.</p>
+      <div class="card-foot"><span class="tag">Automation</span><div class="status"><span class="dot dot-beta"></span> Guide</div></div>
     </a>
   </div>
 
-  <!-- AUTOMATION -->
-  <div class="section-title">Automation & Utilities</div>
+  <!-- ═══ UTILITIES ═══ -->
+  <div class="section-title t-amber"><div class="section-icon">⚙️</div><div class="section-text">Utilities & Infrastructure</div><div class="section-line"></div></div>
   <div class="grid">
-    <a href="/tools/bidgen/cta-buttons.html" class="card card-auto">
-      <div class="card-icon">🎯</div>
-      <h3>CTA Button Generator</h3>
-      <p>Generate branded call-to-action buttons with proper colors, phone links, and tracking for either brand.</p>
-      <div class="status"><span class="dot dot-live"></span> Live</div>
-      <span class="tag">Design</span>
+    <a href="/tools/bidgen/cta-buttons.html" class="card t-amber">
+      <div class="card-top"><div class="card-icon">🎯</div><h3>CTA Button Generator</h3></div>
+      <p>Branded call-to-action buttons with proper colors, phone links, and tracking for either brand.</p>
+      <div class="card-foot"><span class="tag">Design</span><div class="status"><span class="dot dot-live"></span> Live</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-auto" onclick="alert('Proxy running at: https://watts-ai-proxy.wattssafetyinstalls.workers.dev')">
-      <div class="card-icon">🔒</div>
-      <h3>Cloudflare AI Proxy</h3>
-      <p>Secure Cloudflare Worker that proxies Gemini API requests. Handles CORS, rate limiting, and keeps your API key encrypted.</p>
-      <div class="status"><span class="dot dot-live"></span> Deployed — workers.dev</div>
-      <span class="tag">Security</span>
+    <a href="javascript:void(0)" class="card t-teal" onclick="alert('Proxy: https://watts-ai-proxy.wattssafetyinstalls.workers.dev')">
+      <div class="card-top"><div class="card-icon">🔒</div><h3>Cloudflare AI Proxy</h3></div>
+      <p>Secure Cloudflare Worker proxying all AI requests. CORS, rate limiting, encrypted API key. Zero keys exposed in code.</p>
+      <div class="card-foot"><span class="tag">Security</span><div class="status"><span class="dot dot-live"></span> Deployed</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-data" onclick="alert('Web Stories run via GitHub Action with auto-content workflow.')">
-      <div class="card-icon">📱</div>
-      <h3>Web Stories Generator</h3>
-      <p>Auto-generate Google Web Stories with professional images from Pexels. Optimized for mobile discovery and Google Discover.</p>
-      <div class="status"><span class="dot dot-beta"></span> Needs Pexels API Key</div>
-      <span class="tag">Content</span>
+    <a href="javascript:void(0)" class="card t-amber" onclick="alert('GitHub Action: auto-content workflow.')">
+      <div class="card-top"><div class="card-icon">📱</div><h3>Web Stories Generator</h3></div>
+      <p>Auto-generate Google Web Stories with Pexels images. Optimized for mobile discovery and Google Discover.</p>
+      <div class="card-foot"><span class="tag">Content</span><div class="status"><span class="dot dot-setup"></span> Needs Key</div></div>
     </a>
-    <a href="javascript:void(0)" class="card card-data" onclick="alert('Lead data is stored in browser localStorage. View in AI Command Center → Leads tab.')">
-      <div class="card-icon">👥</div>
-      <h3>Lead Engine</h3>
-      <p>Captures visitor leads from the AI chatbot — names, phone numbers, emails, conversation history. Export to CSV from the AI Command Center.</p>
-      <div class="status"><span class="dot dot-live"></span> Capturing Leads</div>
-      <span class="tag">Leads</span>
+    <a href="/tools/ai-dashboard/" class="card t-amber">
+      <div class="card-top"><div class="card-icon">👥</div><h3>Lead Engine & Analytics</h3></div>
+      <p>Captures visitor leads from the AI chatbot + tracks estimator and advisor usage. Export to CSV from the AI Command Center.</p>
+      <div class="card-foot"><span class="tag">Leads</span><div class="status"><span class="dot dot-live"></span> Capturing</div></div>
     </a>
   </div>
 
 </div>
 
 <div class="footer">
-  Watts Command Center &bull; Internal Use Only &bull; Not indexed by search engines
+  Watts Command Center &bull; Internal Use Only &bull; Not Indexed by Search Engines
 </div>
 
+<script>
+// Card glow follows mouse
+document.querySelectorAll('.card').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
+    var r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+</script>
 </body>
 </html>

@@ -403,13 +403,51 @@ function getLeadPriority(score) {
 
 // =====================================================================
 // NOTIFICATION SYSTEM — No third-party APIs needed
-// Uses Formspree (already connected) for email alerts to Justin
-// Also queues notifications in KV for the dashboard to pull
+// 1. SMS via AT&T email-to-SMS gateway (MailChannels, free on CF Workers)
+// 2. Email via Formspree (already connected)
+// 3. KV queue for dashboard pull-notifications
 // =====================================================================
-async function sendNotification(env, message, priority) {
-  const results = { email: false, queued: false };
 
-  // 1. Send via Formspree as urgent email notification to Justin
+// AT&T email-to-SMS gateway — sends a real text to Justin's phone
+const SMS_GATEWAY = '4054106402@txt.att.net';
+const FROM_EMAIL = 'alerts@wattsatpcontractor.com';
+const FROM_NAME = 'Watts Leads';
+
+async function sendSMSviaEmail(message) {
+  try {
+    // MailChannels Send API — free for Cloudflare Workers (no API key needed)
+    const res = await fetch('https://api.mailchannels.net/tx/v1/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        personalizations: [{
+          to: [{ email: SMS_GATEWAY }],
+        }],
+        from: { email: FROM_EMAIL, name: FROM_NAME },
+        subject: 'Lead Alert',
+        content: [{
+          type: 'text/plain',
+          // SMS gateway strips subject, only sends body. Keep under 160 chars.
+          value: message.substring(0, 300),
+        }],
+      }),
+    });
+    const ok = res.status >= 200 && res.status < 300;
+    if (!ok) console.log('[SMS] MailChannels status:', res.status, await res.text().catch(() => ''));
+    return ok;
+  } catch (err) {
+    console.log('[SMS] MailChannels failed:', err.message);
+    return false;
+  }
+}
+
+async function sendNotification(env, message, priority) {
+  const results = { sms: false, email: false, queued: false };
+
+  // 1. Send real SMS via AT&T email-to-SMS gateway (MailChannels)
+  results.sms = await sendSMSviaEmail(message);
+
+  // 2. Send email notification via Formspree
   try {
     const priorityEmoji = priority === 'hot' ? '🔥' : priority === 'warm' ? '🟡' : '🔵';
     await fetch('https://formspree.io/f/mjkjgrlb', {
@@ -428,7 +466,7 @@ async function sendNotification(env, message, priority) {
     console.log('[Notify] Formspree failed:', err.message);
   }
 
-  // 2. Queue in KV for dashboard pull-notifications
+  // 3. Queue in KV for dashboard pull-notifications
   try {
     const queueRaw = await env.CONTRACTS.get('notification_queue');
     const queue = queueRaw ? JSON.parse(queueRaw) : [];
@@ -438,7 +476,6 @@ async function sendNotification(env, message, priority) {
       timestamp: new Date().toISOString(),
       read: false,
     });
-    // Keep last 50 notifications
     if (queue.length > 50) queue.length = 50;
     await env.CONTRACTS.put('notification_queue', JSON.stringify(queue), {
       expirationTtl: LEAD_TTL,
@@ -448,7 +485,7 @@ async function sendNotification(env, message, priority) {
     console.log('[Notify] Queue failed:', err.message);
   }
 
-  return { success: results.email || results.queued, ...results };
+  return { success: results.sms || results.email || results.queued, ...results };
 }
 
 // =====================================================================

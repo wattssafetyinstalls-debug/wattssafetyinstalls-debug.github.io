@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Scanner — Watts BidGen AR Tool</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; overflow: hidden; }
+
+        /* ── Top HUD ── */
+        #hud { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px 16px; background: rgba(15,26,51,0.92); backdrop-filter: blur(8px); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2a3a5c; }
+        #hud h1 { font-size: 16px; color: #e8e8e8; flex: 1; }
+        #hud .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        #hud .badge-ar { background: #8e44ad; color: white; }
+        #hud .badge-2d { background: #2980b9; color: white; }
+
+        /* ── Canvas / AR View ── */
+        #arOverlay { position: fixed; top: 56px; left: 0; right: 0; bottom: 80px; background: #0f1a33; }
+        #arOverlay canvas { width: 100%; height: 100%; display: block; }
+        #arOverlay video { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+        /* ── 2D Floorplan Canvas ── */
+        #floorplanCanvas { width: 100%; height: 100%; background: #0a0f1e; cursor: crosshair; }
+
+        /* ── Bottom Toolbar ── */
+        #toolbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; padding: 10px 16px; background: rgba(15,26,51,0.95); backdrop-filter: blur(8px); border-top: 1px solid #2a3a5c; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .tool-btn { padding: 10px 16px; border: 1px solid #2a3a5c; border-radius: 8px; background: #16213e; color: #bdc3c7; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; flex: 1; justify-content: center; min-width: 0; }
+        .tool-btn:hover, .tool-btn.active { background: #2a3a5c; color: #ecf0f1; border-color: #3498db; }
+        .tool-btn.primary { background: #e67e22; color: white; border-color: #e67e22; }
+        .tool-btn.primary:hover { background: #f39c12; }
+        .tool-btn.danger { background: #c0392b; color: white; border-color: #c0392b; }
+
+        /* ── Side Panel (measurements list) ── */
+        #measurePanel { position: fixed; top: 56px; right: 0; width: 280px; bottom: 80px; background: rgba(22,33,62,0.96); backdrop-filter: blur(8px); border-left: 1px solid #2a3a5c; z-index: 90; overflow-y: auto; padding: 16px; transform: translateX(100%); transition: transform 0.3s; }
+        #measurePanel.open { transform: translateX(0); }
+        #measurePanel h3 { font-size: 13px; color: #3498db; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .measure-item { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+        .measure-item .label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; }
+        .measure-item .value { font-size: 18px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+        .measure-item .detail { font-size: 11px; color: #95a5a6; margin-top: 4px; }
+        .measure-item .actions { display: flex; gap: 6px; margin-top: 6px; }
+        .measure-item .actions button { padding: 4px 10px; font-size: 10px; border: 1px solid #2a3a5c; border-radius: 4px; background: #16213e; color: #bdc3c7; cursor: pointer; }
+        .measure-item .actions button:hover { background: #2a3a5c; }
+        .measure-item .actions button.del { color: #e74c3c; border-color: #e74c3c44; }
+
+        /* ── Summary ── */
+        #summaryBox { background: #1a2744; border: 1px solid #e67e22; border-radius: 8px; padding: 12px; margin-top: 12px; }
+        #summaryBox h4 { font-size: 12px; color: #e67e22; margin-bottom: 8px; }
+        #summaryBox .row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+        #summaryBox .row .lbl { color: #95a5a6; }
+        #summaryBox .row .val { color: #ecf0f1; font-weight: 600; }
+
+        /* ── Status bar ── */
+        #statusBar { position: fixed; top: 56px; left: 0; right: 0; z-index: 95; text-align: center; padding: 8px; font-size: 12px; color: #95a5a6; background: rgba(15,26,51,0.85); display: none; }
+        #statusBar.show { display: block; }
+
+        /* ── Instruction overlay ── */
+        #instructions { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 110; background: rgba(15,26,51,0.97); border: 1px solid #2a3a5c; border-radius: 16px; padding: 30px; max-width: 420px; width: 90%; text-align: center; }
+        #instructions h2 { font-size: 20px; color: #e67e22; margin-bottom: 16px; }
+        #instructions p { font-size: 13px; color: #95a5a6; line-height: 1.6; margin-bottom: 12px; }
+        #instructions .modes { display: flex; gap: 10px; margin-top: 20px; }
+        #instructions .modes button { flex: 1; padding: 14px; border-radius: 10px; border: 2px solid #2a3a5c; background: #16213e; color: #ecf0f1; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        #instructions .modes button:hover { border-color: #e67e22; background: #1a2744; }
+        #instructions .modes button .icon { font-size: 28px; display: block; margin-bottom: 6px; }
+        #instructions .feature-list { text-align: left; margin: 16px 0; }
+        #instructions .feature-list div { padding: 4px 0; font-size: 12px; color: #bdc3c7; }
+
+        /* ── Crosshair ── */
+        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 80; display: none; }
+        #crosshair .ring { width: 40px; height: 40px; border: 2px solid #e67e22; border-radius: 50%; }
+        #crosshair .dot { width: 6px; height: 6px; background: #e67e22; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* ── Point markers on canvas ── */
+        .point-marker { position: absolute; width: 12px; height: 12px; background: #e67e22; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); z-index: 85; pointer-events: none; box-shadow: 0 0 8px rgba(230,126,34,0.6); }
+
+        @media (max-width: 600px) {
+            #measurePanel { width: 100%; }
+            .tool-btn { padding: 10px 8px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HUD ── -->
+<div id="hud">
+    <h1>📐 Room Scanner</h1>
+    <span id="modeBadge" class="badge badge-2d">2D MODE</span>
+    <button class="tool-btn" onclick="toggleMeasurePanel()" style="flex:0;padding:8px 12px;min-width:auto">📋</button>
+</div>
+
+<!-- ── Status Bar ── -->
+<div id="statusBar">Tap two points to measure a wall</div>
+
+<!-- ── AR / Camera / Canvas View ── -->
+<div id="arOverlay">
+    <video id="cameraFeed" autoplay playsinline muted></video>
+    <canvas id="floorplanCanvas"></canvas>
+    <div id="crosshair"><div class="ring"></div><div class="dot"></div></div>
+</div>
+
+<!-- ── Measurement Side Panel ── -->
+<div id="measurePanel">
+    <h3>📏 Measurements</h3>
+    <div id="measureList"></div>
+    <div id="summaryBox" style="display:none">
+        <h4>📊 Room Summary</h4>
+        <div id="summaryContent"></div>
+    </div>
+    <button class="tool-btn primary" onclick="sendToBidGen()" style="margin-top:12px;width:100%">📤 Send to BidGen</button>
+    <button class="tool-btn" onclick="sendToAIVision()" style="margin-top:8px;width:100%">🧠 AI Vision Analysis</button>
+    <button class="tool-btn" onclick="exportMeasurements()" style="margin-top:8px;width:100%">📋 Copy All</button>
+</div>
+
+<!-- ── Bottom Toolbar ── -->
+<div id="toolbar">
+    <button id="btnMeasure" class="tool-btn active" onclick="setTool('measure')">📏 Measure</button>
+    <button id="btnLabel" class="tool-btn" onclick="setTool('label')">🏷️ Label</button>
+    <button id="btnPhoto" class="tool-btn" onclick="captureSnapshot()">📸 Snap</button>
+    <button id="btnUndo" class="tool-btn" onclick="undoLast()">↩️ Undo</button>
+    <button id="btnClear" class="tool-btn danger" onclick="clearAll()">🗑️</button>
+</div>
+
+<!-- ── Start Instructions ── -->
+<div id="instructions">
+    <h2>📐 Room Scanner</h2>
+    <p>Measure rooms by tapping walls on screen. Works in your browser — or put on your Quest 3 for AR passthrough.</p>
+    <div class="feature-list">
+        <div>📏 <strong>Tap-to-measure</strong> — tap two points for wall length</div>
+        <div>📸 <strong>Camera mode</strong> — measure over live camera feed</div>
+        <div>🥽 <strong>Quest 3 AR</strong> — full passthrough with spatial anchors</div>
+        <div>🧠 <strong>AI analysis</strong> — send to Gemini Vision for seam/cut plans</div>
+        <div>📤 <strong>BidGen export</strong> — push measurements into your bid</div>
+    </div>
+    <div class="modes">
+        <button onclick="startMode('2d')">
+            <span class="icon">📐</span>
+            2D Floorplan
+        </button>
+        <button onclick="startMode('camera')">
+            <span class="icon">📸</span>
+            Camera Mode
+        </button>
+        <button id="btnAR" onclick="startMode('ar')" style="display:none">
+            <span class="icon">🥽</span>
+            Quest 3 AR
+        </button>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ── State ──
+    var mode = '2d'; // '2d', 'camera', 'ar'
+    var tool = 'measure'; // 'measure', 'label'
+    var measurements = []; // { id, type, label, points, distance, unit }
+    var pendingPoint = null; // first tap waiting for second
+    var measureId = 0;
+    var canvas, ctx;
+    var gridSize = 24; // pixels per foot in 2D mode
+    var panX = 0, panY = 0;
+    var cameraStream = null;
+    var xrSession = null;
+    var snapshotBase64 = null; // captured photo for AI
+
+    // ── DOM ──
+    var floorplanCanvas = document.getElementById('floorplanCanvas');
+    var cameraFeed = document.getElementById('cameraFeed');
+    var statusBar = document.getElementById('statusBar');
+    var measurePanel = document.getElementById('measurePanel');
+    var crosshair = document.getElementById('crosshair');
+    var instructions = document.getElementById('instructions');
+
+    // ── Check WebXR support (Quest 3) ──
+    if (navigator.xr) {
+        navigator.xr.isSessionSupported('immersive-ar').then(function(supported) {
+            if (supported) {
+                document.getElementById('btnAR').style.display = 'block';
+            }
+        });
+    }
+
+    // ── Start Mode ──
+    window.startMode = function(m) {
+        mode = m;
+        instructions.style.display = 'none';
+        statusBar.className = 'show';
+
+        if (mode === '2d') {
+            document.getElementById('modeBadge').textContent = '2D MODE';
+            document.getElementById('modeBadge').className = 'badge badge-2d';
+            cameraFeed.style.display = 'none';
+            floorplanCanvas.style.display = 'block';
+            crosshair.style.display = 'none';
+            statusBar.textContent = 'Tap two points to measure a wall. Scroll to zoom.';
+            initFloorplan();
+        } else if (mode === 'camera') {
+            document.getElementById('modeBadge').textContent = 'CAMERA';
+            document.getElementById('modeBadge').className = 'badge badge-ar';
+            floorplanCanvas.style.display = 'none';
+            cameraFeed.style.display = 'block';
+            crosshair.style.display = 'block';
+            statusBar.textContent = 'Tap to place points on the camera view. Enter real distance after.';
+            initCamera();
+        } else if (mode === 'ar') {
+            document.getElementById('modeBadge').textContent = 'AR MODE';
+            document.getElementById('modeBadge').className = 'badge badge-ar';
+            statusBar.textContent = 'Point at a surface and tap to place measurement anchors.';
+            initWebXR();
+        }
+    };
+
+    // ── 2D Floorplan ──
+    function initFloorplan() {
+        canvas = floorplanCanvas;
+        ctx = canvas.getContext('2d');
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        drawGrid();
+    }
+
+    function resizeCanvas() {
+        var rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        redraw();
+    }
+
+    function drawGrid() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Grid
+        ctx.strokeStyle = '#1a2744';
+        ctx.lineWidth = 0.5;
+        var gs = gridSize;
+        for (var x = (panX % gs + gs) % gs; x < canvas.width; x += gs) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (var y = (panY % gs + gs) % gs; y < canvas.height; y += gs) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // Major grid (every 5ft)
+        ctx.strokeStyle = '#2a3a5c';
+        ctx.lineWidth = 1;
+        var mg = gs * 5;
+        for (var x = (panX % mg + mg) % mg; x < canvas.width; x += mg) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (var y = (panY % mg + mg) % mg; y < canvas.height; y += mg) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // Origin marker
+        var ox = canvas.width / 2 + panX, oy = canvas.height / 2 + panY;
+        ctx.fillStyle = '#3498db44';
+        ctx.beginPath(); ctx.arc(ox, oy, 4, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function redraw() {
+        if (!ctx) return;
+        drawGrid();
+
+        // Draw all measurements
+        measurements.forEach(function(m) {
+            if (m.type === 'wall' && m.points.length === 2) {
+                drawWallLine(m.points[0], m.points[1], m.distance, m.label);
+            } else if (m.type === 'label' && m.points.length === 1) {
+                drawLabel(m.points[0], m.label);
+            }
+        });
+
+        // Draw pending point
+        if (pendingPoint) {
+            ctx.fillStyle = '#e67e22';
+            ctx.beginPath(); ctx.arc(pendingPoint.x, pendingPoint.y, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#ffffff88';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(pendingPoint.x, pendingPoint.y, 10, 0, Math.PI * 2); ctx.stroke();
+        }
+
+        updateSummary();
+    }
+
+    function drawWallLine(p1, p2, dist, label) {
+        // Line
+        ctx.strokeStyle = '#e67e22';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+
+        // Endpoints
+        ctx.fillStyle = '#e67e22';
+        ctx.beginPath(); ctx.arc(p1.x, p1.y, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p2.x, p2.y, 5, 0, Math.PI * 2); ctx.fill();
+
+        // Distance label
+        var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+        var text = dist ? formatDist(dist) : '?';
+        if (label) text = label + ': ' + text;
+        ctx.font = '600 12px "Segoe UI", sans-serif';
+        var tw = ctx.measureText(text).width;
+        ctx.fillStyle = 'rgba(15,26,51,0.9)';
+        ctx.fillRect(mx - tw / 2 - 6, my - 18, tw + 12, 22);
+        ctx.fillStyle = '#e67e22';
+        ctx.fillText(text, mx - tw / 2, my - 2);
+    }
+
+    function drawLabel(p, label) {
+        ctx.font = '600 11px "Segoe UI", sans-serif';
+        var tw = ctx.measureText(label).width;
+        ctx.fillStyle = 'rgba(142,68,173,0.9)';
+        ctx.fillRect(p.x - tw / 2 - 6, p.y - 18, tw + 12, 22);
+        ctx.fillStyle = '#ecf0f1';
+        ctx.fillText(label, p.x - tw / 2, p.y - 2);
+    }
+
+    function formatDist(inches) {
+        var ft = Math.floor(inches / 12);
+        var inch = Math.round(inches % 12);
+        if (inch === 12) { ft++; inch = 0; }
+        return ft + '\'' + (inch > 0 ? inch + '"' : '');
+    }
+
+    // ── Canvas click handling ──
+    document.getElementById('arOverlay').addEventListener('click', function(e) {
+        if (instructions.style.display !== 'none') return;
+        var rect = (mode === '2d' ? floorplanCanvas : cameraFeed).getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+
+        if (tool === 'measure') {
+            handleMeasureClick(x, y);
+        } else if (tool === 'label') {
+            handleLabelClick(x, y);
+        }
+    });
+
+    function handleMeasureClick(x, y) {
+        if (!pendingPoint) {
+            // First point
+            pendingPoint = { x: x, y: y };
+            statusBar.textContent = 'Tap the other end of the wall';
+            redraw();
+        } else {
+            // Second point — calculate pixel distance, prompt for real distance
+            var px = Math.sqrt(Math.pow(x - pendingPoint.x, 2) + Math.pow(y - pendingPoint.y, 2));
+
+            if (mode === '2d') {
+                // In 2D mode, convert pixel distance to feet using grid scale
+                var inches = (px / gridSize) * 12;
+                var label = prompt('Wall label (e.g. "North wall", "Hallway"):', 'Wall ' + (measurements.length + 1));
+                if (label === null) { pendingPoint = null; redraw(); return; }
+
+                // Let them override the calculated distance
+                var calcFt = (inches / 12).toFixed(1);
+                var realDist = prompt('Distance (calculated ~' + calcFt + ' ft). Enter actual measurement:', calcFt);
+                if (realDist === null) { pendingPoint = null; redraw(); return; }
+                inches = parseFloat(realDist) * 12;
+
+                measureId++;
+                measurements.push({
+                    id: measureId,
+                    type: 'wall',
+                    label: label,
+                    points: [{ x: pendingPoint.x, y: pendingPoint.y }, { x: x, y: y }],
+                    distance: inches,
+                    unit: 'in'
+                });
+            } else {
+                // Camera mode — no spatial reference, always ask for real distance
+                var label = prompt('Wall label:', 'Wall ' + (measurements.length + 1));
+                if (label === null) { pendingPoint = null; redraw(); return; }
+                var realDist = prompt('Enter the actual measurement (ft):');
+                if (realDist === null) { pendingPoint = null; redraw(); return; }
+
+                measureId++;
+                measurements.push({
+                    id: measureId,
+                    type: 'wall',
+                    label: label,
+                    points: [{ x: pendingPoint.x, y: pendingPoint.y }, { x: x, y: y }],
+                    distance: parseFloat(realDist) * 12,
+                    unit: 'in'
+                });
+            }
+
+            pendingPoint = null;
+            statusBar.textContent = 'Measurement saved. Tap two more points for next wall.';
+            redraw();
+            renderMeasureList();
+        }
+    }
+
+    function handleLabelClick(x, y) {
+        var label = prompt('Enter label (e.g. "Door", "Closet", "Pipe"):');
+        if (!label) return;
+        measureId++;
+        measurements.push({
+            id: measureId,
+            type: 'label',
+            label: label,
+            points: [{ x: x, y: y }],
+            distance: 0,
+            unit: ''
+        });
+        redraw();
+        renderMeasureList();
+    }
+
+    // ── Zoom (2D mode) ──
+    document.getElementById('arOverlay').addEventListener('wheel', function(e) {
+        if (mode !== '2d') return;
+        e.preventDefault();
+        var oldGrid = gridSize;
+        gridSize = Math.max(8, Math.min(80, gridSize + (e.deltaY > 0 ? -2 : 2)));
+
+        // Scale existing measurement points
+        var scale = gridSize / oldGrid;
+        var cx = canvas.width / 2, cy = canvas.height / 2;
+        measurements.forEach(function(m) {
+            m.points.forEach(function(p) {
+                p.x = cx + (p.x - cx) * scale;
+                p.y = cy + (p.y - cy) * scale;
+            });
+        });
+        if (pendingPoint) {
+            pendingPoint.x = cx + (pendingPoint.x - cx) * scale;
+            pendingPoint.y = cx + (pendingPoint.y - cy) * scale;
+        }
+        redraw();
+    }, { passive: false });
+
+    // ── Camera Mode ──
+    function initCamera() {
+        if (cameraStream) return;
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            statusBar.textContent = 'Camera not available on this device';
+            return;
+        }
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+        }).then(function(stream) {
+            cameraStream = stream;
+            cameraFeed.srcObject = stream;
+        }).catch(function(err) {
+            statusBar.textContent = 'Camera access denied: ' + err.message;
+        });
+    }
+
+    // ── WebXR (Quest 3) ──
+    function initWebXR() {
+        if (!navigator.xr) {
+            statusBar.textContent = 'WebXR not supported — use Camera mode instead';
+            return;
+        }
+
+        navigator.xr.requestSession('immersive-ar', {
+            requiredFeatures: ['local-floor'],
+            optionalFeatures: ['hit-test', 'anchors', 'plane-detection', 'mesh-detection']
+        }).then(function(session) {
+            xrSession = session;
+            statusBar.textContent = 'AR session started — point and tap to place measurement points';
+            document.getElementById('modeBadge').textContent = 'AR ACTIVE';
+
+            // Create WebGL context for XR
+            var glCanvas = document.createElement('canvas');
+            var gl = glCanvas.getContext('webgl2', { xrCompatible: true });
+            if (!gl) gl = glCanvas.getContext('webgl', { xrCompatible: true });
+
+            session.updateRenderState({
+                baseLayer: new XRWebGLLayer(session, gl)
+            });
+
+            var refSpace;
+            session.requestReferenceSpace('local-floor').then(function(rs) {
+                refSpace = rs;
+
+                // Hit test source for tap-to-place
+                var hitTestSource = null;
+                session.requestHitTestSource({ space: session.inputSources[0] || refSpace }).then(function(src) {
+                    hitTestSource = src;
+                }).catch(function() {
+                    // Hit test might not be available
+                });
+
+                // XR select event (tap in AR)
+                session.addEventListener('select', function(e) {
+                    var frame = e.frame;
+                    var pose = frame.getPose(e.inputSource.targetRaySpace, refSpace);
+                    if (pose) {
+                        var pos = pose.transform.position;
+                        handleARPoint({ x: pos.x, y: pos.y, z: pos.z });
+                    }
+                });
+
+                // Animation frame loop
+                function onXRFrame(time, frame) {
+                    session.requestAnimationFrame(onXRFrame);
+                    var pose = frame.getViewerPose(refSpace);
+                    if (!pose) return;
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
+                    gl.clearColor(0, 0, 0, 0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    // Passthrough is handled by the Quest — we just render overlays
+                }
+                session.requestAnimationFrame(onXRFrame);
+            });
+
+            session.addEventListener('end', function() {
+                xrSession = null;
+                document.getElementById('modeBadge').textContent = '2D MODE';
+                statusBar.textContent = 'AR session ended';
+            });
+        }).catch(function(err) {
+            statusBar.textContent = 'Failed to start AR: ' + err.message;
+            // Fall back to camera mode
+            startMode('camera');
+        });
+    }
+
+    var arPendingPoint = null;
+    function handleARPoint(pos3d) {
+        if (!arPendingPoint) {
+            arPendingPoint = pos3d;
+            statusBar.textContent = 'First point placed. Tap the other end of the wall.';
+        } else {
+            // Calculate real 3D distance in meters → convert to inches
+            var dx = pos3d.x - arPendingPoint.x;
+            var dy = pos3d.y - arPendingPoint.y;
+            var dz = pos3d.z - arPendingPoint.z;
+            var distMeters = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            var distInches = distMeters * 39.3701;
+
+            var label = 'Wall ' + (measurements.length + 1);
+
+            measureId++;
+            measurements.push({
+                id: measureId,
+                type: 'wall',
+                label: label,
+                points: [
+                    { x: 0, y: 0, ar: arPendingPoint },
+                    { x: 0, y: 0, ar: pos3d }
+                ],
+                distance: distInches,
+                unit: 'in',
+                arDistance: true
+            });
+
+            arPendingPoint = null;
+            statusBar.textContent = formatDist(distInches) + ' measured! Tap for next wall.';
+            renderMeasureList();
+        }
+    }
+
+    // ── Tool switching ──
+    window.setTool = function(t) {
+        tool = t;
+        pendingPoint = null;
+        document.querySelectorAll('#toolbar .tool-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
+        if (t === 'measure') statusBar.textContent = 'Tap two points to measure a wall';
+        if (t === 'label') statusBar.textContent = 'Tap to place a label (door, closet, pipe, etc.)';
+        redraw();
+    };
+
+    // ── Snapshot ──
+    window.captureSnapshot = function() {
+        if (mode === 'camera' && cameraFeed.srcObject) {
+            var snapCanvas = document.createElement('canvas');
+            snapCanvas.width = cameraFeed.videoWidth;
+            snapCanvas.height = cameraFeed.videoHeight;
+            var sctx = snapCanvas.getContext('2d');
+            sctx.drawImage(cameraFeed, 0, 0);
+            var quality = 0.8;
+            snapshotBase64 = snapCanvas.toDataURL('image/jpeg', quality);
+            while (snapshotBase64.length > 1400000 && quality > 0.3) {
+                quality -= 0.1;
+                snapshotBase64 = snapCanvas.toDataURL('image/jpeg', quality);
+            }
+            statusBar.textContent = '📸 Snapshot saved — will be sent with AI analysis';
+        } else if (mode === '2d' && canvas) {
+            snapshotBase64 = canvas.toDataURL('image/png');
+            statusBar.textContent = '📸 Floorplan snapshot saved';
+        } else {
+            statusBar.textContent = 'Nothing to capture';
+        }
+    };
+
+    // ── Undo ──
+    window.undoLast = function() {
+        if (pendingPoint) { pendingPoint = null; redraw(); statusBar.textContent = 'Point removed'; return; }
+        if (measurements.length === 0) return;
+        measurements.pop();
+        redraw();
+        renderMeasureList();
+        statusBar.textContent = 'Last measurement removed';
+    };
+
+    // ── Clear ──
+    window.clearAll = function() {
+        if (measurements.length === 0) return;
+        if (!confirm('Clear all measurements?')) return;
+        measurements = [];
+        pendingPoint = null;
+        snapshotBase64 = null;
+        redraw();
+        renderMeasureList();
+        statusBar.textContent = 'All measurements cleared';
+    };
+
+    // ── Measure Panel ──
+    window.toggleMeasurePanel = function() {
+        measurePanel.classList.toggle('open');
+    };
+
+    function renderMeasureList() {
+        var list = document.getElementById('measureList');
+        if (measurements.length === 0) {
+            list.innerHTML = '<div style="text-align:center;color:#555;font-size:12px;padding:20px">No measurements yet.<br>Tap on the canvas to start.</div>';
+            document.getElementById('summaryBox').style.display = 'none';
+            return;
+        }
+
+        var html = '';
+        measurements.forEach(function(m, i) {
+            html += '<div class="measure-item">';
+            html += '<div class="label">' + (m.type === 'wall' ? '📏 WALL' : '🏷️ LABEL') + (m.arDistance ? ' (AR)' : '') + '</div>';
+            if (m.type === 'wall') {
+                html += '<div class="value">' + formatDist(m.distance) + '</div>';
+            }
+            html += '<div class="detail">' + m.label + '</div>';
+            html += '<div class="actions">';
+            html += '<button onclick="editMeasurement(' + m.id + ')">✏️ Edit</button>';
+            html += '<button class="del" onclick="deleteMeasurement(' + m.id + ')">🗑️</button>';
+            html += '</div></div>';
+        });
+        list.innerHTML = html;
+        updateSummary();
+    }
+
+    window.editMeasurement = function(id) {
+        var m = measurements.find(function(x) { return x.id === id; });
+        if (!m) return;
+        var newLabel = prompt('Label:', m.label);
+        if (newLabel !== null) m.label = newLabel;
+        if (m.type === 'wall') {
+            var newDist = prompt('Distance (ft):', (m.distance / 12).toFixed(1));
+            if (newDist !== null) m.distance = parseFloat(newDist) * 12;
+        }
+        redraw();
+        renderMeasureList();
+    };
+
+    window.deleteMeasurement = function(id) {
+        measurements = measurements.filter(function(x) { return x.id !== id; });
+        redraw();
+        renderMeasureList();
+    };
+
+    function updateSummary() {
+        var walls = measurements.filter(function(m) { return m.type === 'wall'; });
+        if (walls.length < 2) {
+            document.getElementById('summaryBox').style.display = 'none';
+            return;
+        }
+
+        var totalLf = 0;
+        walls.forEach(function(w) { totalLf += w.distance / 12; });
+
+        // Estimate area if we have enough walls
+        var longestTwo = walls.map(function(w) { return w.distance / 12; }).sort(function(a, b) { return b - a; }).slice(0, 2);
+        var estArea = longestTwo.length >= 2 ? longestTwo[0] * longestTwo[1] : 0;
+
+        var html = '';
+        html += '<div class="row"><span class="lbl">Walls measured</span><span class="val">' + walls.length + '</span></div>';
+        html += '<div class="row"><span class="lbl">Total perimeter</span><span class="val">' + totalLf.toFixed(1) + ' ft</span></div>';
+        if (estArea > 0) {
+            html += '<div class="row"><span class="lbl">Est. area (L×W)</span><span class="val">' + estArea.toFixed(0) + ' sq ft</span></div>';
+        }
+        var labels = measurements.filter(function(m) { return m.type === 'label'; });
+        if (labels.length > 0) {
+            html += '<div class="row"><span class="lbl">Labels</span><span class="val">' + labels.map(function(l) { return l.label; }).join(', ') + '</span></div>';
+        }
+
+        document.getElementById('summaryContent').innerHTML = html;
+        document.getElementById('summaryBox').style.display = 'block';
+    }
+
+    // ── Export / Send to BidGen ──
+    function getMeasurementText() {
+        var lines = ['Room Measurements (from Room Scanner):'];
+        measurements.forEach(function(m) {
+            if (m.type === 'wall') {
+                lines.push(m.label + ': ' + formatDist(m.distance) + ' (' + (m.distance / 12).toFixed(2) + ' ft)');
+            } else {
+                lines.push('[' + m.label + ']');
+            }
+        });
+        var walls = measurements.filter(function(m) { return m.type === 'wall'; });
+        if (walls.length > 0) {
+            var totalLf = 0;
+            walls.forEach(function(w) { totalLf += w.distance / 12; });
+            lines.push('Total perimeter: ' + totalLf.toFixed(1) + ' ft');
+        }
+        return lines.join('\n');
+    }
+
+    window.exportMeasurements = function() {
+        var text = getMeasurementText();
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function() {
+                statusBar.textContent = '📋 Measurements copied to clipboard!';
+            });
+        } else {
+            prompt('Copy these measurements:', text);
+        }
+    };
+
+    window.sendToBidGen = function() {
+        var text = getMeasurementText();
+        // If opened from BidGen, post message back
+        if (window.opener) {
+            window.opener.postMessage({ type: 'roomScannerData', measurements: text, photo: snapshotBase64 }, '*');
+            statusBar.textContent = '📤 Sent to BidGen!';
+        } else {
+            // Store in sessionStorage and redirect
+            try {
+                sessionStorage.setItem('roomScannerData', JSON.stringify({ measurements: text, photo: snapshotBase64 }));
+            } catch(e) {}
+            // Try localStorage as fallback
+            try {
+                localStorage.setItem('roomScannerData', JSON.stringify({ measurements: text, photo: snapshotBase64 }));
+            } catch(e) {}
+            window.location.href = 'index.html#fieldcalc';
+        }
+    };
+
+    window.sendToAIVision = function() {
+        if (measurements.length === 0 && !snapshotBase64) {
+            statusBar.textContent = 'Add some measurements or take a snapshot first';
+            return;
+        }
+
+        var text = getMeasurementText();
+        // Build Gemini Vision request
+        var prompt = [
+            'You are a master flooring installation expert with 30 years of experience.',
+            'I have measured a room using a room scanner tool. Here are the measurements:',
+            '',
+            text,
+            '',
+            'Based on these measurements' + (snapshotBase64 ? ' and the attached room photo' : '') + ':',
+            '1. **Room Assessment** — shape, total sq ft, any issues you see',
+            '2. **Best Seam Placement** — exactly where seams should go for minimum visibility',
+            '3. **Material Direction** — which way to run the material and why',
+            '4. **Cut Plan for Solo Installer** — pieces sized for one person to handle',
+            '5. **Install Sequence** — step-by-step for a solo installer',
+            '6. **Watch-Outs** — where mistakes happen',
+            '',
+            'Be specific. Use the actual measurements provided. Bold all numbers.'
+        ].join('\n');
+
+        var parts = [{ text: prompt }];
+        if (snapshotBase64) {
+            var match = snapshotBase64.match(/^data:(image\/\w+);base64,(.+)$/);
+            if (match) {
+                parts.unshift({ inlineData: { mimeType: match[1], data: match[2] } });
+            }
+        }
+
+        statusBar.textContent = '🧠 Sending to Gemini Vision for analysis...';
+
+        fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev?model=gemini-2.5-pro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: parts }],
+                generationConfig: { maxOutputTokens: 16384, temperature: 0.3 }
+            })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            var aiText = '';
+            try { aiText = data.candidates[0].content.parts[0].text; } catch(e) { aiText = 'Error parsing response'; }
+
+            // Show in measure panel
+            measurePanel.classList.add('open');
+            var html = document.getElementById('measureList').innerHTML;
+            html += '<div class="measure-item" style="border-color:#e67e22;margin-top:12px">';
+            html += '<div class="label" style="color:#e67e22">🧠 AI ANALYSIS</div>';
+            html += '<div style="font-size:11px;line-height:1.6;color:#bdc3c7;margin-top:6px;max-height:300px;overflow-y:auto;white-space:pre-wrap">' + aiText.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#ecf0f1">$1</strong>').replace(/\n/g, '<br>') + '</div>';
+            html += '</div>';
+            document.getElementById('measureList').innerHTML = html;
+            statusBar.textContent = '🧠 AI analysis complete — see results in measurement panel';
+        })
+        .catch(function(err) {
+            statusBar.textContent = '❌ AI error: ' + err.message;
+        });
+    };
+
+    // Initialize measure list
+    renderMeasureList();
+})();
+</script>
+</body>
+</html>

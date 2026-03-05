@@ -353,9 +353,11 @@
     <div class="fc-group">\
         <div class="fc-label">📷 Room Photo (camera or upload)</div>\
         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">\
-            <button class="fc-btn fc-btn-secondary" onclick="fcOpenCamera()" style="flex:1;min-width:120px;font-size:11px;padding:10px 8px">📷 Take Photo</button>\
-            <button class="fc-btn fc-btn-secondary" onclick="document.getElementById(\'fcFileInput\').click()" style="flex:1;min-width:120px;font-size:11px;padding:10px 8px">📁 Upload Photo</button>\
+            <button class="fc-btn fc-btn-secondary" onclick="fcOpenCamera()" style="flex:1;min-width:80px;font-size:11px;padding:10px 6px">📷 Photo</button>\
+            <button class="fc-btn fc-btn-secondary" onclick="document.getElementById(\'fcFileInput\').click()" style="flex:1;min-width:80px;font-size:11px;padding:10px 6px">📁 Upload</button>\
+            <button class="fc-btn fc-btn-secondary" onclick="fcOpenRoomScanner()" style="flex:1;min-width:80px;font-size:11px;padding:10px 6px;border-color:#8e44ad;color:#bb86fc">📐 Room Scanner</button>\
         </div>\
+        <div style="font-size:10px;color:#7f8c8d;margin-bottom:8px">🥽 Room Scanner works with <strong style="color:#bb86fc">Meta Quest 3</strong> AR passthrough, phone camera, or 2D floorplan mode</div>\
         <input type="file" id="fcFileInput" accept="image/*" style="display:none" onchange="fcHandleFile(event)">\
         <div id="fcCameraContainer" style="display:none;margin-bottom:8px;border-radius:8px;overflow:hidden;position:relative">\
             <video id="fcCameraVideo" autoplay playsinline style="width:100%;border-radius:8px;background:#000"></video>\
@@ -812,6 +814,49 @@
     // ================================================================
     var _fcPhotoBase64 = null; // stored photo as base64 data URL
     var _fcCameraStream = null;
+
+    // ── Room Scanner launcher + data receiver ──
+    window.fcOpenRoomScanner = function() {
+        window.open('room-scanner.html', 'roomScanner', 'width=900,height=700');
+    };
+
+    // Listen for data coming back from Room Scanner
+    window.addEventListener('message', function(e) {
+        if (!e.data || e.data.type !== 'roomScannerData') return;
+        // Fill in measurements textarea
+        var input = document.getElementById('fcAIInput');
+        if (input && e.data.measurements) {
+            input.value = (input.value ? input.value + '\n\n' : '') + e.data.measurements;
+        }
+        // Attach photo if scanner sent one
+        if (e.data.photo) {
+            _fcPhotoBase64 = e.data.photo;
+            fcShowPhotoPreview(e.data.photo);
+        }
+        notify('Room Scanner data received!');
+        // Switch to AI tab
+        if (typeof fcSwitchTab === 'function') fcSwitchTab('ai');
+    });
+
+    // Also check sessionStorage/localStorage on load (if scanner redirected here)
+    (function checkScannerData() {
+        var raw = null;
+        try { raw = sessionStorage.getItem('roomScannerData'); sessionStorage.removeItem('roomScannerData'); } catch(e) {}
+        if (!raw) try { raw = localStorage.getItem('roomScannerData'); localStorage.removeItem('roomScannerData'); } catch(e) {}
+        if (!raw) return;
+        try {
+            var data = JSON.parse(raw);
+            var input = document.getElementById('fcAIInput');
+            if (input && data.measurements) {
+                input.value = (input.value ? input.value + '\n\n' : '') + data.measurements;
+            }
+            if (data.photo) {
+                _fcPhotoBase64 = data.photo;
+                fcShowPhotoPreview(data.photo);
+            }
+            notify('Room Scanner data loaded!');
+        } catch(e) {}
+    })();
 
     window.fcOpenCamera = function() {
         var container = document.getElementById('fcCameraContainer');

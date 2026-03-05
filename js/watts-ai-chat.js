@@ -262,26 +262,49 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
     getLead(text);
     typing(true);
 
-    callAI(hist).then(function(reply) {
+    callAI(trimHist(hist), 0).then(function(reply) {
       typing(false); addMsg(reply,'b');
       hist.push({role:'model',parts:[{text:reply}]});
       getLead(reply);
       if (lead.name && lead.phone) saveLead();
       saveSession();
       updateQuickReplies();
-      busy=false; snd.disabled=false; inp.focus();
-    }).catch(function() {
+    }).catch(function(err) {
       typing(false);
-      addMsg("I'm having trouble connecting. Call us at **(405) 410-6402** — happy to help!",'b');
+      // Don't dead-end — give a contextual recovery response
+      var recovery = getRecoveryResponse();
+      addMsg(recovery,'b');
+      hist.push({role:'model',parts:[{text:recovery}]});
+      saveSession();
+    }).finally(function() {
       busy=false; snd.disabled=false; inp.focus();
     });
   }
 
-  function callAI(h) {
+  // Keep last 16 messages to prevent payload bloat / timeouts
+  function trimHist(h) {
+    if (h.length <= 16) return h;
+    // Always keep first greeting exchange + trim to recent
+    var trimmed = h.slice(0, 2).concat(h.slice(-14));
+    // Ensure first message is always from model (greeting)
+    if (trimmed[0].role !== 'model') trimmed = h.slice(-16);
+    return trimmed;
+  }
+
+  // Contextual recovery instead of dead-end
+  function getRecoveryResponse() {
+    var userMsgs = hist.filter(function(m){return m.role==='user';}).length;
+    if (userMsgs <= 1) return "Hey, sorry about that — my connection hiccupped. What were you asking about? I'm here to help with any accessibility or home modification questions.";
+    if (lead.name) return "Sorry " + lead.name + ", I lost my train of thought there for a second. What were we talking about? Or if you'd rather just call me directly, hit me at **(405) 410-6402** — I pick up.";
+    return "Whoops — lost the signal for a sec. I'm back though. What can I help you figure out? Or feel free to call me at **(405) 410-6402** if that's easier.";
+  }
+
+  function callAI(h, attempt) {
+    var MAX_RETRIES = 2;
     var body = {
       system_instruction:{parts:[{text:SYS}]},
       contents:h,
-      generationConfig:{temperature:.8,maxOutputTokens:300,topP:.9},
+      generationConfig:{temperature:.8,maxOutputTokens:1024,topP:.9},
       safetySettings:[
         {category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_ONLY_HIGH'},
         {category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_ONLY_HIGH'},
@@ -289,15 +312,40 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
         {category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_ONLY_HIGH'}
       ]
     };
+
+    // Timeout wrapper — 15 seconds
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 15000);
+
     return fetch(PROXY+'?model='+MODEL,{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
+      body:JSON.stringify(body),
+      signal:controller.signal
     }).then(function(r) {
-      if (!r.ok) throw new Error('API error');
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP '+r.status);
       return r.json();
     }).then(function(d) {
-      var t = d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0] && d.candidates[0].content.parts[0].text;
-      return t || "I'd love to help — call us at **(405) 410-6402**!";
+      // Check for safety filter block
+      var candidate = d.candidates && d.candidates[0];
+      if (candidate && candidate.finishReason === 'SAFETY') {
+        return "I appreciate you sharing that. I want to make sure I give you the best answer — can you tell me a bit more about your project? Or just call me at **(405) 410-6402** and we'll figure it out together.";
+      }
+      var t = candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text;
+      if (!t || t.trim().length < 5) throw new Error('Empty response');
+      return t;
+    }).catch(function(err) {
+      clearTimeout(timer);
+      // Retry with exponential backoff
+      if (attempt < MAX_RETRIES) {
+        var delay = (attempt + 1) * 1500;
+        return new Promise(function(resolve) {
+          setTimeout(function() {
+            resolve(callAI(h, attempt + 1));
+          }, delay);
+        });
+      }
+      throw err;
     });
   }
 

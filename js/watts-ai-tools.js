@@ -248,7 +248,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         '- Format price range in bold with **\n' +
         '- Do NOT use bullet points or numbered lists — use flowing sentences';
 
-      callProxy(prompt, 400).then(function(text) {
+      callProxy(prompt, 1024).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         var rangeMatch = text.match(/\$[\d,]+\s*[–—-]\s*\$[\d,]+/);
         var rangeStr = rangeMatch ? rangeMatch[0] : '';
@@ -273,16 +273,26 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
           renderStep();
         });
       }).catch(function() {
+        // Contextual fallback with real info instead of generic dead-end
+        var svcLabel2 = '';
+        B.services.forEach(function(sv) { if (sv.id === state.service) svcLabel2 = sv.label; });
         var result = document.getElementById('wq-result');
         if (result) {
-          result.innerHTML = '<h4>We\'d Love to Help</h4>' +
-            '<p>Every project is unique, and we want to give you an accurate number — not a guess. ' +
-            'Call us for a <strong>free, no-obligation on-site estimate</strong> tailored to your specific needs.</p>' +
-            '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Free Estimate</a>';
+          result.innerHTML = '<h4><i class="fas fa-clipboard-check" style="color:' + B.c + ';margin-right:8px"></i>Estimate for ' + svcLabel2 + '</h4>' +
+            '<p><strong>' + state.scope + '</strong> in <strong>' + (state.town || 'your area') + '</strong></p>' +
+            '<p>I want to give you an accurate number for this — not a ballpark guess. Every ' + svcLabel2.toLowerCase() + ' project has unique variables like materials, site conditions, and scope that affect the final price.</p>' +
+            '<p>Here\'s what I can tell you: I\'ll come out, take measurements, assess the situation, and give you a detailed written estimate — <strong>100% free, zero obligation</strong>. Most estimates take about 15–20 minutes and I can usually get out there within a day or two.</p>' +
+            '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Schedule Free Estimate</a>' +
+            '<div style="margin-top:12px"><button class="wai-btn-outline" id="wq-restart"><i class="fas fa-redo"></i> Try Again</button></div>';
           result.classList.add('show');
         }
         var spinner = el.querySelector('.fa-cog');
         if (spinner) spinner.closest('div[style]').style.display = 'none';
+        var restart = document.getElementById('wq-restart');
+        if (restart) restart.addEventListener('click', function() {
+          state = { service: null, scope: null, town: '', details: '', step: 0 };
+          renderStep();
+        });
       });
     }
 
@@ -437,7 +447,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         '- Format service names in bold with **\n' +
         '- Do NOT use bullet points or numbered lists';
 
-      callProxy(prompt, 350).then(function(text) {
+      callProxy(prompt, 1024).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         var resultHtml = '<h4><i class="fas fa-check-circle" style="color:' + B.c + ';margin-right:8px"></i>Our Recommendation</h4>';
         resultHtml += '<div>' + formatted + '</div>';
@@ -451,28 +461,49 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         var restart = document.getElementById('wr-restart');
         if (restart) restart.addEventListener('click', function() { answers = []; step = 0; render(); });
       }).catch(function() {
+        // Build a useful contextual recommendation from the answers instead of a dead-end
+        var answerSummary = [];
+        questions.forEach(function(q, i) { if (answers[i]) answerSummary.push(answers[i]); });
+        var bestGuess = '';
+        B.services.forEach(function(sv) {
+          var combined = answerSummary.join(' ').toLowerCase();
+          if (combined.indexOf('bathroom') !== -1 && (sv.id === 'bath' || sv.id === 'remodel')) bestGuess = sv.label;
+          else if (combined.indexOf('entrance') !== -1 && sv.id === 'ramp') bestGuess = sv.label;
+          else if (combined.indexOf('floor') !== -1 && sv.id === 'floor') bestGuess = sv.label;
+          else if (combined.indexOf('stair') !== -1 && sv.id === 'safety') bestGuess = sv.label;
+          else if (combined.indexOf('kitchen') !== -1 && sv.id === 'remodel') bestGuess = sv.label;
+          else if (combined.indexOf('exterior') !== -1 && sv.id === 'gutter') bestGuess = sv.label;
+        });
+        if (!bestGuess) bestGuess = B.services[0].label;
+
         var result = document.getElementById('wr-result');
         if (result) {
-          result.innerHTML = '<h4>Let\'s Talk About Your Project</h4>' +
-            '<p>Your situation is unique, and we want to make sure we recommend exactly the right solution. ' +
-            'Call us for a <strong>free, no-obligation consultation</strong> — we\'ll assess your needs in person and provide a clear plan.</p>' +
-            '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Free Consultation</a>';
+          result.innerHTML = '<h4><i class="fas fa-check-circle" style="color:' + B.c + ';margin-right:8px"></i>Our Recommendation</h4>' +
+            '<p>Based on what you\'ve told me — <strong>' + answerSummary.join('</strong>, <strong>') + '</strong> — I\'d recommend starting with our <strong>' + bestGuess + '</strong> service.</p>' +
+            '<p>Every home is different, and I want to see your specific situation before making detailed recommendations. I\'ll come out, do a thorough assessment, and give you a clear plan with pricing — <strong>completely free</strong>.</p>' +
+            '<p>I\'m Justin, and I personally handle every project. Licensed, insured, and I\'ve been doing this work across Northeast Nebraska for years.</p>' +
+            '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Free Consultation</a>' +
+            '<div style="margin-top:12px"><button class="wai-btn-outline" id="wr-restart"><i class="fas fa-redo"></i> Try Again</button></div>';
           result.classList.add('show');
         }
         var spinner = el.querySelector('.fa-magnifying-glass-chart');
         if (spinner) spinner.closest('div[style]').style.display = 'none';
+        var restart = document.getElementById('wr-restart');
+        if (restart) restart.addEventListener('click', function() { answers = []; step = 0; render(); });
       });
     }
 
     render();
   }
 
-  // ── PROXY CALL ──
-  function callProxy(prompt, maxTokens) {
+  // ── PROXY CALL WITH RETRY ──
+  function callProxy(prompt, maxTokens, attempt) {
+    attempt = attempt || 0;
+    var MAX_RETRIES = 2;
     var body = {
       system_instruction: { parts: [{ text: 'You are a senior professional at ' + B.name + ', a licensed Nebraska contractor. You speak with authority, warmth, and expertise. You never sound like a generic chatbot. You give specific, actionable advice. You always reference the customer\'s specific situation. Price ranges must reflect real Nebraska contractor rates. Always end with the phone number (405) 410-6402.' }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: maxTokens || 300, topP: 0.9 },
+      generationConfig: { temperature: 0.7, maxOutputTokens: maxTokens || 1024, topP: 0.9 },
       safetySettings: [
         { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
         { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
@@ -480,17 +511,34 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' }
       ]
     };
+
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 15000);
+
     return fetch(PROXY + '?model=' + MODEL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
+      signal: controller.signal
     }).then(function(r) {
-      if (!r.ok) throw new Error('API error');
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     }).then(function(d) {
-      var t = d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0] && d.candidates[0].content.parts[0].text;
-      if (!t) throw new Error('No response');
+      var candidate = d.candidates && d.candidates[0];
+      if (candidate && candidate.finishReason === 'SAFETY') throw new Error('Safety filter');
+      var t = candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text;
+      if (!t || t.trim().length < 10) throw new Error('Empty response');
       return t;
+    }).catch(function(err) {
+      clearTimeout(timer);
+      if (attempt < MAX_RETRIES) {
+        var delay = (attempt + 1) * 1500;
+        return new Promise(function(resolve) {
+          setTimeout(function() { resolve(callProxy(prompt, maxTokens, attempt + 1)); }, delay);
+        });
+      }
+      throw err;
     });
   }
 

@@ -1156,7 +1156,7 @@
 <p class="slogan">Bringing Peace of Mind to Your Doorstep</p>
 <p>Professional Home Services &amp; General Contracting Serving Norfolk, Madison County, Lancaster County, Antelope County & All Nebraska</p>
 <div class="promo-banner">
-<p style="font-size:1.6rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
+<p style="font-size:1.6rem; margin:0" id="hero-promo"></p>
 </div>
 <a class="cta-button" href="tel:+14054106402">Call (405) 410-6402 – Free Quote</a>
 </section>
@@ -1206,7 +1206,7 @@
 </div>
 <div class="promo-floating">
 <a href="/safety-installs/contact.html">
-<p style="font-size:1.2rem; margin:0"><strong>15% OFF First 3 Snow Visits 2025</strong> • <strong>LAWN2026 – 20% OFF Season</strong></p>
+<p style="font-size:1.2rem; margin:0" id="floating-promo"></p>
 </a>
 </div>
 </section>
@@ -1436,6 +1436,47 @@ document.addEventListener('DOMContentLoaded', function() {
         span.textContent = new Date().getFullYear();
     });
 });
+</script>
+<script>
+// Seasonal Promo Banner — auto-updates based on current month & year
+(function() {
+    var now = new Date();
+    var month = now.getMonth(); // 0-11
+    var year = now.getFullYear();
+    var nextYear = year + 1;
+
+    // Season definitions (Nebraska climate):
+    // Dec-Feb: Winter (snow season)
+    // Mar-Apr: Spring transition
+    // May-Sep: Summer (lawn season)
+    // Oct-Nov: Fall transition
+    var promos = [];
+
+    if (month >= 10 || month <= 1) {
+        // NOV-FEB: Snow season promos
+        var snowYear = (month >= 10) ? nextYear : year;
+        promos.push('<strong>15% OFF First 3 Snow Visits ' + snowYear + '</strong>');
+        promos.push('<strong>LAWN' + nextYear + ' \u2013 20% OFF Season</strong>');
+    } else if (month >= 2 && month <= 3) {
+        // MAR-APR: Spring transition
+        promos.push('<strong>SPRING' + year + ' \u2013 Free Estimates on All Projects</strong>');
+        promos.push('<strong>LAWN' + year + ' \u2013 20% OFF Full Season</strong>');
+    } else if (month >= 4 && month <= 8) {
+        // MAY-SEP: Summer / lawn season
+        promos.push('<strong>LAWN' + year + ' \u2013 20% OFF Season Packages</strong>');
+        promos.push('<strong>SUMMER' + year + ' \u2013 15% OFF Remodeling Projects</strong>');
+    } else {
+        // OCT: Fall transition
+        promos.push('<strong>FALL' + year + ' \u2013 15% OFF Gutter &amp; Exterior Work</strong>');
+        promos.push('<strong>SNOW' + (year + 1) + ' \u2013 Book Early &amp; Save 15%</strong>');
+    }
+
+    var promoHTML = promos.join(' \u2022 ');
+    var hero = document.getElementById('hero-promo');
+    var floating = document.getElementById('floating-promo');
+    if (hero) hero.innerHTML = promoHTML;
+    if (floating) floating.innerHTML = promoHTML;
+})();
 </script>
 <script src="/js/watts-ai-tools.js" defer></script>
 <script src="/js/watts-ai-chat.js" defer></script>

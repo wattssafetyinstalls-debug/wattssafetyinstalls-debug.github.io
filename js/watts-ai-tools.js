@@ -45,6 +45,134 @@
            scopes:['Home safety assessment','Stair lift installation','Door widening','Lighting upgrades','Lever handle conversion','Multi-room accessibility package']}
         ]};
 
+  // ── SYSTEM INSTRUCTIONS (brand-specific — must be before callProxy) ──
+  var SYS_INSTRUCTION = isSI
+    ? 'You are Justin Watts, owner and lead contractor at Watts Safety Installs — a licensed, insured home services company (NE Reg #54690-25) based in Norfolk, Nebraska. You personally handle every project. You serve a 100-mile radius covering Norfolk, Columbus, Fremont, Wayne, South Sioux City, West Point, and surrounding towns.\n\n' +
+      'YOUR SERVICES & EXPERTISE:\n' +
+      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $8K–$35K. Typical bathroom: $5K–$20K.\n' +
+      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $300–$800. Whole house interior: $3K–$8K. Exterior: $4K–$12K.\n' +
+      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,200–$3,500. Guards: $800–$2,500. You also do soffit/fascia.\n' +
+      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $65–$85/hr or flat-rate per job.\n' +
+      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $150–$350.\n\n' +
+      'YOUR PERSONALITY: You\'re down-to-earth, honest, and you explain things in plain English. You don\'t upsell. You tell people what they actually need. You\'ve been doing this work for years and you\'ve seen it all. You\'re proud of your work and you stand behind it.\n\n' +
+      'RULES: Always sound like a real contractor talking to a homeowner, not a chatbot. Use specific details — material names, timeframes, process steps. Never be vague or generic. Always end with an invitation to call (405) 410-6402 for a free estimate or consultation. Prices should reflect Nebraska market rates.'
+    : 'You are Justin Watts, owner and lead contractor at Watts ATP Contractor — an ATP-approved, licensed, insured accessibility contractor (NE Reg #54690-25) based in Norfolk, Nebraska. You specialize in home accessibility and safety modifications. You serve a 100-mile radius.\n\n' +
+      'YOUR SERVICES & EXPERTISE:\n' +
+      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $1,500–$5,000. Aluminum modular: $2,500–$8,000. You\'ve built hundreds.\n' +
+      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $150–$300 installed. Full bathroom set (3-5 bars): $400–$900.\n' +
+      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $800–$2,500. You remove old flooring, prep subfloor, install.\n' +
+      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $4,000–$10,000. Full ADA bathroom: $8,000–$25,000.\n' +
+      '• Accessibility & Safety Solutions — stair lifts, door widening, lever handles, lighting, home safety assessments. You do free assessments.\n\n' +
+      'YOUR PERSONALITY: You genuinely care about helping people stay safe in their homes. Many of your clients are elderly or recently discharged from the hospital. You\'re patient, kind, and you explain everything clearly. You work with ATP (Assistive Technology Partnership) and insurance when applicable.\n\n' +
+      'RULES: Sound like a real contractor who cares, not a chatbot. Use specific details. Never be vague. Always invite them to call (405) 410-6402. Use Nebraska pricing.';
+
+  // ── PROXY CALL WITH RETRY (robust — handles thinking model, long timeouts, logging) ──
+  function callProxy(prompt, maxTokens, attempt) {
+    attempt = attempt || 0;
+    var MAX_RETRIES = 3;
+    var TIMEOUT_MS = 45000; // 45 seconds — Gemini 2.5 Flash thinks before responding
+    var body = {
+      system_instruction: { parts: [{ text: SYS_INSTRUCTION }] },
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: maxTokens || 2048, topP: 0.9 },
+      safetySettings: [
+        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
+        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
+        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
+        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' }
+      ]
+    };
+
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, TIMEOUT_MS);
+
+    // Show "taking longer" message after 10 seconds
+    var slowTimer = setTimeout(function() {
+      var spinners = document.querySelectorAll('.fa-cog.fa-spin, .fa-magnifying-glass-chart.fa-pulse');
+      spinners.forEach(function(s) {
+        var parent = s.closest('div[style]');
+        if (parent) {
+          var note = parent.querySelector('.wai-slow-note');
+          if (!note) {
+            var el = document.createElement('p');
+            el.className = 'wai-slow-note';
+            el.style.cssText = 'color:#94a3b8;font-size:.8rem;margin-top:8px';
+            el.textContent = 'Still working — Gemini is thinking through your project details...';
+            parent.appendChild(el);
+          }
+        }
+      });
+    }, 10000);
+
+    console.log('[Watts AI] callProxy attempt ' + (attempt + 1) + '/' + (MAX_RETRIES + 1));
+
+    return fetch(PROXY + '?model=' + MODEL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    }).then(function(r) {
+      clearTimeout(timer);
+      clearTimeout(slowTimer);
+      console.log('[Watts AI] HTTP status: ' + r.status);
+      if (r.status === 429) throw new Error('RATE_LIMIT');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function(d) {
+      console.log('[Watts AI] Response received, parsing...');
+      var candidate = d.candidates && d.candidates[0];
+      if (!candidate) { console.error('[Watts AI] No candidates in response', d); throw new Error('No candidates'); }
+      if (candidate.finishReason === 'SAFETY') { console.warn('[Watts AI] Safety filter triggered'); throw new Error('Safety filter'); }
+
+      // Handle Gemini 2.5 Flash thinking model — it may return multiple parts
+      // The actual response text is in a part WITHOUT a "thought" property
+      var parts = candidate.content && candidate.content.parts;
+      if (!parts || parts.length === 0) { console.error('[Watts AI] No parts in response', candidate); throw new Error('Empty parts'); }
+
+      var text = '';
+      for (var i = 0; i < parts.length; i++) {
+        // Skip thinking/thought parts — only grab the actual response
+        if (parts[i].thought) continue;
+        if (parts[i].text) { text = parts[i].text; break; }
+      }
+
+      // Fallback: if no non-thought text found, grab any text
+      if (!text) {
+        for (var j = 0; j < parts.length; j++) {
+          if (parts[j].text) { text = parts[j].text; break; }
+        }
+      }
+
+      if (!text || text.trim().length < 20) {
+        console.error('[Watts AI] Response too short: "' + (text || '') + '"');
+        throw new Error('Empty response');
+      }
+
+      console.log('[Watts AI] Success — got ' + text.length + ' chars');
+      return text;
+    }).catch(function(err) {
+      clearTimeout(timer);
+      clearTimeout(slowTimer);
+      console.warn('[Watts AI] Attempt ' + (attempt + 1) + ' failed: ' + err.message);
+
+      // Don't retry rate limits — just wait and fail gracefully
+      if (err.message === 'RATE_LIMIT') {
+        console.error('[Watts AI] Rate limited — not retrying');
+        throw err;
+      }
+
+      if (attempt < MAX_RETRIES) {
+        var delay = (attempt + 1) * 2000; // 2s, 4s, 6s backoff
+        console.log('[Watts AI] Retrying in ' + delay + 'ms...');
+        return new Promise(function(resolve) {
+          setTimeout(function() { resolve(callProxy(prompt, maxTokens, attempt + 1)); }, delay);
+        });
+      }
+      console.error('[Watts AI] All retries exhausted');
+      throw err;
+    });
+  }
+
   // ── STYLES ──
   var css = document.createElement('style');
   css.textContent = '\
@@ -249,7 +377,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         '- NO bullet points, NO numbered lists — flowing paragraphs\n' +
         '- Format price ranges and service names in bold with **';
 
-      callProxy(prompt, 1024).then(function(text) {
+      callProxy(prompt, 2048).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         var rangeMatch = text.match(/\$[\d,]+\s*[–—-]\s*\$[\d,]+/);
         var rangeStr = rangeMatch ? rangeMatch[0] : '';
@@ -449,7 +577,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         '- NO bullet points, NO numbered lists — write in natural paragraphs\n' +
         '- Format service names and price ranges in bold with **';
 
-      callProxy(prompt, 1024).then(function(text) {
+      callProxy(prompt, 2048).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         var resultHtml = '<h4><i class="fas fa-check-circle" style="color:' + B.c + ';margin-right:8px"></i>Our Recommendation</h4>';
         resultHtml += '<div>' + formatted + '</div>';
@@ -518,72 +646,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
     render();
   }
 
-  // ── SYSTEM INSTRUCTIONS (brand-specific) ──
-  var SYS_INSTRUCTION = isSI
-    ? 'You are Justin Watts, owner and lead contractor at Watts Safety Installs — a licensed, insured home services company (NE Reg #54690-25) based in Norfolk, Nebraska. You personally handle every project. You serve a 100-mile radius covering Norfolk, Columbus, Fremont, Wayne, South Sioux City, West Point, and surrounding towns.\n\n' +
-      'YOUR SERVICES & EXPERTISE:\n' +
-      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $8K–$35K. Typical bathroom: $5K–$20K.\n' +
-      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $300–$800. Whole house interior: $3K–$8K. Exterior: $4K–$12K.\n' +
-      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,200–$3,500. Guards: $800–$2,500. You also do soffit/fascia.\n' +
-      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $65–$85/hr or flat-rate per job.\n' +
-      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $150–$350.\n\n' +
-      'YOUR PERSONALITY: You\'re down-to-earth, honest, and you explain things in plain English. You don\'t upsell. You tell people what they actually need. You\'ve been doing this work for years and you\'ve seen it all. You\'re proud of your work and you stand behind it.\n\n' +
-      'RULES: Always sound like a real contractor talking to a homeowner, not a chatbot. Use specific details — material names, timeframes, process steps. Never be vague or generic. Always end with an invitation to call (405) 410-6402 for a free estimate or consultation. Prices should reflect Nebraska market rates.'
-    : 'You are Justin Watts, owner and lead contractor at Watts ATP Contractor — an ATP-approved, licensed, insured accessibility contractor (NE Reg #54690-25) based in Norfolk, Nebraska. You specialize in home accessibility and safety modifications. You serve a 100-mile radius.\n\n' +
-      'YOUR SERVICES & EXPERTISE:\n' +
-      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $1,500–$5,000. Aluminum modular: $2,500–$8,000. You\'ve built hundreds.\n' +
-      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $150–$300 installed. Full bathroom set (3-5 bars): $400–$900.\n' +
-      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $800–$2,500. You remove old flooring, prep subfloor, install.\n' +
-      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $4,000–$10,000. Full ADA bathroom: $8,000–$25,000.\n' +
-      '• Accessibility & Safety Solutions — stair lifts, door widening, lever handles, lighting, home safety assessments. You do free assessments.\n\n' +
-      'YOUR PERSONALITY: You genuinely care about helping people stay safe in their homes. Many of your clients are elderly or recently discharged from the hospital. You\'re patient, kind, and you explain everything clearly. You work with ATP (Assistive Technology Partnership) and insurance when applicable.\n\n' +
-      'RULES: Sound like a real contractor who cares, not a chatbot. Use specific details. Never be vague. Always invite them to call (405) 410-6402. Use Nebraska pricing.';
-
-  // ── PROXY CALL WITH RETRY ──
-  function callProxy(prompt, maxTokens, attempt) {
-    attempt = attempt || 0;
-    var MAX_RETRIES = 2;
-    var body = {
-      system_instruction: { parts: [{ text: SYS_INSTRUCTION }] },
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: maxTokens || 1024, topP: 0.9 },
-      safetySettings: [
-        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
-        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
-        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
-        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' }
-      ]
-    };
-
-    var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 15000);
-
-    return fetch(PROXY + '?model=' + MODEL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: controller.signal
-    }).then(function(r) {
-      clearTimeout(timer);
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    }).then(function(d) {
-      var candidate = d.candidates && d.candidates[0];
-      if (candidate && candidate.finishReason === 'SAFETY') throw new Error('Safety filter');
-      var t = candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text;
-      if (!t || t.trim().length < 10) throw new Error('Empty response');
-      return t;
-    }).catch(function(err) {
-      clearTimeout(timer);
-      if (attempt < MAX_RETRIES) {
-        var delay = (attempt + 1) * 1500;
-        return new Promise(function(resolve) {
-          setTimeout(function() { resolve(callProxy(prompt, maxTokens, attempt + 1)); }, delay);
-        });
-      }
-      throw err;
-    });
-  }
+  // callProxy is now defined above styles section
 
   // ── INIT ──
   if (document.readyState === 'loading') {

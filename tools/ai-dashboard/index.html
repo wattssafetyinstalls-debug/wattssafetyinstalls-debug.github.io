@@ -118,7 +118,7 @@
 
 <div class="api-connected-banner">
     <div class="dot"></div>
-    <span><strong>AI Connected</strong> — Powered by Gemini 2.5 Flash via secure proxy</span>
+    <span><strong>AI Connected</strong> — Powered by Gemini 2.5 Pro via secure proxy</span>
 </div>
 
 <div class="tabs" id="tabBar">
@@ -130,6 +130,7 @@
     <div class="tab" data-tab="seo">SEO Keywords</div>
     <div class="tab" data-tab="landing">Landing Pages</div>
     <div class="tab" data-tab="leads">Leads <span class="badge" id="leadsBadge">0</span></div>
+    <div class="tab" data-tab="analytics">Analytics</div>
 </div>
 
 <div class="panel-container">
@@ -457,6 +458,25 @@
     <button class="btn btn-danger" onclick="clearLeads()" style="margin-top:12px; margin-left:8px;">Clear All Leads</button>
 </div>
 
+<!-- ═══════════════ ANALYTICS PANEL ═══════════════ -->
+<div class="panel" id="panel-analytics">
+    <div class="section-title">Widget Analytics</div>
+    <div class="section-desc">Usage data from the AI Chat Widget, Project Estimator, and Service Advisor. Data is stored locally in your browser from visitor interactions on your device.</div>
+
+    <div class="stats-grid" id="analyticsStats"></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="filterAnalytics('all')">All Events</button>
+        <button class="btn btn-secondary" onclick="filterAnalytics('chat_message')">Chat Messages</button>
+        <button class="btn btn-secondary" onclick="filterAnalytics('estimator')">Estimator</button>
+        <button class="btn btn-secondary" onclick="filterAnalytics('advisor')">Service Advisor</button>
+        <button class="btn btn-secondary" onclick="exportAnalytics()">Export CSV</button>
+        <button class="btn btn-danger" onclick="clearAnalytics()">Clear Data</button>
+    </div>
+
+    <div id="analyticsLog" style="max-height:500px;overflow-y:auto;"></div>
+</div>
+
 </div><!-- panel-container -->
 
 <script>
@@ -465,7 +485,7 @@
 // ═══════════════════════════════════════════
 let API_KEY = 'proxy'; // API key managed securely by Cloudflare Worker proxy
 const PROXY_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-2.5-pro';
 
 const BRAND_INFO = {
     atp: {
@@ -497,6 +517,7 @@ const BRAND_INFO = {
     document.getElementById('apiDot').classList.add('connected');
     document.getElementById('apiStatusText').textContent = 'Connected via Proxy';
     loadLeads();
+    loadAnalytics();
 })();
 
 // ═══════════════════════════════════════════
@@ -509,6 +530,8 @@ document.getElementById('tabBar').addEventListener('click', (e) => {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'leads') loadLeads();
+    if (tab.dataset.tab === 'analytics') loadAnalytics();
 });
 
 // ═══════════════════════════════════════════
@@ -997,6 +1020,95 @@ function clearLeads() {
     localStorage.removeItem('watts-ai-leads');
     localStorage.removeItem('watts-ai-sessions');
     loadLeads();
+}
+
+// ═══════════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════════
+let _analyticsFilter = 'all';
+
+function loadAnalytics() {
+    const log = JSON.parse(localStorage.getItem('watts_ai_analytics') || '[]');
+    const chatMsgs = log.filter(e => e.type === 'chat_message');
+    const chatFails = log.filter(e => e.type === 'chat_fallback');
+    const estDone = log.filter(e => e.type === 'estimator_complete');
+    const estFail = log.filter(e => e.type === 'estimator_fallback');
+    const advDone = log.filter(e => e.type === 'advisor_complete');
+    const advFail = log.filter(e => e.type === 'advisor_fallback');
+
+    const statsEl = document.getElementById('analyticsStats');
+    if (statsEl) {
+        statsEl.innerHTML = `
+            <div class="stat-card"><div class="stat-num">${log.length}</div><div class="stat-label">Total Events</div></div>
+            <div class="stat-card"><div class="stat-num">${chatMsgs.length}</div><div class="stat-label">Chat Messages</div></div>
+            <div class="stat-card"><div class="stat-num">${estDone.length + estFail.length}</div><div class="stat-label">Estimates Run</div></div>
+            <div class="stat-card"><div class="stat-num">${advDone.length + advFail.length}</div><div class="stat-label">Advisor Uses</div></div>
+            <div class="stat-card"><div class="stat-num">${chatFails.length + estFail.length + advFail.length}</div><div class="stat-label">Fallbacks</div></div>
+            <div class="stat-card"><div class="stat-num">${log.length > 0 ? new Date(log[log.length-1].ts).toLocaleDateString() : 'N/A'}</div><div class="stat-label">Last Activity</div></div>
+        `;
+    }
+    renderAnalyticsLog(log);
+}
+
+function filterAnalytics(type) {
+    _analyticsFilter = type;
+    const log = JSON.parse(localStorage.getItem('watts_ai_analytics') || '[]');
+    renderAnalyticsLog(log);
+}
+
+function renderAnalyticsLog(log) {
+    const el = document.getElementById('analyticsLog');
+    if (!el) return;
+    let filtered = log;
+    if (_analyticsFilter !== 'all') {
+        filtered = log.filter(e => e.type.indexOf(_analyticsFilter) !== -1);
+    }
+    if (filtered.length === 0) {
+        el.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">No events recorded yet. Use the AI widgets on your live site and data will appear here.</div>';
+        return;
+    }
+    el.innerHTML = filtered.slice().reverse().map(e => {
+        const d = new Date(e.ts);
+        const time = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+        const typeColors = { chat_message:'#00C4B4', chat_fallback:'#e74c3c', estimator_complete:'#3498db', estimator_fallback:'#e67e22', advisor_complete:'#9b59b6', advisor_fallback:'#e67e22' };
+        const color = typeColors[e.type] || '#7f8c8d';
+        let detail = '';
+        if (e.data) {
+            if (e.data.userMsg) detail = 'User: "' + e.data.userMsg + '"';
+            else if (e.data.service) detail = e.data.service + ' → ' + (e.data.scope || '') + (e.data.range ? ' (' + e.data.range + ')' : '');
+            else if (e.data.answers) detail = e.data.answers.join(', ');
+            else if (e.data.error) detail = 'Error: ' + e.data.error;
+            else if (e.data.recommendation) detail = 'Recommended: ' + e.data.recommendation;
+        }
+        return `<div class="lead-card" style="border-left:3px solid ${color}">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="color:${color};font-weight:600;font-size:12px;text-transform:uppercase">${e.type.replace(/_/g,' ')}</span>
+                <span style="color:#555;font-size:11px">${time}</span>
+            </div>
+            ${detail ? `<div style="color:#aaa;font-size:12px;margin-top:4px">${detail}</div>` : ''}
+            <div style="color:#555;font-size:11px;margin-top:2px">${e.brand || ''} &bull; ${e.page || ''}</div>
+        </div>`;
+    }).join('');
+}
+
+function exportAnalytics() {
+    const log = JSON.parse(localStorage.getItem('watts_ai_analytics') || '[]');
+    if (!log.length) return alert('No analytics data to export');
+    const csv = 'Timestamp,Type,Brand,Page,Details\n' + log.map(e => {
+        const detail = e.data ? JSON.stringify(e.data).replace(/"/g, '""') : '';
+        return `"${new Date(e.ts).toISOString()}","${e.type}","${e.brand||''}","${e.page||''}","${detail}"`;
+    }).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `watts-analytics-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+}
+
+function clearAnalytics() {
+    if (!confirm('Delete all analytics data? This cannot be undone.')) return;
+    localStorage.removeItem('watts_ai_analytics');
+    loadAnalytics();
 }
 </script>
 </body>

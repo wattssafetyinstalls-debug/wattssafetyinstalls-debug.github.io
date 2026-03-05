@@ -114,7 +114,7 @@ function httpsRequest(options, body) {
 
 // ── CALL GEMINI ──
 async function callGemini(prompt) {
-  var url = new URL('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_KEY);
+  var url = new URL('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=' + GEMINI_KEY);
   var body = JSON.stringify({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     generationConfig: { temperature: 0.85, maxOutputTokens: 600, topP: 0.92 }
@@ -124,9 +124,21 @@ async function callGemini(prompt) {
     headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
   }, body);
   var json = JSON.parse(res.data);
-  var text = json.candidates && json.candidates[0] && json.candidates[0].content &&
-    json.candidates[0].content.parts && json.candidates[0].content.parts[0] &&
-    json.candidates[0].content.parts[0].text;
+  var candidate = json.candidates && json.candidates[0];
+  if (!candidate || !candidate.content || !candidate.content.parts) {
+    throw new Error('Gemini returned no candidates: ' + res.data.substring(0, 300));
+  }
+  // Gemini 2.5 Pro thinking model — skip thought parts, grab actual response
+  var text = '';
+  for (var i = 0; i < candidate.content.parts.length; i++) {
+    if (candidate.content.parts[i].thought) continue;
+    if (candidate.content.parts[i].text) { text = candidate.content.parts[i].text; break; }
+  }
+  if (!text) {
+    for (var j = 0; j < candidate.content.parts.length; j++) {
+      if (candidate.content.parts[j].text) { text = candidate.content.parts[j].text; break; }
+    }
+  }
   if (!text) throw new Error('Gemini returned no text: ' + res.data.substring(0, 300));
   return text.trim();
 }

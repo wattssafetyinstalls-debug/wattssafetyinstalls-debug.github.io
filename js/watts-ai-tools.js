@@ -9,6 +9,7 @@
 
   var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
   var MODEL = 'gemini-2.5-pro';
+  var FORMSPREE = 'https://formspree.io/f/mjkjgrlb';
   var isSI = window.location.pathname.startsWith('/safety-installs');
 
   var TOWNS = ['Norfolk','Columbus','Fremont','Wayne','South Sioux City','West Point','Schuyler',
@@ -45,26 +46,77 @@
            scopes:['Home safety assessment','Stair lift installation','Door widening','Lighting upgrades','Lever handle conversion','Multi-room accessibility package']}
         ]};
 
+  // ── EMAIL RESULTS HELPER ──
+  function emailResultHtml(widgetId) {
+    return '<div class="wai-divider"></div>' +
+      '<p style="font-size:.85rem;color:#64748B;margin-bottom:4px"><i class="fas fa-envelope" style="color:' + B.c + ';margin-right:6px"></i>Want a copy of this sent to your email?</p>' +
+      '<div class="wai-email-form" id="' + widgetId + '-email-form">' +
+      '<input type="email" placeholder="you@example.com" id="' + widgetId + '-email-input">' +
+      '<button class="wai-email-send" id="' + widgetId + '-email-btn"><i class="fas fa-paper-plane"></i> Send</button>' +
+      '</div>' +
+      '<div id="' + widgetId + '-email-status"></div>';
+  }
+
+  function bindEmailSend(widgetId, subject, bodyText) {
+    var btn = document.getElementById(widgetId + '-email-btn');
+    var inp = document.getElementById(widgetId + '-email-input');
+    var status = document.getElementById(widgetId + '-email-status');
+    if (!btn || !inp) return;
+    btn.addEventListener('click', function() {
+      var email = inp.value.trim();
+      if (!email || email.indexOf('@') === -1) {
+        status.innerHTML = '<p style="color:#dc2626;font-size:.82rem">Please enter a valid email address.</p>';
+        return;
+      }
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      var cleanBody = bodyText.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+      fetch(FORMSPREE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          _replyto: email,
+          _subject: subject + ' — ' + B.name,
+          message: cleanBody,
+          source: widgetId,
+          brand: B.name,
+          page: window.location.href
+        })
+      }).then(function(r) {
+        if (r.ok) {
+          status.innerHTML = '<p class="wai-email-sent"><i class="fas fa-check-circle"></i> Sent! Check your inbox.</p>';
+          btn.style.display = 'none';
+          inp.style.display = 'none';
+        } else { throw new Error('Failed'); }
+      }).catch(function() {
+        status.innerHTML = '<p style="color:#dc2626;font-size:.82rem">Couldn\'t send — please try again or call (405) 410-6402.</p>';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+      });
+    });
+  }
+
   // ── SYSTEM INSTRUCTIONS (brand-specific — must be before callProxy) ──
   var SYS_INSTRUCTION = isSI
     ? 'You are Justin Watts, owner and lead contractor at Watts Safety Installs — a licensed, insured home services company (NE Reg #54690-25) based in Norfolk, Nebraska. You personally handle every project. You serve a 100-mile radius covering Norfolk, Columbus, Fremont, Wayne, South Sioux City, West Point, and surrounding towns.\n\n' +
       'YOUR SERVICES & EXPERTISE:\n' +
-      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $15K–$50K. Partial kitchen update: $5K–$15K. Typical bathroom: $8K–$25K. Tub-to-shower conversion: $5K–$12K.\n' +
-      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $400–$1,200. Whole house interior: $4K–$12K. Exterior: $5K–$15K.\n' +
-      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,800–$5,000. Guards: $1,200–$3,500. You also do soffit/fascia.\n' +
-      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $75–$95/hr or flat-rate per job. Most jobs $200–$1,500.\n' +
-      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $200–$450. Multi-room setup: $500–$2,000.\n\n' +
+      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $15K–$50K or more. Partial kitchen update: $5K–$15K+. Typical bathroom: $8K–$25K or more. Tub-to-shower conversion: $5K–$12K+.\n' +
+      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $400–$1,200+. Whole house interior: $4K–$12K or more. Exterior: $5K–$15K+.\n' +
+      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,800–$5,000+. Guards: $1,200–$3,500+. You also do soffit/fascia.\n' +
+      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $75–$95/hr or flat-rate per job. Most jobs $200–$1,500+.\n' +
+      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $200–$450+. Multi-room setup: $500–$2,000 or more.\n\n' +
       'YOUR PERSONALITY: You\'re down-to-earth, honest, and you explain things in plain English. You don\'t upsell. You tell people what they actually need. You\'ve been doing this work for years and you\'ve seen it all. You\'re proud of your work and you stand behind it.\n\n' +
-      'RULES: Always sound like a real contractor talking to a homeowner, not a chatbot. Use specific details — material names, timeframes, process steps. Never be vague or generic. Always end with an invitation to call (405) 410-6402 for a free estimate or consultation. Prices should reflect Nebraska market rates.'
+      'RULES: Always sound like a real contractor talking to a homeowner, not a chatbot. Use specific details — material names, timeframes, process steps. Never be vague or generic. Always end with an invitation to call (405) 410-6402 for a free estimate or consultation. Prices should reflect Nebraska market rates. NEVER cap a price range — always say "or more" or "and up" after the upper number (e.g. "$15K–$50K or more depending on scope").'
     : 'You are Justin Watts, owner and lead contractor at Watts ATP Contractor — an ATP-approved, licensed, insured accessibility contractor (NE Reg #54690-25) based in Norfolk, Nebraska. You specialize in home accessibility and safety modifications. You serve a 100-mile radius.\n\n' +
       'YOUR SERVICES & EXPERTISE:\n' +
-      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $2,500–$7,000. Aluminum modular: $4,000–$12,000. Concrete: $3,500–$10,000. You\'ve built hundreds.\n' +
-      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $200–$400 installed. Full bathroom set (3-5 bars): $600–$1,500. Whole-home package: $1,200–$3,000.\n' +
-      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $1,200–$3,500. Multiple rooms: $3,000–$8,000. You remove old flooring, prep subfloor, install.\n' +
-      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $6,000–$15,000. Full ADA bathroom: $12,000–$30,000.\n' +
-      '• Accessibility & Safety Solutions — stair lifts ($3,000–$8,000), door widening ($800–$2,500 per door), lever handles, lighting upgrades, home safety assessments. You do free assessments.\n\n' +
+      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $2,500–$7,000+. Aluminum modular: $4,000–$12,000 or more. Concrete: $3,500–$10,000+. You\'ve built hundreds.\n' +
+      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $200–$400+ installed. Full bathroom set (3-5 bars): $600–$1,500+. Whole-home package: $1,200–$3,000 or more.\n' +
+      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $1,200–$3,500+. Multiple rooms: $3,000–$8,000 or more. You remove old flooring, prep subfloor, install.\n' +
+      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $6,000–$15,000+. Full ADA bathroom: $12,000–$30,000 or more.\n' +
+      '• Accessibility & Safety Solutions — stair lifts ($3,000–$8,000+), door widening ($800–$2,500+ per door), lever handles, lighting upgrades, home safety assessments. You do free assessments.\n\n' +
       'YOUR PERSONALITY: You genuinely care about helping people stay safe in their homes. Many of your clients are elderly or recently discharged from the hospital. You\'re patient, kind, and you explain everything clearly. You work with ATP (Assistive Technology Partnership) and insurance when applicable.\n\n' +
-      'RULES: Sound like a real contractor who cares, not a chatbot. Use specific details. Never be vague. Always invite them to call (405) 410-6402. Use Nebraska pricing.';
+      'RULES: Sound like a real contractor who cares, not a chatbot. Use specific details. Never be vague. Always invite them to call (405) 410-6402. Use Nebraska pricing. NEVER cap a price range — always say "or more" or "and up" after the upper number (e.g. "$12K–$30K or more depending on scope").';
 
   // ── PROXY CALL WITH RETRY (robust — handles thinking model, long timeouts, logging) ──
   function callProxy(prompt, maxTokens, attempt) {
@@ -86,24 +138,6 @@
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, TIMEOUT_MS);
 
-    // Show "taking longer" message after 10 seconds
-    var slowTimer = setTimeout(function() {
-      var spinners = document.querySelectorAll('.fa-cog.fa-spin, .fa-magnifying-glass-chart.fa-pulse');
-      spinners.forEach(function(s) {
-        var parent = s.closest('div[style]');
-        if (parent) {
-          var note = parent.querySelector('.wai-slow-note');
-          if (!note) {
-            var el = document.createElement('p');
-            el.className = 'wai-slow-note';
-            el.style.cssText = 'color:#94a3b8;font-size:.8rem;margin-top:8px';
-            el.textContent = 'Still working — Gemini is thinking through your project details...';
-            parent.appendChild(el);
-          }
-        }
-      });
-    }, 10000);
-
     console.log('[Watts AI] callProxy attempt ' + (attempt + 1) + '/' + (MAX_RETRIES + 1));
 
     return fetch(PROXY + '?model=' + MODEL, {
@@ -113,7 +147,6 @@
       signal: controller.signal
     }).then(function(r) {
       clearTimeout(timer);
-      clearTimeout(slowTimer);
       console.log('[Watts AI] HTTP status: ' + r.status);
       if (r.status === 429) throw new Error('RATE_LIMIT');
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -152,7 +185,6 @@
       return text;
     }).catch(function(err) {
       clearTimeout(timer);
-      clearTimeout(slowTimer);
       console.warn('[Watts AI] Attempt ' + (attempt + 1) + ' failed: ' + err.message);
 
       // Don't retry rate limits — just wait and fail gracefully
@@ -244,6 +276,13 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
 .wai-budget-display{text-align:center;font-size:1.5rem;font-weight:700;color:' + B.c + ';font-family:"Playfair Display",serif;margin-bottom:4px}\
 .wai-budget-labels{display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8;margin-top:2px}\
 .wai-budget-hint{text-align:center;color:#94a3b8;font-size:.8rem;margin-bottom:16px}\
+.wai-email-form{display:flex;gap:8px;margin-top:16px;align-items:center;flex-wrap:wrap}\
+.wai-email-form input[type=email]{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:.88rem;font-family:inherit;outline:none;background:#fafafa}\
+.wai-email-form input[type=email]:focus{border-color:' + B.c + ';background:#fff}\
+.wai-email-send{display:inline-flex;align-items:center;gap:6px;background:' + B.bg + ';color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}\
+.wai-email-send:hover{opacity:.9;transform:translateY(-1px)}\
+.wai-email-send:disabled{opacity:.5;cursor:default;transform:none}\
+.wai-email-sent{color:' + B.c + ';font-size:.82rem;font-weight:600;margin-top:6px}\
 @keyframes waiIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}\
 @media(max-width:768px){.wai-row{grid-template-columns:1fr}.wai-grid{grid-template-columns:repeat(2,1fr)}\
 .wai-grid-3{grid-template-columns:repeat(2,1fr)}.wai-card{padding:24px 18px}\
@@ -372,7 +411,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         (state.details ? '• THEIR DESCRIPTION: ' + state.details + '\n' : '') +
         '\nAs Justin, give them a detailed, professional estimate. Write in natural paragraphs — like you\'re talking to them in their kitchen.\n\n' +
         'Your response MUST include ALL of these:\n\n' +
-        '1. A realistic PRICE RANGE for this specific scope using Nebraska contractor rates (bold with **: **$X,XXX – $X,XXX**). Be specific to what they selected.\n\n' +
+        '1. A realistic PRICE RANGE for this specific scope using Nebraska contractor rates (bold with **: **$X,XXX – $X,XXX or more**). NEVER hard-cap a price — always add "or more" or "and up" after the upper number.\n\n' +
         '2. EXPLAIN what drives the cost — materials, labor hours, complexity. Name specific materials you\'d likely use (e.g., "5/4 pressure-treated decking" or "Sherwin-Williams Duration exterior").\n\n' +
         '3. Tell them what\'s INCLUDED at this price — prep work, materials, labor, cleanup, warranty. Be specific, not generic.\n\n' +
         '4. Mention ONE thing that could push the price up or down (e.g., "If your subfloor needs replacing, add another $500–$1,000").\n\n' +
@@ -384,7 +423,8 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         '- Be specific to the exact scope they selected\n' +
         '- Sound like a contractor who\'s done this work a thousand times\n' +
         '- NO bullet points, NO numbered lists — flowing paragraphs\n' +
-        '- Format price ranges and service names in bold with **';
+        '- Format price ranges and service names in bold with **\n' +
+        '- NEVER put a ceiling on pricing — always say "or more" / "and up" after the top number';
 
       callProxy(prompt, 2048).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
@@ -400,11 +440,14 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         resultHtml += '<div>' + formatted + '</div>';
         resultHtml += '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> Schedule Free On-Site Estimate</a>';
         resultHtml += '<div style="margin-top:12px"><button class="wai-btn-outline" id="wq-restart"><i class="fas fa-redo"></i> Start New Estimate</button></div>';
+        resultHtml += emailResultHtml('wq');
 
         var result = document.getElementById('wq-result');
         if (result) { result.innerHTML = resultHtml; result.classList.add('show'); }
         var spinner = el.querySelector('.fa-cog');
         if (spinner) spinner.closest('div[style]').style.display = 'none';
+        trackEvent('estimator_complete', { service: svcLabel, scope: state.scope, town: state.town, range: rangeStr });
+        bindEmailSend('wq', 'Your Project Estimate — ' + state.scope, formatted);
         var restart = document.getElementById('wq-restart');
         if (restart) restart.addEventListener('click', function() {
           state = { service: null, scope: null, town: '', details: '', step: 0 };
@@ -421,8 +464,11 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
             '<p>I want to give you an accurate number for this — not a ballpark guess. Every ' + svcLabel2.toLowerCase() + ' project has unique variables like materials, site conditions, and scope that affect the final price.</p>' +
             '<p>Here\'s what I can tell you: I\'ll come out, take measurements, assess the situation, and give you a detailed written estimate — <strong>100% free, zero obligation</strong>. Most estimates take about 15–20 minutes and I can usually get out there within a day or two.</p>' +
             '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Schedule Free Estimate</a>' +
-            '<div style="margin-top:12px"><button class="wai-btn-outline" id="wq-restart"><i class="fas fa-redo"></i> Try Again</button></div>';
+            '<div style="margin-top:12px"><button class="wai-btn-outline" id="wq-restart"><i class="fas fa-redo"></i> Try Again</button></div>' +
+            emailResultHtml('wq');
           result.classList.add('show');
+          trackEvent('estimator_fallback', { service: svcLabel2, scope: state.scope, town: state.town });
+          bindEmailSend('wq', 'Your Project Estimate — ' + svcLabel2, result.innerHTML);
         }
         var spinner = el.querySelector('.fa-cog');
         if (spinner) spinner.closest('div[style]').style.display = 'none';
@@ -611,7 +657,7 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         'Your response MUST include ALL of these (in flowing paragraphs, NOT bullet points):\n\n' +
         '1. LEAD with your top service recommendation (bold the service name with **). Tell them specifically WHY this is the right fit based on their exact answers — don\'t be generic.\n\n' +
         '2. EXPLAIN what the process looks like — what happens when you show up, how long it typically takes, what materials you\'d likely use. Give them a mental picture of the project from start to finish.\n\n' +
-        '3. Give a REALISTIC PRICE RANGE for their specific scope using Nebraska rates. Be specific — "For a project like yours, you\'re typically looking at $X,XXX to $X,XXX depending on..."\n\n' +
+        '3. Give a REALISTIC PRICE RANGE for their specific scope using Nebraska rates. Be specific — "For a project like yours, you\'re typically looking at $X,XXX to $X,XXX or more depending on..." NEVER hard-cap — always add "or more" or "and up".\n\n' +
         '4. If a SECOND service would complement the first one, mention it naturally — "While I\'m there, a lot of my customers also..."\n\n' +
         '5. Based on their timeline answer, address urgency appropriately — if urgent, emphasize your quick turnaround. If they\'re just exploring, reassure them there\'s no pressure.\n\n' +
         '6. END with a clear next step: invite them to call (405) 410-6402 for a free, no-obligation consultation or estimate.\n\n' +
@@ -621,7 +667,8 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         '- Reference their SPECIFIC answers, not generic filler\n' +
         '- Use real material names, timeframes, and Nebraska pricing\n' +
         '- NO bullet points, NO numbered lists — write in natural paragraphs\n' +
-        '- Format service names and price ranges in bold with **';
+        '- Format service names and price ranges in bold with **\n' +
+        '- NEVER put a ceiling on pricing — always say "or more" / "and up" after the top number';
 
       callProxy(prompt, 2048).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
@@ -629,11 +676,14 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         resultHtml += '<div>' + formatted + '</div>';
         resultHtml += '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> Schedule Free Consultation</a>';
         resultHtml += '<div style="margin-top:12px"><button class="wai-btn-outline" id="wr-restart"><i class="fas fa-redo"></i> Start Over</button></div>';
+        resultHtml += emailResultHtml('wr');
 
         var result = document.getElementById('wr-result');
         if (result) { result.innerHTML = resultHtml; result.classList.add('show'); }
         var spinner = el.querySelector('.fa-magnifying-glass-chart');
         if (spinner) spinner.closest('div[style]').style.display = 'none';
+        trackEvent('advisor_complete', { answers: answers.slice() });
+        bindEmailSend('wr', 'Your Service Recommendation', formatted);
         var restart = document.getElementById('wr-restart');
         if (restart) restart.addEventListener('click', function() { answers = []; step = 0; render(); });
       }).catch(function() {
@@ -647,29 +697,29 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         if (isSI) {
           if (combined.indexOf('kitchen') !== -1) {
             bestGuess = 'Kitchen & Bath Remodeling';
-            fallbackDetail = 'For a kitchen project, I\'d typically start with an on-site visit to measure the space, look at your existing cabinets, plumbing, and electrical, and talk through what you want. A partial update (new countertops, backsplash, paint) usually runs <strong>$5,000–$15,000</strong>. A full gut remodel with new cabinets and layout changes is more like <strong>$15,000–$50,000</strong> depending on materials. I source from both local suppliers and big-box stores depending on your budget.';
+            fallbackDetail = 'For a kitchen project, I\'d typically start with an on-site visit to measure the space, look at your existing cabinets, plumbing, and electrical, and talk through what you want. A partial update (new countertops, backsplash, paint) usually runs <strong>$5,000–$15,000 or more</strong>. A full gut remodel with new cabinets and layout changes is more like <strong>$15,000–$50,000 and up</strong> depending on materials. I source from both local suppliers and big-box stores depending on your budget.';
           } else if (combined.indexOf('bathroom') !== -1) {
             bestGuess = 'Kitchen & Bath Remodeling';
-            fallbackDetail = 'Bathroom remodels are one of my most common projects. A cosmetic refresh — new vanity, fixtures, paint, maybe some tile — typically runs <strong>$5,000–$12,000</strong>. A full remodel with tub-to-shower conversion, new tile, and layout changes is more like <strong>$8,000–$25,000</strong>. I handle all the plumbing, tile work, and finishing myself.';
+            fallbackDetail = 'Bathroom remodels are one of my most common projects. A cosmetic refresh — new vanity, fixtures, paint, maybe some tile — typically runs <strong>$5,000–$12,000 or more</strong>. A full remodel with tub-to-shower conversion, new tile, and layout changes is more like <strong>$8,000–$25,000 and up</strong>. I handle all the plumbing, tile work, and finishing myself.';
           } else if (combined.indexOf('paint') !== -1) {
             bestGuess = 'Interior & Exterior Painting';
-            fallbackDetail = 'Prep work is 70% of a good paint job — I scrape, sand, prime, and caulk before any paint goes on. A single room runs <strong>$400–$1,200</strong>, whole house interior <strong>$4,000–$12,000</strong>, exterior <strong>$5,000–$15,000</strong>. I use Sherwin-Williams and Benjamin Moore products exclusively.';
+            fallbackDetail = 'Prep work is 70% of a good paint job — I scrape, sand, prime, and caulk before any paint goes on. A single room runs <strong>$400–$1,200+</strong>, whole house interior <strong>$4,000–$12,000 or more</strong>, exterior <strong>$5,000–$15,000 and up</strong>. I use Sherwin-Williams and Benjamin Moore products exclusively.';
           } else if (combined.indexOf('gutter') !== -1) {
             bestGuess = 'Gutter Install & Repair';
-            fallbackDetail = 'I carry a seamless gutter machine on my truck — 5" and 6" aluminum in your choice of colors. Full gutter replacement runs <strong>$1,800–$5,000</strong> for most homes. Gutter guards are <strong>$1,200–$3,500</strong>. I also handle soffit and fascia repair if needed.';
+            fallbackDetail = 'I carry a seamless gutter machine on my truck — 5" and 6" aluminum in your choice of colors. Full gutter replacement runs <strong>$1,800–$5,000+</strong> for most homes. Gutter guards are <strong>$1,200–$3,500 or more</strong>. I also handle soffit and fascia repair if needed.';
           } else if (combined.indexOf('tv') !== -1 || combined.indexOf('electronic') !== -1) {
             bestGuess = 'Electronics & TV Mounting';
-            fallbackDetail = 'A single TV wall mount with cable concealment runs <strong>$200–$450</strong>. Multi-room setups, surround sound, and smart home integration depend on scope — usually <strong>$500–$2,000</strong>. I handle the mounting, wiring, and setup so everything looks clean.';
+            fallbackDetail = 'A single TV wall mount with cable concealment runs <strong>$200–$450+</strong>. Multi-room setups, surround sound, and smart home integration depend on scope — usually <strong>$500–$2,000 or more</strong>. I handle the mounting, wiring, and setup so everything looks clean.';
           } else {
             bestGuess = 'Handyman Services';
-            fallbackDetail = 'I handle all kinds of home repairs and small projects — doors, windows, drywall, shelving, fixtures, weather stripping. I charge around <strong>$75–$95/hour</strong> or flat-rate for bigger jobs. Most handyman projects run <strong>$200–$1,500</strong> depending on scope.';
+            fallbackDetail = 'I handle all kinds of home repairs and small projects — doors, windows, drywall, shelving, fixtures, weather stripping. I charge around <strong>$75–$95/hour</strong> or flat-rate for bigger jobs. Most handyman projects run <strong>$200–$1,500+</strong> depending on scope.';
           }
         } else {
-          if (combined.indexOf('bathroom') !== -1) { bestGuess = 'Bathroom Accessibility'; fallbackDetail = 'Walk-in shower conversions run <strong>$6,000–$15,000</strong>, and a full ADA bathroom remodel is typically <strong>$12,000–$30,000</strong>. I handle everything — demolition, plumbing, tile, fixtures, grab bars, and cleanup.'; }
-          else if (combined.indexOf('entrance') !== -1 || combined.indexOf('wheelchair') !== -1) { bestGuess = 'Wheelchair Ramp Installation'; fallbackDetail = 'Wood ramps typically run <strong>$2,500–$7,000</strong> and aluminum modular ramps <strong>$4,000–$12,000</strong>. I build to ADA specs (1:12 slope ratio) and handle all permits.'; }
-          else if (combined.indexOf('floor') !== -1 || combined.indexOf('slip') !== -1) { bestGuess = 'Non-Slip Flooring'; fallbackDetail = 'A single bathroom floor runs <strong>$1,200–$3,500</strong>. Multiple rooms: <strong>$3,000–$8,000</strong>. I remove the old flooring, prep the subfloor, and install slip-resistant vinyl plank or textured tile.'; }
-          else if (combined.indexOf('stair') !== -1) { bestGuess = 'Accessibility & Safety Solutions'; fallbackDetail = 'Stair lifts run <strong>$3,000–$8,000</strong> installed, plus grab rails and other stairway safety modifications. I do a free home safety assessment to figure out exactly what you need.'; }
-          else { bestGuess = 'Grab Bar Installation'; fallbackDetail = 'A single grab bar runs <strong>$200–$400</strong> installed, a full bathroom set (3-5 bars) is <strong>$600–$1,500</strong>, or a whole-home package is <strong>$1,200–$3,000</strong>. I locate studs and use proper blocking for maximum hold strength.'; }
+          if (combined.indexOf('bathroom') !== -1) { bestGuess = 'Bathroom Accessibility'; fallbackDetail = 'Walk-in shower conversions run <strong>$6,000–$15,000 or more</strong>, and a full ADA bathroom remodel is typically <strong>$12,000–$30,000 and up</strong>. I handle everything — demolition, plumbing, tile, fixtures, grab bars, and cleanup.'; }
+          else if (combined.indexOf('entrance') !== -1 || combined.indexOf('wheelchair') !== -1) { bestGuess = 'Wheelchair Ramp Installation'; fallbackDetail = 'Wood ramps typically run <strong>$2,500–$7,000+</strong> and aluminum modular ramps <strong>$4,000–$12,000 or more</strong>. I build to ADA specs (1:12 slope ratio) and handle all permits.'; }
+          else if (combined.indexOf('floor') !== -1 || combined.indexOf('slip') !== -1) { bestGuess = 'Non-Slip Flooring'; fallbackDetail = 'A single bathroom floor runs <strong>$1,200–$3,500+</strong>. Multiple rooms: <strong>$3,000–$8,000 or more</strong>. I remove the old flooring, prep the subfloor, and install slip-resistant vinyl plank or textured tile.'; }
+          else if (combined.indexOf('stair') !== -1) { bestGuess = 'Accessibility & Safety Solutions'; fallbackDetail = 'Stair lifts run <strong>$3,000–$8,000+</strong> installed, plus grab rails and other stairway safety modifications. I do a free home safety assessment to figure out exactly what you need.'; }
+          else { bestGuess = 'Grab Bar Installation'; fallbackDetail = 'A single grab bar runs <strong>$200–$400+</strong> installed, a full bathroom set (3-5 bars) is <strong>$600–$1,500+</strong>, or a whole-home package is <strong>$1,200–$3,000 or more</strong>. I locate studs and use proper blocking for maximum hold strength.'; }
         }
 
         var result = document.getElementById('wr-result');
@@ -679,8 +729,11 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
             '<p>' + fallbackDetail + '</p>' +
             '<p>I\'m Justin, and I personally handle every project start to finish. I\'d love to come take a look at your situation — <strong>completely free, no pressure</strong>. I can usually get out there within a day or two.</p>' +
             '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Free Consultation</a>' +
-            '<div style="margin-top:12px"><button class="wai-btn-outline" id="wr-restart"><i class="fas fa-redo"></i> Try Again</button></div>';
+            '<div style="margin-top:12px"><button class="wai-btn-outline" id="wr-restart"><i class="fas fa-redo"></i> Try Again</button></div>' +
+            emailResultHtml('wr');
           result.classList.add('show');
+          trackEvent('advisor_fallback', { answers: answers.slice(), recommendation: bestGuess });
+          bindEmailSend('wr', 'Your Service Recommendation', result.innerHTML);
         }
         var spinner = el.querySelector('.fa-magnifying-glass-chart');
         if (spinner) spinner.closest('div[style]').style.display = 'none';
@@ -693,6 +746,24 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
   }
 
   // callProxy is now defined above styles section
+
+  // ── ANALYTICS TRACKING ──
+  function trackEvent(type, data) {
+    try {
+      var key = 'watts_ai_analytics';
+      var log = JSON.parse(localStorage.getItem(key) || '[]');
+      log.push({
+        type: type,
+        data: data,
+        brand: B.name,
+        page: window.location.pathname,
+        ts: Date.now()
+      });
+      // Keep last 500 events to prevent bloat
+      if (log.length > 500) log = log.slice(-500);
+      localStorage.setItem(key, JSON.stringify(log));
+    } catch (e) { /* storage full or disabled */ }
+  }
 
   // ── INIT ──
   if (document.readyState === 'loading') {

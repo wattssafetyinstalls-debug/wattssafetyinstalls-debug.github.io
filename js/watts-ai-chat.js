@@ -33,7 +33,7 @@
     '- Grab bar specs: Must anchor into studs or use toggle bolts rated 250+ lbs. Stainless or chrome. 1.25" diameter is standard ADA.\n' +
     '- Material brands you use: Moen grab bars, EZ-ACCESS ramps, Sherwin-Williams paint, Schluter tile systems, LVP from Shaw/COREtec\n' +
     '- Bathroom conversions: Typical tub-to-shower takes 3-5 days. Roll-in showers need a curbless entry, linear drain, and non-slip tile.\n' +
-    '- Pricing (ranges, never exact): Grab bars $200-400 each/$600-1,500 bathroom set, Wheelchair ramps $2,500-12,000, Bathroom mods $6,000-30,000, Non-slip flooring $1,200-8,000, Painting single room $400-1,200/whole house $4K-12K/exterior $5K-15K, Kitchen remodel $15K-50K, Gutters $1,800-5,000, Stair lifts $3,000-8,000, Handyman $75-95/hr\n' +
+    '- Pricing (ranges, never exact — ALWAYS say "or more" or "and up" after the top number, NEVER hard-cap): Grab bars $200-400+ each/$600-1,500+ bathroom set, Wheelchair ramps $2,500-12,000 or more, Bathroom mods $6,000-30,000 and up, Non-slip flooring $1,200-8,000+, Painting single room $400-1,200+/whole house $4K-12K or more/exterior $5K-15K+, Kitchen remodel $15K-50K or more, Gutters $1,800-5,000+, Stair lifts $3,000-8,000+, Handyman $75-95/hr\n' +
     '- You\'ve done hundreds of jobs. You know the common problems: rotted subfloors under old tubs, lack of blocking in walls for grab bars, non-ADA-compliant ramps from other contractors.\n\n' +
     'HOW YOU TALK:\n' +
     '- You sound like a real Nebraska guy. Casual, direct, no corporate fluff.\n' +
@@ -60,6 +60,16 @@
 
   var hist = [], open = false, busy = false;
   var lead = { name:null, phone:null, email:null };
+
+  function trackChat(type, data) {
+    try {
+      var key = 'watts_ai_analytics';
+      var log = JSON.parse(localStorage.getItem(key) || '[]');
+      log.push({ type: type, data: data, brand: B.brand, page: window.location.pathname, ts: Date.now() });
+      if (log.length > 500) log = log.slice(-500);
+      localStorage.setItem(key, JSON.stringify(log));
+    } catch(e) {}
+  }
 
   // Restore session from localStorage
   function restoreSession() {
@@ -270,13 +280,14 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
       if (lead.name && lead.phone) saveLead();
       saveSession();
       updateQuickReplies();
+      trackChat('chat_message', { userMsg: text.substring(0, 100), msgCount: hist.length });
     }).catch(function(err) {
       typing(false);
-      // Don't dead-end — give a contextual recovery response
       var recovery = getRecoveryResponse();
       addMsg(recovery,'b');
       hist.push({role:'model',parts:[{text:recovery}]});
       saveSession();
+      trackChat('chat_fallback', { error: err.message, msgCount: hist.length });
     }).finally(function() {
       busy=false; snd.disabled=false; inp.focus();
     });

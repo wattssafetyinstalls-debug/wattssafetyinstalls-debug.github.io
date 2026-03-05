@@ -49,20 +49,20 @@
   var SYS_INSTRUCTION = isSI
     ? 'You are Justin Watts, owner and lead contractor at Watts Safety Installs — a licensed, insured home services company (NE Reg #54690-25) based in Norfolk, Nebraska. You personally handle every project. You serve a 100-mile radius covering Norfolk, Columbus, Fremont, Wayne, South Sioux City, West Point, and surrounding towns.\n\n' +
       'YOUR SERVICES & EXPERTISE:\n' +
-      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $8K–$35K. Typical bathroom: $5K–$20K.\n' +
-      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $300–$800. Whole house interior: $3K–$8K. Exterior: $4K–$12K.\n' +
-      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,200–$3,500. Guards: $800–$2,500. You also do soffit/fascia.\n' +
-      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $65–$85/hr or flat-rate per job.\n' +
-      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $150–$350.\n\n' +
+      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $15K–$50K. Partial kitchen update: $5K–$15K. Typical bathroom: $8K–$25K. Tub-to-shower conversion: $5K–$12K.\n' +
+      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $400–$1,200. Whole house interior: $4K–$12K. Exterior: $5K–$15K.\n' +
+      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,800–$5,000. Guards: $1,200–$3,500. You also do soffit/fascia.\n' +
+      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $75–$95/hr or flat-rate per job. Most jobs $200–$1,500.\n' +
+      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $200–$450. Multi-room setup: $500–$2,000.\n\n' +
       'YOUR PERSONALITY: You\'re down-to-earth, honest, and you explain things in plain English. You don\'t upsell. You tell people what they actually need. You\'ve been doing this work for years and you\'ve seen it all. You\'re proud of your work and you stand behind it.\n\n' +
       'RULES: Always sound like a real contractor talking to a homeowner, not a chatbot. Use specific details — material names, timeframes, process steps. Never be vague or generic. Always end with an invitation to call (405) 410-6402 for a free estimate or consultation. Prices should reflect Nebraska market rates.'
     : 'You are Justin Watts, owner and lead contractor at Watts ATP Contractor — an ATP-approved, licensed, insured accessibility contractor (NE Reg #54690-25) based in Norfolk, Nebraska. You specialize in home accessibility and safety modifications. You serve a 100-mile radius.\n\n' +
       'YOUR SERVICES & EXPERTISE:\n' +
-      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $1,500–$5,000. Aluminum modular: $2,500–$8,000. You\'ve built hundreds.\n' +
-      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $150–$300 installed. Full bathroom set (3-5 bars): $400–$900.\n' +
-      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $800–$2,500. You remove old flooring, prep subfloor, install.\n' +
-      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $4,000–$10,000. Full ADA bathroom: $8,000–$25,000.\n' +
-      '• Accessibility & Safety Solutions — stair lifts, door widening, lever handles, lighting, home safety assessments. You do free assessments.\n\n' +
+      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $2,500–$7,000. Aluminum modular: $4,000–$12,000. Concrete: $3,500–$10,000. You\'ve built hundreds.\n' +
+      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $200–$400 installed. Full bathroom set (3-5 bars): $600–$1,500. Whole-home package: $1,200–$3,000.\n' +
+      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $1,200–$3,500. Multiple rooms: $3,000–$8,000. You remove old flooring, prep subfloor, install.\n' +
+      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $6,000–$15,000. Full ADA bathroom: $12,000–$30,000.\n' +
+      '• Accessibility & Safety Solutions — stair lifts ($3,000–$8,000), door widening ($800–$2,500 per door), lever handles, lighting upgrades, home safety assessments. You do free assessments.\n\n' +
       'YOUR PERSONALITY: You genuinely care about helping people stay safe in their homes. Many of your clients are elderly or recently discharged from the hospital. You\'re patient, kind, and you explain everything clearly. You work with ATP (Assistive Technology Partnership) and insurance when applicable.\n\n' +
       'RULES: Sound like a real contractor who cares, not a chatbot. Use specific details. Never be vague. Always invite them to call (405) 410-6402. Use Nebraska pricing.';
 
@@ -235,6 +235,15 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
 .wai-rec-card h5{color:' + B.bg + ';font-size:.95rem;margin:0 0 4px}\
 .wai-rec-card p{color:#64748B;font-size:.82rem;margin:0;line-height:1.5}\
 .wai-rec-match{display:inline-block;background:' + B.cl + ';color:' + B.accent + ';font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px}\
+.wai-slider-wrap{padding:8px 0 16px}\
+.wai-slider-track{position:relative;width:100%;height:6px;background:#e9ecef;border-radius:3px;margin:20px 0 12px}\
+.wai-slider-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,' + B.c + ',' + B.cd + ');border-radius:3px;transition:width .15s}\
+.wai-range-input{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:transparent;position:absolute;top:0;left:0;margin:0;cursor:pointer;z-index:2}\
+.wai-range-input::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:' + B.c + ';border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:grab}\
+.wai-range-input::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:' + B.c + ';border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:grab}\
+.wai-budget-display{text-align:center;font-size:1.5rem;font-weight:700;color:' + B.c + ';font-family:"Playfair Display",serif;margin-bottom:4px}\
+.wai-budget-labels{display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8;margin-top:2px}\
+.wai-budget-hint{text-align:center;color:#94a3b8;font-size:.8rem;margin-bottom:16px}\
 @keyframes waiIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}\
 @media(max-width:768px){.wai-row{grid-template-columns:1fr}.wai-grid{grid-template-columns:repeat(2,1fr)}\
 .wai-grid-3{grid-template-columns:repeat(2,1fr)}.wai-card{padding:24px 18px}\
@@ -460,13 +469,9 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
           {label:'Just pricing it out',desc:'Gathering info before deciding'}
         ]},
       { q: 'What budget range are you working with?', icon: 'fa-wallet',
-        opts: [
-          {label:'Under $500',desc:'Quick fix or small job'},
-          {label:'$500 – $2,000',desc:'Solid mid-range project'},
-          {label:'$2,000 – $5,000',desc:'Significant upgrade'},
-          {label:'$5,000+',desc:'Major remodel or renovation'},
-          {label:'No idea yet',desc:'Help me figure out what this costs'}
-        ]}
+        type: 'slider', min: 0, max: 50000, step: 500, defaultVal: 5000,
+        format: function(v) { return v >= 50000 ? '$50,000+' : '$' + v.toLocaleString(); },
+        hint: 'Drag the slider — don\'t worry about being exact, this just helps me tailor my recommendation.' }
     ] : [
       { q: 'Who will benefit from these modifications?', icon: 'fa-users',
         opts: [
@@ -501,7 +506,11 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
           {label:'Within 2 weeks',desc:'Soon but not emergency'},
           {label:'Within 1–2 months',desc:'Planning ahead'},
           {label:'Just researching',desc:'Gathering info & pricing'}
-        ]}
+        ]},
+      { q: 'What budget range are you working with?', icon: 'fa-wallet',
+        type: 'slider', min: 0, max: 50000, step: 500, defaultVal: 5000,
+        format: function(v) { return v >= 50000 ? '$50,000+' : '$' + v.toLocaleString(); },
+        hint: 'Drag the slider — this helps me recommend the right scope for your budget.' }
     ];
 
     var answers = [];
@@ -520,16 +529,31 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         var q = questions[step];
         html += '<div class="wai-step-label">Question ' + (step + 1) + ' of ' + questions.length + '</div>';
         html += '<span class="wai-field-label"><i class="fas ' + q.icon + '" style="color:' + B.c + ';margin-right:6px"></i>' + q.q + '</span>';
-        html += '<div class="wai-grid">';
-        q.opts.forEach(function(o) {
-          html += '<div class="wai-opt wai-opt-sm" data-ans="' + o.label + '">';
-          if (o.icon) html += '<i class="fas ' + o.icon + '"></i>';
-          html += '<strong>' + o.label + '</strong>';
-          if (o.desc) html += '<br><span style="font-size:.72rem;color:#94a3b8;font-weight:400">' + o.desc + '</span>';
+        if (q.type === 'slider') {
+          var curVal = answers[step] ? parseInt(answers[step].replace(/[^0-9]/g,'')) : q.defaultVal;
+          html += '<div class="wai-slider-wrap">';
+          html += '<div class="wai-budget-display" id="wr-budget-val">' + q.format(curVal) + '</div>';
+          if (q.hint) html += '<p class="wai-budget-hint">' + q.hint + '</p>';
+          html += '<div class="wai-slider-track"><div class="wai-slider-fill" id="wr-slider-fill" style="width:' + ((curVal / q.max) * 100) + '%"></div>';
+          html += '<input type="range" class="wai-range-input" id="wr-slider" min="' + q.min + '" max="' + q.max + '" step="' + q.step + '" value="' + curVal + '"></div>';
+          html += '<div class="wai-budget-labels"><span>$0</span><span>$10K</span><span>$25K</span><span>$50K+</span></div>';
           html += '</div>';
-        });
-        html += '</div>';
-        if (step > 0) html += '<button class="wai-btn-outline wai-back"><i class="fas fa-arrow-left"></i> Back</button>';
+          html += '<div style="display:flex;gap:10px;align-items:center;margin-top:8px">';
+          if (step > 0) html += '<button class="wai-btn-outline wai-back"><i class="fas fa-arrow-left"></i> Back</button>';
+          html += '<button class="wai-btn" id="wr-slider-next"><i class="fas fa-arrow-right"></i> Continue</button>';
+          html += '</div>';
+        } else {
+          html += '<div class="wai-grid">';
+          q.opts.forEach(function(o) {
+            html += '<div class="wai-opt wai-opt-sm" data-ans="' + o.label + '">';
+            if (o.icon) html += '<i class="fas ' + o.icon + '"></i>';
+            html += '<strong>' + o.label + '</strong>';
+            if (o.desc) html += '<br><span style="font-size:.72rem;color:#94a3b8;font-weight:400">' + o.desc + '</span>';
+            html += '</div>';
+          });
+          html += '</div>';
+          if (step > 0) html += '<button class="wai-btn-outline wai-back"><i class="fas fa-arrow-left"></i> Back</button>';
+        }
       } else {
         html += '<div style="text-align:center;padding:24px 0">\
 <div style="width:48px;height:48px;border-radius:50%;background:' + B.cl + ';display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px">\
@@ -542,14 +566,36 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
       el.innerHTML = html;
 
       if (step < questions.length) {
-        el.querySelectorAll('[data-ans]').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            answers[step] = btn.dataset.ans;
+        var q = questions[step];
+        if (q.type === 'slider') {
+          var slider = document.getElementById('wr-slider');
+          var fill = document.getElementById('wr-slider-fill');
+          var display = document.getElementById('wr-budget-val');
+          if (slider) {
+            slider.addEventListener('input', function() {
+              var v = parseInt(slider.value);
+              display.textContent = q.format(v);
+              fill.style.width = ((v / q.max) * 100) + '%';
+            });
+          }
+          var nextBtn = document.getElementById('wr-slider-next');
+          if (nextBtn) nextBtn.addEventListener('click', function() {
+            var v = parseInt(slider.value);
+            answers[step] = q.format(v);
             step++;
             if (step < questions.length) { render(); }
             else { render(); getRecommendation(); }
           });
-        });
+        } else {
+          el.querySelectorAll('[data-ans]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              answers[step] = btn.dataset.ans;
+              step++;
+              if (step < questions.length) { render(); }
+              else { render(); getRecommendation(); }
+            });
+          });
+        }
         var back = el.querySelector('.wai-back');
         if (back) back.addEventListener('click', function() { step--; render(); });
       }
@@ -601,29 +647,29 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         if (isSI) {
           if (combined.indexOf('kitchen') !== -1) {
             bestGuess = 'Kitchen & Bath Remodeling';
-            fallbackDetail = 'For a kitchen project, I\'d typically start with an on-site visit to measure the space, look at your existing cabinets, plumbing, and electrical, and talk through what you want. A partial update (new countertops, backsplash, paint) usually runs <strong>$3,000–$8,000</strong>. A full gut remodel with new cabinets and layout changes is more like <strong>$12,000–$35,000</strong> depending on materials. I source from both local suppliers and big-box stores depending on your budget.';
+            fallbackDetail = 'For a kitchen project, I\'d typically start with an on-site visit to measure the space, look at your existing cabinets, plumbing, and electrical, and talk through what you want. A partial update (new countertops, backsplash, paint) usually runs <strong>$5,000–$15,000</strong>. A full gut remodel with new cabinets and layout changes is more like <strong>$15,000–$50,000</strong> depending on materials. I source from both local suppliers and big-box stores depending on your budget.';
           } else if (combined.indexOf('bathroom') !== -1) {
             bestGuess = 'Kitchen & Bath Remodeling';
-            fallbackDetail = 'Bathroom remodels are one of my most common projects. A cosmetic refresh — new vanity, fixtures, paint, maybe some tile — typically runs <strong>$3,000–$7,000</strong>. A full remodel with tub-to-shower conversion, new tile, and layout changes is more like <strong>$8,000–$20,000</strong>. I handle all the plumbing, tile work, and finishing myself.';
+            fallbackDetail = 'Bathroom remodels are one of my most common projects. A cosmetic refresh — new vanity, fixtures, paint, maybe some tile — typically runs <strong>$5,000–$12,000</strong>. A full remodel with tub-to-shower conversion, new tile, and layout changes is more like <strong>$8,000–$25,000</strong>. I handle all the plumbing, tile work, and finishing myself.';
           } else if (combined.indexOf('paint') !== -1) {
             bestGuess = 'Interior & Exterior Painting';
-            fallbackDetail = 'Prep work is 70% of a good paint job — I scrape, sand, prime, and caulk before any paint goes on. A single room runs <strong>$300–$800</strong>, whole house interior <strong>$3,000–$8,000</strong>, exterior <strong>$4,000–$12,000</strong>. I use Sherwin-Williams and Benjamin Moore products exclusively.';
+            fallbackDetail = 'Prep work is 70% of a good paint job — I scrape, sand, prime, and caulk before any paint goes on. A single room runs <strong>$400–$1,200</strong>, whole house interior <strong>$4,000–$12,000</strong>, exterior <strong>$5,000–$15,000</strong>. I use Sherwin-Williams and Benjamin Moore products exclusively.';
           } else if (combined.indexOf('gutter') !== -1) {
             bestGuess = 'Gutter Install & Repair';
-            fallbackDetail = 'I carry a seamless gutter machine on my truck — 5" and 6" aluminum in your choice of colors. Full gutter replacement runs <strong>$1,200–$3,500</strong> for most homes. Gutter guards are <strong>$800–$2,500</strong>. I also handle soffit and fascia repair if needed.';
+            fallbackDetail = 'I carry a seamless gutter machine on my truck — 5" and 6" aluminum in your choice of colors. Full gutter replacement runs <strong>$1,800–$5,000</strong> for most homes. Gutter guards are <strong>$1,200–$3,500</strong>. I also handle soffit and fascia repair if needed.';
           } else if (combined.indexOf('tv') !== -1 || combined.indexOf('electronic') !== -1) {
             bestGuess = 'Electronics & TV Mounting';
-            fallbackDetail = 'A single TV wall mount with cable concealment runs <strong>$150–$350</strong>. Multi-room setups, surround sound, and smart home integration depend on scope — usually <strong>$300–$1,500</strong>. I handle the mounting, wiring, and setup so everything looks clean.';
+            fallbackDetail = 'A single TV wall mount with cable concealment runs <strong>$200–$450</strong>. Multi-room setups, surround sound, and smart home integration depend on scope — usually <strong>$500–$2,000</strong>. I handle the mounting, wiring, and setup so everything looks clean.';
           } else {
             bestGuess = 'Handyman Services';
-            fallbackDetail = 'I handle all kinds of home repairs and small projects — doors, windows, drywall, shelving, fixtures, weather stripping. I charge around <strong>$65–$85/hour</strong> or flat-rate for bigger jobs. Most handyman projects run <strong>$150–$800</strong> depending on scope.';
+            fallbackDetail = 'I handle all kinds of home repairs and small projects — doors, windows, drywall, shelving, fixtures, weather stripping. I charge around <strong>$75–$95/hour</strong> or flat-rate for bigger jobs. Most handyman projects run <strong>$200–$1,500</strong> depending on scope.';
           }
         } else {
-          if (combined.indexOf('bathroom') !== -1) { bestGuess = 'Bathroom Accessibility'; fallbackDetail = 'Walk-in shower conversions run <strong>$4,000–$10,000</strong>, and a full ADA bathroom remodel is typically <strong>$8,000–$25,000</strong>. I handle everything — demolition, plumbing, tile, fixtures, grab bars, and cleanup.'; }
-          else if (combined.indexOf('entrance') !== -1 || combined.indexOf('wheelchair') !== -1) { bestGuess = 'Wheelchair Ramp Installation'; fallbackDetail = 'Wood ramps typically run <strong>$1,500–$5,000</strong> and aluminum modular ramps <strong>$2,500–$8,000</strong>. I build to ADA specs (1:12 slope ratio) and handle all permits.'; }
-          else if (combined.indexOf('floor') !== -1 || combined.indexOf('slip') !== -1) { bestGuess = 'Non-Slip Flooring'; fallbackDetail = 'A single bathroom floor runs <strong>$800–$2,500</strong>. I remove the old flooring, prep the subfloor, and install slip-resistant vinyl plank or textured tile.'; }
-          else if (combined.indexOf('stair') !== -1) { bestGuess = 'Accessibility & Safety Solutions'; fallbackDetail = 'Stair lifts, grab rails, and other stairway safety modifications. I do a free home safety assessment to figure out exactly what you need.'; }
-          else { bestGuess = 'Grab Bar Installation'; fallbackDetail = 'A single grab bar runs <strong>$150–$300</strong> installed, or a full bathroom set (3-5 bars) is <strong>$400–$900</strong>. I locate studs and use proper blocking for maximum hold strength.'; }
+          if (combined.indexOf('bathroom') !== -1) { bestGuess = 'Bathroom Accessibility'; fallbackDetail = 'Walk-in shower conversions run <strong>$6,000–$15,000</strong>, and a full ADA bathroom remodel is typically <strong>$12,000–$30,000</strong>. I handle everything — demolition, plumbing, tile, fixtures, grab bars, and cleanup.'; }
+          else if (combined.indexOf('entrance') !== -1 || combined.indexOf('wheelchair') !== -1) { bestGuess = 'Wheelchair Ramp Installation'; fallbackDetail = 'Wood ramps typically run <strong>$2,500–$7,000</strong> and aluminum modular ramps <strong>$4,000–$12,000</strong>. I build to ADA specs (1:12 slope ratio) and handle all permits.'; }
+          else if (combined.indexOf('floor') !== -1 || combined.indexOf('slip') !== -1) { bestGuess = 'Non-Slip Flooring'; fallbackDetail = 'A single bathroom floor runs <strong>$1,200–$3,500</strong>. Multiple rooms: <strong>$3,000–$8,000</strong>. I remove the old flooring, prep the subfloor, and install slip-resistant vinyl plank or textured tile.'; }
+          else if (combined.indexOf('stair') !== -1) { bestGuess = 'Accessibility & Safety Solutions'; fallbackDetail = 'Stair lifts run <strong>$3,000–$8,000</strong> installed, plus grab rails and other stairway safety modifications. I do a free home safety assessment to figure out exactly what you need.'; }
+          else { bestGuess = 'Grab Bar Installation'; fallbackDetail = 'A single grab bar runs <strong>$200–$400</strong> installed, a full bathroom set (3-5 bars) is <strong>$600–$1,500</strong>, or a whole-home package is <strong>$1,200–$3,000</strong>. I locate studs and use proper blocking for maximum hold strength.'; }
         }
 
         var result = document.getElementById('wr-result');

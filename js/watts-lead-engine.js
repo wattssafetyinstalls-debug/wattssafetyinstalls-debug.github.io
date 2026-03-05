@@ -369,16 +369,36 @@
   }
 
   // ══════════════════════════════════════
-  // 6. CONTACT FORM TRACKING
-  // Track the main contact form submissions
+  // 6. CONTACT FORM HANDLER
+  // Captures main contact form + sends to automation
   // ══════════════════════════════════════
-  function trackContactForm() {
-    // Watch for any form submission on the contact page
-    document.addEventListener('submit', function(e) {
-      var form = e.target;
-      // Skip our own forms
-      if (form.id === 'exit-form' || form.id === 'callback-form' || form.id === 'mobile-callback-form') return;
+  function handleContactForm() {
+    var form = document.getElementById('contactForm');
+    if (!form) return;
 
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var btn = form.querySelector('button[type="submit"]');
+      var origText = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      }
+
+      var data = {
+        name: (form.querySelector('#name') || {}).value || '',
+        phone: (form.querySelector('#phone') || {}).value || '',
+        email: (form.querySelector('#email') || {}).value || '',
+        service: (form.querySelector('#service') || {}).value || '',
+        timeline: (form.querySelector('#timeline') || {}).value || '',
+        message: (form.querySelector('#message') || {}).value || '',
+        source: 'contact_form',
+        page: window.location.pathname,
+        timestamp: new Date().toISOString()
+      };
+
+      // GA tracking
       if (typeof gtag === 'function') {
         gtag('event', 'contact_form_submit', {
           event_category: 'Lead',
@@ -387,26 +407,56 @@
         });
       }
       if (window.dataLayer) {
-        window.dataLayer.push({ event: 'contact_form_submit', formType: 'contact_page' });
+        window.dataLayer.push({ event: 'contact_form_submit', formType: 'contact_page', service: data.service });
       }
+
+      storeLead(data);
+
+      // Show thank-you state
+      var container = form.parentElement;
+      container.innerHTML =
+        '<div style="text-align:center;padding:40px 20px;">' +
+          '<div style="font-size:4rem;margin-bottom:20px;">✅</div>' +
+          '<h2 style="font-family:Playfair Display,serif;color:var(--navy,#0A1D37);margin-bottom:12px;">Message Sent!</h2>' +
+          '<p style="color:var(--gray,#64748B);font-size:1.1rem;margin-bottom:20px;">Thank you, ' + (data.name.split(' ')[0] || '') + '! Justin will personally review your request and get back to you within 2 hours during business hours.</p>' +
+          '<p style="color:var(--gray,#64748B);font-size:0.95rem;margin-bottom:24px;">If this is urgent, call directly:</p>' +
+          '<a href="' + PHONE_LINK + '" style="display:inline-block;padding:16px 32px;background:var(--teal,#00C4B4);color:#fff;border-radius:50px;text-decoration:none;font-weight:700;font-size:1.15rem;box-shadow:0 4px 15px rgba(0,196,180,0.3);">Call Now: ' + PHONE + '</a>' +
+        '</div>';
     });
   }
 
   // ══════════════════════════════════════
   // LEAD STORAGE
-  // Stores leads locally + sends to email via formspree/webhook
+  // Sends to Cloudflare Worker for scoring, SMS, CRM, email
+  // Falls back to Formspree if worker is unreachable
   // ══════════════════════════════════════
+  var WORKER_URL = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
+
   function storeLead(data) {
     // Store in localStorage as backup
     var leads = JSON.parse(localStorage.getItem('watts_leads') || '[]');
     leads.push(data);
     localStorage.setItem('watts_leads', JSON.stringify(leads));
 
-    // Send to Formspree (free tier: 50 submissions/month)
-    // Replace YOUR_FORM_ID with actual Formspree form ID after signup
-    var FORMSPREE_ID = window.WATTS_FORMSPREE_ID || 'mjkjgrlb';
-    if (FORMSPREE_ID) {
-      fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+    // Detect brand from URL
+    var isWSI = window.location.pathname.indexOf('/safety-installs') === 0;
+    data.brand = isWSI ? 'wsi' : 'atp';
+    data.referrer = document.referrer || '';
+
+    // Send to Cloudflare Worker (lead scoring + SMS + CRM + email)
+    fetch(WORKER_URL + '/lead/incoming', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(result) {
+      console.log('[Watts Lead Engine] Lead processed:', result);
+    })
+    .catch(function(err) {
+      console.warn('[Watts Lead Engine] Worker unreachable, falling back to Formspree');
+      // Fallback to Formspree
+      fetch('https://formspree.io/f/mjkjgrlb', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -418,11 +468,8 @@
           page: data.page,
           _subject: 'New Lead from ' + BUSINESS + ' Website (' + data.source + ')'
         })
-      }).catch(function() {}); // Fail silently
-    }
-
-    // Also try sending via email link as fallback
-    console.log('[Watts Lead Engine] Lead captured:', data);
+      }).catch(function() {});
+    });
   }
 
   // ══════════════════════════════════════
@@ -502,7 +549,7 @@
     createExitIntent();
     createCallbackWidget();
     trackEngagement();
-    trackContactForm();
+    handleContactForm();
     registerSW();
     createSocialProof();
   }

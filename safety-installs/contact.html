@@ -1057,32 +1057,8 @@
         // Current year for copyright
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
-        // Contact form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            const contactData = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                email: formData.get('email'),
-                service: formData.get('service'),
-                timeline: formData.get('timeline'),
-                message: formData.get('message')
-            };
-            
-            // Here you would typically send this data to your server
-            // For now, we'll just show a success message
-            alert('Thank you for your message! We will contact you within 24 hours to discuss your project and provide a free consultation.');
-            this.reset();
-            
-            // Track the contact form submission (Google Analytics)
-            gtag('event', 'contact_form_submission', {
-                'event_category': 'contact',
-                'event_label': 'Contact Form Submission'
-            });
-        });
+        // Contact form submission handled by watts-lead-engine.js
+        // (sends to Cloudflare Worker for scoring, SMS notification, CRM, and email)
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

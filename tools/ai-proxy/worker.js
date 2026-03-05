@@ -1,5 +1,5 @@
 /**
- * Watts AI Proxy + Contract Delivery — Cloudflare Worker
+ * Watts AI Proxy + Contract Delivery + Lead Automation — Cloudflare Worker
  * 
  * ROUTES:
  *   POST /                  — Gemini AI proxy (existing)
@@ -7,14 +7,27 @@
  *   GET  /contract/fetch    — Client fetches contract to view/sign
  *   POST /contract/sign     — Client submits e-signature (locks contract)
  *   GET  /contract/status   — BidGen polls for contract status
+ *   POST /lead/incoming     — Receive new lead from website forms
+ *   GET  /lead/list         — List all leads (pin-protected)
+ *   POST /lead/update       — Update lead status (pin-protected)
+ *   GET  /lead/stats        — Dashboard stats (pin-protected)
  * 
  * SECRETS (set via wrangler secret put):
  *   GEMINI_API_KEY          — Google Gemini API key
  *   CONTRACT_HMAC_SECRET    — HMAC key for signing tokens
+ *   TWILIO_ACCOUNT_SID      — Twilio account SID
+ *   TWILIO_AUTH_TOKEN        — Twilio auth token
+ *   TWILIO_FROM_NUMBER      — Twilio phone number (e.g. +14025551234)
+ *   OWNER_PHONE             — Justin's phone number (e.g. +14054106402)
+ *   OWNER_PIN               — PIN for dashboard access
  * 
  * KV NAMESPACE:
- *   CONTRACTS               — KV store for contract data
+ *   CONTRACTS               — KV store for contract data + leads
  *   Create: wrangler kv namespace create CONTRACTS
+ * 
+ * CRON TRIGGER (wrangler.toml):
+ *   [triggers]
+ *   crons = ["0 15 * * *"]   — Runs daily at 9 AM CST (15:00 UTC)
  * 
  * DEPLOYMENT:
  *   wrangler deploy          (from tools/ai-proxy/)
@@ -31,6 +44,20 @@ const ALLOWED_ORIGINS = [
 const RATE_LIMIT = new Map();
 const MAX_REQUESTS_PER_MINUTE = 10;
 const CONTRACT_TTL = 90 * 24 * 60 * 60; // 90 days in seconds
+const LEAD_TTL = 365 * 24 * 60 * 60; // 1 year in seconds
+
+// Lead scoring rules
+const LEAD_SCORES = {
+  service: {
+    'wheelchair-ramp': 10, 'grab-bars': 8, 'bathroom-accessibility': 9,
+    'non-slip-flooring': 7, 'accessibility-safety': 10,
+    'snow-removal': 6, 'handyman': 5, 'painting': 5, 'remodeling': 7,
+    'other': 3, '': 1
+  },
+  urgency: {
+    'immediately': 10, '1-2 weeks': 7, '1 month': 4, 'flexible': 2, '': 1
+  }
+};
 
 function getRateLimitKey(request) {
   return request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -348,6 +375,387 @@ async function handleContractStatus(request, env, corsHeaders) {
 }
 
 // =====================================================================
+// LEAD SCORING
+// =====================================================================
+function scoreLead(data) {
+  let score = 0;
+  // Service type
+  score += LEAD_SCORES.service[data.service] || LEAD_SCORES.service[''] || 1;
+  // Urgency / timeline
+  score += LEAD_SCORES.urgency[data.timeline] || LEAD_SCORES.urgency[''] || 1;
+  // Phone provided = high intent
+  if (data.phone && data.phone.replace(/\D/g, '').length >= 7) score += 5;
+  // Email provided
+  if (data.email && data.email.includes('@')) score += 2;
+  // Message length (effort = intent)
+  if (data.message && data.message.length > 50) score += 3;
+  if (data.message && data.message.length > 150) score += 2;
+  // Source bonus
+  if (data.source === 'contact_form') score += 3;
+  if (data.source === 'callback_widget' || data.source === 'mobile_callback') score += 4;
+  if (data.source === 'exit_intent') score += 1;
+
+  return score;
+}
+
+function getLeadPriority(score) {
+  if (score >= 20) return 'hot';
+  if (score >= 12) return 'warm';
+  return 'cool';
+}
+
+// =====================================================================
+// TWILIO SMS
+// =====================================================================
+async function sendSMS(env, to, message) {
+  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN || !env.TWILIO_FROM_NUMBER) {
+    console.log('[SMS] Twilio not configured, skipping SMS');
+    return { success: false, reason: 'twilio_not_configured' };
+  }
+
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`;
+  const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        From: env.TWILIO_FROM_NUMBER,
+        To: to,
+        Body: message,
+      }),
+    });
+
+    const result = await res.json();
+    return { success: res.ok, sid: result.sid, error: result.message };
+  } catch (err) {
+    return { success: false, reason: err.message };
+  }
+}
+
+// =====================================================================
+// AUTO-REPLY EMAIL (via Formspree or future transactional email)
+// =====================================================================
+async function sendAutoReply(env, lead) {
+  // Send via Formspree as a notification (Formspree sends to your configured email)
+  // The client sees this as an auto-reply if Formspree autoresponder is enabled
+  try {
+    await fetch('https://formspree.io/f/mjkjgrlb', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: lead.name,
+        phone: lead.phone || '',
+        email: lead.email || '',
+        service: lead.service || 'General Inquiry',
+        message: lead.message || '',
+        _replyto: lead.email || '',
+        _subject: `🔔 New ${lead.priority?.toUpperCase() || ''} Lead: ${lead.name} — ${lead.service || 'General'}`,
+        source: lead.source,
+        score: lead.score,
+        priority: lead.priority,
+        page: lead.page,
+        timestamp: lead.timestamp,
+      }),
+    });
+    return { success: true };
+  } catch (err) {
+    return { success: false, reason: err.message };
+  }
+}
+
+// =====================================================================
+// ROUTE: POST /lead/incoming — Receive new lead from website
+// =====================================================================
+async function handleLeadIncoming(request, env, corsHeaders) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+  }
+
+  try {
+    const data = await request.json();
+
+    if (!data.name) {
+      return jsonResponse({ error: 'Name is required' }, 400, corsHeaders);
+    }
+
+    // Score the lead
+    const score = scoreLead(data);
+    const priority = getLeadPriority(score);
+
+    // Build lead record
+    const leadId = `lead:${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+    const lead = {
+      id: leadId,
+      name: data.name,
+      phone: data.phone || '',
+      email: data.email || '',
+      service: data.service || '',
+      timeline: data.timeline || '',
+      message: data.message || '',
+      source: data.source || 'unknown',
+      page: data.page || '',
+      referrer: data.referrer || '',
+      score,
+      priority,
+      status: 'new',          // new → contacted → quoted → won → lost
+      createdAt: new Date().toISOString(),
+      contactedAt: null,
+      followUps: [],           // track follow-up attempts
+      notes: '',
+      ip: request.headers.get('CF-Connecting-IP') || '',
+      brand: data.brand || 'atp',  // atp or wsi
+    };
+
+    // Store in KV
+    await env.CONTRACTS.put(leadId, JSON.stringify(lead), { expirationTtl: LEAD_TTL });
+
+    // Add to the lead index (list of all lead IDs for dashboard)
+    const indexRaw = await env.CONTRACTS.get('lead_index');
+    const index = indexRaw ? JSON.parse(indexRaw) : [];
+    index.unshift({ id: leadId, name: lead.name, score, priority, status: 'new', createdAt: lead.createdAt, service: lead.service });
+    // Keep last 500 leads in index
+    if (index.length > 500) index.length = 500;
+    await env.CONTRACTS.put('lead_index', JSON.stringify(index), { expirationTtl: LEAD_TTL });
+
+    // === AUTOMATION: SMS to Justin ===
+    const priorityEmoji = priority === 'hot' ? '🔥' : priority === 'warm' ? '🟡' : '🔵';
+    const smsMessage = `${priorityEmoji} NEW LEAD (${priority.toUpperCase()} — Score: ${score})\n` +
+      `Name: ${lead.name}\n` +
+      `Phone: ${lead.phone || 'Not provided'}\n` +
+      `Service: ${lead.service || 'General'}\n` +
+      `Timeline: ${lead.timeline || 'Not specified'}\n` +
+      `Source: ${lead.source}\n` +
+      (lead.message ? `Msg: ${lead.message.substring(0, 100)}${lead.message.length > 100 ? '...' : ''}` : '');
+
+    const smsResult = await sendSMS(env, env.OWNER_PHONE || '+14054106402', smsMessage);
+
+    // === AUTOMATION: Email notification (via Formspree) ===
+    const emailResult = await sendAutoReply(env, lead);
+
+    return jsonResponse({
+      success: true,
+      leadId,
+      score,
+      priority,
+      sms: smsResult.success ? 'sent' : 'skipped',
+      email: emailResult.success ? 'sent' : 'skipped',
+    }, 200, corsHeaders);
+  } catch (error) {
+    return jsonResponse({ error: 'Failed to process lead: ' + error.message }, 500, corsHeaders);
+  }
+}
+
+// =====================================================================
+// ROUTE: GET /lead/list?pin=XXXX&status=new&limit=50
+// =====================================================================
+async function handleLeadList(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const pin = url.searchParams.get('pin');
+
+  if (!pin || pin !== env.OWNER_PIN) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+
+  const statusFilter = url.searchParams.get('status') || '';
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50'), 200);
+
+  const indexRaw = await env.CONTRACTS.get('lead_index');
+  let index = indexRaw ? JSON.parse(indexRaw) : [];
+
+  if (statusFilter) {
+    index = index.filter(l => l.status === statusFilter);
+  }
+
+  // Return summary list (not full lead data — fetch individually for detail)
+  return jsonResponse({
+    total: index.length,
+    leads: index.slice(0, limit),
+  }, 200, corsHeaders);
+}
+
+// =====================================================================
+// ROUTE: GET /lead/detail?pin=XXXX&id=lead:XXXXX
+// =====================================================================
+async function handleLeadDetail(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const pin = url.searchParams.get('pin');
+  const id = url.searchParams.get('id');
+
+  if (!pin || pin !== env.OWNER_PIN) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+  if (!id) {
+    return jsonResponse({ error: 'Missing lead id' }, 400, corsHeaders);
+  }
+
+  const raw = await env.CONTRACTS.get(id);
+  if (!raw) {
+    return jsonResponse({ error: 'Lead not found' }, 404, corsHeaders);
+  }
+
+  return jsonResponse(JSON.parse(raw), 200, corsHeaders);
+}
+
+// =====================================================================
+// ROUTE: POST /lead/update — Update lead status/notes
+// Body: { pin, id, status?, notes?, contactedAt? }
+// =====================================================================
+async function handleLeadUpdate(request, env, corsHeaders) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+  }
+
+  try {
+    const body = await request.json();
+    const { pin, id, status, notes, contactedAt } = body;
+
+    if (!pin || pin !== env.OWNER_PIN) {
+      return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+    }
+    if (!id) {
+      return jsonResponse({ error: 'Missing lead id' }, 400, corsHeaders);
+    }
+
+    const raw = await env.CONTRACTS.get(id);
+    if (!raw) {
+      return jsonResponse({ error: 'Lead not found' }, 404, corsHeaders);
+    }
+
+    const lead = JSON.parse(raw);
+
+    if (status) lead.status = status;
+    if (notes !== undefined) lead.notes = notes;
+    if (contactedAt) lead.contactedAt = contactedAt;
+
+    await env.CONTRACTS.put(id, JSON.stringify(lead), { expirationTtl: LEAD_TTL });
+
+    // Also update the index
+    const indexRaw = await env.CONTRACTS.get('lead_index');
+    if (indexRaw) {
+      const index = JSON.parse(indexRaw);
+      const entry = index.find(l => l.id === id);
+      if (entry && status) entry.status = status;
+      await env.CONTRACTS.put('lead_index', JSON.stringify(index), { expirationTtl: LEAD_TTL });
+    }
+
+    return jsonResponse({ success: true, lead }, 200, corsHeaders);
+  } catch (error) {
+    return jsonResponse({ error: 'Failed to update lead: ' + error.message }, 500, corsHeaders);
+  }
+}
+
+// =====================================================================
+// ROUTE: GET /lead/stats?pin=XXXX — Dashboard stats
+// =====================================================================
+async function handleLeadStats(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const pin = url.searchParams.get('pin');
+
+  if (!pin || pin !== env.OWNER_PIN) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+
+  const indexRaw = await env.CONTRACTS.get('lead_index');
+  const index = indexRaw ? JSON.parse(indexRaw) : [];
+
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  const weekAgo = new Date(now - 7 * 86400000).toISOString();
+  const monthAgo = new Date(now - 30 * 86400000).toISOString();
+
+  const stats = {
+    total: index.length,
+    today: index.filter(l => l.createdAt?.startsWith(today)).length,
+    thisWeek: index.filter(l => l.createdAt >= weekAgo).length,
+    thisMonth: index.filter(l => l.createdAt >= monthAgo).length,
+    byStatus: {},
+    byPriority: { hot: 0, warm: 0, cool: 0 },
+    byService: {},
+    avgScore: 0,
+    needsFollowUp: 0,
+  };
+
+  let totalScore = 0;
+  index.forEach(l => {
+    stats.byStatus[l.status] = (stats.byStatus[l.status] || 0) + 1;
+    stats.byPriority[l.priority] = (stats.byPriority[l.priority] || 0) + 1;
+    if (l.service) stats.byService[l.service] = (stats.byService[l.service] || 0) + 1;
+    totalScore += l.score || 0;
+    // Needs follow-up: new leads older than 2 hours
+    if (l.status === 'new' && l.createdAt < new Date(now - 2 * 3600000).toISOString()) {
+      stats.needsFollowUp++;
+    }
+  });
+  stats.avgScore = index.length > 0 ? Math.round(totalScore / index.length * 10) / 10 : 0;
+
+  return jsonResponse(stats, 200, corsHeaders);
+}
+
+// =====================================================================
+// CRON: Daily follow-up check (runs at 9 AM CST via Cloudflare Cron)
+// =====================================================================
+async function handleScheduled(env) {
+  const indexRaw = await env.CONTRACTS.get('lead_index');
+  if (!indexRaw) return;
+
+  const index = JSON.parse(indexRaw);
+  const now = new Date();
+  let followUpCount = 0;
+
+  for (const entry of index) {
+    if (entry.status !== 'new') continue;
+
+    const raw = await env.CONTRACTS.get(entry.id);
+    if (!raw) continue;
+
+    const lead = JSON.parse(raw);
+    const ageMs = now - new Date(lead.createdAt);
+    const ageDays = Math.floor(ageMs / 86400000);
+
+    // Follow-up at 1 day, 3 days, 7 days
+    const followUpDays = [1, 3, 7];
+    const dueFollowUp = followUpDays.find(d => ageDays >= d && !lead.followUps.includes(d));
+
+    if (dueFollowUp && lead.phone) {
+      const msgs = {
+        1: `⏰ FOLLOW UP (Day 1): ${lead.name} — ${lead.service || 'General'} — ${lead.phone}. Lead from ${lead.source}. No response yet.`,
+        3: `📋 FOLLOW UP (Day 3): ${lead.name} still hasn't been contacted. Phone: ${lead.phone}. Service: ${lead.service || 'General'}. Consider calling today.`,
+        7: `🚨 FINAL FOLLOW UP (Day 7): ${lead.name} — ${lead.phone}. This lead will go cold soon. Last chance to convert.`,
+      };
+
+      await sendSMS(env, env.OWNER_PHONE || '+14054106402', msgs[dueFollowUp]);
+
+      lead.followUps.push(dueFollowUp);
+      await env.CONTRACTS.put(entry.id, JSON.stringify(lead), { expirationTtl: LEAD_TTL });
+      followUpCount++;
+    }
+
+    // Auto-mark as cold after 14 days with no contact
+    if (ageDays >= 14 && lead.status === 'new') {
+      lead.status = 'cold';
+      entry.status = 'cold';
+      await env.CONTRACTS.put(entry.id, JSON.stringify(lead), { expirationTtl: LEAD_TTL });
+    }
+  }
+
+  // Save updated index
+  await env.CONTRACTS.put('lead_index', JSON.stringify(index), { expirationTtl: LEAD_TTL });
+
+  // Send daily summary if there are new leads
+  const newLeads = index.filter(l => l.status === 'new').length;
+  const hotLeads = index.filter(l => l.priority === 'hot' && l.status === 'new').length;
+  if (newLeads > 0) {
+    await sendSMS(env, env.OWNER_PHONE || '+14054106402',
+      `📊 Daily Lead Summary:\n${newLeads} open leads (${hotLeads} hot)\n${followUpCount} follow-up reminders sent today.\nCheck dashboard for details.`);
+  }
+}
+
+// =====================================================================
 // MAIN ROUTER
 // =====================================================================
 export default {
@@ -376,7 +784,29 @@ export default {
       return handleContractStatus(request, env, corsHeaders);
     }
 
+    // Lead automation routes
+    if (path === '/lead/incoming') {
+      return handleLeadIncoming(request, env, corsHeaders);
+    }
+    if (path === '/lead/list') {
+      return handleLeadList(request, env, corsHeaders);
+    }
+    if (path === '/lead/detail') {
+      return handleLeadDetail(request, env, corsHeaders);
+    }
+    if (path === '/lead/update') {
+      return handleLeadUpdate(request, env, corsHeaders);
+    }
+    if (path === '/lead/stats') {
+      return handleLeadStats(request, env, corsHeaders);
+    }
+
     // Default: AI proxy (existing behavior)
     return handleAIProxy(request, env, corsHeaders);
+  },
+
+  // Cron trigger handler — daily follow-up checks
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(handleScheduled(env));
   },
 };

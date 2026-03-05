@@ -18,8 +18,4 @@ id = "5eb1067365f24433832c7c2b37253c12"
 crons = ["0 15 * * *"]
 
 # Lead automation secrets (set via wrangler secret put):
-# TWILIO_ACCOUNT_SID    — Twilio account SID
-# TWILIO_AUTH_TOKEN     — Twilio auth token
-# TWILIO_FROM_NUMBER    — Your Twilio phone number (+1XXXXXXXXXX)
-# OWNER_PHONE           — Justin's phone (+14054106402)
-# OWNER_PIN             — PIN for lead dashboard access
+# OWNER_PIN             — PIN for lead dashboard access (use your BidGen PIN)

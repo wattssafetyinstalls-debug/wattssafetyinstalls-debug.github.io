@@ -341,14 +341,37 @@
     }
 
     // ================================================================
-    // AI PLANNER TAB
+    // AI PLANNER TAB — Camera + Upload + Vision Analysis
     // ================================================================
     function buildAITab() {
         return '\
 <div class="fc-section" id="fcAI">\
     <div class="fc-note" style="margin-top:0;margin-bottom:12px">\
-        Paste your field measurements and room details below. Gemini will analyze optimal cut patterns, seam placements, material ordering, and give you a full install plan.\
+        <strong>📸 Snap a photo</strong> of the room or upload one, and Gemini Vision will analyze seam placement, cut sizes for solo install, material direction, and give you a full plan. You can also type measurements below.\
     </div>\
+    \
+    <div class="fc-group">\
+        <div class="fc-label">📷 Room Photo (camera or upload)</div>\
+        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">\
+            <button class="fc-btn fc-btn-secondary" onclick="fcOpenCamera()" style="flex:1;min-width:120px;font-size:11px;padding:10px 8px">📷 Take Photo</button>\
+            <button class="fc-btn fc-btn-secondary" onclick="document.getElementById(\'fcFileInput\').click()" style="flex:1;min-width:120px;font-size:11px;padding:10px 8px">📁 Upload Photo</button>\
+        </div>\
+        <input type="file" id="fcFileInput" accept="image/*" style="display:none" onchange="fcHandleFile(event)">\
+        <div id="fcCameraContainer" style="display:none;margin-bottom:8px;border-radius:8px;overflow:hidden;position:relative">\
+            <video id="fcCameraVideo" autoplay playsinline style="width:100%;border-radius:8px;background:#000"></video>\
+            <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center">\
+                <button class="fc-btn" onclick="fcCapturePhoto()" style="display:inline-block;width:auto;padding:10px 24px;font-size:12px;border-radius:20px">📸 Capture</button>\
+                <button class="fc-btn fc-btn-secondary" onclick="fcCloseCamera()" style="display:inline-block;width:auto;padding:10px 16px;font-size:12px;border-radius:20px;margin-left:6px">✕ Close</button>\
+            </div>\
+        </div>\
+        <canvas id="fcCameraCanvas" style="display:none"></canvas>\
+        <div id="fcPhotoPreview" style="display:none;margin-bottom:8px;position:relative">\
+            <img id="fcPhotoImg" style="width:100%;border-radius:8px;border:2px solid #27ae60">\
+            <button onclick="fcRemovePhoto()" style="position:absolute;top:4px;right:4px;background:#e74c3c;color:white;border:none;width:24px;height:24px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>\
+            <div style="position:absolute;bottom:6px;left:6px;background:rgba(39,174,96,0.9);color:white;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:600">✓ Photo attached — AI will analyze this</div>\
+        </div>\
+    </div>\
+    \
     <div class="fc-group">\
         <div class="fc-label">Material Type</div>\
         <select class="fc-select" id="fcAIType">\
@@ -361,14 +384,14 @@
         </select>\
     </div>\
     <div class="fc-group">\
-        <div class="fc-label">Room Details & Measurements</div>\
-        <textarea class="fc-input" id="fcAIInput" rows="6" style="resize:vertical;min-height:100px" placeholder="Example:\nLiving room: 14\'3\" × 18\'6\"\nHallway: 3\'8\" × 22\'\nCloset: 5\' × 4\'2\"\nRoll width: 12ft\nDoors: 3 standard\nLayout: L-shaped, hallway connects to living room\nConcerns: seam placement, pattern match"></textarea>\
+        <div class="fc-label">Room Details & Measurements <span style="font-weight:400;color:#7f8c8d">(optional if photo provided)</span></div>\
+        <textarea class="fc-input" id="fcAIInput" rows="5" style="resize:vertical;min-height:80px" placeholder="Example:\nLiving room: 14\'3\" × 18\'6\"\nHallway: 3\'8\" × 22\'\nRoll width: 12ft\nDoors: 3 standard\nLayout: L-shaped\n\nOr just snap a photo above!"></textarea>\
     </div>\
     <div class="fc-row">\
         <div class="fc-group">\
             <div class="fc-label">Install Crew</div>\
             <select class="fc-select" id="fcAICrew">\
-                <option value="solo">Solo</option>\
+                <option value="solo">Solo (one man)</option>\
                 <option value="team2">Team of 2</option>\
                 <option value="team3">Team of 3+</option>\
             </select>\
@@ -382,7 +405,7 @@
             </select>\
         </div>\
     </div>\
-    <button class="fc-btn" onclick="fcAIAnalyze()">🧠 AI Cut & Install Planner</button>\
+    <button class="fc-btn" onclick="fcAIAnalyze()">🧠 AI Vision — Seam & Cut Planner</button>\
     <div id="fcAIResult" style="margin-top:12px"></div>\
 </div>';
     }
@@ -785,49 +808,210 @@
     };
 
     // ================================================================
-    // AI CUT & INSTALL PLANNER (Gemini powered)
+    // CAMERA / PHOTO UPLOAD — capture or upload room photos
+    // ================================================================
+    var _fcPhotoBase64 = null; // stored photo as base64 data URL
+    var _fcCameraStream = null;
+
+    window.fcOpenCamera = function() {
+        var container = document.getElementById('fcCameraContainer');
+        var video = document.getElementById('fcCameraVideo');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            notify('Camera not available — use the upload button instead');
+            return;
+        }
+
+        container.style.display = 'block';
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+        })
+        .then(function(stream) {
+            _fcCameraStream = stream;
+            video.srcObject = stream;
+        })
+        .catch(function(err) {
+            container.style.display = 'none';
+            notify('Camera access denied — use the upload button');
+        });
+    };
+
+    window.fcCloseCamera = function() {
+        var container = document.getElementById('fcCameraContainer');
+        var video = document.getElementById('fcCameraVideo');
+        container.style.display = 'none';
+        if (_fcCameraStream) {
+            _fcCameraStream.getTracks().forEach(function(t) { t.stop(); });
+            _fcCameraStream = null;
+        }
+        video.srcObject = null;
+    };
+
+    window.fcCapturePhoto = function() {
+        var video = document.getElementById('fcCameraVideo');
+        var canvas = document.getElementById('fcCameraCanvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+
+        // Compress to JPEG, max ~1MB for Gemini
+        var quality = 0.8;
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+        // If too large, reduce quality
+        while (dataUrl.length > 1400000 && quality > 0.3) {
+            quality -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        _fcPhotoBase64 = dataUrl;
+        fcShowPhotoPreview(dataUrl);
+        fcCloseCamera();
+        notify('Photo captured — hit the AI button to analyze');
+    };
+
+    window.fcHandleFile = function(e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            // Resize if needed to keep under ~1.5MB for Gemini
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.getElementById('fcCameraCanvas');
+                var maxDim = 1920;
+                var w = img.width, h = img.height;
+                if (w > maxDim || h > maxDim) {
+                    if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                    else { w = Math.round(w * maxDim / h); h = maxDim; }
+                }
+                canvas.width = w;
+                canvas.height = h;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                var quality = 0.8;
+                var dataUrl = canvas.toDataURL('image/jpeg', quality);
+                while (dataUrl.length > 1400000 && quality > 0.3) {
+                    quality -= 0.1;
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                }
+                _fcPhotoBase64 = dataUrl;
+                fcShowPhotoPreview(dataUrl);
+                notify('Photo loaded — hit the AI button to analyze');
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+        // Reset input so same file can be re-selected
+        e.target.value = '';
+    };
+
+    function fcShowPhotoPreview(dataUrl) {
+        var preview = document.getElementById('fcPhotoPreview');
+        var img = document.getElementById('fcPhotoImg');
+        img.src = dataUrl;
+        preview.style.display = 'block';
+    }
+
+    window.fcRemovePhoto = function() {
+        _fcPhotoBase64 = null;
+        document.getElementById('fcPhotoPreview').style.display = 'none';
+        document.getElementById('fcPhotoImg').src = '';
+    };
+
+    // ================================================================
+    // AI VISION CUT & INSTALL PLANNER (Gemini 2.5 Pro Vision)
     // ================================================================
     window.fcAIAnalyze = function() {
         var matType = document.getElementById('fcAIType').value;
         var input = document.getElementById('fcAIInput').value.trim();
         var crew = document.getElementById('fcAICrew').value;
         var exp = document.getElementById('fcAIExp').value;
+        var hasPhoto = !!_fcPhotoBase64;
 
-        if (!input) {
-            notify('Enter your room measurements and details');
+        if (!input && !hasPhoto) {
+            notify('Take a photo or enter room measurements');
             return;
         }
 
         var resultEl = document.getElementById('fcAIResult');
-        resultEl.innerHTML = '<div style="text-align:center;padding:20px;color:#7f8c8d"><div class="spinner" style="width:32px;height:32px;border:3px solid #2a3a5c;border-top-color:#e67e22;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 10px"></div>Analyzing measurements with Gemini AI...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+        var loadMsg = hasPhoto ? 'Analyzing room photo + measurements with Gemini Vision...' : 'Analyzing measurements with Gemini AI...';
+        resultEl.innerHTML = '<div style="text-align:center;padding:20px;color:#7f8c8d"><div class="spinner" style="width:32px;height:32px;border:3px solid #2a3a5c;border-top-color:#e67e22;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 10px"></div>' + loadMsg + '</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+
+        var isSolo = crew === 'solo';
+        var soloSection = isSolo ? [
+            '',
+            '## CRITICAL — SOLO (ONE MAN) INSTALL REQUIREMENTS:',
+            'This is a ONE-PERSON install. Every recommendation must account for:',
+            '- **Maximum manageable piece size** for one person to carry, position, and lay flat without wrinkles or misalignment',
+            '- For sheet vinyl/carpet: maximum piece a solo installer can handle is typically 12ft × 10-12ft. Larger pieces MUST be cut down or you need a different strategy.',
+            '- **Reduce cut sizes** so one person can fold, carry, and position each piece alone',
+            '- **Seam placement** should allow pieces small enough for solo handling — even if it means one extra seam',
+            '- **Install sequence** must be step-by-step for one person — what to dry-fit first, where to start adhesive, how to avoid trapping yourself',
+            '- **Weight and bulk** considerations — a full 12ft wide × 20ft carpet piece weighs 60-80 lbs and is nearly impossible solo',
+            '- Recommend folding techniques, kick methods, and solo tricks for each step',
+            ''
+        ].join('\n') : '';
+
+        var photoSection = hasPhoto ? [
+            '',
+            '## ROOM PHOTO ATTACHED',
+            'I have attached a photo of the room. Analyze the photo carefully:',
+            '- **Estimate room dimensions** from visual cues (doorways are ~6\'8\" tall × 2\'8\"-3\'0\" wide, outlets are 12\" from floor, etc.)',
+            '- **Identify the room shape** — is it rectangular, L-shaped, has alcoves, closets, bump-outs?',
+            '- **Count doorways and transitions** visible in the photo',
+            '- **Assess the subfloor** if visible (concrete, plywood, existing flooring)',
+            '- **Note any obstacles** — cabinets, islands, pipes, odd angles, fixtures',
+            '- **Recommend optimal seam location** based on the actual room layout you see',
+            '- **Recommend best direction** to run the material based on light sources, room shape, traffic flow',
+            ''
+        ].join('\n') : '';
 
         var prompt = [
-            'You are a senior flooring and trades installation expert. Analyze these field measurements and provide a detailed, actionable cut plan and material order.',
+            'You are a master flooring and trades installation expert with 30 years of field experience. You are advising a real installer on a real job.',
+            hasPhoto ? 'A photo of the room has been provided — analyze it carefully along with any measurements.' : '',
             '',
             '## Material: ' + matType.replace('_', ' ').toUpperCase(),
-            '## Crew: ' + crew,
+            '## Crew: ' + crew + (isSolo ? ' (ONE MAN — size ALL cuts for solo handling)' : ''),
             '## Experience: ' + exp,
+            photoSection,
+            soloSection,
+            input ? '## Field Measurements & Room Details:\n' + input : '## No written measurements provided — estimate from the photo.',
             '',
-            '## Field Measurements & Room Details:',
-            input,
+            '## REQUIRED OUTPUT:',
+            '1. **Room Assessment** — shape, dimensions (estimated if from photo), total sq ft, obstacles',
+            '2. **Best Seam Placement** — EXACTLY where the seam(s) should go, why that spot minimizes visibility, and how it aligns with traffic patterns and light. If no seam needed, say so.',
+            '3. **Material Direction** — which way to run the material and why (lengthwise vs widthwise, with or against light)',
+            '4. **Total Material Order** — exact quantity with ' + (matType === 'carpet' || matType === 'sheet_vinyl' ? '10-15% waste' : '10% waste'),
+            '5. **Cut List** — every piece with exact dimensions' + (isSolo ? ', sized so one person can handle each piece' : '') + '. Use a table.',
+            '6. **Step-by-Step Install Sequence** — numbered steps' + (isSolo ? ' written for a solo installer' : '') + ', including dry-fit, trim, adhesive/tape, seaming, rolling',
+            '7. **Time Estimate** — realistic hours for ' + crew + ' at ' + exp + ' level',
+            '8. **Watch-Outs** — specific areas where mistakes happen on THIS job',
+            '9. **Tools Needed** — every tool required',
             '',
-            '## What I Need From You:',
-            '1. **Total Material Order** — exact quantity to order with waste factor',
-            '2. **Optimal Cut Plan** — which direction to run the material, where to place seams (if sheet goods), how to minimize waste',
-            '3. **Cut List** — specific pieces to cut from the roll/box, with dimensions',
-            '4. **Seam Placement** — where seams should go for minimum visibility and maximum structural integrity',
-            '5. **Install Sequence** — what order to install rooms/pieces, step by step',
-            '6. **Time Estimate** — realistic hours for ' + crew + ' crew at ' + exp + ' level',
-            '7. **Watch-Outs** — potential problems, difficult cuts, areas where mistakes happen',
-            '8. **Tools Needed** — specific tools for this job',
-            '',
-            'Be thorough. Use tables for cut lists. Bold all measurements and quantities. This is a real job — accuracy matters.'
+            'Be thorough. Use tables for the cut list. Bold all measurements. This is a REAL job — accuracy matters. Think step by step.'
         ].join('\n');
 
+        // Build the request parts — text + optional image
+        var parts = [{ text: prompt }];
+        if (hasPhoto) {
+            // Extract base64 data and mime type from data URL
+            var match = _fcPhotoBase64.match(/^data:(image\/\w+);base64,(.+)$/);
+            if (match) {
+                parts.unshift({
+                    inlineData: {
+                        mimeType: match[1],
+                        data: match[2]
+                    }
+                });
+            }
+        }
+
         var body = {
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            contents: [{ role: 'user', parts: parts }],
             generationConfig: {
-                maxOutputTokens: 16384,
+                maxOutputTokens: 32768,
                 temperature: 0.3
             }
         };
@@ -840,8 +1024,8 @@
         .then(function(res) { return res.json(); })
         .then(function(data) {
             var text = '';
-            try { text = data.candidates[0].content.parts[0].text; } catch(e) { text = 'Error parsing AI response.'; }
-            resultEl.innerHTML = '<div class="fc-result" style="max-height:400px;overflow-y:auto"><div class="fc-result-title">🧠 AI Cut & Install Plan</div><div style="font-size:12px;line-height:1.7;color:#bdc3c7">' + renderMarkdown(text) + '</div></div>';
+            try { text = data.candidates[0].content.parts[0].text; } catch(e) { text = 'Error parsing AI response. Raw: ' + JSON.stringify(data).substring(0, 300); }
+            resultEl.innerHTML = '<div class="fc-result" style="max-height:500px;overflow-y:auto"><div class="fc-result-title">' + (hasPhoto ? '📸🧠' : '🧠') + ' AI Vision — Seam & Cut Plan</div><div style="font-size:12px;line-height:1.7;color:#bdc3c7">' + renderMarkdown(text) + '</div></div>';
         })
         .catch(function(err) {
             resultEl.innerHTML = '<div class="fc-result" style="border-color:#e74c3c"><div style="color:#e74c3c;font-weight:600">❌ Error: ' + err.message + '</div></div>';
@@ -887,6 +1071,12 @@
         document.getElementById('fcDwResult').innerHTML = '';
         document.getElementById('fcTrimResult').innerHTML = '';
         document.getElementById('fcAIResult').innerHTML = '';
+        // Clear photo
+        _fcPhotoBase64 = null;
+        var preview = document.getElementById('fcPhotoPreview');
+        if (preview) preview.style.display = 'none';
+        var photoImg = document.getElementById('fcPhotoImg');
+        if (photoImg) photoImg.src = '';
         // Reset inputs
         var inputs = document.querySelectorAll('#fieldCalcPanel input[type="number"]');
         inputs.forEach(function(inp) { if (!inp.value || inp.id === 'fcTrimDoors' || inp.id === 'fcTransCount') return; });

@@ -11,14 +11,11 @@
  *   GET  /lead/list         — List all leads (pin-protected)
  *   POST /lead/update       — Update lead status (pin-protected)
  *   GET  /lead/stats        — Dashboard stats (pin-protected)
+ *   GET  /notifications     — Pull notification queue (pin-protected)
  * 
  * SECRETS (set via wrangler secret put):
  *   GEMINI_API_KEY          — Google Gemini API key
  *   CONTRACT_HMAC_SECRET    — HMAC key for signing tokens
- *   TWILIO_ACCOUNT_SID      — Twilio account SID
- *   TWILIO_AUTH_TOKEN        — Twilio auth token
- *   TWILIO_FROM_NUMBER      — Twilio phone number (e.g. +14025551234)
- *   OWNER_PHONE             — Justin's phone number (e.g. +14054106402)
  *   OWNER_PIN               — PIN for dashboard access
  * 
  * KV NAMESPACE:
@@ -405,45 +402,61 @@ function getLeadPriority(score) {
 }
 
 // =====================================================================
-// TWILIO SMS
+// NOTIFICATION SYSTEM — No third-party APIs needed
+// Uses Formspree (already connected) for email alerts to Justin
+// Also queues notifications in KV for the dashboard to pull
 // =====================================================================
-async function sendSMS(env, to, message) {
-  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN || !env.TWILIO_FROM_NUMBER) {
-    console.log('[SMS] Twilio not configured, skipping SMS');
-    return { success: false, reason: 'twilio_not_configured' };
-  }
+async function sendNotification(env, message, priority) {
+  const results = { email: false, queued: false };
 
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`;
-  const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
-
+  // 1. Send via Formspree as urgent email notification to Justin
   try {
-    const res = await fetch(url, {
+    const priorityEmoji = priority === 'hot' ? '🔥' : priority === 'warm' ? '🟡' : '🔵';
+    await fetch('https://formspree.io/f/mjkjgrlb', {
       method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        From: env.TWILIO_FROM_NUMBER,
-        To: to,
-        Body: message,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        _subject: `${priorityEmoji} Watts Lead Alert: ${message.substring(0, 60)}`,
+        message: message,
+        priority: priority || 'normal',
+        timestamp: new Date().toISOString(),
+        _replyto: 'noreply@wattsatpcontractor.com',
       }),
     });
-
-    const result = await res.json();
-    return { success: res.ok, sid: result.sid, error: result.message };
+    results.email = true;
   } catch (err) {
-    return { success: false, reason: err.message };
+    console.log('[Notify] Formspree failed:', err.message);
   }
+
+  // 2. Queue in KV for dashboard pull-notifications
+  try {
+    const queueRaw = await env.CONTRACTS.get('notification_queue');
+    const queue = queueRaw ? JSON.parse(queueRaw) : [];
+    queue.unshift({
+      message,
+      priority: priority || 'normal',
+      timestamp: new Date().toISOString(),
+      read: false,
+    });
+    // Keep last 50 notifications
+    if (queue.length > 50) queue.length = 50;
+    await env.CONTRACTS.put('notification_queue', JSON.stringify(queue), {
+      expirationTtl: LEAD_TTL,
+    });
+    results.queued = true;
+  } catch (err) {
+    console.log('[Notify] Queue failed:', err.message);
+  }
+
+  return { success: results.email || results.queued, ...results };
 }
 
 // =====================================================================
-// AUTO-REPLY EMAIL (via Formspree or future transactional email)
+// LEAD EMAIL — sends lead details to Justin via Formspree
 // =====================================================================
-async function sendAutoReply(env, lead) {
-  // Send via Formspree as a notification (Formspree sends to your configured email)
-  // The client sees this as an auto-reply if Formspree autoresponder is enabled
+async function sendLeadEmail(env, lead) {
   try {
+    const priorityEmoji = lead.priority === 'hot' ? '🔥' : lead.priority === 'warm' ? '🟡' : '🔵';
     await fetch('https://formspree.io/f/mjkjgrlb', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -454,18 +467,47 @@ async function sendAutoReply(env, lead) {
         service: lead.service || 'General Inquiry',
         message: lead.message || '',
         _replyto: lead.email || '',
-        _subject: `🔔 New ${lead.priority?.toUpperCase() || ''} Lead: ${lead.name} — ${lead.service || 'General'}`,
+        _subject: `${priorityEmoji} New ${lead.priority?.toUpperCase() || ''} Lead (Score: ${lead.score}): ${lead.name} — ${lead.service || 'General'}`,
         source: lead.source,
         score: lead.score,
         priority: lead.priority,
+        timeline: lead.timeline || '',
         page: lead.page,
-        timestamp: lead.timestamp,
+        timestamp: lead.createdAt,
       }),
     });
     return { success: true };
   } catch (err) {
     return { success: false, reason: err.message };
   }
+}
+
+// =====================================================================
+// ROUTE: GET /notifications?pin=XXXX — pull notification queue
+// =====================================================================
+async function handleNotifications(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const pin = url.searchParams.get('pin');
+
+  if (!pin || pin !== env.OWNER_PIN) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+
+  const queueRaw = await env.CONTRACTS.get('notification_queue');
+  const queue = queueRaw ? JSON.parse(queueRaw) : [];
+
+  // Mark as read if requested
+  if (url.searchParams.get('markRead') === '1') {
+    queue.forEach(n => n.read = true);
+    await env.CONTRACTS.put('notification_queue', JSON.stringify(queue), {
+      expirationTtl: LEAD_TTL,
+    });
+  }
+
+  return jsonResponse({
+    unread: queue.filter(n => !n.read).length,
+    notifications: queue,
+  }, 200, corsHeaders);
 }
 
 // =====================================================================
@@ -522,28 +564,20 @@ async function handleLeadIncoming(request, env, corsHeaders) {
     if (index.length > 500) index.length = 500;
     await env.CONTRACTS.put('lead_index', JSON.stringify(index), { expirationTtl: LEAD_TTL });
 
-    // === AUTOMATION: SMS to Justin ===
-    const priorityEmoji = priority === 'hot' ? '🔥' : priority === 'warm' ? '🟡' : '🔵';
-    const smsMessage = `${priorityEmoji} NEW LEAD (${priority.toUpperCase()} — Score: ${score})\n` +
-      `Name: ${lead.name}\n` +
-      `Phone: ${lead.phone || 'Not provided'}\n` +
-      `Service: ${lead.service || 'General'}\n` +
-      `Timeline: ${lead.timeline || 'Not specified'}\n` +
-      `Source: ${lead.source}\n` +
-      (lead.message ? `Msg: ${lead.message.substring(0, 100)}${lead.message.length > 100 ? '...' : ''}` : '');
+    // === AUTOMATION: Email lead details to Justin via Formspree ===
+    const emailResult = await sendLeadEmail(env, lead);
 
-    const smsResult = await sendSMS(env, env.OWNER_PHONE || '+14054106402', smsMessage);
-
-    // === AUTOMATION: Email notification (via Formspree) ===
-    const emailResult = await sendAutoReply(env, lead);
+    // === AUTOMATION: Queue notification for dashboard ===
+    const notifyMsg = `NEW LEAD: ${lead.name} — ${lead.service || 'General'} — ${lead.phone || 'No phone'} — Score: ${score}`;
+    const notifyResult = await sendNotification(env, notifyMsg, priority);
 
     return jsonResponse({
       success: true,
       leadId,
       score,
       priority,
-      sms: smsResult.success ? 'sent' : 'skipped',
       email: emailResult.success ? 'sent' : 'skipped',
+      notified: notifyResult.success ? 'sent' : 'skipped',
     }, 200, corsHeaders);
   } catch (error) {
     return jsonResponse({ error: 'Failed to process lead: ' + error.message }, 500, corsHeaders);
@@ -728,7 +762,7 @@ async function handleScheduled(env) {
         7: `🚨 FINAL FOLLOW UP (Day 7): ${lead.name} — ${lead.phone}. This lead will go cold soon. Last chance to convert.`,
       };
 
-      await sendSMS(env, env.OWNER_PHONE || '+14054106402', msgs[dueFollowUp]);
+      await sendNotification(env, msgs[dueFollowUp], lead.priority);
 
       lead.followUps.push(dueFollowUp);
       await env.CONTRACTS.put(entry.id, JSON.stringify(lead), { expirationTtl: LEAD_TTL });
@@ -750,8 +784,8 @@ async function handleScheduled(env) {
   const newLeads = index.filter(l => l.status === 'new').length;
   const hotLeads = index.filter(l => l.priority === 'hot' && l.status === 'new').length;
   if (newLeads > 0) {
-    await sendSMS(env, env.OWNER_PHONE || '+14054106402',
-      `📊 Daily Lead Summary:\n${newLeads} open leads (${hotLeads} hot)\n${followUpCount} follow-up reminders sent today.\nCheck dashboard for details.`);
+    await sendNotification(env,
+      `📊 Daily Lead Summary: ${newLeads} open leads (${hotLeads} hot). ${followUpCount} follow-up reminders sent today.`, 'normal');
   }
 }
 
@@ -799,6 +833,9 @@ export default {
     }
     if (path === '/lead/stats') {
       return handleLeadStats(request, env, corsHeaders);
+    }
+    if (path === '/notifications') {
+      return handleNotifications(request, env, corsHeaders);
     }
 
     // Default: AI proxy (existing behavior)

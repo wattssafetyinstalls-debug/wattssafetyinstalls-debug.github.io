@@ -360,6 +360,156 @@
         .cta-btn.enhanced-atp:hover { background: #d35400; transform: translateY(-1px); }
         .cta-btn.google-scan { background: #4285f4; color: white; }
         .cta-btn.google-scan:hover { background: #3367d6; transform: translateY(-1px); }
+
+        /* ============================================================
+           MOBILE RESPONSIVE — full touch-friendly layout
+           ============================================================ */
+        @media (max-width: 768px) {
+            body { font-size: 14px; }
+            .container { padding: 16px 12px; }
+            h1 { font-size: 20px; }
+            .subtitle { font-size: 12px; margin-bottom: 16px; }
+            .card { padding: 16px; margin-bottom: 14px; border-radius: 8px; }
+            .card h2 { font-size: 14px; flex-wrap: wrap; }
+
+            /* Header — stack title above CTA buttons */
+            .container > div:first-child { flex-direction: column !important; align-items: stretch !important; gap: 12px; }
+            .cta-buttons { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+            .cta-btn { padding: 8px 12px; font-size: 12px; min-width: auto; flex: 1 1 auto; justify-content: center; }
+
+            /* Form grids — single column */
+            .form-grid { grid-template-columns: 1fr !important; gap: 10px; }
+
+            /* Inputs — larger touch targets */
+            .form-group input, .form-group textarea, .form-group select { padding: 12px; font-size: 15px; }
+
+            /* Labor item rows — stack vertically */
+            #laborItemsContainer .li-row { grid-template-columns: 1fr !important; gap: 4px; }
+            .item-header.labor { display: none; }
+
+            /* Material item rows — stack vertically */
+            #matItemsContainer .mi-row, #distMatContainer .di-row { grid-template-columns: 1fr 1fr !important; gap: 4px; }
+            .item-header.mat { display: none; }
+
+            /* Scope / note rows */
+            .scope-row, .note-row { flex-direction: column; gap: 4px; }
+            .scope-row input, .note-row input { font-size: 14px; padding: 12px; }
+
+            /* Button row — wrap and stretch */
+            .btn-row { flex-direction: column; gap: 8px; }
+            .btn-row .btn { width: 100%; justify-content: center; padding: 14px 16px; font-size: 14px; }
+
+            /* Sync bar */
+            .sync-bar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+
+            /* Catalog bar — stack vertically */
+            .catalog-bar { flex-direction: column; gap: 10px; align-items: stretch; padding: 12px; }
+            .catalog-bar .cb-inflation { margin-left: 0; }
+
+            /* Template bar — stack */
+            .template-bar { flex-direction: column; gap: 8px; align-items: stretch; }
+            .template-bar select { min-width: unset; width: 100%; }
+            .template-bar button { width: 100%; }
+
+            /* Invoice widget — collapsed by default on mobile, full-width when open */
+            .invoice-widget { position: fixed; top: auto; bottom: 60px; right: 8px; left: 8px; width: auto; max-width: none; max-height: 50vh; border-radius: 10px; }
+            .invoice-widget.widget-collapsed { position: fixed; top: auto; bottom: 60px; right: 8px; left: auto; width: auto; }
+
+            /* Invoice modal — full screen on mobile */
+            .invoice-modal-content { width: 100%; max-width: 100%; border-radius: 0; max-height: 100vh; }
+            .invoice-modal { padding: 0; }
+            .invoice-tabs { flex-wrap: wrap; gap: 4px; }
+            .invoice-tab { padding: 6px 10px; font-size: 11px; }
+            .invoice-filters { flex-direction: column; }
+            .invoice-filters select, .invoice-filters input { width: 100%; }
+
+            /* Quote library stats — 2 columns on mobile */
+            .invoice-modal-body > div:first-child { grid-template-columns: 1fr 1fr !important; }
+
+            /* Analytics grid */
+            .analytics-grid { grid-template-columns: 1fr 1fr !important; }
+            .analytics-card .a-value { font-size: 18px; }
+            .analytics-bar-label { width: 70px; font-size: 10px; }
+
+            /* Price lookup / catalog */
+            .pl-search-row { flex-direction: column; gap: 6px; }
+            .pl-search-row input, .pl-search-row select, .pl-search-row button { width: 100%; }
+            .pl-item { flex-wrap: wrap; gap: 6px; }
+            .pl-item .pl-name { min-width: 100%; }
+
+            /* Catalog form rows */
+            .cat-form-row { flex-direction: column; }
+            .cat-input-sm { min-width: unset; width: 100%; }
+            .cat-tabs { flex-wrap: wrap; gap: 4px; }
+            .cat-tab { padding: 6px 12px; font-size: 11px; }
+
+            /* Live calculator panel — enhanced for mobile */
+            .live-calc { flex-direction: column; padding: 8px 12px; gap: 2px; }
+            .lc-row { min-width: 100%; padding: 4px 8px; font-size: 13px; }
+            .lc-row.lc-grand span:last-child { font-size: 18px; }
+
+            /* Scan modal — full screen */
+            .scan-overlay { padding: 0; }
+            .scan-modal { border-radius: 0; margin: 0; max-width: 100%; min-height: 100vh; }
+            .scan-capture-btns { flex-direction: column; }
+            .scan-capture-btns button { width: 100%; }
+            .scan-results > div:nth-child(2) { grid-template-columns: 1fr !important; }
+
+            /* Template manager modal — full screen */
+            .tpl-modal-overlay { padding: 0; }
+            .tpl-modal { border-radius: 0; margin: 0; max-width: 100%; }
+            .tpl-tabs { flex-wrap: wrap; gap: 4px; }
+            .tpl-tab { padding: 6px 12px; font-size: 11px; }
+            .tpl-field-bar { gap: 4px; }
+            .tpl-field-btn { padding: 5px 8px; font-size: 10px; }
+            .tpl-gen-bar { flex-direction: column; }
+            .tpl-gen-bar button { width: 100%; }
+
+            /* Vendor template cards */
+            .vendor-tpl-card { flex-direction: column; text-align: center; gap: 8px; }
+            .vendor-tpl-actions { justify-content: center; }
+
+            /* Job actions — wrap on mobile */
+            .job-actions { flex-direction: column; }
+            .job-actions .btn { width: 100%; justify-content: center; }
+
+            /* Saved jobs */
+            .saved-jobs select { font-size: 14px; padding: 12px; }
+
+            /* Add row buttons */
+            .add-row-btn { padding: 12px 14px; font-size: 13px; }
+
+            /* Remove row button — bigger touch target */
+            .remove-row { font-size: 20px; padding: 4px 8px; }
+
+            /* Login box */
+            .login-box { padding: 30px 20px; width: 95%; }
+            .login-box h2 { font-size: 20px; }
+            .login-box input { width: 100%; font-size: 20px; }
+
+            /* Instructions */
+            .instructions { padding: 14px 16px; }
+            .instructions ol { font-size: 12px; }
+
+            /* Scan tab AI chat */
+            #aiChatLog { min-height: 200px; max-height: 300px; }
+
+            /* Spacer above live calc */
+            .container > div:last-child { height: 100px !important; }
+
+            /* Price section within cards */
+            .price-section { margin-top: 10px; padding-top: 10px; }
+        }
+
+        /* Small phones */
+        @media (max-width: 400px) {
+            .container { padding: 10px 8px; }
+            .card { padding: 12px; }
+            h1 { font-size: 18px; }
+            .btn-row .btn { padding: 12px; font-size: 13px; }
+            #matItemsContainer .mi-row, #distMatContainer .di-row { grid-template-columns: 1fr !important; }
+            .analytics-grid { grid-template-columns: 1fr !important; }
+        }
     </style>
 </head>
 <body>
@@ -6154,5 +6304,6 @@ generateChangeOrder = function() {
 </script>
 <script src="bidgen-ai.js" defer></script>
 <script src="contract-delivery.js" defer></script>
+<script src="field-calc.js" defer></script>
 </body>
 </html>

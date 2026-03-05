@@ -3,613 +3,162 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Contract Document — Watts Safety Installs</title>
+<title>Contract Document</title>
 <meta name="robots" content="noindex, nofollow"/>
 <link rel="icon" href="/favicon.ico"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
 <style>
-:root {
-    --navy: #0A1D37;
-    --teal: #00C4B4;
-    --gold: #FFD700;
-    --red: #dc2626;
-    --dark: #1a1a1a;
-    --gray: #64748B;
-    --light: #F8FAFC;
-    --white: #FFFFFF;
-    --border: #E2E8F0;
-    --shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
+/* ============================================================
+   BIDGEN docCSS — exact same styles as generated documents
+   Brand colors are injected dynamically via CSS variables
+   ============================================================ */
+@media print { body { margin:0; padding:0.3in; } .no-print { display:none !important; } .sig-canvas { border:none !important; } }
 * { margin:0; padding:0; box-sizing:border-box; }
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #f1f5f9;
-    color: #1E293B;
-    line-height: 1.6;
-    min-height: 100vh;
-}
+body { font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif; color:#1a1a1a; line-height:1.5; padding:0.5in; padding-top:60px; max-width:8.5in; margin:0 auto; font-size:11pt; background:#fff; }
 
-/* Header */
-.contract-header {
-    background: var(--navy);
-    color: var(--white);
-    padding: 20px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-.contract-header .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--teal);
-}
-.contract-header .badge {
-    font-size: 0.75rem;
-    color: var(--gold);
-    font-weight: 600;
-}
+/* Top status toolbar — replaces BidGen's edit toolbar */
+.toolbar { position:fixed; top:0; left:0; right:0; background:var(--brand-dark,#1A1A1A); color:#eee; padding:8px 20px; display:flex; align-items:center; gap:12px; z-index:9999; box-shadow:0 2px 12px rgba(0,0,0,0.3); font-size:13px; }
+.toolbar .tbt { font-weight:700; font-size:14px; margin-right:auto; }
+.toolbar button { padding:8px 18px; border:none; border-radius:5px; font-size:13px; font-weight:600; cursor:pointer; }
+.toolbar .tbp { background:var(--brand-accent,#C0392B); color:var(--badge-text,#FFF5E6); }
+.toolbar .tbe { background:#2a3a5c; color:#bbb; border:1px solid #3a4a6c; }
 
-/* Loading state */
-.loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    gap: 20px;
-}
-.spinner {
-    width: 48px; height: 48px;
-    border: 4px solid var(--border);
-    border-top-color: var(--teal);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: var(--gray); font-size: 1rem; }
-
-/* Error state */
-.error-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    gap: 16px;
-    padding: 40px;
-    text-align: center;
-}
-.error-icon { font-size: 3rem; }
-.error-title { font-size: 1.5rem; font-weight: 700; color: var(--dark); }
-.error-msg { color: var(--gray); max-width: 500px; }
-
-/* Contract document */
-.contract-wrapper {
-    max-width: 850px;
-    margin: 30px auto;
-    padding: 0 20px;
-}
-.contract-doc {
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-}
-.contract-status-bar {
-    padding: 12px 30px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.status-sent { background: #EFF6FF; color: #1D4ED8; }
-.status-viewed { background: #FFF7ED; color: #C2410C; }
-.status-signed { background: #F0FDF4; color: #15803D; }
-
-.contract-body { padding: 40px; }
-
-/* Company header in document */
-.doc-company {
-    text-align: center;
-    padding-bottom: 24px;
-    border-bottom: 2px solid var(--navy);
-    margin-bottom: 30px;
-}
-.doc-company h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    color: var(--navy);
-    margin-bottom: 4px;
-}
-.doc-company .license {
-    font-size: 0.85rem;
-    color: var(--gray);
-    font-weight: 500;
-}
-.doc-company .doc-type {
-    margin-top: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--dark);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+/* Document header — company info + badge */
+.header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid var(--brand-dark,#1A1A1A); padding-bottom:15px; margin-bottom:20px; }
+.company-info h1 { font-size:22pt; color:var(--brand-dark,#1A1A1A); margin-bottom:2px; }
+.company-info p { font-size:9pt; color:#555; }
+.badge { background:var(--brand-accent,#C0392B); color:var(--badge-text,#FFF5E6); padding:8px 20px; font-size:12pt; font-weight:bold; text-align:center; border-radius:4px; }
+.badge small { display:block; font-size:8pt; font-weight:normal; opacity:0.8; }
 
 /* Info grid */
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 30px;
-}
-@media(max-width:600px) { .info-grid { grid-template-columns: 1fr; } }
-.info-card {
-    background: var(--light);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-}
-.info-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--gray);
-    margin-bottom: 4px;
-}
-.info-value {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--dark);
-}
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px; }
+.info-box { background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; padding:10px 14px; }
+.info-box label { font-size:8pt; text-transform:uppercase; color:#6c757d; letter-spacing:0.5px; display:block; margin-bottom:2px; }
+.info-box .value { font-size:11pt; font-weight:600; color:var(--brand-dark,#1A1A1A); }
 
-/* Line items table */
-.items-section { margin-bottom: 30px; }
-.items-section h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-}
-.items-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-}
-.items-table th {
-    background: var(--navy);
-    color: var(--white);
-    padding: 10px 12px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.items-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-}
-.items-table tr:nth-child(even) { background: #FAFBFC; }
-.items-table .amount { text-align: right; font-weight: 600; }
+/* Scope section */
+.scope { background:#eef2f7; border-left:4px solid var(--brand-accent,#C0392B); padding:12px 16px; margin-bottom:20px; font-size:10pt; }
+.scope h3 { font-size:10pt; color:var(--brand-dark,#1A1A1A); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+.scope ul { list-style:none; padding:0; }
+.scope ul li { padding:2px 0 2px 16px; position:relative; }
+.scope ul li::before { content:"\2713"; position:absolute; left:0; color:var(--brand-accent,#C0392B); font-weight:bold; }
 
-/* Totals */
-.totals-box {
-    background: var(--light);
-    border: 2px solid var(--navy);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 30px;
-}
-.totals-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    font-size: 0.9rem;
-}
-.totals-row.grand {
-    border-top: 2px solid var(--navy);
-    margin-top: 8px;
-    padding-top: 12px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--navy);
-}
+/* Tables */
+table { width:100%; border-collapse:collapse; margin-bottom:20px; }
+table thead th { background:var(--brand-dark,#1A1A1A); color:var(--brand-accent,#C0392B); padding:8px 10px; text-align:left; font-size:9pt; text-transform:uppercase; letter-spacing:0.5px; }
+table thead th:last-child, table thead th:nth-child(3), table thead th:nth-child(4), table thead th:nth-child(5) { text-align:right; }
+table tbody td { padding:8px 10px; border-bottom:1px solid #e9ecef; font-size:10pt; vertical-align:top; }
+table tbody td:last-child, table tbody td:nth-child(3), table tbody td:nth-child(4), table tbody td:nth-child(5) { text-align:right; white-space:nowrap; }
+table tbody tr:nth-child(even) { background:#f8f9fa; }
+.item-num { font-weight:700; color:var(--brand-accent,#C0392B); width:30px; }
+.item-desc strong { display:block; font-size:10pt; }
+.subtotal-row td { border-top:2px solid var(--brand-accent,#C0392B); font-weight:700; font-size:11pt; padding-top:10px; background:transparent !important; }
+.total-row td { border-top:3px double var(--brand-dark,#1A1A1A); font-weight:700; font-size:13pt; color:var(--brand-dark,#1A1A1A); padding-top:12px; padding-bottom:12px; background:#f5f5f5 !important; }
 
-/* Scope & notes */
-.scope-section {
-    margin-bottom: 30px;
-}
-.scope-section h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 8px;
-}
-.scope-content {
-    background: var(--light);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    font-size: 0.9rem;
-    white-space: pre-wrap;
-    line-height: 1.7;
-}
+/* Combined totals box */
+.combined { background:var(--combined-bg,#FFF5E6); border:2px solid var(--combined-border,#1A1A1A); border-radius:6px; padding:16px 20px; margin-top:24px; }
+.combined h3 { font-size:12pt; color:var(--brand-dark,#1A1A1A); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; }
+.combined table { width:100%; border-collapse:collapse; }
+.combined table td { padding:6px 10px; font-size:11pt; border-bottom:1px solid var(--combined-rule,#e8c9a0); }
+.combined table td:last-child { text-align:right; font-weight:600; }
+.combined .grand td { border-top:3px double var(--brand-dark,#1A1A1A); font-size:14pt; font-weight:700; color:var(--brand-dark,#1A1A1A); padding-top:10px; }
+.combined .psf td { font-size:10pt; color:#6c757d; border-bottom:none; }
 
-/* Terms */
-.terms-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #FFFBEB;
-    border: 1px solid #FDE68A;
-    border-radius: 8px;
-}
-.terms-section h3 {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #92400E;
-    margin-bottom: 8px;
-}
-.terms-section p {
-    font-size: 0.8rem;
-    color: #78350F;
-    line-height: 1.6;
-}
+/* Notes */
+.notes-section { margin-top:20px; }
+.notes-section h3 { font-size:11pt; color:var(--brand-accent,#C0392B); border-bottom:2px solid var(--brand-accent,#C0392B); padding-bottom:4px; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; }
+.notes-section .note { font-size:9pt; color:#495057; margin-bottom:8px; padding-left:14px; position:relative; }
+.notes-section .note::before { content:"\25CF"; position:absolute; left:0; color:var(--brand-accent,#C0392B); font-size:7pt; top:2px; }
 
-/* Signature area */
-.sign-section {
-    border-top: 2px solid var(--navy);
-    padding-top: 30px;
-    margin-top: 30px;
-}
-.sign-section h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 16px;
-    text-align: center;
-}
-.sign-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 2px solid var(--navy);
-}
-.sign-tab {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    background: var(--white);
-    color: var(--navy);
-    border: none;
-    transition: all 0.2s;
-}
-.sign-tab.active {
-    background: var(--navy);
-    color: var(--white);
-}
-.sign-type-area { display: none; }
-.sign-type-area.active { display: block; }
+/* Unforeseen / disclaimer */
+.unforeseen-box { background:#fff3cd; border:1px solid #ffc107; border-radius:4px; padding:12px 16px; margin-top:20px; font-size:9pt; }
+.unforeseen-box h4 { color:#856404; font-size:10pt; margin-bottom:6px; }
+.unforeseen-box p { color:#664d03; line-height:1.5; }
 
-/* Type signature */
-.sign-name-input {
-    width: 100%;
-    padding: 16px;
-    font-size: 1.8rem;
-    font-family: 'Brush Script MT', 'Segoe Script', cursive;
-    border: 2px dashed var(--border);
-    border-radius: 8px;
-    text-align: center;
-    outline: none;
-    transition: border-color 0.2s;
-}
-.sign-name-input:focus { border-color: var(--teal); }
-.sign-name-preview {
-    text-align: center;
-    font-family: 'Brush Script MT', 'Segoe Script', cursive;
-    font-size: 2.5rem;
-    color: var(--navy);
-    padding: 20px;
-    min-height: 80px;
-}
-
-/* Draw signature */
-.sign-canvas-wrap {
-    border: 2px dashed var(--border);
-    border-radius: 8px;
-    position: relative;
-    background: var(--white);
-}
-.sign-canvas {
-    width: 100%;
-    height: 180px;
-    cursor: crosshair;
-    touch-action: none;
-}
-.sign-canvas-clear {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: var(--red);
-    color: var(--white);
-    border: none;
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* Signer name input */
-.signer-name-row {
-    margin-top: 16px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-.signer-name-row label {
-    font-weight: 600;
-    font-size: 0.85rem;
-    white-space: nowrap;
-}
-.signer-name-row input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    outline: none;
-}
-.signer-name-row input:focus { border-color: var(--teal); }
-
-/* Submit button */
-.sign-submit {
-    display: block;
-    width: 100%;
-    margin-top: 20px;
-    padding: 16px;
-    background: var(--teal);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(0,196,180,0.3);
-}
-.sign-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,196,180,0.4);
-}
-.sign-submit:disabled {
-    background: var(--gray);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-.sign-disclaimer {
-    margin-top: 12px;
-    font-size: 0.75rem;
-    color: var(--gray);
-    text-align: center;
-    line-height: 1.5;
-}
-
-/* Signed confirmation */
-.signed-confirmation {
-    text-align: center;
-    padding: 30px;
-    background: #F0FDF4;
-    border: 2px solid #86EFAC;
-    border-radius: 12px;
-}
-.signed-confirmation .check { font-size: 3rem; margin-bottom: 12px; }
-.signed-confirmation h2 { color: #15803D; font-size: 1.3rem; margin-bottom: 8px; }
-.signed-confirmation p { color: #166534; font-size: 0.9rem; }
-.signed-sig-display {
-    margin-top: 20px;
-    padding: 16px;
-    background: var(--white);
-    border-radius: 8px;
-    border: 1px solid #BBF7D0;
-}
-.signed-sig-display .sig-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--gray);
-    margin-bottom: 8px;
-}
-.signed-sig-display .sig-typed {
-    font-family: 'Brush Script MT', 'Segoe Script', cursive;
-    font-size: 2rem;
-    color: var(--navy);
-}
-.signed-sig-display .sig-drawn img {
-    max-width: 300px;
-    max-height: 100px;
-}
-.signed-sig-display .sig-meta {
-    margin-top: 8px;
-    font-size: 0.75rem;
-    color: var(--gray);
-}
+/* Signature pads — matches BidGen's sigHTML */
+.sig-section { margin-top:30px; }
+.sig-section h3 { font-size:11pt; color:var(--brand-dark,#1A1A1A); border-bottom:2px solid var(--brand-dark,#1A1A1A); padding-bottom:4px; margin-bottom:16px; text-transform:uppercase; letter-spacing:0.5px; }
+.sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:30px; }
+.sig-pad { text-align:center; }
+.sig-pad label { font-size:9pt; color:#6c757d; display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; }
+.sig-canvas { border:1px solid #ccc; border-radius:4px; background:white; cursor:crosshair; width:100%; height:100px; display:block; touch-action:none; }
+.sig-pad .sig-date { font-size:9pt; color:#495057; margin-top:4px; min-height:18px; }
+.sig-pad .sig-clear { font-size:11px; color:#c0392b; cursor:pointer; background:none; border:none; text-decoration:underline; margin-top:2px; }
 
 /* Footer */
-.contract-footer {
-    text-align: center;
-    padding: 30px 20px;
-    color: var(--gray);
-    font-size: 0.8rem;
-}
-.contract-footer a { color: var(--teal); text-decoration: none; }
+.footer { margin-top:30px; text-align:center; font-size:8pt; color:#adb5bd; border-top:1px solid #dee2e6; padding-top:10px; }
 
-/* Print styles */
-@media print {
-    body { background: white; }
-    .contract-header, .contract-footer, .sign-section { display: none; }
-    .contract-wrapper { margin: 0; padding: 0; }
-    .contract-doc { box-shadow: none; border-radius: 0; }
-}
+/* === E-SIGN SPECIFIC ADDITIONS (not in BidGen docs) === */
+.esign-status { padding:10px 16px; font-size:10pt; font-weight:600; display:flex; align-items:center; gap:8px; border-radius:4px; margin-bottom:20px; }
+.esign-status.sent { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+.esign-status.viewed { background:#FFF7ED; color:#C2410C; border:1px solid #FED7AA; }
+.esign-status.signed { background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; }
+
+.esign-section { border:2px solid var(--brand-accent,#C0392B); border-radius:6px; padding:20px; margin-top:30px; background:var(--combined-bg,#FFF5E6); }
+.esign-section h3 { font-size:12pt; color:var(--brand-accent,#C0392B); margin-bottom:12px; text-transform:uppercase; text-align:center; }
+.esign-tabs { display:flex; gap:0; margin-bottom:16px; border-radius:4px; overflow:hidden; border:2px solid var(--brand-dark,#1A1A1A); }
+.esign-tab { flex:1; padding:10px; text-align:center; font-weight:600; font-size:10pt; cursor:pointer; background:#fff; color:var(--brand-dark); border:none; transition:all 0.2s; }
+.esign-tab.active { background:var(--brand-dark,#1A1A1A); color:var(--brand-accent,#C0392B); }
+.esign-area { display:none; }
+.esign-area.active { display:block; }
+.esign-type-input { width:100%; padding:14px; font-size:24pt; font-family:'Brush Script MT','Segoe Script',cursive; border:2px dashed #ccc; border-radius:4px; text-align:center; outline:none; }
+.esign-type-input:focus { border-color:var(--brand-accent); }
+.esign-type-preview { text-align:center; font-family:'Brush Script MT','Segoe Script',cursive; font-size:28pt; color:var(--brand-dark); padding:16px; min-height:60px; }
+.esign-canvas-wrap { border:2px dashed #ccc; border-radius:4px; position:relative; background:#fff; }
+.esign-canvas { width:100%; height:150px; cursor:crosshair; touch-action:none; }
+.esign-canvas-clear { position:absolute; top:6px; right:6px; background:#c0392b; color:#fff; border:none; padding:3px 10px; border-radius:3px; font-size:10px; font-weight:600; cursor:pointer; }
+.esign-name-row { margin-top:14px; display:flex; gap:10px; align-items:center; }
+.esign-name-row label { font-weight:600; font-size:9pt; white-space:nowrap; }
+.esign-name-row input { flex:1; padding:8px 12px; border:1px solid #dee2e6; border-radius:4px; font-size:10pt; outline:none; }
+.esign-submit { display:block; width:100%; margin-top:16px; padding:14px; background:var(--brand-accent,#C0392B); color:var(--badge-text,#FFF5E6); border:none; border-radius:4px; font-size:12pt; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.esign-submit:hover { opacity:0.9; }
+.esign-submit:disabled { background:#adb5bd; cursor:not-allowed; }
+.esign-disclaimer { margin-top:10px; font-size:8pt; color:#6c757d; text-align:center; line-height:1.5; }
+
+.signed-lock { text-align:center; padding:20px; background:#F0FDF4; border:2px solid #86EFAC; border-radius:6px; margin-top:24px; }
+.signed-lock .check { font-size:2.5rem; margin-bottom:8px; }
+.signed-lock h3 { color:#15803D; font-size:12pt; margin-bottom:6px; }
+.signed-lock p { color:#166534; font-size:9pt; }
+.signed-lock .sig-display { margin-top:14px; padding:12px; background:#fff; border-radius:4px; border:1px solid #BBF7D0; }
+.signed-lock .sig-display .sig-typed { font-family:'Brush Script MT','Segoe Script',cursive; font-size:24pt; color:var(--brand-dark); }
+.signed-lock .sig-display img { max-width:280px; max-height:90px; }
+.signed-lock .sig-meta { margin-top:6px; font-size:8pt; color:#6c757d; }
+
+/* Loading / error overlays */
+.overlay-center { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; gap:16px; text-align:center; }
+.spinner { width:40px; height:40px; border:3px solid #dee2e6; border-top-color:var(--brand-accent,#C0392B); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media print { .toolbar, .esign-section, .esign-status, .no-print { display:none !important; } body { padding-top:0 !important; } }
+@media (max-width:600px) { .info-grid { grid-template-columns:1fr; } .sig-grid { grid-template-columns:1fr; gap:16px; } body { padding:12px; padding-top:60px; font-size:10pt; } }
 </style>
 </head>
 <body>
 
-<div class="contract-header">
-    <div>
-        <div class="logo">WATTS</div>
-        <div class="badge">Nebraska Licensed #54690-25</div>
-    </div>
-    <div style="text-align:right">
-        <div style="font-size:0.85rem;font-weight:600">Secure Contract Document</div>
-        <div style="font-size:0.75rem;color:var(--gold)">🔒 HMAC-Verified Link</div>
-    </div>
-</div>
-
-<!-- Loading State -->
-<div id="loadingState" class="loading-container">
+<!-- Loading -->
+<div id="loadingState" class="overlay-center">
     <div class="spinner"></div>
-    <div class="loading-text">Loading contract document...</div>
+    <div style="color:#6c757d;font-size:10pt">Loading contract document...</div>
 </div>
 
-<!-- Error State -->
-<div id="errorState" class="error-container" style="display:none">
-    <div class="error-icon">⚠️</div>
-    <div class="error-title" id="errorTitle">Contract Not Found</div>
-    <div class="error-msg" id="errorMsg">This contract link may have expired or is invalid.</div>
+<!-- Error -->
+<div id="errorState" class="overlay-center" style="display:none">
+    <div style="font-size:3rem">⚠️</div>
+    <div style="font-size:16pt;font-weight:700;color:#1a1a1a" id="errorTitle">Contract Not Found</div>
+    <div style="color:#6c757d;max-width:500px" id="errorMsg">This contract link may have expired or is invalid.</div>
 </div>
 
-<!-- Contract Document -->
-<div id="contractState" class="contract-wrapper" style="display:none">
-    <div class="contract-doc">
-        <div id="statusBar" class="contract-status-bar status-sent">
-            <span id="statusIcon">📤</span>
-            <span id="statusText">Contract Sent</span>
-        </div>
-
-        <div class="contract-body">
-            <!-- Company Header -->
-            <div class="doc-company">
-                <h1 id="docCompanyName">Watts Safety Installs</h1>
-                <div class="license" id="docLicense">Nebraska Licensed Contractor #54690-25</div>
-                <div class="doc-type" id="docType">Service Contract & Estimate</div>
-            </div>
-
-            <!-- Info Grid -->
-            <div class="info-grid" id="infoGrid"></div>
-
-            <!-- Labor Items -->
-            <div class="items-section" id="laborSection" style="display:none">
-                <h3>Labor & Services</h3>
-                <table class="items-table">
-                    <thead><tr><th>Description</th><th>Qty</th><th>Basis</th><th>Rate</th><th class="amount">Amount</th></tr></thead>
-                    <tbody id="laborBody"></tbody>
-                </table>
-            </div>
-
-            <!-- Material Items -->
-            <div class="items-section" id="materialsSection" style="display:none">
-                <h3>Materials</h3>
-                <table class="items-table">
-                    <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Price</th><th class="amount">Amount</th></tr></thead>
-                    <tbody id="materialsBody"></tbody>
-                </table>
-            </div>
-
-            <!-- Totals -->
-            <div class="totals-box" id="totalsBox"></div>
-
-            <!-- Scope -->
-            <div class="scope-section" id="scopeSection" style="display:none">
-                <h3>Scope of Work</h3>
-                <div class="scope-content" id="scopeContent"></div>
-            </div>
-
-            <!-- Notes -->
-            <div class="scope-section" id="notesSection" style="display:none">
-                <h3>Additional Notes</h3>
-                <div class="scope-content" id="notesContent"></div>
-            </div>
-
-            <!-- Disclaimer / Terms -->
-            <div class="terms-section" id="termsSection" style="display:none">
-                <h3>Terms & Conditions</h3>
-                <p id="termsContent"></p>
-            </div>
-
-            <!-- Signature Section (only if not yet signed) -->
-            <div id="signSection" class="sign-section" style="display:none">
-                <h2>Sign & Accept This Contract</h2>
-
-                <div class="sign-tabs">
-                    <button class="sign-tab active" onclick="switchSignTab('type')">Type Signature</button>
-                    <button class="sign-tab" onclick="switchSignTab('draw')">Draw Signature</button>
-                </div>
-
-                <!-- Type Signature -->
-                <div id="signType" class="sign-type-area active">
-                    <input type="text" class="sign-name-input" id="typeSignInput" placeholder="Type your full name" oninput="updateTypePreview()"/>
-                    <div class="sign-name-preview" id="typePreview"></div>
-                </div>
-
-                <!-- Draw Signature -->
-                <div id="signDraw" class="sign-type-area">
-                    <div class="sign-canvas-wrap">
-                        <canvas id="signCanvas" class="sign-canvas"></canvas>
-                        <button class="sign-canvas-clear" onclick="clearCanvas()">Clear</button>
-                    </div>
-                </div>
-
-                <div class="signer-name-row">
-                    <label>Full Legal Name:</label>
-                    <input type="text" id="signerNameInput" placeholder="Enter your full legal name"/>
-                </div>
-
-                <button class="sign-submit" id="signSubmitBtn" onclick="submitSignature()">
-                    ✍️ Sign & Accept Contract
-                </button>
-                <div class="sign-disclaimer">
-                    By signing, you acknowledge that you have read, understood, and agree to the scope of work and terms described in this contract. This constitutes a legally binding electronic signature per the E-SIGN Act (15 U.S.C. § 7001).
-                </div>
-            </div>
-
-            <!-- Already Signed Confirmation -->
-            <div id="signedSection" style="display:none">
-                <div class="signed-confirmation">
-                    <div class="check">✅</div>
-                    <h2>Contract Signed & Locked</h2>
-                    <p>This contract was signed and is now a read-only record for both parties.</p>
-                    <div class="signed-sig-display">
-                        <div class="sig-label">Signature</div>
-                        <div id="signedSigContent"></div>
-                        <div class="sig-meta" id="signedMeta"></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<!-- Contract Document — rendered by JS into BidGen's exact format -->
+<div id="contractState" style="display:none">
+    <div class="toolbar no-print" id="contractToolbar">
+        <span class="tbt" id="toolbarTitle">CONTRACT</span>
+        <span id="toolbarStatus" style="font-size:11px;color:#7f8c8d"></span>
+        <button class="tbp" onclick="exportPDF()">📄 Download PDF</button>
+        <button class="tbe" onclick="window.print()">🖨️ Print</button>
     </div>
 
-    <!-- Print button -->
-    <div style="text-align:center;margin-top:16px">
-        <button onclick="window.print()" style="background:var(--navy);color:white;border:none;padding:10px 24px;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.85rem">🖨️ Print / Save as PDF</button>
+    <div id="docContent">
+        <!-- Dynamically rendered in BidGen format -->
     </div>
-</div>
-
-<div class="contract-footer">
-    <p>Watts Safety Installs &bull; (405) 410-6402 &bull; <a href="mailto:Justin.Watts@WattsATPContractor.com">Justin.Watts@WattsATPContractor.com</a></p>
-    <p style="margin-top:4px">500 Block Omaha Ave, Norfolk, NE 68701 &bull; Nebraska License #54690-25</p>
 </div>
 
 <script>
@@ -620,17 +169,38 @@ body {
     var params = new URLSearchParams(window.location.search);
     var TOKEN = params.get('t');
     var SIGNATURE = params.get('s');
-    var contractData = null;
+
+    // Brand presets — must match BidGen's BRANDS object exactly
+    var BRANDS = {
+        wsi: { name:'Watts Safety Installs', accent:'#C0392B', dark:'#1A1A1A', badgeText:'#FFF5E6', scopeCheck:'#C0392B', combinedBg:'#FFF5E6', combinedBorder:'#1A1A1A', combinedRule:'#e8c9a0' },
+        atp: { name:'Watts ATP Contractor', accent:'#00C4B4', dark:'#0A1D37', badgeText:'white', scopeCheck:'#00C4B4', combinedBg:'#e6faf8', combinedBorder:'#0A1D37', combinedRule:'#8dd8cf' }
+    };
+
+    function detectBrand(c) {
+        if (!c || !c.companyInfo) return BRANDS.wsi;
+        var name = (c.companyInfo.companyName || '').toLowerCase();
+        if (name.indexOf('atp') !== -1) return BRANDS.atp;
+        return BRANDS.wsi;
+    }
+
+    function applyBrand(b) {
+        var r = document.documentElement.style;
+        r.setProperty('--brand-accent', b.accent);
+        r.setProperty('--brand-dark', b.dark);
+        r.setProperty('--badge-text', b.badgeText);
+        r.setProperty('--combined-bg', b.combinedBg);
+        r.setProperty('--combined-border', b.combinedBorder);
+        r.setProperty('--combined-rule', b.combinedRule);
+    }
 
     // ============================================================
-    // STATE MANAGEMENT
+    // STATE
     // ============================================================
     function showState(state) {
         document.getElementById('loadingState').style.display = state === 'loading' ? 'flex' : 'none';
         document.getElementById('errorState').style.display = state === 'error' ? 'flex' : 'none';
         document.getElementById('contractState').style.display = state === 'contract' ? 'block' : 'none';
     }
-
     function showError(title, msg) {
         document.getElementById('errorTitle').textContent = title;
         document.getElementById('errorMsg').textContent = msg;
@@ -638,182 +208,205 @@ body {
     }
 
     // ============================================================
-    // FETCH CONTRACT
+    // FETCH
     // ============================================================
     async function loadContract() {
-        if (!TOKEN || !SIGNATURE) {
-            showError('Invalid Link', 'This contract link is missing required parameters. Please check the link you received.');
-            return;
-        }
-
+        if (!TOKEN || !SIGNATURE) { showError('Invalid Link', 'This contract link is missing required parameters.'); return; }
         try {
             var res = await fetch(PROXY + '/contract/fetch?t=' + encodeURIComponent(TOKEN) + '&s=' + encodeURIComponent(SIGNATURE));
             var data = await res.json();
-
             if (!res.ok) {
-                if (res.status === 403) {
-                    showError('Invalid Link', 'This link has been tampered with or is not valid. Please contact Watts Safety Installs for a new link.');
-                } else if (res.status === 404) {
-                    showError('Contract Expired', 'This contract link has expired or been removed. Please contact Watts Safety Installs for assistance.');
-                } else {
-                    showError('Error', data.error || 'Failed to load contract.');
-                }
+                if (res.status === 403) showError('Invalid Link', 'This link has been tampered with or is not valid. Please contact us for a new link.');
+                else if (res.status === 404) showError('Contract Expired', 'This contract link has expired or been removed.');
+                else showError('Error', data.error || 'Failed to load contract.');
                 return;
             }
-
-            contractData = data;
             renderContract(data);
             showState('contract');
-        } catch (err) {
-            showError('Connection Error', 'Unable to reach the server. Please check your internet connection and try again.');
-        }
+        } catch (err) { showError('Connection Error', 'Unable to reach the server. Check your internet connection.'); }
     }
 
     // ============================================================
-    // RENDER CONTRACT
+    // RENDER — builds the EXACT same HTML structure as BidGen docs
     // ============================================================
     function renderContract(data) {
         var c = data.contractData;
+        var brand = detectBrand(c);
+        applyBrand(brand);
 
-        // Status bar
-        updateStatusBar(data.status);
+        var typeMap = { labor:'ESTIMATE A \u2014 LABOR', materials:'ESTIMATE B \u2014 MATERIALS', change_order:'CHANGE ORDER' };
+        var typeBadge = { labor:'ESTIMATE A<br><small>LABOR COSTS</small>', materials:'ESTIMATE B<br><small>MATERIALS</small>', change_order:'CHANGE ORDER' };
+        var docTitle = typeMap[c.type] || 'SERVICE CONTRACT';
+        document.title = docTitle + ' - ' + E(data.clientName || 'Client');
+        document.getElementById('toolbarTitle').textContent = docTitle;
 
-        // Company info
-        if (c.companyInfo) {
-            if (c.companyInfo.companyName) document.getElementById('docCompanyName').textContent = c.companyInfo.companyName;
-            if (c.companyInfo.licenseNum) document.getElementById('docLicense').textContent = 'Nebraska Licensed Contractor ' + c.companyInfo.licenseNum;
+        // Status
+        var statusMap = { sent:'📤 Awaiting Review', viewed:'👁️ Client Viewing', signed:'✅ Signed & Locked' };
+        var statusClass = data.status || 'sent';
+        document.getElementById('toolbarStatus').textContent = statusMap[statusClass] || '';
+
+        var h = '';
+
+        // Status banner
+        h += '<div class="esign-status ' + statusClass + '">';
+        if (statusClass === 'sent') h += '📤 This contract has been sent and is awaiting review.';
+        else if (statusClass === 'viewed') h += '👁️ You are reviewing this contract. Please sign below when ready.';
+        else h += '✅ This contract has been signed and is locked as a permanent record.';
+        h += '</div>';
+
+        // Document header — matches co(brand) from BidGen
+        var companyName = (c.companyInfo && c.companyInfo.companyName) || brand.name;
+        var license = (c.companyInfo && c.companyInfo.licenseNum) || '#54690-25';
+        var phone = (c.companyInfo && c.companyInfo.phone) || '(405) 410-6402';
+        var email = (c.companyInfo && c.companyInfo.email) || 'Justin.Watts@WattsATPContractor.com';
+
+        h += '<div class="header">';
+        h += '<div class="company-info"><h1>' + E(companyName) + '</h1>';
+        h += '<p>Licensed General Contractor &mdash; State of Nebraska</p>';
+        h += '<p>License #: ' + E(license) + ' &nbsp;|&nbsp; Phone: ' + E(phone) + ' &nbsp;|&nbsp; Email: ' + E(email) + '</p>';
+        h += '</div>';
+        h += '<div class="badge">' + (typeBadge[c.type] || 'CONTRACT') + '</div>';
+        h += '</div>';
+
+        // Info grid — matches BidGen's info-grid
+        h += '<div class="info-grid">';
+        h += infoBox('Prepared For', data.clientName || '[Client]');
+        h += infoBox('Estimate Date', c.estimateDate ? fd(c.estimateDate) : '[Date]');
+        var location = [c.jobDetails && c.jobDetails.complexName, c.jobDetails && c.jobDetails.unitNum, c.jobDetails && c.jobDetails.jobCity].filter(Boolean).join(', ') || '[Location]';
+        h += infoBox('Project Location', location);
+        h += infoBox('Estimate Valid For', '30 Days from Date Above');
+        h += '</div>';
+
+        // Scope — matches BidGen's .scope section
+        var scopeItems = c.scopeItems || c.scope;
+        var sqft = (c.jobDetails && c.jobDetails.sqft) || '';
+        var areaDesc = (c.jobDetails && c.jobDetails.areaDesc) || '';
+        if (scopeItems) {
+            var scopeHeading = c.scopeTitle || (sqft ? sqft + ' sq ft ' + areaDesc : 'Project Scope');
+            h += '<div class="scope"><h3>Scope of Work &mdash; ' + E(scopeHeading) + '</h3>';
+            if (sqft) h += '<p style="font-size:9pt;color:#6c757d;margin-bottom:6px">' + E(sqft + ' sq ft') + ' &mdash; ' + E(areaDesc) + '</p>';
+            if (Array.isArray(scopeItems)) {
+                h += '<ul>';
+                scopeItems.forEach(function(s) { h += '<li>' + E(s) + '</li>'; });
+                h += '</ul>';
+            } else {
+                h += '<p style="white-space:pre-wrap">' + E(scopeItems) + '</p>';
+            }
+            h += '</div>';
         }
 
-        // Document type
-        var typeMap = { labor: 'Labor Estimate', materials: 'Materials Quote', change_order: 'Change Order' };
-        document.getElementById('docType').textContent = typeMap[c.type] || 'Service Contract & Estimate';
-
-        // Info grid
-        var grid = document.getElementById('infoGrid');
-        var cards = [];
-        cards.push(infoCard('Invoice #', c.id || data.invoiceId));
-        cards.push(infoCard('Client', data.clientName));
-        if (c.estimateDate) cards.push(infoCard('Estimate Date', formatDate(c.estimateDate)));
-        if (c.jobDetails) {
-            if (c.jobDetails.complexName) cards.push(infoCard('Property', c.jobDetails.complexName + (c.jobDetails.unitNum ? ' — ' + c.jobDetails.unitNum : '')));
-            if (c.jobDetails.jobCity) cards.push(infoCard('Location', c.jobDetails.jobCity));
-            if (c.jobDetails.tradeType) cards.push(infoCard('Trade', capitalize(c.jobDetails.tradeType)));
-            if (c.jobDetails.sqft) cards.push(infoCard('Area', c.jobDetails.sqft + ' sq ft'));
-            if (c.jobDetails.areaDesc) cards.push(infoCard('Area Description', c.jobDetails.areaDesc));
-        }
-        if (c.companyInfo) {
-            if (c.companyInfo.phone) cards.push(infoCard('Phone', c.companyInfo.phone));
-            if (c.companyInfo.email) cards.push(infoCard('Email', c.companyInfo.email));
-        }
-        grid.innerHTML = cards.join('');
-
-        // Labor items
-        if (c.laborItems && c.laborItems.length > 0) {
-            document.getElementById('laborSection').style.display = 'block';
-            var lbody = document.getElementById('laborBody');
-            lbody.innerHTML = c.laborItems.map(function(item) {
-                var amt = (item.qty || 0) * (item.price || 0);
-                return '<tr><td>' + esc(item.desc || item.name || '') + '</td><td>' + item.qty + '</td><td>' + esc(item.basis || '') + '</td><td>$' + fmtNum(item.price) + '</td><td class="amount">$' + fmtNum(amt) + '</td></tr>';
-            }).join('');
+        // Labor table — matches BidGen's table format exactly
+        var laborItems = c.laborItems || [];
+        if (laborItems.length > 0) {
+            var laborTotal = 0;
+            h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
+            laborItems.forEach(function(item, i) {
+                var lineTotal = (item.qty || 0) * (item.price || 0);
+                laborTotal += lineTotal;
+                h += '<tr><td class="item-num">' + (i+1) + '</td><td class="item-desc"><strong>' + E(item.desc || item.name || '') + '</strong></td>';
+                h += '<td>' + E(item.basis || '') + '</td><td>' + (item.qty || '') + '</td><td>$' + f(item.price || 0) + '</td><td><strong>$' + f(lineTotal) + '</strong></td></tr>';
+            });
+            h += '<tr class="subtotal-row"><td></td><td colspan="4">LABOR SUBTOTAL</td><td>$' + f(laborTotal) + '</td></tr>';
+            h += '<tr class="total-row"><td></td><td colspan="4">TOTAL LABOR</td><td>$' + f(c.laborTotal != null ? c.laborTotal : laborTotal) + '</td></tr>';
+            h += '</tbody></table>';
         }
 
-        // Material items
-        if (c.materialItems && c.materialItems.length > 0) {
-            document.getElementById('materialsSection').style.display = 'block';
-            var mbody = document.getElementById('materialsBody');
-            mbody.innerHTML = c.materialItems.map(function(item) {
+        // Materials table
+        var matItems = c.materialItems || [];
+        if (matItems.length > 0) {
+            var matTotal = 0;
+            h += '<table><thead><tr><th style="width:30px">#</th><th>Material / Item</th><th>Unit</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
+            matItems.forEach(function(item, i) {
                 var q = item.qtyNum || item.qty || 0;
-                var amt = q * (item.price || 0);
-                return '<tr><td>' + esc(item.name || item.desc || '') + '</td><td>' + q + '</td><td>' + esc(item.unit || '') + '</td><td>$' + fmtNum(item.price) + '</td><td class="amount">$' + fmtNum(amt) + '</td></tr>';
-            }).join('');
+                var lineTotal = q * (item.price || 0);
+                matTotal += lineTotal;
+                h += '<tr><td class="item-num">' + (i+1) + '</td><td class="item-desc"><strong>' + E(item.name || item.desc || '') + '</strong></td>';
+                h += '<td>' + E(item.unit || 'ea') + '</td><td>' + q + '</td><td>$' + f(item.price || 0) + '</td><td><strong>$' + f(lineTotal) + '</strong></td></tr>';
+            });
+            h += '<tr class="subtotal-row"><td></td><td colspan="4">MATERIALS SUBTOTAL</td><td>$' + f(matTotal) + '</td></tr>';
+            h += '<tr class="total-row"><td></td><td colspan="4">TOTAL MATERIALS</td><td>$' + f(c.materialsTotal != null ? c.materialsTotal : matTotal) + '</td></tr>';
+            h += '</tbody></table>';
         }
 
-        // Totals
-        var totalsBox = document.getElementById('totalsBox');
-        var rows = '';
-        if (c.laborTotal != null) rows += totalsRow('Labor Total', c.laborTotal);
-        if (c.materialsTotal != null) rows += totalsRow('Materials Total', c.materialsTotal);
-        if (c.amount != null) rows += '<div class="totals-row grand"><span>Grand Total</span><span>$' + fmtNum(c.amount) + '</span></div>';
-        totalsBox.innerHTML = rows;
-
-        // Scope
-        if (c.scope) {
-            document.getElementById('scopeSection').style.display = 'block';
-            document.getElementById('scopeContent').textContent = c.scope;
+        // Combined totals — matches BidGen's .combined section
+        if (c.amount != null) {
+            h += '<div class="combined"><h3>Contract Total</h3><table>';
+            if (c.laborTotal != null) h += '<tr><td>Labor Total</td><td>$' + f(c.laborTotal) + '</td></tr>';
+            if (c.materialsTotal != null) h += '<tr><td>Materials Total</td><td>$' + f(c.materialsTotal) + '</td></tr>';
+            h += '<tr class="grand"><td>GRAND TOTAL</td><td>$' + f(c.amount) + '</td></tr>';
+            if (sqft && parseFloat(sqft) > 0) h += '<tr class="psf"><td>Per Square Foot</td><td>$' + f(c.amount / parseFloat(sqft)) + ' /sq ft</td></tr>';
+            h += '</table></div>';
         }
 
-        // Notes
-        if (c.notes) {
-            document.getElementById('notesSection').style.display = 'block';
-            document.getElementById('notesContent').textContent = c.notes;
+        // Notes — matches BidGen's .notes-section
+        var notes = c.notesItems || c.notes;
+        if (notes) {
+            h += '<div class="notes-section"><h3>Estimate Notes</h3>';
+            if (Array.isArray(notes)) {
+                notes.forEach(function(n) { h += '<div class="note">' + E(n) + '</div>'; });
+            } else {
+                h += '<div class="note">' + E(notes) + '</div>';
+            }
+            h += '</div>';
         }
 
-        // Disclaimer / terms
+        // Disclaimer — matches BidGen's .unforeseen-box
         if (c.disclaimer) {
-            document.getElementById('termsSection').style.display = 'block';
-            document.getElementById('termsContent').textContent = c.disclaimer;
+            h += '<div class="unforeseen-box"><h4>UNFORESEEN CONDITIONS CLAUSE</h4><p>' + E(c.disclaimer) + '</p></div>';
         }
 
-        // Signature state
+        // Signature section — depends on signed status
         if (data.status === 'signed') {
-            document.getElementById('signSection').style.display = 'none';
-            document.getElementById('signedSection').style.display = 'block';
-            renderSignedState(data);
+            // Read-only signed record
+            h += '<div class="signed-lock">';
+            h += '<div class="check">✅</div>';
+            h += '<h3>Contract Signed &amp; Locked</h3>';
+            h += '<p>This contract was electronically signed and is now a read-only record for both parties.</p>';
+            h += '<div class="sig-display">';
+            if (data.signatureType === 'draw' && data.signatureData) {
+                h += '<img src="' + data.signatureData + '" alt="Signature"/>';
+            } else if (data.signatureData) {
+                h += '<div class="sig-typed">' + E(data.signatureData) + '</div>';
+            }
+            h += '<div class="sig-meta">';
+            if (data.signerName) h += 'Signed by: ' + E(data.signerName);
+            if (data.signedAt) h += ' &bull; ' + new Date(data.signedAt).toLocaleString();
+            h += '</div></div></div>';
         } else {
-            document.getElementById('signSection').style.display = 'block';
-            document.getElementById('signedSection').style.display = 'none';
-            initCanvas();
+            // E-sign form
+            h += '<div class="esign-section">';
+            h += '<h3>✍️ Sign &amp; Accept This Contract</h3>';
+            h += '<div class="esign-tabs"><button class="esign-tab active" onclick="switchTab(\'type\')">Type Signature</button><button class="esign-tab" onclick="switchTab(\'draw\')">Draw Signature</button></div>';
+            h += '<div id="esignType" class="esign-area active"><input type="text" class="esign-type-input" id="typeInput" placeholder="Type your full name" oninput="document.getElementById(\'typePreview\').textContent=this.value"/><div class="esign-type-preview" id="typePreview"></div></div>';
+            h += '<div id="esignDraw" class="esign-area"><div class="esign-canvas-wrap"><canvas id="signCanvas" class="esign-canvas"></canvas><button class="esign-canvas-clear" onclick="clearCanvas()">Clear</button></div></div>';
+            h += '<div class="esign-name-row"><label>Full Legal Name:</label><input type="text" id="signerName" placeholder="Enter your full legal name"/></div>';
+            h += '<button class="esign-submit" id="signBtn" onclick="submitSignature()">✍️ Sign &amp; Accept Contract</button>';
+            h += '<div class="esign-disclaimer">By signing, you acknowledge that you have read, understood, and agree to the scope of work and terms described above. This constitutes a legally binding electronic signature per the E-SIGN Act (15 U.S.C. &sect; 7001).</div>';
+            h += '</div>';
+        }
+
+        // Footer — matches BidGen's .footer
+        h += '<div class="footer"><p>' + E(companyName) + ' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
+
+        document.getElementById('docContent').innerHTML = h;
+
+        // Init canvas if not signed
+        if (data.status !== 'signed') {
+            setTimeout(initCanvas, 100);
         }
     }
 
-    function updateStatusBar(status) {
-        var bar = document.getElementById('statusBar');
-        var icon = document.getElementById('statusIcon');
-        var text = document.getElementById('statusText');
-        bar.className = 'contract-status-bar status-' + status;
-        if (status === 'sent') { icon.textContent = '📤'; text.textContent = 'Contract Sent — Awaiting Review'; }
-        else if (status === 'viewed') { icon.textContent = '👁️'; text.textContent = 'Contract Viewed — Awaiting Signature'; }
-        else if (status === 'signed') { icon.textContent = '✅'; text.textContent = 'Contract Signed & Locked'; }
-    }
-
-    function renderSignedState(data) {
-        var content = document.getElementById('signedSigContent');
-        if (data.signatureType === 'draw' && data.signatureData) {
-            content.innerHTML = '<div class="sig-drawn"><img src="' + data.signatureData + '" alt="Signature"/></div>';
-        } else if (data.signatureData) {
-            content.innerHTML = '<div class="sig-typed">' + esc(data.signatureData) + '</div>';
-        }
-        var meta = document.getElementById('signedMeta');
-        var parts = [];
-        if (data.signerName) parts.push('Signed by: ' + data.signerName);
-        if (data.signedAt) parts.push('Date: ' + new Date(data.signedAt).toLocaleString());
-        meta.textContent = parts.join(' • ');
-    }
-
     // ============================================================
-    // SIGNATURE TABS
-    // ============================================================
-    window.switchSignTab = function(tab) {
-        document.querySelectorAll('.sign-tab').forEach(function(t) { t.classList.remove('active'); });
-        document.querySelectorAll('.sign-type-area').forEach(function(a) { a.classList.remove('active'); });
-        if (tab === 'type') {
-            document.querySelectorAll('.sign-tab')[0].classList.add('active');
-            document.getElementById('signType').classList.add('active');
-        } else {
-            document.querySelectorAll('.sign-tab')[1].classList.add('active');
-            document.getElementById('signDraw').classList.add('active');
-        }
-    };
-
-    window.updateTypePreview = function() {
-        var val = document.getElementById('typeSignInput').value;
-        document.getElementById('typePreview').textContent = val;
-    };
-
-    // ============================================================
-    // CANVAS DRAWING
+    // SIGNATURE TABS & CANVAS
     // ============================================================
     var canvas, ctx, drawing = false, hasDrawn = false;
+
+    window.switchTab = function(tab) {
+        document.querySelectorAll('.esign-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.esign-area').forEach(function(a) { a.classList.remove('active'); });
+        if (tab === 'type') { document.querySelectorAll('.esign-tab')[0].classList.add('active'); document.getElementById('esignType').classList.add('active'); }
+        else { document.querySelectorAll('.esign-tab')[1].classList.add('active'); document.getElementById('esignDraw').classList.add('active'); }
+    };
 
     function initCanvas() {
         canvas = document.getElementById('signCanvas');
@@ -821,139 +414,84 @@ body {
         ctx = canvas.getContext('2d');
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
         canvas.addEventListener('mousedown', startDraw);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDraw);
         canvas.addEventListener('mouseleave', stopDraw);
-        canvas.addEventListener('touchstart', function(e) { e.preventDefault(); startDraw(getTouchPos(e)); }, { passive: false });
-        canvas.addEventListener('touchmove', function(e) { e.preventDefault(); draw(getTouchPos(e)); }, { passive: false });
+        canvas.addEventListener('touchstart', function(e) { e.preventDefault(); startDraw(getTouchPos(e)); }, { passive:false });
+        canvas.addEventListener('touchmove', function(e) { e.preventDefault(); draw(getTouchPos(e)); }, { passive:false });
         canvas.addEventListener('touchend', stopDraw);
     }
-
-    function resizeCanvas() {
-        if (!canvas) return;
-        var rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = 180;
-        ctx.strokeStyle = '#0A1D37';
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-    }
-
-    function getTouchPos(e) {
-        var r = canvas.getBoundingClientRect();
-        var t = e.touches[0];
-        return { offsetX: t.clientX - r.left, offsetY: t.clientY - r.top };
-    }
-
+    function resizeCanvas() { if (!canvas) return; var r = canvas.parentElement.getBoundingClientRect(); canvas.width = r.width; canvas.height = 150; ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }
+    function getTouchPos(e) { var r = canvas.getBoundingClientRect(), t = e.touches[0]; return { offsetX: t.clientX - r.left, offsetY: t.clientY - r.top }; }
     function startDraw(e) { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); }
     function draw(e) { if (!drawing) return; hasDrawn = true; ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }
     function stopDraw() { drawing = false; }
-
-    window.clearCanvas = function() {
-        if (!ctx) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        hasDrawn = false;
-    };
+    window.clearCanvas = function() { if (!ctx) return; ctx.clearRect(0, 0, canvas.width, canvas.height); hasDrawn = false; };
 
     // ============================================================
     // SUBMIT SIGNATURE
     // ============================================================
     window.submitSignature = async function() {
-        var signerName = document.getElementById('signerNameInput').value.trim();
-        if (!signerName) {
-            alert('Please enter your full legal name.');
-            document.getElementById('signerNameInput').focus();
-            return;
-        }
+        var signerName = document.getElementById('signerName').value.trim();
+        if (!signerName) { alert('Please enter your full legal name.'); document.getElementById('signerName').focus(); return; }
 
-        // Determine signature type and data
-        var activeTab = document.querySelector('.sign-type-area.active');
+        var activeTab = document.querySelector('.esign-area.active');
         var signatureType, signatureData;
-
-        if (activeTab.id === 'signType') {
+        if (activeTab.id === 'esignType') {
             signatureType = 'type';
-            signatureData = document.getElementById('typeSignInput').value.trim();
-            if (!signatureData) {
-                alert('Please type your signature.');
-                document.getElementById('typeSignInput').focus();
-                return;
-            }
+            signatureData = document.getElementById('typeInput').value.trim();
+            if (!signatureData) { alert('Please type your signature.'); return; }
         } else {
             signatureType = 'draw';
-            if (!hasDrawn) {
-                alert('Please draw your signature on the canvas.');
-                return;
-            }
+            if (!hasDrawn) { alert('Please draw your signature on the canvas.'); return; }
             signatureData = canvas.toDataURL('image/png');
         }
 
-        // Confirm
-        if (!confirm('By clicking OK, you are electronically signing this contract.\n\nName: ' + signerName + '\nDate: ' + new Date().toLocaleString() + '\n\nThis action cannot be undone.')) {
-            return;
-        }
+        if (!confirm('By clicking OK, you are electronically signing this contract.\n\nName: ' + signerName + '\nDate: ' + new Date().toLocaleString() + '\n\nThis action cannot be undone.')) return;
 
-        var btn = document.getElementById('signSubmitBtn');
-        btn.disabled = true;
-        btn.textContent = '⏳ Submitting signature...';
+        var btn = document.getElementById('signBtn');
+        btn.disabled = true; btn.textContent = '⏳ Submitting...';
 
         try {
             var res = await fetch(PROXY + '/contract/sign', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    token: TOKEN,
-                    signature: SIGNATURE,
-                    signerName: signerName,
-                    signatureData: signatureData,
-                    signatureType: signatureType
-                })
+                body: JSON.stringify({ token: TOKEN, signature: SIGNATURE, signerName: signerName, signatureData: signatureData, signatureType: signatureType })
             });
-
             var result = await res.json();
-
             if (!res.ok) {
-                if (res.status === 409) {
-                    alert('This contract has already been signed by ' + (result.signerName || 'another party') + '.');
-                    location.reload();
-                    return;
-                }
-                throw new Error(result.error || 'Signature submission failed');
+                if (res.status === 409) { alert('Already signed by ' + (result.signerName || 'another party') + '.'); location.reload(); return; }
+                throw new Error(result.error || 'Submission failed');
             }
-
-            // Success — show signed state
-            document.getElementById('signSection').style.display = 'none';
-            document.getElementById('signedSection').style.display = 'block';
-            updateStatusBar('signed');
-            renderSignedState({
-                signatureType: signatureType,
-                signatureData: signatureData,
-                signerName: signerName,
-                signedAt: result.signedAt
-            });
-
+            location.reload();
         } catch (err) {
-            alert('Error submitting signature: ' + err.message + '\n\nPlease try again or contact Watts Safety Installs.');
-            btn.disabled = false;
-            btn.textContent = '✍️ Sign & Accept Contract';
+            alert('Error: ' + err.message); btn.disabled = false; btn.textContent = '✍️ Sign & Accept Contract';
         }
     };
 
     // ============================================================
-    // HELPERS
+    // PDF EXPORT
     // ============================================================
-    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-    function fmtNum(n) { return Number(n || 0).toFixed(2); }
-    function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-    function formatDate(d) { try { return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); } catch(e) { return d; } }
-    function infoCard(label, value) {
-        return '<div class="info-card"><div class="info-label">' + esc(label) + '</div><div class="info-value">' + esc(value || '—') + '</div></div>';
-    }
-    function totalsRow(label, amount) {
-        return '<div class="totals-row"><span>' + esc(label) + '</span><span>$' + fmtNum(amount) + '</span></div>';
-    }
+    window.exportPDF = function() {
+        var tb = document.querySelector('.toolbar'); if (tb) tb.style.display = 'none';
+        var fn = (document.title || 'Contract').replace(/[^a-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+        if (typeof html2pdf !== 'undefined') {
+            html2pdf().set({ margin:0.3, filename:fn, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} }).from(document.body).save().then(function() { if (tb) tb.style.display = 'flex'; });
+        } else {
+            var s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+            s.onload = function() { html2pdf().set({ margin:0.3, filename:fn, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} }).from(document.body).save().then(function() { if (tb) tb.style.display = 'flex'; }); };
+            document.head.appendChild(s);
+        }
+    };
+
+    // ============================================================
+    // HELPERS — match BidGen's E(), f(), fd()
+    // ============================================================
+    function E(v) { var d = document.createElement('div'); d.textContent = v || ''; return d.innerHTML; }
+    function f(n) { return Number(n || 0).toFixed(2); }
+    function fd(s) { if (!s) return '[Date]'; try { var d = new Date(s + 'T12:00:00'); return d.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }); } catch(e) { return s; } }
+    function infoBox(label, value) { return '<div class="info-box"><label>' + E(label) + '</label><div class="value">' + E(value) + '</div></div>'; }
 
     // ============================================================
     // INIT

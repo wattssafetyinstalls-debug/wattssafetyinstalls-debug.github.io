@@ -11,4 +11,4 @@ compatibility_date = "2024-01-01"
 # Then paste the id below
 [[kv_namespaces]]
 binding = "CONTRACTS"
-id = "PLACEHOLDER_REPLACE_AFTER_KV_CREATE"
+id = "5eb1067365f24433832c7c2b37253c12"

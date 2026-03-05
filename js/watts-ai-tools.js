@@ -228,25 +228,26 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
       B.services.forEach(function(sv) { if (sv.id === state.service) svcLabel = sv.label; });
       var loc = state.town || 'Northeast Nebraska';
 
-      var prompt = 'You are the lead estimator for ' + B.name + ', a licensed contractor (NE Reg #54690-25) based in Norfolk, Nebraska serving a 100-mile radius.\n\n' +
-        'A potential customer has requested a project estimate:\n' +
+      var prompt = 'A potential customer wants an estimate for a project:\n' +
         '• SERVICE: ' + svcLabel + '\n' +
         '• SCOPE: ' + state.scope + '\n' +
         '• LOCATION: ' + loc + '\n' +
-        (state.details ? '• PROJECT DETAILS: ' + state.details + '\n' : '') +
-        '\nProvide a professional estimate response with this EXACT structure:\n' +
-        '1. First line: A realistic price RANGE using Nebraska market rates (format: **$X,XXX – $X,XXX**)\n' +
-        '2. Second line: Brief explanation of what drives the cost (materials, labor, complexity)\n' +
-        '3. Third line: What\'s typically INCLUDED at this price point (2-3 items)\n' +
-        '4. Fourth line: One factor that could adjust the price up or down\n' +
-        '5. Final line: "Schedule your free on-site estimate to get an exact quote — call (405) 410-6402"\n\n' +
+        (state.details ? '• THEIR DESCRIPTION: ' + state.details + '\n' : '') +
+        '\nAs Justin, give them a detailed, professional estimate. Write in natural paragraphs — like you\'re talking to them in their kitchen.\n\n' +
+        'Your response MUST include ALL of these:\n\n' +
+        '1. A realistic PRICE RANGE for this specific scope using Nebraska contractor rates (bold with **: **$X,XXX – $X,XXX**). Be specific to what they selected.\n\n' +
+        '2. EXPLAIN what drives the cost — materials, labor hours, complexity. Name specific materials you\'d likely use (e.g., "5/4 pressure-treated decking" or "Sherwin-Williams Duration exterior").\n\n' +
+        '3. Tell them what\'s INCLUDED at this price — prep work, materials, labor, cleanup, warranty. Be specific, not generic.\n\n' +
+        '4. Mention ONE thing that could push the price up or down (e.g., "If your subfloor needs replacing, add another $500–$1,000").\n\n' +
+        '5. Describe the PROCESS briefly — "I\'d come out, take measurements, give you a written quote same day..."\n\n' +
+        '6. End with: invite them to call (405) 410-6402 for a free on-site estimate.\n\n' +
         'RULES:\n' +
-        '- Use realistic Nebraska contractor pricing, not national averages\n' +
-        '- Be specific to the scope they selected, not generic\n' +
-        '- Sound like a knowledgeable, trustworthy contractor — not a chatbot\n' +
-        '- Keep total response under 120 words\n' +
-        '- Format price range in bold with **\n' +
-        '- Do NOT use bullet points or numbered lists — use flowing sentences';
+        '- Write 150–200 words. This is a REAL estimate breakdown, not a one-liner.\n' +
+        '- Use Nebraska contractor pricing, not national averages\n' +
+        '- Be specific to the exact scope they selected\n' +
+        '- Sound like a contractor who\'s done this work a thousand times\n' +
+        '- NO bullet points, NO numbered lists — flowing paragraphs\n' +
+        '- Format price ranges and service names in bold with **';
 
       callProxy(prompt, 1024).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
@@ -305,38 +306,38 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
     if (!el) return;
 
     var questions = isSI ? [
-      { q: 'What area of your home needs attention?', icon: 'fa-house',
+      { q: 'What type of project are you looking at?', icon: 'fa-house',
         opts: [
-          {label:'Kitchen',icon:'fa-kitchen-set',desc:'Cabinets, counters, layout'},
-          {label:'Bathroom',icon:'fa-bath',desc:'Fixtures, tile, vanity'},
-          {label:'Exterior',icon:'fa-tree',desc:'Siding, gutters, deck'},
-          {label:'Living Areas',icon:'fa-couch',desc:'Walls, floors, fixtures'},
-          {label:'Multiple Rooms',icon:'fa-layer-group',desc:'Whole-home project'},
-          {label:'Electronics / AV',icon:'fa-tv',desc:'TV, sound, smart home'}
+          {label:'Kitchen remodel',icon:'fa-kitchen-set',desc:'Cabinets, counters, tile, layout'},
+          {label:'Bathroom remodel',icon:'fa-bath',desc:'Fixtures, tile, vanity, shower'},
+          {label:'Painting',icon:'fa-paint-roller',desc:'Interior or exterior'},
+          {label:'Gutters',icon:'fa-droplet',desc:'Install, repair, guards'},
+          {label:'Handyman / repairs',icon:'fa-screwdriver-wrench',desc:'Doors, drywall, fixtures'},
+          {label:'TV / electronics',icon:'fa-tv',desc:'Mounting, wiring, smart home'}
         ]},
-      { q: 'What\'s the primary goal for this project?', icon: 'fa-bullseye',
+      { q: 'Tell me more about what you need done:', icon: 'fa-bullseye',
         opts: [
-          {label:'Complete renovation',desc:'Tear out and start fresh'},
-          {label:'Cosmetic refresh',desc:'Update look without major work'},
-          {label:'Repair something broken',desc:'Fix a specific problem'},
-          {label:'New installation',desc:'Add something that isn\'t there'},
-          {label:'Maintenance',desc:'Preventive upkeep'},
-          {label:'Not sure yet',desc:'Need professional guidance'}
+          {label:'Full tear-out & rebuild',desc:'Start from scratch, new everything'},
+          {label:'Update the look',desc:'Keep the bones, freshen it up'},
+          {label:'Fix something specific',desc:'Leak, crack, broken fixture'},
+          {label:'Install something new',desc:'Add what\'s not there yet'},
+          {label:'Maintenance / prevent issues',desc:'Upkeep before problems start'},
+          {label:'Not sure — need advice',desc:'I want a pro to tell me what\'s best'}
         ]},
-      { q: 'What\'s your timeline?', icon: 'fa-calendar',
+      { q: 'What\'s your timeline looking like?', icon: 'fa-calendar',
         opts: [
-          {label:'Urgent — ASAP',desc:'Need it done this week'},
-          {label:'Within 2 weeks',desc:'Soon but not emergency'},
-          {label:'Within 1–2 months',desc:'Planning ahead'},
-          {label:'Just exploring',desc:'Gathering info & pricing'}
+          {label:'ASAP — this week',desc:'Urgent, need it handled now'},
+          {label:'Next couple weeks',desc:'Soon but flexible'},
+          {label:'1–2 months out',desc:'Planning ahead, no rush'},
+          {label:'Just pricing it out',desc:'Gathering info before deciding'}
         ]},
-      { q: 'Do you have a budget range in mind?', icon: 'fa-wallet',
+      { q: 'What budget range are you working with?', icon: 'fa-wallet',
         opts: [
-          {label:'Under $500',desc:'Small project'},
-          {label:'$500 – $2,000',desc:'Mid-range project'},
-          {label:'$2,000 – $5,000',desc:'Significant project'},
-          {label:'$5,000+',desc:'Major renovation'},
-          {label:'Not sure yet',desc:'Need help estimating'}
+          {label:'Under $500',desc:'Quick fix or small job'},
+          {label:'$500 – $2,000',desc:'Solid mid-range project'},
+          {label:'$2,000 – $5,000',desc:'Significant upgrade'},
+          {label:'$5,000+',desc:'Major remodel or renovation'},
+          {label:'No idea yet',desc:'Help me figure out what this costs'}
         ]}
     ] : [
       { q: 'Who will benefit from these modifications?', icon: 'fa-users',
@@ -428,24 +429,25 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
 
     function getRecommendation() {
       var svcList = B.services.map(function(s) { return s.label; }).join(', ');
-      var prompt = 'You are a senior service advisor for ' + B.name + ', a licensed contractor (NE Reg #54690-25) in Norfolk, Nebraska.\n\n' +
-        'Available services: ' + svcList + '.\n\n' +
-        'A potential customer completed our needs assessment:\n';
+      var prompt = 'A potential customer just completed our needs assessment on the website. Here are their answers:\n\n';
       questions.forEach(function(q, i) {
         prompt += '• ' + q.q + ' → ' + (answers[i] || 'Not answered') + '\n';
       });
-      prompt += '\nProvide a professional recommendation with this EXACT structure:\n' +
-        '1. Start with "Based on your needs..." and name the #1 recommended service (bold with **)\n' +
-        '2. Explain in 2 sentences WHY this service is the best fit for their specific situation\n' +
-        '3. If a second service would complement it, mention it briefly\n' +
-        '4. Include one specific detail about how ' + B.name + ' handles this type of project\n' +
-        '5. End with: "Call (405) 410-6402 to schedule your free consultation"\n\n' +
+      prompt += '\nAs Justin, give this person a detailed, personalized recommendation. Write it like you\'re talking directly to them — warm, knowledgeable, and specific.\n\n' +
+        'Your response MUST include ALL of these (in flowing paragraphs, NOT bullet points):\n\n' +
+        '1. LEAD with your top service recommendation (bold the service name with **). Tell them specifically WHY this is the right fit based on their exact answers — don\'t be generic.\n\n' +
+        '2. EXPLAIN what the process looks like — what happens when you show up, how long it typically takes, what materials you\'d likely use. Give them a mental picture of the project from start to finish.\n\n' +
+        '3. Give a REALISTIC PRICE RANGE for their specific scope using Nebraska rates. Be specific — "For a project like yours, you\'re typically looking at $X,XXX to $X,XXX depending on..."\n\n' +
+        '4. If a SECOND service would complement the first one, mention it naturally — "While I\'m there, a lot of my customers also..."\n\n' +
+        '5. Based on their timeline answer, address urgency appropriately — if urgent, emphasize your quick turnaround. If they\'re just exploring, reassure them there\'s no pressure.\n\n' +
+        '6. END with a clear next step: invite them to call (405) 410-6402 for a free, no-obligation consultation or estimate.\n\n' +
         'RULES:\n' +
-        '- Sound like an experienced, caring contractor — not a chatbot\n' +
-        '- Reference their specific answers, don\'t be generic\n' +
-        '- Keep total response under 100 words\n' +
-        '- Format service names in bold with **\n' +
-        '- Do NOT use bullet points or numbered lists';
+        '- Write 150–250 words. This is a DETAILED recommendation, not a one-liner.\n' +
+        '- Sound like a real contractor who\'s done this a thousand times\n' +
+        '- Reference their SPECIFIC answers, not generic filler\n' +
+        '- Use real material names, timeframes, and Nebraska pricing\n' +
+        '- NO bullet points, NO numbered lists — write in natural paragraphs\n' +
+        '- Format service names and price ranges in bold with **';
 
       callProxy(prompt, 1024).then(function(text) {
         var formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
@@ -461,27 +463,47 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
         var restart = document.getElementById('wr-restart');
         if (restart) restart.addEventListener('click', function() { answers = []; step = 0; render(); });
       }).catch(function() {
-        // Build a useful contextual recommendation from the answers instead of a dead-end
+        // Smart fallback — build a real recommendation from answers using service knowledge
         var answerSummary = [];
         questions.forEach(function(q, i) { if (answers[i]) answerSummary.push(answers[i]); });
-        var bestGuess = '';
-        B.services.forEach(function(sv) {
-          var combined = answerSummary.join(' ').toLowerCase();
-          if (combined.indexOf('bathroom') !== -1 && (sv.id === 'bath' || sv.id === 'remodel')) bestGuess = sv.label;
-          else if (combined.indexOf('entrance') !== -1 && sv.id === 'ramp') bestGuess = sv.label;
-          else if (combined.indexOf('floor') !== -1 && sv.id === 'floor') bestGuess = sv.label;
-          else if (combined.indexOf('stair') !== -1 && sv.id === 'safety') bestGuess = sv.label;
-          else if (combined.indexOf('kitchen') !== -1 && sv.id === 'remodel') bestGuess = sv.label;
-          else if (combined.indexOf('exterior') !== -1 && sv.id === 'gutter') bestGuess = sv.label;
-        });
-        if (!bestGuess) bestGuess = B.services[0].label;
+        var combined = answerSummary.join(' ').toLowerCase();
+        var bestGuess = '', fallbackDetail = '';
+
+        // Service-specific matching with real details
+        if (isSI) {
+          if (combined.indexOf('kitchen') !== -1) {
+            bestGuess = 'Kitchen & Bath Remodeling';
+            fallbackDetail = 'For a kitchen project, I\'d typically start with an on-site visit to measure the space, look at your existing cabinets, plumbing, and electrical, and talk through what you want. A partial update (new countertops, backsplash, paint) usually runs <strong>$3,000–$8,000</strong>. A full gut remodel with new cabinets and layout changes is more like <strong>$12,000–$35,000</strong> depending on materials. I source from both local suppliers and big-box stores depending on your budget.';
+          } else if (combined.indexOf('bathroom') !== -1) {
+            bestGuess = 'Kitchen & Bath Remodeling';
+            fallbackDetail = 'Bathroom remodels are one of my most common projects. A cosmetic refresh — new vanity, fixtures, paint, maybe some tile — typically runs <strong>$3,000–$7,000</strong>. A full remodel with tub-to-shower conversion, new tile, and layout changes is more like <strong>$8,000–$20,000</strong>. I handle all the plumbing, tile work, and finishing myself.';
+          } else if (combined.indexOf('paint') !== -1) {
+            bestGuess = 'Interior & Exterior Painting';
+            fallbackDetail = 'Prep work is 70% of a good paint job — I scrape, sand, prime, and caulk before any paint goes on. A single room runs <strong>$300–$800</strong>, whole house interior <strong>$3,000–$8,000</strong>, exterior <strong>$4,000–$12,000</strong>. I use Sherwin-Williams and Benjamin Moore products exclusively.';
+          } else if (combined.indexOf('gutter') !== -1) {
+            bestGuess = 'Gutter Install & Repair';
+            fallbackDetail = 'I carry a seamless gutter machine on my truck — 5" and 6" aluminum in your choice of colors. Full gutter replacement runs <strong>$1,200–$3,500</strong> for most homes. Gutter guards are <strong>$800–$2,500</strong>. I also handle soffit and fascia repair if needed.';
+          } else if (combined.indexOf('tv') !== -1 || combined.indexOf('electronic') !== -1) {
+            bestGuess = 'Electronics & TV Mounting';
+            fallbackDetail = 'A single TV wall mount with cable concealment runs <strong>$150–$350</strong>. Multi-room setups, surround sound, and smart home integration depend on scope — usually <strong>$300–$1,500</strong>. I handle the mounting, wiring, and setup so everything looks clean.';
+          } else {
+            bestGuess = 'Handyman Services';
+            fallbackDetail = 'I handle all kinds of home repairs and small projects — doors, windows, drywall, shelving, fixtures, weather stripping. I charge around <strong>$65–$85/hour</strong> or flat-rate for bigger jobs. Most handyman projects run <strong>$150–$800</strong> depending on scope.';
+          }
+        } else {
+          if (combined.indexOf('bathroom') !== -1) { bestGuess = 'Bathroom Accessibility'; fallbackDetail = 'Walk-in shower conversions run <strong>$4,000–$10,000</strong>, and a full ADA bathroom remodel is typically <strong>$8,000–$25,000</strong>. I handle everything — demolition, plumbing, tile, fixtures, grab bars, and cleanup.'; }
+          else if (combined.indexOf('entrance') !== -1 || combined.indexOf('wheelchair') !== -1) { bestGuess = 'Wheelchair Ramp Installation'; fallbackDetail = 'Wood ramps typically run <strong>$1,500–$5,000</strong> and aluminum modular ramps <strong>$2,500–$8,000</strong>. I build to ADA specs (1:12 slope ratio) and handle all permits.'; }
+          else if (combined.indexOf('floor') !== -1 || combined.indexOf('slip') !== -1) { bestGuess = 'Non-Slip Flooring'; fallbackDetail = 'A single bathroom floor runs <strong>$800–$2,500</strong>. I remove the old flooring, prep the subfloor, and install slip-resistant vinyl plank or textured tile.'; }
+          else if (combined.indexOf('stair') !== -1) { bestGuess = 'Accessibility & Safety Solutions'; fallbackDetail = 'Stair lifts, grab rails, and other stairway safety modifications. I do a free home safety assessment to figure out exactly what you need.'; }
+          else { bestGuess = 'Grab Bar Installation'; fallbackDetail = 'A single grab bar runs <strong>$150–$300</strong> installed, or a full bathroom set (3-5 bars) is <strong>$400–$900</strong>. I locate studs and use proper blocking for maximum hold strength.'; }
+        }
 
         var result = document.getElementById('wr-result');
         if (result) {
           result.innerHTML = '<h4><i class="fas fa-check-circle" style="color:' + B.c + ';margin-right:8px"></i>Our Recommendation</h4>' +
-            '<p>Based on what you\'ve told me — <strong>' + answerSummary.join('</strong>, <strong>') + '</strong> — I\'d recommend starting with our <strong>' + bestGuess + '</strong> service.</p>' +
-            '<p>Every home is different, and I want to see your specific situation before making detailed recommendations. I\'ll come out, do a thorough assessment, and give you a clear plan with pricing — <strong>completely free</strong>.</p>' +
-            '<p>I\'m Justin, and I personally handle every project. Licensed, insured, and I\'ve been doing this work across Northeast Nebraska for years.</p>' +
+            '<p>Based on what you\'ve told me — <strong>' + answerSummary.join('</strong>, <strong>') + '</strong> — I\'d recommend our <strong>' + bestGuess + '</strong> service.</p>' +
+            '<p>' + fallbackDetail + '</p>' +
+            '<p>I\'m Justin, and I personally handle every project start to finish. I\'d love to come take a look at your situation — <strong>completely free, no pressure</strong>. I can usually get out there within a day or two.</p>' +
             '<a class="cta" href="tel:+14054106402"><i class="fas fa-phone"></i> (405) 410-6402 — Free Consultation</a>' +
             '<div style="margin-top:12px"><button class="wai-btn-outline" id="wr-restart"><i class="fas fa-redo"></i> Try Again</button></div>';
           result.classList.add('show');
@@ -496,12 +518,33 @@ box-shadow:0 2px 8px ' + B.c + '40;transition:all .25s}\
     render();
   }
 
+  // ── SYSTEM INSTRUCTIONS (brand-specific) ──
+  var SYS_INSTRUCTION = isSI
+    ? 'You are Justin Watts, owner and lead contractor at Watts Safety Installs — a licensed, insured home services company (NE Reg #54690-25) based in Norfolk, Nebraska. You personally handle every project. You serve a 100-mile radius covering Norfolk, Columbus, Fremont, Wayne, South Sioux City, West Point, and surrounding towns.\n\n' +
+      'YOUR SERVICES & EXPERTISE:\n' +
+      '• Kitchen & Bath Remodeling — full gut remodels, cabinet replacement, tile, countertops, tub-to-shower conversions. You source materials from local suppliers and big-box stores depending on budget. Typical kitchen remodel: $8K–$35K. Typical bathroom: $5K–$20K.\n' +
+      '• Interior & Exterior Painting — prep work is 70% of a good paint job. You scrape, sand, prime, caulk. Sherwin-Williams and Benjamin Moore products. Single room: $300–$800. Whole house interior: $3K–$8K. Exterior: $4K–$12K.\n' +
+      '• Gutter Install & Repair — 5" and 6" seamless aluminum. You carry a gutter machine on your truck. Full replacement: $1,200–$3,500. Guards: $800–$2,500. You also do soffit/fascia.\n' +
+      '• Handyman Services — doors, windows, drywall, shelving, fixtures, weather stripping, odd jobs. Hourly rate around $65–$85/hr or flat-rate per job.\n' +
+      '• Electronics & TV Mounting — wall mounts, cable concealment, surround sound, smart home setup. Single TV mount: $150–$350.\n\n' +
+      'YOUR PERSONALITY: You\'re down-to-earth, honest, and you explain things in plain English. You don\'t upsell. You tell people what they actually need. You\'ve been doing this work for years and you\'ve seen it all. You\'re proud of your work and you stand behind it.\n\n' +
+      'RULES: Always sound like a real contractor talking to a homeowner, not a chatbot. Use specific details — material names, timeframes, process steps. Never be vague or generic. Always end with an invitation to call (405) 410-6402 for a free estimate or consultation. Prices should reflect Nebraska market rates.'
+    : 'You are Justin Watts, owner and lead contractor at Watts ATP Contractor — an ATP-approved, licensed, insured accessibility contractor (NE Reg #54690-25) based in Norfolk, Nebraska. You specialize in home accessibility and safety modifications. You serve a 100-mile radius.\n\n' +
+      'YOUR SERVICES & EXPERTISE:\n' +
+      '• Wheelchair Ramp Installation — wood, aluminum modular, concrete. ADA-compliant slopes (1:12 ratio). You handle permits. Wood ramps: $1,500–$5,000. Aluminum modular: $2,500–$8,000. You\'ve built hundreds.\n' +
+      '• Grab Bar Installation — stainless, chrome, designer finishes. You locate studs, use proper blocking. Single bar: $150–$300 installed. Full bathroom set (3-5 bars): $400–$900.\n' +
+      '• Non-Slip Flooring — vinyl plank, textured tile, non-slip coatings. Single bathroom: $800–$2,500. You remove old flooring, prep subfloor, install.\n' +
+      '• Bathroom Accessibility — walk-in showers, roll-in showers, comfort-height toilets, accessible vanities. Tub-to-shower conversion: $4,000–$10,000. Full ADA bathroom: $8,000–$25,000.\n' +
+      '• Accessibility & Safety Solutions — stair lifts, door widening, lever handles, lighting, home safety assessments. You do free assessments.\n\n' +
+      'YOUR PERSONALITY: You genuinely care about helping people stay safe in their homes. Many of your clients are elderly or recently discharged from the hospital. You\'re patient, kind, and you explain everything clearly. You work with ATP (Assistive Technology Partnership) and insurance when applicable.\n\n' +
+      'RULES: Sound like a real contractor who cares, not a chatbot. Use specific details. Never be vague. Always invite them to call (405) 410-6402. Use Nebraska pricing.';
+
   // ── PROXY CALL WITH RETRY ──
   function callProxy(prompt, maxTokens, attempt) {
     attempt = attempt || 0;
     var MAX_RETRIES = 2;
     var body = {
-      system_instruction: { parts: [{ text: 'You are a senior professional at ' + B.name + ', a licensed Nebraska contractor. You speak with authority, warmth, and expertise. You never sound like a generic chatbot. You give specific, actionable advice. You always reference the customer\'s specific situation. Price ranges must reflect real Nebraska contractor rates. Always end with the phone number (405) 410-6402.' }] },
+      system_instruction: { parts: [{ text: SYS_INSTRUCTION }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: { temperature: 0.7, maxOutputTokens: maxTokens || 1024, topP: 0.9 },
       safetySettings: [

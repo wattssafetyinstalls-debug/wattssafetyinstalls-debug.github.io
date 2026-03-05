@@ -58,19 +58,35 @@
         .trade-badge.general { background: #e67e22; color: white; }
         .trade-badge.plumbing { background: #2980b9; color: white; }
         .trade-badge.electrical { background: #f39c12; color: #1a1a1a; }
+        .trade-badge.carpet_tile { background: #16a085; color: white; }
         .trade-badge.custom { background: #7f8c8d; color: white; }
-        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 100px 100px; gap: 6px; margin-bottom: 6px; align-items: center; }
-        #laborItemsContainer .li-row input { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
-        #laborItemsContainer .li-row input:focus { outline: none; border-color: #3498db; }
-        #matItemsContainer .mi-row, #distMatContainer .di-row { display: grid; grid-template-columns: 1fr 80px 100px; gap: 6px; margin-bottom: 6px; align-items: center; }
-        #matItemsContainer .mi-row input, #distMatContainer .di-row input { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
-        #matItemsContainer .mi-row input:focus, #distMatContainer .di-row input:focus { outline: none; border-color: #3498db; }
+        #laborItemsContainer .li-row { display: grid; grid-template-columns: 1fr 120px 60px 100px; gap: 6px; margin-bottom: 6px; align-items: center; }
+        #laborItemsContainer .li-row input, #laborItemsContainer .li-row select { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
+        #laborItemsContainer .li-row input:focus, #laborItemsContainer .li-row select:focus { outline: none; border-color: #3498db; }
+        #laborItemsContainer .li-row select option { background: #0f1a33; color: #eee; }
+        #matItemsContainer .mi-row, #distMatContainer .di-row { display: grid; grid-template-columns: 1fr 50px 70px 100px; gap: 6px; margin-bottom: 6px; align-items: center; }
+        #matItemsContainer .mi-row input, #matItemsContainer .mi-row select, #distMatContainer .di-row input, #distMatContainer .di-row select { font-size: 13px; padding: 9px 10px; min-width: 0; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
+        #matItemsContainer .mi-row input:focus, #matItemsContainer .mi-row select:focus, #distMatContainer .di-row input:focus, #distMatContainer .di-row select:focus { outline: none; border-color: #3498db; }
+        #matItemsContainer .mi-row select option, #distMatContainer .di-row select option { background: #0f1a33; color: #eee; }
         .item-header { display: grid; gap: 6px; margin-bottom: 6px; font-size: 10px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 2px; }
-        .item-header.labor { grid-template-columns: 1fr 100px 100px; }
-        .item-header.mat { grid-template-columns: 1fr 80px 100px; }
+        .item-header.labor { grid-template-columns: 1fr 120px 60px 100px; }
+        .item-header.mat { grid-template-columns: 1fr 50px 70px 100px; }
+        .scope-row, .note-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+        .scope-row input, .note-row input { flex: 1; font-size: 13px; padding: 9px 10px; background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; color: #eee; }
+        .scope-row input:focus, .note-row input:focus { outline: none; border-color: #3498db; }
         .add-row-btn { background: none; border: 1px dashed #3a4a6c; color: #7f8c8d; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 6px; width: 100%; }
         .add-row-btn:hover { border-color: #3498db; color: #3498db; }
         .remove-row { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
+        /* Live Calculator Panel */
+        .live-calc { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0f1e; border-top: 2px solid #3498db; padding: 10px 20px; z-index: 9998; display: flex; flex-wrap: wrap; gap: 0; justify-content: center; box-shadow: 0 -4px 16px rgba(0,0,0,0.4); }
+        .lc-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 12px; font-size: 12px; color: #95a5a6; min-width: 160px; }
+        .lc-row span:last-child { font-weight: 700; color: #ecf0f1; font-family: monospace; font-size: 13px; }
+        .lc-row.lc-sm { font-size: 10px; color: #7f8c8d; }
+        .lc-row.lc-sm span:last-child { color: #7f8c8d; font-size: 11px; }
+        .lc-row.lc-grand { background: #16213e; border-radius: 6px; padding: 6px 14px; margin: 2px 4px; }
+        .lc-row.lc-grand span:last-child { color: #2ecc71; font-size: 16px; }
+        .lc-row.lc-psf span:last-child { color: #f39c12; }
+        @media (max-width: 768px) { .live-calc { flex-direction: column; padding: 8px 12px; } .lc-row { min-width: 100%; } }
         /* Autocomplete dropdown */
         .ac-wrap { position: relative; }
         .ac-drop { position: absolute; top: 100%; left: 0; right: 0; background: #0f1a33; border: 1px solid #3498db; border-top: none; border-radius: 0 0 6px 6px; max-height: 220px; overflow-y: auto; z-index: 1000; display: none; }
@@ -664,6 +680,7 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
                 <label>Trade Type</label>
                 <select id="tradeType" onchange="onTradeChange()">
                     <option value="flooring">Flooring</option>
+                    <option value="carpet_tile">Carpet Tile (Commercial)</option>
                     <option value="painting">Painting</option>
                     <option value="general">General / Remodel</option>
                     <option value="plumbing">Plumbing</option>
@@ -676,7 +693,8 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
             <div class="form-group"><label>Property / Complex Name</label><input type="text" id="complexName" placeholder="e.g. Oakwood Apartments"></div>
             <div class="form-group"><label>Unit / Address</label><input type="text" id="unitNum" placeholder="e.g. Unit 204"></div>
             <div class="form-group"><label>City, State</label><input type="text" id="jobCity" placeholder="e.g. Norfolk, NE"></div>
-            <div class="form-group"><label>Area Size (sq ft)</label><input type="number" id="sqft" value="48" min="1"></div>
+            <div class="form-group"><label>Area Size (sq ft)</label><input type="number" id="sqft" value="48" min="1" oninput="liveCalc()"></div>
+            <div class="form-group"><label>Linear Feet (cove base, trim, etc.)</label><input type="number" id="linft" value="0" min="0" oninput="liveCalc()"></div>
             <div class="form-group full"><label>Area Description (e.g. "Bathroom, Second Floor" or "Living Room &amp; Hallway")</label><input type="text" id="areaDesc" placeholder="e.g. Bathroom, Second Floor"></div>
         </div>
         <div class="saved-jobs" style="margin-top:16px;">
@@ -687,14 +705,30 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
                 <button class="btn btn-save" onclick="loadJob()">Load Selected</button>
                 <button class="btn btn-clear" onclick="deleteJob()">Delete Selected</button>
                 <button class="btn btn-clear" onclick="clearForm()">Clear Form</button>
+                <button class="btn" style="background:linear-gradient(135deg,#2980b9,#3498db);color:white;font-size:11px" onclick="openClientInsights()">Client Insights</button>
             </div>
         </div>
+    </div>
+
+    <!-- SECTION 2B: SCOPE & NOTES -->
+    <div class="card">
+        <h2><span class="icon">2B</span> Scope of Work &amp; Notes</h2>
+        <div class="form-group full" style="margin-bottom:12px;">
+            <label>Scope Title (appears as heading on generated bid)</label>
+            <input type="text" id="scopeTitle" placeholder="e.g. Three Hallways Carpet Tile Installation">
+        </div>
+        <label style="font-size:11px; text-transform:uppercase; color:#7f8c8d; letter-spacing:0.5px; margin-bottom:6px; display:block;">Scope Bullet Points (one per line — edit, add, remove as needed)</label>
+        <div id="scopeItemsContainer"></div>
+        <button class="add-row-btn" onclick="addScopeRow('')" style="margin-bottom:16px;">+ Add Scope Item</button>
+        <label style="font-size:11px; text-transform:uppercase; color:#7f8c8d; letter-spacing:0.5px; margin-bottom:6px; display:block;">Estimate Notes (appear at bottom of generated bid)</label>
+        <div id="notesItemsContainer"></div>
+        <button class="add-row-btn" onclick="addNoteRow('')">+ Add Note</button>
     </div>
 
     <!-- SECTION 3 -->
     <div class="card">
         <h2><span class="icon">3</span> Labor Line Items</h2>
-        <div class="item-header labor"><span>Description</span><span>Basis</span><span>Price</span></div>
+        <div class="item-header labor"><span>Description</span><span>Basis</span><span>Qty</span><span>Price</span></div>
         <div id="laborItemsContainer"></div>
         <button class="add-row-btn" onclick="addLaborRow('','','')">+ Add Labor Item</button>
     </div>
@@ -702,10 +736,10 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
     <div class="card">
         <h2><span class="icon">4</span> Material Line Items</h2>
         <div class="form-grid" style="margin-bottom:14px;">
-            <div class="form-group"><label>Overhead %</label><input type="number" id="materialsMarkup" value="15" step="1"></div>
+            <div class="form-group"><label>Overhead %</label><input type="number" id="materialsMarkup" value="15" step="1" oninput="liveCalc()"></div>
             <div class="form-group"><label>Third-Party Supplier Note (optional)</label><input type="text" id="supplierNote" placeholder="e.g. Scranton Flooring supplies vinyl — PM pays directly"></div>
         </div>
-        <div class="item-header mat"><span>Material</span><span>Qty</span><span>Price</span></div>
+        <div class="item-header mat"><span>Material</span><span>Qty</span><span>Unit</span><span>Price</span></div>
         <div id="matItemsContainer"></div>
         <button class="add-row-btn" onclick="addMatRow('','','')">+ Add Material Item</button>
     </div>
@@ -717,7 +751,7 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
             <div class="form-group"><label>Distributor / Supplier Name</label><input type="text" id="distName" placeholder="e.g. Scranton Flooring, HD Supply, Ferguson"></div>
             <div class="form-group"><label>Distributor PO / Account #</label><input type="text" id="distPO" placeholder="e.g. PO-4421 or Acct #88712"></div>
         </div>
-        <div class="item-header mat"><span>Material</span><span>Qty</span><span>Price</span></div>
+        <div class="item-header mat"><span>Material</span><span>Qty</span><span>Unit</span><span>Price</span></div>
         <div id="distMatContainer"></div>
         <button class="add-row-btn" onclick="addDistMatRow('','','')">+ Add Distributor Material</button>
     </div>
@@ -737,6 +771,27 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
         <button class="btn btn-change" onclick="generateChangeOrder()">Open Change Order</button>
         <button class="btn" style="background:linear-gradient(135deg,#8e44ad,#9b59b6);color:white" onclick="openTemplateManager()">Use My Template</button>
         <button class="btn" style="background:linear-gradient(135deg,#e67e22,#d35400);color:white" onclick="openScanner()">Scan Document</button>
+    </div>
+    <div style="height:80px"></div>
+</div>
+
+<!-- LIVE CALCULATOR BAR -->
+<div class="live-calc" id="liveCalcPanel">
+    <div class="lc-row lc-grand"><span>Grand Total</span><span>$0.00</span></div>
+    <div class="lc-row lc-psf"><span>Per Sq Ft</span><span>$0.00 /sf</span></div>
+</div>
+
+<!-- CLIENT INSIGHTS MODAL -->
+<div class="scan-overlay" id="ciOverlay" style="display:none">
+    <div class="scan-modal" style="max-width:700px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 style="margin:0">Client Insights &amp; Job History</h2>
+            <button onclick="closeClientInsights()" style="background:none;border:none;color:#7f8c8d;font-size:20px;cursor:pointer">&times;</button>
+        </div>
+        <div style="margin-bottom:12px">
+            <input type="text" id="ciSearch" placeholder="Filter by client name..." oninput="ciRender()" style="width:100%;padding:10px;background:#0f1a33;border:1px solid #2a3a5c;border-radius:6px;color:#eee;font-size:13px">
+        </div>
+        <div id="ciContent" style="max-height:60vh;overflow-y:auto"></div>
     </div>
 </div>
 
@@ -1037,6 +1092,25 @@ function flashSync() {
 // =====================================================================
 // TRADE PRESETS
 // =====================================================================
+// ========== STANDARD UNIT OPTIONS ==========
+const LABOR_BASIS_OPTIONS = [
+    { value: 'per sq ft', label: 'per sq ft', multiplier: 'sqft' },
+    { value: 'per lin ft', label: 'per lin ft', multiplier: 'linft' },
+    { value: 'per unit', label: 'per unit', multiplier: 'qty' },
+    { value: 'per hour', label: 'per hour', multiplier: 'qty' },
+    { value: 'per box', label: 'per box', multiplier: 'qty' },
+    { value: 'per tube', label: 'per tube', multiplier: 'qty' },
+    { value: 'per roll', label: 'per roll', multiplier: 'qty' },
+    { value: 'per bag', label: 'per bag', multiplier: 'qty' },
+    { value: 'per gal', label: 'per gal', multiplier: 'qty' },
+    { value: 'per fixture', label: 'per fixture', multiplier: 'qty' },
+    { value: 'per run', label: 'per run', multiplier: 'qty' },
+    { value: '1 lot', label: '1 lot (flat)', multiplier: 'flat' },
+    { value: 'fixed', label: 'fixed', multiplier: 'flat' }
+];
+
+const MAT_UNIT_OPTIONS = ['box','bag','tube','roll','tub','ea','set','lot','pack','gal','sheet','ctn','pail','bucket','qt','can'];
+
 const TRADES = {
     flooring: {
         label: 'Flooring',
@@ -1051,7 +1125,7 @@ const TRADES = {
             'Debris removal, hauling, and disposal'
         ],
         labor: [
-            { desc: 'Toilet Removal & Reinstallation', basis: '1 fixture', price: 140 },
+            { desc: 'Toilet Removal & Reinstallation', basis: 'per fixture', price: 140 },
             { desc: 'Demolition — Existing Flooring Layers', basis: 'per sq ft', price: 4.50 },
             { desc: 'Subfloor Repair', basis: 'fixed', price: 250 },
             { desc: 'Concrete/Cement Patch Repair', basis: 'per sq ft', price: 1.50 },
@@ -1206,6 +1280,46 @@ const TRADES = {
         disclaimer: 'Electrical systems concealed within walls, ceilings, and floors cannot be fully assessed until access is gained. Conditions including aluminum wiring, knob-and-tube wiring, non-code-compliant connections, overloaded circuits, or deteriorated insulation may be discovered. Contractor shall provide immediate written notice. Work shall cease until a written Change Order is executed by both parties. All electrical work performed per NEC and local code.',
         notes: ['Light fixtures and specialty devices to be selected by client unless specified.','Overhead covers procurement time, vehicle/fuel, material handling, and warranty coordination.','Permits pulled if required by local jurisdiction.']
     },
+    carpet_tile: {
+        label: 'Carpet Tile',
+        areaDesc: 'Hallways / Common Areas',
+        scope: [
+            'Removal and disposal of existing floor covering',
+            'Floor preparation — scraping, patching, leveling',
+            'Layout and installation of carpet tile (glue-down)',
+            'Transition strip installation at doorways and edges',
+            'Cove base removal and reinstallation',
+            'Debris removal, hauling, and disposal',
+            'Final walkthrough and quality inspection'
+        ],
+        labor: [
+            { desc: 'Demolition — Existing Floor Covering', basis: 'per sq ft', price: 1.50 },
+            { desc: 'Floor Prep — Scrape, Patch, Level', basis: 'per sq ft', price: 1.25 },
+            { desc: 'Carpet Tile Installation (glue-down)', basis: 'per sq ft', price: 1.75 },
+            { desc: 'Transition Strips', basis: 'per unit', price: 15 },
+            { desc: 'Cove Base Removal & Install', basis: 'per lin ft', price: 1.50 },
+            { desc: 'Debris Hauling & Disposal', basis: '1 lot', price: 75 },
+            { desc: 'Material Procurement & Coordination', basis: '1 lot', price: 60 }
+        ],
+        materials: [
+            { desc: 'Floor Scraper Blades', qty: '1 pack', price: 12 },
+            { desc: 'ARDEX FEATHER FINISH (10 lb)', qty: '1 bag', price: 30 },
+            { desc: 'Carpet Tile Adhesive (4 gal)', qty: '1 bucket', price: 85 },
+            { desc: 'Transition Strips (aluminum)', qty: '2 ea', price: 8 },
+            { desc: 'Cove Base Adhesive (30 oz)', qty: '1 tube', price: 12 },
+            { desc: 'Rubber Cove Base (4" roll)', qty: '1 roll', price: 45 },
+            { desc: 'Utility Blades / Chalk Line', qty: '1 lot', price: 10 },
+            { desc: 'Contractor Trash Bags (Heavy Duty)', qty: '1 box', price: 8 }
+        ],
+        supplierNote: 'Carpet tile supplied by property management or distributor — PM pays supplier directly. This estimate covers adhesive, prep materials, cove base, and consumables only.',
+        disclaimer: 'Existing floor covering may conceal substrate damage, moisture issues, asbestos-containing materials, or non-standard subfloor conditions. Contractor shall provide immediate written notice upon discovery. Work shall cease in the affected area until a written Change Order is executed by both parties.',
+        notes: [
+            'Carpet tile material supplied separately by PM or distributor as noted above.',
+            'Pricing assumes standard glue-down installation on concrete or approved substrate.',
+            'Overhead covers procurement time, vehicle/fuel, material handling, and warranty coordination.',
+            'All work performed per manufacturer specifications and applicable building codes.'
+        ]
+    },
     custom: {
         label: 'Custom',
         areaDesc: '',
@@ -1275,6 +1389,12 @@ function initApp() {
 
     // Default trade
     onTradeChange();
+
+    // Hook up markup input to live calc
+    document.getElementById('materialsMarkup').addEventListener('input', liveCalc);
+
+    // Initial live calc
+    setTimeout(liveCalc, 300);
 
     // Monitor connection
     db.ref('.info/connected').on('value', snap => {
@@ -1966,37 +2086,98 @@ function onTradeChange() {
     preset.labor.forEach(li => addLaborRow(li.desc, li.basis, li.price));
     document.getElementById('matItemsContainer').innerHTML = '';
     preset.materials.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
+    // Populate scope items
+    document.getElementById('scopeItemsContainer').innerHTML = '';
+    (preset.scope || []).forEach(s => addScopeRow(s));
+    // Populate notes
+    document.getElementById('notesItemsContainer').innerHTML = '';
+    (preset.notes || []).forEach(n => addNoteRow(n));
+    // Auto-generate scope title if empty or was a default
+    var stEl = document.getElementById('scopeTitle');
+    var knownScopeTitles = Object.values(TRADES).map(p => p.label + ' Installation');
+    if (!stEl.value || knownScopeTitles.includes(stEl.value)) stEl.value = preset.label + ' Installation';
     document.getElementById('supplierNote').value = preset.supplierNote;
     document.getElementById('disclaimer').value = preset.disclaimer;
+    liveCalc();
 }
 
-function addLaborRow(desc, basis, price) {
+function addLaborRow(desc, basis, price, qty) {
     const c = document.getElementById('laborItemsContainer');
     const row = document.createElement('div');
     row.className = 'li-row';
+    // Build basis dropdown
+    var selHtml = '<select class="basis-select" onchange="laborBasisChange(this);liveCalc()">';
+    LABOR_BASIS_OPTIONS.forEach(function(opt) {
+        var sel = (basis && opt.value === basis) ? ' selected' : '';
+        selHtml += '<option value="'+esc(opt.value)+'"'+sel+'>'+esc(opt.label)+'</option>';
+    });
+    selHtml += '</select>';
+    // Determine default qty based on basis
+    var defaultQty = qty || '';
+    if (!defaultQty && basis) {
+        var bOpt = LABOR_BASIS_OPTIONS.find(function(o){ return o.value === basis; });
+        if (bOpt && bOpt.multiplier === 'sqft') defaultQty = gv('sqft') || '48';
+        else if (bOpt && bOpt.multiplier === 'linft') defaultQty = gv('linft') || '0';
+        else if (bOpt && bOpt.multiplier === 'flat') defaultQty = '1';
+        else defaultQty = '1';
+    }
     row.innerHTML = '<input type="text" placeholder="Description" value="'+esc(desc)+'">'
-        + '<input type="text" placeholder="Basis" value="'+esc(basis)+'">'
-        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.25" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.li-row\').remove()">&times;</button></div>';
+        + selHtml
+        + '<input type="number" step="1" min="0" placeholder="Qty" value="'+(defaultQty||'')+'" class="labor-qty" oninput="liveCalc()">'
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="labor-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="this.closest(\'.li-row\').remove();liveCalc()">&times;</button></div>';
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'labor');
 }
+function laborBasisChange(sel) {
+    var row = sel.closest('.li-row');
+    var qtyInput = row.querySelector('.labor-qty');
+    var val = sel.value;
+    var bOpt = LABOR_BASIS_OPTIONS.find(function(o){ return o.value === val; });
+    if (!bOpt) return;
+    if (bOpt.multiplier === 'sqft') qtyInput.value = gv('sqft') || '48';
+    else if (bOpt.multiplier === 'linft') qtyInput.value = gv('linft') || '0';
+    else if (bOpt.multiplier === 'flat') qtyInput.value = '1';
+    // For 'qty' types (per unit, per hour, etc.) leave qty alone for user to fill
+}
+function parseMatQty(qtyStr) {
+    var s = String(qtyStr||'').trim();
+    var m = s.match(/^(\d+\.?\d*)\s*(.*)$/);
+    if (m) return { num: m[1], unit: m[2].trim().toLowerCase() || 'ea' };
+    return { num: s || '1', unit: 'ea' };
+}
 function addMatRow(desc, qty, price) {
-    const c = document.getElementById('matItemsContainer');
-    const row = document.createElement('div');
+    var c = document.getElementById('matItemsContainer');
+    var row = document.createElement('div');
     row.className = 'mi-row';
+    var pq = parseMatQty(qty);
+    var unitSel = '<select class="mat-unit" onchange="liveCalc()">';
+    MAT_UNIT_OPTIONS.forEach(function(u) {
+        var sel = (u === pq.unit) ? ' selected' : '';
+        unitSel += '<option value="'+u+'"'+sel+'>'+u+'</option>';
+    });
+    unitSel += '</select>';
     row.innerHTML = '<input type="text" placeholder="Material" value="'+esc(desc)+'">'
-        + '<input type="text" placeholder="Qty" value="'+esc(qty)+'">'
-        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.mi-row\').remove()">&times;</button></div>';
+        + '<input type="number" step="1" min="0" placeholder="#" value="'+esc(pq.num)+'" class="mat-qty" oninput="liveCalc()">'
+        + unitSel
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="mat-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="this.closest(\'.mi-row\').remove();liveCalc()">&times;</button></div>';
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'materials');
 }
 function addDistMatRow(desc, qty, price) {
-    const c = document.getElementById('distMatContainer');
-    const row = document.createElement('div');
+    var c = document.getElementById('distMatContainer');
+    var row = document.createElement('div');
     row.className = 'di-row';
+    var pq = parseMatQty(qty);
+    var unitSel = '<select class="mat-unit" onchange="liveCalc()">';
+    MAT_UNIT_OPTIONS.forEach(function(u) {
+        var sel = (u === pq.unit) ? ' selected' : '';
+        unitSel += '<option value="'+u+'"'+sel+'>'+u+'</option>';
+    });
+    unitSel += '</select>';
     row.innerHTML = '<input type="text" placeholder="Material" value="'+esc(desc)+'">'
-        + '<input type="text" placeholder="Qty" value="'+esc(qty)+'">'
-        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" style="flex:1;"><button class="remove-row" onclick="this.closest(\'.di-row\').remove()">&times;</button></div>';
+        + '<input type="number" step="1" min="0" placeholder="#" value="'+esc(pq.num)+'" class="mat-qty" oninput="liveCalc()">'
+        + unitSel
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="mat-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="this.closest(\'.di-row\').remove();liveCalc()">&times;</button></div>';
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'materials');
 }
@@ -2004,28 +2185,122 @@ function esc(s) { return String(s||'').replace(/"/g, '&quot;'); }
 
 // ========== GATHER DATA ==========
 function getLaborItems() {
-    const rows = document.querySelectorAll('#laborItemsContainer .li-row');
-    return Array.from(rows).map(r => {
-        const inputs = r.querySelectorAll('input');
-        return { desc: inputs[0].value, basis: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
-    }).filter(i => i.desc);
+    var rows = document.querySelectorAll('#laborItemsContainer .li-row');
+    return Array.from(rows).map(function(r) {
+        var descInput = r.querySelector('input[type="text"]');
+        var basisSelect = r.querySelector('.basis-select');
+        var qtyInput = r.querySelector('.labor-qty');
+        var priceInput = r.querySelector('.labor-price');
+        return {
+            desc: descInput ? descInput.value : '',
+            basis: basisSelect ? basisSelect.value : 'per sq ft',
+            qty: qtyInput ? (parseFloat(qtyInput.value) || 1) : 1,
+            price: priceInput ? (parseFloat(priceInput.value) || 0) : 0
+        };
+    }).filter(function(i) { return i.desc; });
 }
 function getMatItems() {
-    const rows = document.querySelectorAll('#matItemsContainer .mi-row');
-    return Array.from(rows).map(r => {
-        const inputs = r.querySelectorAll('input');
-        return { desc: inputs[0].value, qty: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
-    }).filter(i => i.desc);
+    var rows = document.querySelectorAll('#matItemsContainer .mi-row');
+    return Array.from(rows).map(function(r) {
+        var descInput = r.querySelector('input[type="text"]');
+        var qtyInput = r.querySelector('.mat-qty');
+        var unitSelect = r.querySelector('.mat-unit');
+        var priceInput = r.querySelector('.mat-price');
+        var qNum = qtyInput ? (parseFloat(qtyInput.value) || 1) : 1;
+        var qUnit = unitSelect ? unitSelect.value : 'ea';
+        return {
+            desc: descInput ? descInput.value : '',
+            qty: qNum + ' ' + qUnit,
+            qtyNum: qNum,
+            qtyUnit: qUnit,
+            price: priceInput ? (parseFloat(priceInput.value) || 0) : 0
+        };
+    }).filter(function(i) { return i.desc; });
 }
 function getDistMatItems() {
-    const rows = document.querySelectorAll('#distMatContainer .di-row');
-    return Array.from(rows).map(r => {
-        const inputs = r.querySelectorAll('input');
-        return { desc: inputs[0].value, qty: inputs[1].value, price: parseFloat(inputs[2].value) || 0 };
-    }).filter(i => i.desc);
+    var rows = document.querySelectorAll('#distMatContainer .di-row');
+    return Array.from(rows).map(function(r) {
+        var descInput = r.querySelector('input[type="text"]');
+        var qtyInput = r.querySelector('.mat-qty');
+        var unitSelect = r.querySelector('.mat-unit');
+        var priceInput = r.querySelector('.mat-price');
+        var qNum = qtyInput ? (parseFloat(qtyInput.value) || 1) : 1;
+        var qUnit = unitSelect ? unitSelect.value : 'ea';
+        return {
+            desc: descInput ? descInput.value : '',
+            qty: qNum + ' ' + qUnit,
+            qtyNum: qNum,
+            qtyUnit: qUnit,
+            price: priceInput ? (parseFloat(priceInput.value) || 0) : 0
+        };
+    }).filter(function(i) { return i.desc; });
 }
-function getScope() { return TRADES[document.getElementById('tradeType').value].scope; }
-function getNotes() { return TRADES[document.getElementById('tradeType').value].notes; }
+function getScope() {
+    var rows = document.querySelectorAll('#scopeItemsContainer .scope-row');
+    return Array.from(rows).map(function(r) { return r.querySelector('input').value; }).filter(function(v) { return v.trim(); });
+}
+function getNotes() {
+    var rows = document.querySelectorAll('#notesItemsContainer .note-row');
+    return Array.from(rows).map(function(r) { return r.querySelector('input').value; }).filter(function(v) { return v.trim(); });
+}
+function addScopeRow(text) {
+    var c = document.getElementById('scopeItemsContainer');
+    var row = document.createElement('div');
+    row.className = 'scope-row';
+    row.innerHTML = '<input type="text" placeholder="Scope item..." value="'+esc(text)+'">'
+        + '<button class="remove-row" onclick="this.closest(\'.scope-row\').remove()">&times;</button>';
+    c.appendChild(row);
+}
+function addNoteRow(text) {
+    var c = document.getElementById('notesItemsContainer');
+    var row = document.createElement('div');
+    row.className = 'note-row';
+    row.innerHTML = '<input type="text" placeholder="Note..." value="'+esc(text)+'">'
+        + '<button class="remove-row" onclick="this.closest(\'.note-row\').remove()">&times;</button>';
+    c.appendChild(row);
+}
+
+// ========== LIVE CALCULATOR ==========
+function calcLaborTotal() {
+    var items = getLaborItems();
+    var tot = 0;
+    items.forEach(function(i) { tot += i.qty * i.price; });
+    return tot;
+}
+function calcMatTotal() {
+    var items = getMatItems();
+    var sub = 0;
+    items.forEach(function(i) { sub += i.qtyNum * i.price; });
+    return sub;
+}
+function calcDistMatTotal() {
+    var items = getDistMatItems();
+    var sub = 0;
+    items.forEach(function(i) { sub += i.qtyNum * i.price; });
+    return sub;
+}
+function liveCalc() {
+    var laborTot = calcLaborTotal();
+    var matSub = calcMatTotal();
+    var mk = gn('materialsMarkup');
+    var matMarkup = matSub * (mk / 100);
+    var matTot = matSub + matMarkup;
+    var distTot = calcDistMatTotal();
+    var grand = laborTot + matTot + distTot;
+    var sqft = gn('sqft') || 1;
+    var perSf = grand / sqft;
+
+    var el = document.getElementById('liveCalcPanel');
+    if (!el) return;
+    el.innerHTML = '<div class="lc-row"><span>Labor Subtotal</span><span>$' + f(laborTot) + '</span></div>'
+        + '<div class="lc-row"><span>Materials Subtotal</span><span>$' + f(matSub) + '</span></div>'
+        + '<div class="lc-row lc-sm"><span>Markup (' + mk + '%)</span><span>$' + f(matMarkup) + '</span></div>'
+        + '<div class="lc-row"><span>Materials Total</span><span>$' + f(matTot) + '</span></div>'
+        + (distTot > 0 ? '<div class="lc-row"><span>Distributor Materials</span><span>$' + f(distTot) + '</span></div>' : '')
+        + '<div class="lc-row lc-grand"><span>Grand Total</span><span>$' + f(grand) + '</span></div>'
+        + '<div class="lc-row lc-psf"><span>Per Sq Ft (' + sqft + ' sf)</span><span>$' + (perSf).toFixed(2) + ' /sf</span></div>'
+        + '<div class="lc-row lc-psf"><span>Labor /sf</span><span>$' + (laborTot / sqft).toFixed(2) + '</span></div>';
+}
 
 // ========== SAVED JOBS (FIREBASE) ==========
 function loadSavedJobsList() {
@@ -2042,9 +2317,10 @@ function saveJob() {
     if (!name) return;
     const jobData = {
         tradeType: gv('tradeType'), clientName: c, complexName: x, unitNum: u,
-        jobCity: gv('jobCity'), sqft: gv('sqft'), areaDesc: gv('areaDesc'),
+        jobCity: gv('jobCity'), sqft: gv('sqft'), linft: gv('linft'), areaDesc: gv('areaDesc'),
         estimateDate: gv('estimateDate'), materialsMarkup: gv('materialsMarkup'),
         supplierNote: gv('supplierNote'), disclaimer: gv('disclaimer'),
+        scopeTitle: gv('scopeTitle'), scopeItems: getScope(), noteItems: getNotes(),
         laborItems: getLaborItems(), matItems: getMatItems(),
         savedAt: Date.now()
     };
@@ -2061,7 +2337,7 @@ function loadJob() {
     const n = document.getElementById('savedJobsSelect').value;
     if (!n) { alert('Select a job first.'); return; }
     const j = _cloudJobs[n]; if (!j) return;
-    ['tradeType','clientName','complexName','unitNum','jobCity','sqft','areaDesc','estimateDate','materialsMarkup','supplierNote','disclaimer'].forEach(k => {
+    ['tradeType','clientName','complexName','unitNum','jobCity','sqft','linft','areaDesc','estimateDate','materialsMarkup','supplierNote','disclaimer'].forEach(k => {
         const e = document.getElementById(k); if (e && j[k] !== undefined) e.value = j[k];
     });
     const badge = document.getElementById('tradeBadge');
@@ -2069,12 +2345,23 @@ function loadJob() {
     badge.textContent = preset.label; badge.className = 'trade-badge ' + (j.tradeType || 'custom');
     if (j.laborItems) {
         document.getElementById('laborItemsContainer').innerHTML = '';
-        j.laborItems.forEach(li => addLaborRow(li.desc, li.basis, li.price));
+        j.laborItems.forEach(li => addLaborRow(li.desc, li.basis, li.price, li.qty));
     }
     if (j.matItems) {
         document.getElementById('matItemsContainer').innerHTML = '';
         j.matItems.forEach(mi => addMatRow(mi.desc, mi.qty, mi.price));
     }
+    // Restore scope
+    if (j.scopeTitle) document.getElementById('scopeTitle').value = j.scopeTitle;
+    if (j.scopeItems) {
+        document.getElementById('scopeItemsContainer').innerHTML = '';
+        j.scopeItems.forEach(s => addScopeRow(s));
+    }
+    if (j.noteItems) {
+        document.getElementById('notesItemsContainer').innerHTML = '';
+        j.noteItems.forEach(n => addNoteRow(n));
+    }
+    liveCalc();
 }
 function deleteJob() {
     const n = document.getElementById('savedJobsSelect').value;
@@ -2083,8 +2370,9 @@ function deleteJob() {
     jobsRef.child(n).remove().then(() => { flashSync(); });
 }
 function clearForm() {
-    ['clientName','complexName','unitNum','jobCity','areaDesc','supplierNote'].forEach(id => { document.getElementById(id).value = ''; });
+    ['clientName','complexName','unitNum','jobCity','areaDesc','supplierNote','scopeTitle'].forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('sqft').value = 48;
+    document.getElementById('linft').value = 0;
     document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
     onTradeChange();
 }
@@ -2185,24 +2473,25 @@ function reopenDoc(invoiceId) {
 function generateLabor() {
     var brand = getBrand();
     var sq = gn('sqft'), items = getLaborItems(), scope = getScope(), notes = getNotes();
-    var tot = 0; items.forEach(function(i){ tot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
+    var tot = 0; items.forEach(function(i){ tot += i.qty * i.price; });
     var ad = gv('areaDesc') || '[Area]';
     var disc = gv('disclaimer');
     var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labor Estimate - '+(gv('clientName')||'Client')+'</title><style>'+docCSS(brand)+'</style></head><body>';
     h += toolbar('ESTIMATE A &mdash; LABOR');
     h += '<div class="header">'+co(brand)+'<div class="badge">ESTIMATE A<br><small>LABOR COSTS</small></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Estimate Date</label><div class="value">'+E(fd(gv('estimateDate')))+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div><div class="info-box"><label>Estimate Valid For</label><div class="value">'+E('30 Days from Date Above')+'</div></div></div>';
-    h += '<div class="scope"><h3>Scope of Work &mdash; <span data-editable data-sqft>'+sq+'</span> sq ft '+E(ad)+'</h3><ul>';
+    var scopeHeading = gv('scopeTitle') || (sq + ' sq ft ' + ad);
+    h += '<div class="scope"><h3>Scope of Work &mdash; '+E(scopeHeading)+'</h3>';
+    h += '<p style="font-size:9pt;color:#6c757d;margin-bottom:6px">'+E(sq+' sq ft')+(gn('linft')>0?' &nbsp;|&nbsp; '+E(gn('linft')+' lin ft'):'')+ ' &mdash; '+E(ad)+'</p><ul>';
     scope.forEach(function(s){ h += '<li>'+E(s)+'</li>'; });
     h += '</ul></div>';
-    h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description of Work</th><th>Basis</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
     items.forEach(function(item, i){
-        var isSqFt = item.basis.toLowerCase().indexOf('sq ft') !== -1;
-        var lineTotal = isSqFt ? item.price * sq : item.price;
-        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.basis,'data-basis')+'</td><td>'+P('$'+f(item.price),'data-rate')+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
+        var lineTotal = item.qty * item.price;
+        h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.basis,'data-basis')+'</td><td>'+E(item.qty)+'</td><td>'+P('$'+f(item.price),'data-rate')+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
     });
-    h += '<tr class="subtotal-row"><td></td><td colspan="3">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
-    h += '<tr class="total-row"><td></td><td colspan="3">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
+    h += '<tr class="subtotal-row"><td></td><td colspan="4">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
+    h += '<tr class="total-row"><td></td><td colspan="4">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
     h += '</tbody></table>';
     h += '<div class="notes-section"><h3>Labor Estimate Notes</h3>';
     notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
@@ -2219,11 +2508,11 @@ function generateLabor() {
 function generateMaterials() {
     var brand = getBrand();
     var sq = gn('sqft'), mk = gn('materialsMarkup'), items = getMatItems(), notes = getNotes();
-    var sub = 0; items.forEach(function(i){ sub += (parseFloat(i.qty) || 1) * i.price; });
+    var sub = 0; items.forEach(function(i){ sub += i.qtyNum * i.price; });
     var ma = sub * (mk/100), mt = sub + ma;
-    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
+    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.qty * i.price; });
     var distItems = getDistMatItems();
-    var distSub = 0; distItems.forEach(function(i){ distSub += (parseFloat(i.qty) || 1) * i.price; });
+    var distSub = 0; distItems.forEach(function(i){ distSub += i.qtyNum * i.price; });
     var distName = gv('distName');
     var distPO = gv('distPO');
     var grand = labTot + mt + distSub;
@@ -2236,8 +2525,7 @@ function generateMaterials() {
     if (sn) { h += '<div class="supplier-note"><h4>MATERIAL SUPPLIER NOTE</h4><p>'+E(sn)+'</p></div>'; }
     h += '<table><thead><tr><th style="width:30px">#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
     items.forEach(function(item, i){
-        var qtyNum = parseFloat(item.qty) || 1;
-        var lineTotal = qtyNum * item.price;
+        var lineTotal = item.qtyNum * item.price;
         h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty,'data-qty')+'</td><td>'+P('$'+f(item.price),'data-unit-price')+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
     });
     h += '<tr class="subtotal-row"><td></td><td colspan="3">MATERIALS SUBTOTAL</td><td><span data-subtotal>$'+f(sub)+'</span></td></tr>';
@@ -2251,8 +2539,7 @@ function generateMaterials() {
         if (distPO) h += '<p style="font-size:9pt;color:#6c757d;margin-bottom:12px">PO / Account: '+E(distPO)+'</p>';
         h += '<table><thead><tr><th style="width:30px">#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
         distItems.forEach(function(item, i){
-            var qtyNum = parseFloat(item.qty) || 1;
-            var lineTotal = qtyNum * item.price;
+            var lineTotal = item.qtyNum * item.price;
             h += '<tr><td class="item-num">'+(i+1)+'</td><td class="item-desc"><strong>'+E(item.desc)+'</strong></td><td>'+E(item.qty)+'</td><td>$'+f(item.price)+'</td><td><strong>$'+f(lineTotal)+'</strong></td></tr>';
         });
         h += '<tr class="subtotal-row"><td></td><td colspan="3">DISTRIBUTOR MATERIALS SUBTOTAL</td><td>$'+f(distSub)+'</td></tr>';
@@ -2279,8 +2566,8 @@ function generateMaterials() {
 // ========== CHANGE ORDER ==========
 function generateChangeOrder() {
     var sq = gn('sqft'), mk = gn('materialsMarkup')/100;
-    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price; });
-    var mitems = getMatItems(), matSub = 0; mitems.forEach(function(i){ matSub += (parseFloat(i.qty) || 1) * i.price; });
+    var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.qty * i.price; });
+    var mitems = getMatItems(), matSub = 0; mitems.forEach(function(i){ matSub += i.qtyNum * i.price; });
     var matTot = matSub + (matSub * mk), orig = labTot + matTot;
     var disc = gv('disclaimer');
     var brand = getBrand();
@@ -2388,6 +2675,168 @@ document.addEventListener('click', function(e) {
     const drop = document.getElementById('clientAcDrop');
     if (drop && !e.target.closest('.client-ac-wrap')) drop.classList.remove('show');
 });
+
+// =====================================================================
+// CLIENT INSIGHTS & PATTERN INTELLIGENCE
+// =====================================================================
+function openClientInsights() {
+    document.getElementById('ciOverlay').style.display = 'flex';
+    document.getElementById('ciSearch').value = '';
+    ciRender();
+}
+function closeClientInsights() {
+    document.getElementById('ciOverlay').style.display = 'none';
+}
+
+function ciGetJobsByClient() {
+    var grouped = {};
+    Object.keys(_cloudJobs).forEach(function(jobName) {
+        var j = _cloudJobs[jobName];
+        var client = j.clientName || 'Unknown';
+        if (!grouped[client]) grouped[client] = [];
+        grouped[client].push({ name: jobName, data: j });
+    });
+    return grouped;
+}
+
+function ciRender() {
+    var el = document.getElementById('ciContent');
+    var filter = (document.getElementById('ciSearch').value || '').toLowerCase().trim();
+    var grouped = ciGetJobsByClient();
+    var clients = Object.keys(grouped).sort();
+    if (filter) clients = clients.filter(function(c) { return c.toLowerCase().includes(filter); });
+
+    if (clients.length === 0) {
+        el.innerHTML = '<p style="color:#7f8c8d;text-align:center;padding:20px">No clients found. Save some jobs first.</p>';
+        return;
+    }
+
+    var html = '';
+    clients.forEach(function(clientName) {
+        var jobs = grouped[clientName];
+        var clientMeta = Object.values(_clientDB).find(function(c) { return c.name === clientName; }) || {};
+        var patterns = ciAnalyzePatterns(jobs);
+
+        html += '<div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:14px;margin-bottom:10px">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+        html += '<div><span style="color:#3498db;font-weight:700;font-size:14px">' + escHtml(clientName) + '</span>';
+        if (clientMeta.property) html += ' <span style="color:#7f8c8d;font-size:11px">&mdash; ' + escHtml(clientMeta.property) + '</span>';
+        if (clientMeta.city) html += ' <span style="color:#7f8c8d;font-size:11px">(' + escHtml(clientMeta.city) + ')</span>';
+        html += '</div>';
+        html += '<span style="background:#16213e;color:#f39c12;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px">' + jobs.length + ' job' + (jobs.length !== 1 ? 's' : '') + '</span>';
+        html += '</div>';
+
+        // Pattern insights
+        if (patterns.avgTotal > 0) {
+            html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">';
+            html += '<span style="background:#1a2744;padding:4px 8px;border-radius:4px;font-size:10px;color:#95a5a6">Avg Total: <strong style="color:#2ecc71">$' + patterns.avgTotal.toFixed(0) + '</strong></span>';
+            html += '<span style="background:#1a2744;padding:4px 8px;border-radius:4px;font-size:10px;color:#95a5a6">Avg Labor/sf: <strong style="color:#f39c12">$' + patterns.avgLaborPerSf.toFixed(2) + '</strong></span>';
+            if (patterns.commonTrade) html += '<span style="background:#1a2744;padding:4px 8px;border-radius:4px;font-size:10px;color:#95a5a6">Common Trade: <strong style="color:#3498db">' + escHtml(patterns.commonTrade) + '</strong></span>';
+            if (patterns.avgMarkup > 0) html += '<span style="background:#1a2744;padding:4px 8px;border-radius:4px;font-size:10px;color:#95a5a6">Avg Markup: <strong style="color:#e67e22">' + patterns.avgMarkup.toFixed(0) + '%</strong></span>';
+            html += '</div>';
+        }
+
+        // Suggested rates
+        if (patterns.suggestedRates.length > 0) {
+            html += '<div style="margin-bottom:8px"><span style="font-size:10px;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px">Suggested Rates (from history)</span>';
+            html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
+            patterns.suggestedRates.forEach(function(r) {
+                html += '<span style="background:#0a1628;border:1px solid #2a3a5c;padding:3px 7px;border-radius:4px;font-size:10px;color:#bdc3c7">' + escHtml(r.desc) + ': <strong style="color:#2ecc71">$' + r.price.toFixed(2) + '</strong> <span style="color:#7f8c8d">' + escHtml(r.basis) + '</span></span>';
+            });
+            html += '</div></div>';
+        }
+
+        // Job list
+        html += '<div style="border-top:1px solid #1a2744;padding-top:6px;margin-top:4px">';
+        jobs.sort(function(a,b) { return (b.data.savedAt || 0) - (a.data.savedAt || 0); }).forEach(function(job) {
+            var d = job.data;
+            var saveDate = d.savedAt ? new Date(d.savedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+            var total = ciCalcJobTotal(d);
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:11px">';
+            html += '<div><span style="color:#bdc3c7">' + escHtml(job.name) + '</span> <span style="color:#7f8c8d;font-size:10px">' + saveDate + '</span></div>';
+            html += '<div style="display:flex;gap:8px;align-items:center"><span style="color:#2ecc71;font-weight:600;font-family:monospace">$' + total.toFixed(0) + '</span>';
+            html += '<button onclick="ciLoadJob(\'' + escHtml(job.name).replace(/'/g, "\\'") + '\')" style="background:#2a3a5c;color:#bdc3c7;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px">Load</button></div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+    });
+
+    el.innerHTML = html;
+}
+
+function ciCalcJobTotal(jobData) {
+    var labTot = 0, matTot = 0;
+    if (jobData.laborItems) {
+        jobData.laborItems.forEach(function(i) {
+            labTot += (i.qty || 1) * (i.price || 0);
+        });
+    }
+    if (jobData.matItems) {
+        var mk = parseFloat(jobData.materialsMarkup) || 15;
+        var matSub = 0;
+        jobData.matItems.forEach(function(i) {
+            var qn = parseFloat(String(i.qty||'1').replace(/[^0-9.]/g, '')) || 1;
+            matSub += qn * (i.price || 0);
+        });
+        matTot = matSub + matSub * (mk / 100);
+    }
+    return labTot + matTot;
+}
+
+function ciAnalyzePatterns(jobs) {
+    var totals = [], laborPerSf = [], trades = {}, markups = [], allLabor = {};
+    jobs.forEach(function(job) {
+        var d = job.data;
+        var total = ciCalcJobTotal(d);
+        totals.push(total);
+        var sqft = parseFloat(d.sqft) || 48;
+        if (d.laborItems) {
+            var lt = 0;
+            d.laborItems.forEach(function(i) {
+                lt += (i.qty || 1) * (i.price || 0);
+                var key = (i.desc || '').toLowerCase().trim();
+                if (key && i.price > 0) {
+                    if (!allLabor[key]) allLabor[key] = { desc: i.desc, basis: i.basis, prices: [] };
+                    allLabor[key].prices.push(i.price);
+                }
+            });
+            laborPerSf.push(lt / sqft);
+        }
+        if (d.tradeType) trades[d.tradeType] = (trades[d.tradeType] || 0) + 1;
+        if (d.materialsMarkup) markups.push(parseFloat(d.materialsMarkup));
+    });
+
+    var avgTotal = totals.length ? totals.reduce(function(a,b){return a+b;},0) / totals.length : 0;
+    var avgLPSF = laborPerSf.length ? laborPerSf.reduce(function(a,b){return a+b;},0) / laborPerSf.length : 0;
+    var avgMk = markups.length ? markups.reduce(function(a,b){return a+b;},0) / markups.length : 0;
+
+    var commonTrade = '';
+    var maxTradeCount = 0;
+    Object.keys(trades).forEach(function(t) { if (trades[t] > maxTradeCount) { maxTradeCount = trades[t]; commonTrade = t; } });
+
+    // Build suggested rates from most-used labor items
+    var suggested = Object.values(allLabor).filter(function(l) { return l.prices.length >= 1; })
+        .map(function(l) {
+            var avg = l.prices.reduce(function(a,b){return a+b;},0) / l.prices.length;
+            return { desc: l.desc, basis: l.basis || '', price: avg, count: l.prices.length };
+        })
+        .sort(function(a,b) { return b.count - a.count; })
+        .slice(0, 6);
+
+    return {
+        avgTotal: avgTotal,
+        avgLaborPerSf: avgLPSF,
+        commonTrade: commonTrade,
+        avgMarkup: avgMk,
+        suggestedRates: suggested
+    };
+}
+
+function ciLoadJob(jobName) {
+    closeClientInsights();
+    document.getElementById('savedJobsSelect').value = jobName;
+    loadJob();
+}
 
 // =====================================================================
 // QUICK TEMPLATES
@@ -3977,8 +4426,6 @@ function scanPopulateUI(data) {
     document.getElementById('scanResults').style.display = 'block';
 }
 
-function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
 // Fallback text parser for Tesseract output
 function scanParseTextFallback(text) {
     var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
@@ -5086,15 +5533,11 @@ function autoSaveInvoice(type) {
     const sq = gn('sqft');
     const litems = getLaborItems();
     let laborTotal = 0;
-    litems.forEach(i => {
-        laborTotal += (i.basis.toLowerCase().indexOf('sq ft') !== -1) ? i.price * sq : i.price;
-    });
+    litems.forEach(i => { laborTotal += i.qty * i.price; });
     
     const mitems = getMatItems();
     let matSubtotal = 0;
-    mitems.forEach(i => {
-        matSubtotal += (parseFloat(i.qty) || 1) * i.price;
-    });
+    mitems.forEach(i => { matSubtotal += i.qtyNum * i.price; });
     
     const markup = gn('materialsMarkup') / 100;
     const matTotal = matSubtotal + (matSubtotal * markup);

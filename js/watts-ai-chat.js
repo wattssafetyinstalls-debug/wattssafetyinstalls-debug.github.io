@@ -7,6 +7,8 @@
 
   var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
   var MODEL = 'gemini-2.5-flash';
+  var SESSION_KEY = 'watts-chat-session';
+  var LEAD_KEY = 'watts-ai-leads';
 
   var isSI = window.location.pathname.startsWith('/safety-installs');
   var B = isSI
@@ -56,7 +58,26 @@
     '- BOOKING: If someone wants to schedule, say "You can book a time right on our website — just head to our contact page and pick a slot that works for you: https://wattsatpcontractor.com/contact.html#cal-embed Or I can take your info and call you to set it up!"';
 
   var hist = [], open = false, busy = false;
-  var lead = { name:null, phone:null };
+  var lead = { name:null, phone:null, email:null };
+
+  // Restore session from localStorage
+  function restoreSession() {
+    try {
+      var s = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+      if (s && s.hist && s.hist.length && (Date.now() - s.ts) < 1800000) {
+        hist = s.hist;
+        if (s.lead) lead = s.lead;
+        return true;
+      }
+    } catch(x) {}
+    return false;
+  }
+  function saveSession() {
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({hist:hist, lead:lead, ts:Date.now()}));
+    } catch(x) {}
+  }
+  var hadSession = restoreSession();
 
   // ── STYLES ──
   var s = document.createElement('style');
@@ -162,14 +183,38 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   var snd  = document.getElementById('wc-snd');
   var qr   = document.getElementById('wc-qr');
 
-  function doOpen()  { open=true;  win.classList.add('on'); trig.classList.remove('has-dot'); trig.style.display='none'; if(!hist.length) greet(); setTimeout(function(){inp.focus()},200); }
+  function doOpen()  {
+    open=true; win.classList.add('on'); trig.classList.remove('has-dot'); trig.style.display='none';
+    if(!msgs.children.length) {
+      if(hadSession && hist.length) { replayHistory(); }
+      else if(!hist.length) { greet(); }
+    }
+    setTimeout(function(){inp.focus()},200);
+  }
+  function replayHistory() {
+    hist.forEach(function(m) {
+      var who = m.role === 'user' ? 'u' : 'b';
+      var txt = m.parts[0].text;
+      addMsg(txt, who, true);
+    });
+    qr.style.display = 'none';
+  }
   function doClose() { open=false; win.classList.remove('on'); trig.style.display=''; }
 
-  function addMsg(txt, who) {
+  function addMsg(txt, who, silent) {
     var d = document.createElement('div');
     d.className = 'wm ' + who;
-    d.innerHTML = txt.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>').replace(/\((\d{3})\)\s?(\d{3})-(\d{4})/g,'<a href="tel:+1$1$2$3">($1) $2-$3</a>');
+    if (silent) d.style.animation = 'none';
+    d.innerHTML = formatMsg(txt);
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+  }
+  function formatMsg(txt) {
+    return txt
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n/g,'<br>')
+      .replace(/\((\d{3})\)\s?(\d{3})-(\d{4})/g,'<a href="tel:+1$1$2$3">($1) $2-$3</a>')
+      .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,'<a href="mailto:$1">$1</a>')
+      .replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
   }
 
   function typing(on) {
@@ -222,6 +267,8 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
       hist.push({role:'model',parts:[{text:reply}]});
       getLead(reply);
       if (lead.name && lead.phone) saveLead();
+      saveSession();
+      updateQuickReplies();
       busy=false; snd.disabled=false; inp.focus();
     }).catch(function() {
       typing(false);
@@ -257,19 +304,42 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   function getLead(t) {
     var ph = t.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
     if (ph) lead.phone=ph[1];
-    var nm = t.match(/(?:my name is|i'm|i am|this is|name:?|call me|it's|hey i'm|hey im)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/i);
-    if (nm) lead.name=nm[1];
+    var nm = t.match(/(?:my name is|i'm|i am|this is|name:?|call me|it's|hey i'm|hey im|^\s*)([A-Z][a-z]{1,15}(?:\s[A-Z][a-z]{1,15})?)/i);
+    if (nm && nm[1].length > 1 && !/^(?:I|A|The|My|It|We|He|She|So|Ok|Hi|Hey|Yes|No|Do|Is|Im)$/i.test(nm[1])) lead.name=nm[1];
     var em = t.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     if (em) lead.email=em[0];
   }
 
   function saveLead() {
     try {
-      var ls = JSON.parse(localStorage.getItem('watts-ai-leads')||'[]');
-      var e = {name:lead.name,phone:lead.phone,brand:B.name,page:location.pathname,ts:new Date().toISOString()};
+      var ls = JSON.parse(localStorage.getItem(LEAD_KEY)||'[]');
+      var e = {name:lead.name,phone:lead.phone,email:lead.email||null,brand:B.name,page:location.pathname,ts:new Date().toISOString(),msgs:hist.length};
       var dup = false;
       for (var i=0;i<ls.length;i++) { if(ls[i].phone===e.phone&&ls[i].name===e.name){dup=true;break;} }
-      if (!dup) { ls.push(e); localStorage.setItem('watts-ai-leads',JSON.stringify(ls)); }
+      if (!dup) {
+        ls.push(e);
+        localStorage.setItem(LEAD_KEY,JSON.stringify(ls));
+        sendLeadNotification(e);
+      }
+    } catch(x) {}
+  }
+  function sendLeadNotification(e) {
+    // Fire-and-forget to Formspree for email notification
+    try {
+      fetch('https://formspree.io/f/mjkjgrlb', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({
+          _subject:'AI Chat Lead: '+(e.name||'Unknown'),
+          name:e.name||'Not captured',
+          phone:e.phone||'Not captured',
+          email:e.email||'Not captured',
+          brand:e.brand,
+          page:'https://wattsatpcontractor.com'+e.page,
+          source:'AI Chat Widget',
+          messages:e.msgs+' messages exchanged'
+        })
+      });
     } catch(x) {}
   }
 
@@ -278,13 +348,33 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   document.getElementById('wc-x').addEventListener('click', doClose);
   snd.addEventListener('click', function(){ send(inp.value); });
   inp.addEventListener('keydown', function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(inp.value);} });
-  qr.addEventListener('click', function(e){ var b=e.target.closest('.qr'); if(b) send(b.dataset.m); });
+  qr.addEventListener('click', function(e){
+    var b=e.target.closest('.qr'); if(!b) return;
+    var m=b.dataset.m;
+    if(m.slice(-1)===' ') { inp.value=m; inp.focus(); } else { send(m); }
+  });
 
-  // Nudge after 8s
-  setTimeout(function(){ if(!open&&!hist.length) trig.classList.add('has-dot'); }, 8000);
+  // Smart quick replies that adapt
+  function updateQuickReplies() {
+    if (hist.length < 4) return;
+    var has = function(k){ return hist.some(function(m){return m.parts[0].text.toLowerCase().indexOf(k)!==-1;}); };
+    var btns = [];
+    if (!lead.name) btns.push({m:'My name is ',l:'Share My Name'});
+    if (!lead.phone && lead.name) btns.push({m:'My number is ',l:'Share My Number'});
+    if (!has('estimate') && !has('schedule')) btns.push({m:'I\'d like a free estimate',l:'Get Estimate'});
+    if (!has('cost') && !has('price') && !has('much')) btns.push({m:'How much does this cost?',l:'Pricing'});
+    if (btns.length > 0) {
+      qr.innerHTML = btns.map(function(b){return '<button class="qr" data-m="'+b.m+'">'+b.l+'</button>';}).join('');
+      qr.style.display = 'flex';
+    }
+  }
+
+  // Nudge after 6s
+  setTimeout(function(){ if(!open&&!hist.length&&!hadSession) trig.classList.add('has-dot'); }, 6000);
 
   // Save session on unload
   window.addEventListener('beforeunload', function(){
+    saveSession();
     if(hist.length>1) {
       try {
         var ss=JSON.parse(localStorage.getItem('watts-ai-sessions')||'[]');

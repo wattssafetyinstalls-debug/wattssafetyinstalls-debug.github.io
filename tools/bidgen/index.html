@@ -802,6 +802,7 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
         <div style="display:flex;gap:6px;flex:1;position:relative;">
             <input type="text" id="templateSearch" placeholder="Search 40+ templates... (e.g. grab bar, ramp, stairlift, flooring)" autocomplete="off" oninput="filterTemplates()" onfocus="filterTemplates()" style="flex:1;min-width:0;">
             <div id="templateDrop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:999;background:#16213e;border:1px solid #2a3a5c;border-radius:8px;max-height:340px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
+            <button id="templateMicBtn" onclick="toggleTemplateVoice()" style="white-space:nowrap;width:36px;min-width:36px;padding:0;display:flex;align-items:center;justify-content:center;font-size:16px;background:#1a2744;border:1px solid #2a3a5c;border-radius:6px;cursor:pointer;transition:all 0.2s;" title="Voice input">🎙</button>
             <button onclick="applySelectedTemplate()" style="white-space:nowrap">Apply</button>
             <button onclick="aiSmartFill()" style="white-space:nowrap;background:linear-gradient(135deg,#8e44ad,#3498db);color:white;font-weight:700;" title="Describe any job and Gemini 2.5 Pro auto-fills everything">🤖 AI Fill</button>
         </div>

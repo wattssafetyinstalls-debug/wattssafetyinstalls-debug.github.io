@@ -10,6 +10,100 @@
     var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
     var _selectedTemplateKey = '';
     var _lastAITemplate = null; // stores last AI-generated template for interlink use
+    var _speechRecognition = null; // Web Speech API instance
+    var _speechTarget = null; // which input element is receiving speech
+
+    // ── VOICE INPUT (Web Speech API) ────────────────────────────────
+    function hasSpeechSupport() {
+        return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    }
+
+    function startVoiceInput(targetId, statusId) {
+        if (!hasSpeechSupport()) {
+            alert('Speech recognition not supported in this browser. Use Chrome or Edge.');
+            return;
+        }
+
+        // Stop existing recognition
+        if (_speechRecognition) {
+            _speechRecognition.stop();
+            _speechRecognition = null;
+        }
+
+        var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        _speechRecognition = new SpeechRecognition();
+        _speechRecognition.continuous = true;
+        _speechRecognition.interimResults = true;
+        _speechRecognition.lang = 'en-US';
+        _speechTarget = document.getElementById(targetId);
+
+        var micBtn = document.getElementById(statusId);
+        var finalTranscript = _speechTarget ? _speechTarget.value : '';
+
+        if (micBtn) {
+            micBtn.style.background = '#e74c3c';
+            micBtn.style.animation = 'pulse 1s ease infinite';
+            micBtn.title = 'Listening... click to stop';
+        }
+
+        _speechRecognition.onresult = function(event) {
+            var interim = '';
+            for (var i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interim += event.results[i][0].transcript;
+                }
+            }
+            if (_speechTarget) {
+                _speechTarget.value = finalTranscript + interim;
+            }
+        };
+
+        _speechRecognition.onerror = function(event) {
+            if (event.error !== 'aborted') {
+                if (typeof showNotification === 'function') {
+                    showNotification('Mic error: ' + event.error + '. Try again.', 'error');
+                }
+            }
+            stopVoiceInput(statusId);
+        };
+
+        _speechRecognition.onend = function() {
+            stopVoiceInput(statusId);
+        };
+
+        _speechRecognition.start();
+    }
+
+    function stopVoiceInput(statusId) {
+        if (_speechRecognition) {
+            try { _speechRecognition.stop(); } catch(e) {}
+            _speechRecognition = null;
+        }
+        var micBtn = document.getElementById(statusId);
+        if (micBtn) {
+            micBtn.style.background = '';
+            micBtn.style.animation = '';
+            micBtn.title = 'Voice input';
+        }
+    }
+
+    function toggleVoiceInput(targetId, statusId) {
+        if (_speechRecognition) {
+            stopVoiceInput(statusId);
+        } else {
+            startVoiceInput(targetId, statusId);
+        }
+    }
+
+    window.toggleTemplateVoice = function() {
+        toggleVoiceInput('templateSearch', 'templateMicBtn');
+    };
+
+    window.toggleSmartFillVoice = function() {
+        toggleVoiceInput('aiSmartFillInput', 'smartFillMicBtn');
+    };
 
     // ── BUILD CATEGORY INDEX ─────────────────────────────────────────
     function getTemplateIndex() {
@@ -193,7 +287,10 @@
             '<h3 style="margin:0 0 8px;color:#3498db;font-size:18px;">🤖 AI Smart Fill — Gemini 2.5 Pro + Web Search</h3>' +
             '<p style="color:#a0a0a0;font-size:12px;margin:0 0 6px;">Describe the job in plain English. AI searches the web for <strong style="color:#4ade80">current material pricing</strong> (Menards, HD, Lowe\'s), uses <strong style="color:#f59e0b">real contractor jargon</strong>, and generates a complete bid-ready template.</p>' +
             '<p style="color:#71717a;font-size:10px;margin:0 0 12px;">Tip: Be specific — mention quantities, brands, sizes, room details, ADA requirements. The more detail, the better the template.</p>' +
-            '<textarea id="aiSmartFillInput" rows="5" style="width:100%;background:#0d1b2a;color:white;border:1px solid #2a3a5c;border-radius:8px;padding:12px;font-size:14px;resize:vertical;box-sizing:border-box;" placeholder="e.g. Install 3 ADA grab bars in a bathroom with tile walls — one 18in vertical by toilet, one 36in horizontal in shower, one 24in by tub entry. Walls are standard drywall with 1/2in tile surround. Need wood blocking behind drywall where studs aren\'t located...">' + (desc || '') + '</textarea>' +
+            '<div style="position:relative;">' +
+            '<textarea id="aiSmartFillInput" rows="5" style="width:100%;background:#0d1b2a;color:white;border:1px solid #2a3a5c;border-radius:8px;padding:12px;padding-right:44px;font-size:14px;resize:vertical;box-sizing:border-box;" placeholder="e.g. Install 3 ADA grab bars in a bathroom with tile walls — one 18in vertical by toilet, one 36in horizontal in shower, one 24in by tub entry...">' + (desc || '') + '</textarea>' +
+            (hasSpeechSupport() ? '<button id="smartFillMicBtn" onclick="toggleSmartFillVoice()" style="position:absolute;right:8px;top:8px;width:32px;height:32px;border-radius:50%;border:1px solid #2a3a5c;background:#1a2744;color:#e74c3c;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" title="Voice input">🎙</button>' : '') +
+            '</div>' +
             '<div style="display:flex;gap:8px;margin-top:14px;">' +
             '<button onclick="runAiSmartFill()" style="flex:1;padding:10px;background:linear-gradient(135deg,#8e44ad,#3498db);color:white;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;">Generate Template</button>' +
             '<button onclick="document.getElementById(\'aiSmartFillModal\').remove()" style="padding:10px 20px;background:#2a3a5c;color:#ccc;border:none;border-radius:8px;cursor:pointer;">Cancel</button>' +

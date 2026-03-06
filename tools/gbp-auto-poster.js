@@ -4,7 +4,7 @@
  * Automated Google Business Profile posting with AI content + stock photos.
  * Runs 3x/week via GitHub Actions (Mon/Wed/Fri).
  *
- * Requires env vars:
+ * Requires env vars (stored in GitHub Secrets — NEVER in code):
  *   GBP_CLIENT_ID, GBP_CLIENT_SECRET, GBP_REFRESH_TOKEN
  *   GEMINI_API_KEY
  *   PEXELS_API_KEY (optional — posts without image if missing)
@@ -178,7 +178,12 @@ async function getAccessToken() {
     headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
   }, body);
   var json = JSON.parse(res.data);
-  if (!json.access_token) throw new Error('OAuth failed: ' + res.data.substring(0, 300));
+  if (!json.access_token) {
+    console.error('  OAuth Response Status: ' + res.status);
+    console.error('  OAuth Error: ' + (json.error || 'unknown'));
+    console.error('  OAuth Error Desc: ' + (json.error_description || 'none'));
+    throw new Error('OAuth failed: ' + (json.error_description || json.error || res.data.substring(0, 300)));
+  }
   return json.access_token;
 }
 
@@ -189,12 +194,17 @@ async function getAccountId(accessToken) {
     path: '/v1/accounts', method: 'GET',
     headers: { 'Authorization': 'Bearer ' + accessToken }
   });
+  console.log('  Account API status: ' + res.status);
   var json = JSON.parse(res.data);
   if (json.accounts && json.accounts.length > 0) {
     // accounts[].name is like "accounts/123456789"
     var accountName = json.accounts[0].name;
     console.log('  Account: ' + accountName);
     return accountName;
+  }
+  if (json.error) {
+    console.error('  Account Error: ' + json.error.message);
+    console.error('  Account Error Status: ' + json.error.status);
   }
   throw new Error('No GBP accounts found: ' + res.data.substring(0, 300));
 }

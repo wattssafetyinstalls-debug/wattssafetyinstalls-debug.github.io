@@ -827,6 +827,146 @@ async function handleScheduled(env) {
 }
 
 // =====================================================================
+// ROUTE: POST /contract/send-sms — Text contract link to client
+// Body: { phone, message, ownerPin }
+// Uses MailChannels → carrier email-to-SMS gateway
+// =====================================================================
+const CARRIER_GATEWAYS = {
+  att: 'txt.att.net',
+  tmobile: 'tmomail.net',
+  verizon: 'vtext.com',
+  sprint: 'messaging.sprintpcs.com',
+  uscellular: 'email.uscc.net',
+  metro: 'mymetropcs.com',
+  boost: 'sms.myboostmobile.com',
+  cricket: 'sms.cricketwireless.net',
+};
+
+async function handleContractSendSMS(request, env, corsHeaders) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+  }
+
+  try {
+    const body = await request.json();
+    const { phone, message, carrier, ownerPin } = body;
+
+    if (!phone || !message || !ownerPin) {
+      return jsonResponse({ error: 'Missing required fields: phone, message, ownerPin' }, 400, corsHeaders);
+    }
+
+    if (ownerPin !== env.OWNER_PIN) {
+      return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+    }
+
+    // Clean phone number — digits only
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length < 10) {
+      return jsonResponse({ error: 'Invalid phone number' }, 400, corsHeaders);
+    }
+
+    // Use specified carrier gateway, default to AT&T
+    const gateway = CARRIER_GATEWAYS[carrier || 'att'] || CARRIER_GATEWAYS.att;
+    const smsEmail = cleanPhone + '@' + gateway;
+
+    // Send via MailChannels
+    const res = await fetch('https://api.mailchannels.net/tx/v1/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: smsEmail }] }],
+        from: { email: FROM_EMAIL, name: 'Watts Contractor' },
+        subject: 'Contract',
+        content: [{
+          type: 'text/plain',
+          value: message.substring(0, 300),
+        }],
+      }),
+    });
+
+    const ok = res.status >= 200 && res.status < 300;
+    return jsonResponse({
+      success: ok,
+      gateway: gateway,
+      status: res.status,
+    }, ok ? 200 : 502, corsHeaders);
+  } catch (error) {
+    return jsonResponse({ error: 'SMS send failed: ' + error.message }, 500, corsHeaders);
+  }
+}
+
+// =====================================================================
+// ROUTE: POST /contract/send-email — Email contract link to client
+// Body: { to, clientName, contractUrl, invoiceId, amount, ownerPin }
+// =====================================================================
+async function handleContractSendEmail(request, env, corsHeaders) {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+  }
+
+  try {
+    const body = await request.json();
+    const { to, clientName, contractUrl, invoiceId, amount, companyName, ownerPin } = body;
+
+    if (!to || !contractUrl || !ownerPin) {
+      return jsonResponse({ error: 'Missing required fields' }, 400, corsHeaders);
+    }
+
+    if (ownerPin !== env.OWNER_PIN) {
+      return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+    }
+
+    const company = companyName || 'Watts Safety Installs';
+    const name = clientName || 'Valued Customer';
+    const amountStr = amount ? '$' + parseFloat(amount).toFixed(2) : '';
+
+    const emailBody = [
+      `Hi ${name},`,
+      '',
+      `Thank you for choosing ${company}.`,
+      '',
+      'Please review and sign your contract/estimate using the secure link below:',
+      '',
+      contractUrl,
+      '',
+      'This link is secure and will lock once signed. Both parties retain read-only access for records.',
+      '',
+      'Contract Details:',
+      `  • Invoice: ${invoiceId || 'N/A'}`,
+      amountStr ? `  • Total: ${amountStr}` : '',
+      '',
+      'If you have any questions, please don\'t hesitate to reach out.',
+      '',
+      'Best regards,',
+      'Justin Watts',
+      company,
+      'Nebraska Licensed Contractor #54690-25',
+      '(405) 410-6402',
+      'Justin.Watts@WattsATPContractor.com',
+    ].filter(Boolean).join('\n');
+
+    const res = await fetch('https://api.mailchannels.net/tx/v1/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: to, name: name }] }],
+        from: { email: 'contracts@wattsatpcontractor.com', name: company },
+        subject: `Contract & Estimate from ${company}${invoiceId ? ' — ' + invoiceId : ''}`,
+        content: [{
+          type: 'text/plain',
+          value: emailBody,
+        }],
+      }),
+    });
+
+    const ok = res.status >= 200 && res.status < 300;
+    return jsonResponse({ success: ok, status: res.status }, ok ? 200 : 502, corsHeaders);
+  } catch (error) {
+    return jsonResponse({ error: 'Email send failed: ' + error.message }, 500, corsHeaders);
+  }
+}
+
+// =====================================================================
 // MAIN ROUTER
 // =====================================================================
 export default {
@@ -853,6 +993,12 @@ export default {
     }
     if (path === '/contract/status') {
       return handleContractStatus(request, env, corsHeaders);
+    }
+    if (path === '/contract/send-sms') {
+      return handleContractSendSMS(request, env, corsHeaders);
+    }
+    if (path === '/contract/send-email') {
+      return handleContractSendEmail(request, env, corsHeaders);
     }
 
     // Lead automation routes

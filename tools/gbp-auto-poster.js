@@ -117,7 +117,7 @@ async function callGemini(prompt) {
   var url = new URL('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=' + GEMINI_KEY);
   var body = JSON.stringify({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.85, maxOutputTokens: 600, topP: 0.92 }
+    generationConfig: { temperature: 0.85, maxOutputTokens: 8192, topP: 0.92 }
   });
   var res = await httpsRequest({
     hostname: url.hostname, path: url.pathname + url.search, method: 'POST',

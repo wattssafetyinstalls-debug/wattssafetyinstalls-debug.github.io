@@ -86,7 +86,7 @@
         .lc-row.lc-grand { background: #16213e; border-radius: 6px; padding: 6px 14px; margin: 2px 4px; }
         .lc-row.lc-grand span:last-child { color: #2ecc71; font-size: 16px; }
         .lc-row.lc-psf span:last-child { color: #f39c12; }
-        @media (max-width: 768px) { .live-calc { flex-direction: column; padding: 8px 12px; } .lc-row { min-width: 100%; } }
+        @media (max-width: 768px) { .live-calc { flex-wrap: wrap; padding: 4px 8px; gap: 0; } .lc-row { min-width: 48%; flex: 1 1 48%; padding: 2px 6px; font-size: 10px; } .lc-row span:last-child { font-size: 11px; } .lc-row.lc-grand { padding: 3px 8px; margin: 1px 2px; } .lc-row.lc-grand span:last-child { font-size: 13px; } .lc-row.lc-sm { font-size: 9px; } .lc-row.lc-sm span:last-child { font-size: 9px; } }
         /* Autocomplete dropdown */
         .ac-wrap { position: relative; }
         .ac-drop { position: absolute; top: 100%; left: 0; right: 0; background: #0f1a33; border: 1px solid #3498db; border-top: none; border-radius: 0 0 6px 6px; max-height: 220px; overflow-y: auto; z-index: 1000; display: none; }
@@ -365,12 +365,12 @@
            MOBILE RESPONSIVE — full touch-friendly layout
            ============================================================ */
         @media (max-width: 768px) {
-            body { font-size: 14px; }
-            .container { padding: 16px 12px; }
-            h1 { font-size: 20px; }
-            .subtitle { font-size: 12px; margin-bottom: 16px; }
-            .card { padding: 16px; margin-bottom: 14px; border-radius: 8px; }
-            .card h2 { font-size: 14px; flex-wrap: wrap; }
+            body { font-size: 13px; }
+            .container { padding: 10px 8px; padding-bottom: 50px; }
+            h1 { font-size: 18px; }
+            .subtitle { font-size: 11px; margin-bottom: 10px; }
+            .card { padding: 12px; margin-bottom: 10px; border-radius: 8px; }
+            .card h2 { font-size: 13px; flex-wrap: wrap; margin-bottom: 10px; }
 
             /* Header — stack title above CTA buttons */
             .container > div:first-child { flex-direction: column !important; align-items: stretch !important; gap: 12px; }
@@ -380,8 +380,8 @@
             /* Form grids — single column */
             .form-grid { grid-template-columns: 1fr !important; gap: 10px; }
 
-            /* Inputs — larger touch targets */
-            .form-group input, .form-group textarea, .form-group select { padding: 12px; font-size: 15px; }
+            /* Inputs — touch friendly but compact */
+            .form-group input, .form-group textarea, .form-group select { padding: 10px; font-size: 14px; }
 
             /* Labor item rows — stack vertically */
             #laborItemsContainer .li-row { grid-template-columns: 1fr !important; gap: 4px; }
@@ -393,11 +393,11 @@
 
             /* Scope / note rows */
             .scope-row, .note-row { flex-direction: column; gap: 4px; }
-            .scope-row input, .note-row input { font-size: 14px; padding: 12px; }
+            .scope-row input, .note-row input { font-size: 13px; padding: 10px; }
 
             /* Button row — wrap and stretch */
-            .btn-row { flex-direction: column; gap: 8px; }
-            .btn-row .btn { width: 100%; justify-content: center; padding: 14px 16px; font-size: 14px; }
+            .btn-row { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+            .btn-row .btn { flex: 1 1 45%; justify-content: center; padding: 10px 10px; font-size: 12px; }
 
             /* Sync bar */
             .sync-bar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
@@ -412,8 +412,8 @@
             .template-bar button { width: 100%; }
 
             /* Invoice widget — collapsed by default on mobile, full-width when open */
-            .invoice-widget { position: fixed; top: auto; bottom: 60px; right: 8px; left: 8px; width: auto; max-width: none; max-height: 50vh; border-radius: 10px; }
-            .invoice-widget.widget-collapsed { position: fixed; top: auto; bottom: 60px; right: 8px; left: auto; width: auto; }
+            .invoice-widget { position: fixed; top: auto; bottom: 44px; right: 6px; left: 6px; width: auto; max-width: none; max-height: 50vh; border-radius: 10px; }
+            .invoice-widget.widget-collapsed { position: fixed; top: auto; bottom: 44px; right: 6px; left: auto; width: auto; }
 
             /* Invoice modal — full screen on mobile */
             .invoice-modal-content { width: 100%; max-width: 100%; border-radius: 0; max-height: 100vh; }
@@ -443,10 +443,12 @@
             .cat-tabs { flex-wrap: wrap; gap: 4px; }
             .cat-tab { padding: 6px 12px; font-size: 11px; }
 
-            /* Live calculator panel — enhanced for mobile */
-            .live-calc { flex-direction: column; padding: 8px 12px; gap: 2px; }
-            .lc-row { min-width: 100%; padding: 4px 8px; font-size: 13px; }
-            .lc-row.lc-grand span:last-child { font-size: 18px; }
+            /* Live calculator panel — compact for mobile */
+            .live-calc { flex-wrap: wrap; padding: 3px 6px; gap: 0; }
+            .lc-row { min-width: 48%; flex: 1 1 48%; padding: 1px 6px; font-size: 10px; }
+            .lc-row span:last-child { font-size: 11px; }
+            .lc-row.lc-grand { padding: 2px 8px; margin: 1px; }
+            .lc-row.lc-grand span:last-child { font-size: 14px; }
 
             /* Scan modal — full screen */
             .scan-overlay { padding: 0; }
@@ -488,14 +490,14 @@
             .login-box input { width: 100%; font-size: 20px; }
 
             /* Instructions */
-            .instructions { padding: 14px 16px; }
-            .instructions ol { font-size: 12px; }
+            .instructions { padding: 10px 12px; }
+            .instructions ol { font-size: 11px; }
 
             /* Scan tab AI chat */
             #aiChatLog { min-height: 200px; max-height: 300px; }
 
             /* Spacer above live calc */
-            .container > div:last-child { height: 100px !important; }
+            .container > div:last-child { height: 60px !important; }
 
             /* Price section within cards */
             .price-section { margin-top: 10px; padding-top: 10px; }
@@ -503,10 +505,10 @@
 
         /* Small phones */
         @media (max-width: 400px) {
-            .container { padding: 10px 8px; }
-            .card { padding: 12px; }
-            h1 { font-size: 18px; }
-            .btn-row .btn { padding: 12px; font-size: 13px; }
+            .container { padding: 6px 6px; padding-bottom: 44px; }
+            .card { padding: 10px; }
+            h1 { font-size: 16px; }
+            .btn-row .btn { padding: 8px; font-size: 11px; flex: 1 1 100%; }
             #matItemsContainer .mi-row, #distMatContainer .di-row { grid-template-columns: 1fr !important; }
             .analytics-grid { grid-template-columns: 1fr !important; }
         }

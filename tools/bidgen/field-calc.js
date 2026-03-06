@@ -42,7 +42,8 @@
         btn.id = 'fieldCalcToggle';
         btn.title = 'Field Measurement Calculator';
         btn.innerHTML = '📐';
-        btn.style.cssText = 'position:fixed;bottom:90px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e67e22,#d35400);color:white;border:none;font-size:24px;cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(230,126,34,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;';
+        var isMob = window.innerWidth <= 768;
+        btn.style.cssText = 'position:fixed;' + (isMob ? 'bottom:56px;right:12px;width:42px;height:42px;font-size:20px;' : 'bottom:90px;right:24px;width:52px;height:52px;font-size:24px;') + 'border-radius:50%;background:linear-gradient(135deg,#e67e22,#d35400);color:white;border:none;cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(230,126,34,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;';
         btn.onmouseenter = function() { btn.style.transform = 'scale(1.1)'; };
         btn.onmouseleave = function() { btn.style.transform = 'scale(1)'; };
         btn.onclick = togglePanel;
@@ -68,10 +69,10 @@
     // ================================================================
     function buildPanelHTML() {
         return '\
-<div style="background:linear-gradient(135deg,#e67e22,#d35400);padding:14px 18px;display:flex;justify-content:space-between;align-items:center">\
+<div style="background:linear-gradient(135deg,#e67e22,#d35400);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">\
     <div>\
-        <div style="font-size:15px;font-weight:700">📐 Field Measurement Calculator</div>\
-        <div style="font-size:10px;opacity:0.85;margin-top:2px">Smart material & cut planning • Gemini AI</div>\
+        <div style="font-size:14px;font-weight:700">📐 Field Calculator</div>\
+        <div style="font-size:9px;opacity:0.85;margin-top:1px">Material & cut planning • Gemini AI</div>\
     </div>\
     <div style="display:flex;gap:6px">\
         <button onclick="fieldCalcClearAll()" style="background:rgba(255,255,255,0.15);color:white;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;font-weight:600">Clear</button>\
@@ -86,7 +87,7 @@
     <button class="fc-tab" onclick="fcSwitchTab(\'ai\')">🧠 AI Planner</button>\
 </div>\
 \
-<div style="flex:1;overflow-y:auto;padding:16px" id="fcContent">\
+<div style="flex:1;overflow-y:auto;padding:12px" id="fcContent">\
     ' + buildFlooringTab() + '\
     ' + buildDrywallTab() + '\
     ' + buildTrimTab() + '\
@@ -127,11 +128,19 @@
     @media(max-width:768px){\
         .fc-row{grid-template-columns:1fr !important}\
         .fc-row3{grid-template-columns:1fr 1fr !important}\
-        .fc-tab{font-size:10px;padding:8px 4px}\
-        #fieldCalcPanel{font-size:14px}\
-        .fc-input,.fc-select{padding:10px 12px;font-size:14px}\
-        .fc-btn{padding:14px;font-size:14px}\
-        .fc-remove{width:28px;height:28px;font-size:14px}\
+        .fc-tab{font-size:9px;padding:7px 3px}\
+        #fieldCalcPanel{font-size:12px}\
+        .fc-input,.fc-select{padding:8px 10px;font-size:13px}\
+        .fc-btn{padding:10px;font-size:12px}\
+        .fc-btn-secondary{padding:8px 6px;font-size:11px}\
+        .fc-remove{width:24px;height:24px;font-size:12px}\
+        .fc-group{margin-bottom:8px}\
+        .fc-result{padding:10px}\
+        .fc-result-title{font-size:10px;margin-bottom:6px}\
+        .fc-result-row{font-size:11px;padding:3px 0}\
+        .fc-note{font-size:10px;padding:6px;margin-top:6px}\
+        .fc-room-entry{padding:8px;margin-bottom:6px}\
+        .fc-label{font-size:9px;margin-bottom:3px}\
     }\
 </style>';
     }

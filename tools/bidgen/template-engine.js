@@ -1,5 +1,7 @@
 /**
- * BidGen Template Engine — Searchable dropdown, AI Smart Fill, predictive suggestions
+ * BidGen Template Engine v2 — Searchable dropdown, AI Smart Fill w/ Google Search Grounding,
+ * predictive suggestions, contractor jargon, local material pricing (Menards, HD, etc.),
+ * and deep interlinks with AI Mentor widget + Field Calculator.
  * Requires templates.js to be loaded first for JOB_TEMPLATES.
  */
 (function() {
@@ -7,6 +9,7 @@
 
     var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
     var _selectedTemplateKey = '';
+    var _lastAITemplate = null; // stores last AI-generated template for interlink use
 
     // ── BUILD CATEGORY INDEX ─────────────────────────────────────────
     function getTemplateIndex() {
@@ -187,9 +190,10 @@
         modal.id = 'aiSmartFillModal';
         modal.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:20px;';
         modal.innerHTML = '<div style="background:#16213e;border-radius:12px;padding:28px;max-width:520px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,0.5);">' +
-            '<h3 style="margin:0 0 8px;color:#3498db;font-size:18px;">🤖 AI Smart Fill — Gemini 2.5 Pro</h3>' +
-            '<p style="color:#a0a0a0;font-size:12px;margin:0 0 16px;">Describe the job in plain English. AI will generate a complete template with labor, materials, scope, notes, and disclaimer.</p>' +
-            '<textarea id="aiSmartFillInput" rows="4" style="width:100%;background:#0d1b2a;color:white;border:1px solid #2a3a5c;border-radius:8px;padding:12px;font-size:14px;resize:vertical;box-sizing:border-box;" placeholder="e.g. Install 3 grab bars in a bathroom with tile walls, one 18 inch vertical by toilet, one 36 inch horizontal in shower, one 24 inch by tub entry...">' + (desc || '') + '</textarea>' +
+            '<h3 style="margin:0 0 8px;color:#3498db;font-size:18px;">🤖 AI Smart Fill — Gemini 2.5 Pro + Web Search</h3>' +
+            '<p style="color:#a0a0a0;font-size:12px;margin:0 0 6px;">Describe the job in plain English. AI searches the web for <strong style="color:#4ade80">current material pricing</strong> (Menards, HD, Lowe\'s), uses <strong style="color:#f59e0b">real contractor jargon</strong>, and generates a complete bid-ready template.</p>' +
+            '<p style="color:#71717a;font-size:10px;margin:0 0 12px;">Tip: Be specific — mention quantities, brands, sizes, room details, ADA requirements. The more detail, the better the template.</p>' +
+            '<textarea id="aiSmartFillInput" rows="5" style="width:100%;background:#0d1b2a;color:white;border:1px solid #2a3a5c;border-radius:8px;padding:12px;font-size:14px;resize:vertical;box-sizing:border-box;" placeholder="e.g. Install 3 ADA grab bars in a bathroom with tile walls — one 18in vertical by toilet, one 36in horizontal in shower, one 24in by tub entry. Walls are standard drywall with 1/2in tile surround. Need wood blocking behind drywall where studs aren\'t located...">' + (desc || '') + '</textarea>' +
             '<div style="display:flex;gap:8px;margin-top:14px;">' +
             '<button onclick="runAiSmartFill()" style="flex:1;padding:10px;background:linear-gradient(135deg,#8e44ad,#3498db);color:white;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;">Generate Template</button>' +
             '<button onclick="document.getElementById(\'aiSmartFillModal\').remove()" style="padding:10px 20px;background:#2a3a5c;color:#ccc;border:none;border-radius:8px;cursor:pointer;">Cancel</button>' +
@@ -202,38 +206,103 @@
         setTimeout(function() { document.getElementById('aiSmartFillInput').focus(); }, 100);
     };
 
+    // ── CONTEXT GATHERING — pull data from BidGen, Field Calc, Catalog ──
+    function gatherBidContext() {
+        var ctx = '';
+        try {
+            var fields = [
+                ['tradeType','Trade'],['clientName','Client'],['complexName','Property'],
+                ['unitNum','Unit'],['jobCity','City'],['sqft','SqFt'],['linft','LinFt'],
+                ['areaDesc','Area'],['materialsMarkup','Markup%']
+            ];
+            fields.forEach(function(f) {
+                var el = document.getElementById(f[0]);
+                if (el && el.value) ctx += f[1] + ': ' + el.value + '\n';
+            });
+            if (typeof getLaborItems === 'function') {
+                var li = getLaborItems();
+                if (li.length) {
+                    ctx += '\nExisting Labor Items:\n';
+                    li.forEach(function(i) { ctx += '  - ' + i.desc + ' (' + i.qty + ' x $' + i.price + ')\n'; });
+                }
+            }
+            if (typeof getMatItems === 'function') {
+                var mi = getMatItems();
+                if (mi.length) {
+                    ctx += '\nExisting Material Items:\n';
+                    mi.forEach(function(i) { ctx += '  - ' + i.desc + ' (' + i.qty + ' x $' + i.price + ')\n'; });
+                }
+            }
+            if (typeof _catalog !== 'undefined' && _catalog && _catalog.materials) {
+                var keys = Object.keys(_catalog.materials);
+                if (keys.length) {
+                    ctx += '\nMaterial Catalog (recent prices):\n';
+                    keys.slice(0, 15).forEach(function(k) {
+                        var item = _catalog.materials[k];
+                        ctx += '  ' + k + ': $' + (item.lastPrice || '?') + '\n';
+                    });
+                }
+            }
+        } catch(e) {}
+        return ctx;
+    }
+
     window.runAiSmartFill = function() {
         var input = document.getElementById('aiSmartFillInput');
         var status = document.getElementById('aiSmartFillStatus');
         if (!input || !input.value.trim()) { alert('Please describe the job.'); return; }
 
         var jobDesc = input.value.trim();
+        var existingContext = gatherBidContext();
         status.style.display = 'block';
-        status.innerHTML = '<div style="text-align:center;color:#3498db;font-size:13px;"><div style="margin-bottom:8px;">⏳ Gemini 2.5 Pro is generating your template...</div><div style="width:100%;height:3px;background:#0d1b2a;border-radius:2px;overflow:hidden;"><div style="width:60%;height:100%;background:linear-gradient(90deg,#8e44ad,#3498db);animation:pulse 1.5s ease infinite;border-radius:2px;"></div></div></div>';
+        status.innerHTML = '<div style="text-align:center;color:#3498db;font-size:13px;"><div style="margin-bottom:8px;">⏳ Gemini 2.5 Pro is searching the web & generating your template...</div><div style="width:100%;height:3px;background:#0d1b2a;border-radius:2px;overflow:hidden;"><div style="width:60%;height:100%;background:linear-gradient(90deg,#8e44ad,#3498db);animation:pulse 1.5s ease infinite;border-radius:2px;"></div></div></div>';
 
-        var prompt = 'You are BidGen Template Generator for a Nebraska general contractor. Generate a complete job template from this description.\n\n' +
-            'JOB DESCRIPTION: ' + jobDesc + '\n\n' +
-            'Return ONLY a valid JSON object (no markdown, no code fences) with this EXACT structure:\n' +
-            '{\n' +
-            '  "trade": "general|plumbing|electrical|flooring|painting|roofing|carpet_tile",\n' +
-            '  "areaDesc": "short area description",\n' +
-            '  "sqft": number,\n' +
-            '  "markup": number (15-25),\n' +
-            '  "scopeTitle": "scope heading for the bid",\n' +
-            '  "scope": ["scope item 1", "scope item 2", ...],\n' +
-            '  "notes": ["note 1", "note 2", ...],\n' +
-            '  "labor": [{"desc": "task", "basis": "per unit|per sq ft|1 lot|per run|per lin ft", "price": number}, ...],\n' +
-            '  "materials": [{"desc": "material name", "qty": "quantity string", "price": number}, ...],\n' +
-            '  "disclaimer": "unforeseen conditions clause text"\n' +
-            '}\n\n' +
-            'IMPORTANT RULES:\n' +
-            '- Use realistic Nebraska 2025 pricing\n' +
-            '- Include ALL labor steps (demo, prep, install, cleanup)\n' +
-            '- Include ALL materials needed\n' +
-            '- Scope items should be professional bid language\n' +
-            '- Disclaimer should cover hidden conditions\n' +
-            '- Be thorough — a real contractor needs this to be complete\n' +
-            '- ONLY return the JSON object, nothing else';
+        var prompt = [
+            'You are BidGen Template Generator for Watts Safety Installs / Watts ATP Contractor — a Nebraska Licensed General Contractor (#54690-25) based in Norfolk, NE.',
+            '',
+            '## YOUR JOB',
+            'Generate a COMPLETE, bid-ready job template from the description below. You have access to Google Search — USE IT to look up:',
+            '- Current material prices at Menards, Home Depot, Lowe\'s, or specialty suppliers',
+            '- Correct trade terminology and contractor/jobsite jargon for line item descriptions',
+            '- ADA standards, building codes (Nebraska IRC), and manufacturer specs for products mentioned',
+            '- Real product names, SKUs, and model numbers when possible',
+            '',
+            '## CONTRACTOR LANGUAGE RULES',
+            'Write ALL line items in real contractor/tradesman language:',
+            '- Use field terms: "rough-in" not "prepare plumbing", "R&R" for remove and replace, "LF" for linear feet, "EA" for each',
+            '- Material descriptions should include size, type, brand when known: "3/4 PurePEX × 10ft stick" not just "PEX pipe"',
+            '- Labor basis options: "per sq ft", "per lin ft", "per unit", "1 lot", "per hour", "per run", "EA"',
+            '- Use abbreviations a contractor would: "GFI" or "GFCI", "WH" for water heater, "ADA" for accessibility, "PT" for pressure-treated, "LVP", "SLU" for self-leveling underlayment',
+            '',
+            '## PRICING RULES',
+            '- Search the web for CURRENT material prices — Menards Norfolk NE or nearest store, Home Depot, or online',
+            '- Labor rates must be Nebraska 2025-2026 market rates for a licensed GC',
+            '- If you find a specific product price online, use it. Include the source in a note.',
+            '- Material markup is separate (the user sets it in BidGen) — quote material at contractor/wholesale cost',
+            '',
+            '## JOB DESCRIPTION',
+            jobDesc,
+            '',
+            existingContext ? ('## EXISTING BID CONTEXT (already in BidGen form)\n' + existingContext + '\n') : '',
+            '## OUTPUT FORMAT',
+            'Return ONLY a valid JSON object (no markdown, no code fences, no explanation) with this EXACT structure:',
+            '{',
+            '  "trade": "general|plumbing|electrical|flooring|painting|roofing|carpet_tile",',
+            '  "areaDesc": "short area description",',
+            '  "sqft": number,',
+            '  "markup": number (15-25),',
+            '  "scopeTitle": "professional scope heading for the bid document",',
+            '  "scope": ["scope item 1 in professional bid language", ...],',
+            '  "notes": ["note with real specs, product names, code references", ...],',
+            '  "labor": [{"desc": "contractor-language task description", "basis": "per unit|per sq ft|1 lot|per lin ft|EA", "price": number}, ...],',
+            '  "materials": [{"desc": "specific product name with size/brand", "qty": "quantity with unit", "price": number}, ...],',
+            '  "disclaimer": "unforeseen conditions clause covering hidden conditions specific to THIS job type",',
+            '  "webSources": ["brief notes on pricing sources found, e.g. Menards Norfolk NE $X.XX for product Y"]',
+            '}',
+            '',
+            'CRITICAL: Include ALL labor steps (demo, prep, install, test, cleanup). Include ALL materials needed (fasteners, adhesives, consumables). Be thorough — a real contractor needs this to be COMPLETE and bid-ready.',
+            'ONLY return the JSON object.'
+        ].join('\n');
 
         var contents = [
             { role: 'user', parts: [{ text: prompt }] }
@@ -244,9 +313,10 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: contents,
+                tools: [{ googleSearch: {} }],
                 generationConfig: {
                     temperature: 0.4,
-                    maxOutputTokens: 8192,
+                    maxOutputTokens: 16384,
                     topP: 0.9
                 }
             })
@@ -284,6 +354,9 @@
             if (!template.labor || !template.materials || !template.trade) {
                 throw new Error('AI response missing required fields (labor, materials, trade).');
             }
+
+            // Store for interlink use
+            _lastAITemplate = template;
 
             // Apply the AI-generated template
             applyAITemplate(template, jobDesc);
@@ -369,10 +442,148 @@
         // Recalc
         if (typeof liveCalc === 'function') liveCalc();
 
+        // Show web sources if available
+        var sourceNote = '';
+        if (t.webSources && t.webSources.length) {
+            sourceNote = ' | Sources: ' + t.webSources.slice(0, 3).join('; ');
+        }
+
         if (typeof showNotification === 'function') {
-            showNotification('🤖 AI template generated and applied! Review and adjust as needed.', 'success');
+            showNotification('🤖 AI template applied! Web-sourced pricing included.' + sourceNote, 'success');
+        }
+
+        // Show interlink action bar
+        showPostApplyBar(desc);
+    }
+
+    // ── POST-APPLY INTERLINK BAR ────────────────────────────────────
+    function showPostApplyBar(jobDesc) {
+        var existing = document.getElementById('templateInterlinkBar');
+        if (existing) existing.remove();
+
+        var bar = document.createElement('div');
+        bar.id = 'templateInterlinkBar';
+        bar.style.cssText = 'background:linear-gradient(135deg,#0d1b2a,#16213e);border:1px solid #2a3a5c;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
+        bar.innerHTML = '<span style="font-size:11px;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;">Template Applied</span>' +
+            '<button onclick="templateReviewWithAI()" style="background:linear-gradient(135deg,#3498db,#8e44ad);color:white;border:none;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;" title="Have AI Mentor review the filled bid">🧠 Review with AI Mentor</button>' +
+            '<button onclick="templateSendToFieldCalc()" style="background:linear-gradient(135deg,#e67e22,#f39c12);color:white;border:none;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;" title="Open Field Calc with this job\'s measurements">📐 Open Field Calc</button>' +
+            '<button onclick="templatePriceLookup()" style="background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;border:none;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;" title="Search web for current material prices">🔍 Price Check</button>' +
+            '<button onclick="this.parentElement.remove()" style="background:#2a3a5c;color:#999;border:none;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;margin-left:auto;">✕</button>';
+
+        var templateBar = document.getElementById('templateBar');
+        if (templateBar && templateBar.parentNode) {
+            templateBar.parentNode.insertBefore(bar, templateBar.nextSibling);
         }
     }
+
+    // ── INTERLINK: Review with AI Mentor ─────────────────────────────
+    window.templateReviewWithAI = function() {
+        // Open AI Mentor panel and send a review request with current bid context
+        var toggle = document.getElementById('bgai-toggle');
+        var panel = document.getElementById('bgai-panel');
+        if (toggle && panel && !panel.classList.contains('open')) {
+            toggle.click();
+        }
+
+        // Find the AI Mentor's input and send button
+        setTimeout(function() {
+            var aiInput = document.getElementById('bgai-in');
+            var aiSend = document.getElementById('bgai-send');
+            if (aiInput && aiSend) {
+                var trade = (document.getElementById('tradeType') || {}).value || 'general';
+                var sqft = (document.getElementById('sqft') || {}).value || '?';
+                var area = (document.getElementById('areaDesc') || {}).value || '?';
+                aiInput.value = 'I just applied a template for a ' + trade + ' job (' + sqft + ' sq ft, ' + area + '). Do a FULL BID REVIEW — check my pricing against Nebraska market rates, flag anything I\'m missing, check my scope for gaps, and tell me if my material quantities look right for the square footage. Use your web search to verify current material pricing at Menards or Home Depot near Norfolk NE.';
+                aiSend.click();
+            }
+        }, 500);
+    };
+
+    // ── INTERLINK: Open Field Calc with job context ──────────────────
+    window.templateSendToFieldCalc = function() {
+        // Open Field Calc panel
+        var fcToggle = document.getElementById('fieldCalcToggle');
+        var fcPanel = document.getElementById('fieldCalcPanel');
+        if (fcToggle && fcPanel && fcPanel.style.display === 'none') {
+            fcToggle.click();
+        }
+
+        // Pre-fill Field Calc AI tab with job measurements context
+        setTimeout(function() {
+            // Switch to AI tab
+            if (typeof fcSwitchTab === 'function') fcSwitchTab('ai');
+
+            var aiInput = document.getElementById('fcAIInput');
+            if (aiInput) {
+                var sqft = (document.getElementById('sqft') || {}).value || '';
+                var area = (document.getElementById('areaDesc') || {}).value || '';
+                var trade = (document.getElementById('tradeType') || {}).value || '';
+                var linft = (document.getElementById('linft') || {}).value || '';
+                var msg = 'Job: ' + trade + ' — ' + area;
+                if (sqft) msg += '\nTotal area: ' + sqft + ' sq ft';
+                if (linft && linft !== '0') msg += '\nLinear feet: ' + linft + ' lf';
+
+                // Add material info from the template
+                if (_lastAITemplate && _lastAITemplate.materials) {
+                    msg += '\n\nMaterials to calculate:';
+                    _lastAITemplate.materials.forEach(function(m) {
+                        msg += '\n  - ' + m.desc + ' (' + m.qty + ')';
+                    });
+                }
+                aiInput.value = msg;
+            }
+        }, 300);
+
+        if (typeof showNotification === 'function') {
+            showNotification('📐 Field Calc opened with job context. Use AI Planner tab for cut optimization.', 'success');
+        }
+    };
+
+    // ── INTERLINK: Web Price Check ───────────────────────────────────
+    window.templatePriceLookup = function() {
+        var matItems = [];
+        try {
+            if (typeof getMatItems === 'function') matItems = getMatItems();
+        } catch(e) {}
+
+        if (!matItems.length) {
+            alert('No materials in the current bid to price check.');
+            return;
+        }
+
+        // Build a list of materials to search
+        var matList = matItems.map(function(m) { return m.desc; }).join(', ');
+
+        // Open AI Mentor and ask for price verification
+        var toggle = document.getElementById('bgai-toggle');
+        var panel = document.getElementById('bgai-panel');
+        if (toggle && panel && !panel.classList.contains('open')) {
+            toggle.click();
+        }
+
+        setTimeout(function() {
+            var aiInput = document.getElementById('bgai-in');
+            var aiSend = document.getElementById('bgai-send');
+            if (aiInput && aiSend) {
+                aiInput.value = 'Search the web and verify current pricing for these materials near Norfolk, NE (check Menards, Home Depot, Lowe\'s, and online suppliers):\n\n' +
+                    matItems.map(function(m) { return '- ' + m.desc + ' (currently listed at $' + m.price + ')'; }).join('\n') +
+                    '\n\nFor each material, tell me: current retail price, contractor price if different, where to get the best deal, and if my listed price is reasonable. Use a comparison table.';
+                aiSend.click();
+            }
+        }, 500);
+    };
+
+    // ── GLOBAL INTERLINK API — other widgets can call these ──────────
+    window.BidGenTemplates = {
+        getLastAITemplate: function() { return _lastAITemplate; },
+        getTemplateList: function() {
+            return Object.keys(JOB_TEMPLATES).map(function(k) {
+                return { key: k, label: JOB_TEMPLATES[k].label, cat: JOB_TEMPLATES[k].cat };
+            });
+        },
+        applyByKey: function(key) { applyTemplateByKey(key); },
+        getCurrentFormData: gatherBidContext
+    };
 
     // ── CLOSE DROPDOWN ON OUTSIDE CLICK ──────────────────────────────
     document.addEventListener('click', function(e) {

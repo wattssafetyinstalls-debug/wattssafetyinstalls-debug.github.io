@@ -146,6 +146,7 @@
       signal: controller.signal,
       body: JSON.stringify({
         contents: contents,
+        tools: [{ googleSearch: {} }],
         generationConfig: {
           temperature: 0.8,
           maxOutputTokens: 65536,

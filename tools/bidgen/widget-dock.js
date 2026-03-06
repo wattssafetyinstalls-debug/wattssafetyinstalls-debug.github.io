@@ -176,25 +176,25 @@
     return { x: e.clientX, y: e.clientY };
   }
 
+  var _btnPress = false; // track if press started on a button
+
   function startDrag(e) {
-    // Don't drag if clicking a button (let click handler run)
-    if (e.target.closest('.wd-btn')) {
-      _didDrag = false;
-      // Still track for drag detection
-      var pos = getXY(e);
-      _startX = pos.x;
-      _startY = pos.y;
+    var pos = getXY(e);
+    _startX = pos.x;
+    _startY = pos.y;
+    _didDrag = false;
+
+    // If pressing a button, don't start drag immediately — wait for move threshold
+    if (e.target.closest && e.target.closest('.wd-btn')) {
+      _btnPress = true;
       return;
     }
 
+    _btnPress = false;
     var dock = document.getElementById('wd-dock');
-    var pos = getXY(e);
     var rect = dock.getBoundingClientRect();
 
     _dragging = true;
-    _didDrag = false;
-    _startX = pos.x;
-    _startY = pos.y;
     _dockX = rect.left;
     _dockY = rect.top;
 
@@ -212,16 +212,17 @@
 
   function moveDrag(e) {
     if (!_dragging) {
-      // Check if a button press turned into a drag
-      if (e.target && _startX !== undefined) {
+      // Check if a button press turned into a drag (finger moved far enough)
+      if (_btnPress && _startX !== undefined) {
         var pos = getXY(e);
         var dist = Math.abs(pos.x - _startX) + Math.abs(pos.y - _startY);
-        if (dist > 8) {
+        if (dist > 10) {
           // Convert to drag
+          _btnPress = false;
+          _didDrag = true;
           var dock = document.getElementById('wd-dock');
           var rect = dock.getBoundingClientRect();
           _dragging = true;
-          _didDrag = true;
           _dockX = rect.left;
           _dockY = rect.top;
           dock.classList.add('dragging');
@@ -258,6 +259,7 @@
   }
 
   function endDrag(e) {
+    _btnPress = false;
     if (!_dragging) return;
     _dragging = false;
 

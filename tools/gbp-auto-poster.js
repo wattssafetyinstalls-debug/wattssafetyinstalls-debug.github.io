@@ -15,11 +15,11 @@ const path = require('path');
 const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
-const CLIENT_ID     = process.env.GBP_CLIENT_ID;
-const CLIENT_SECRET = process.env.GBP_CLIENT_SECRET;
-const REFRESH_TOKEN = process.env.GBP_REFRESH_TOKEN;
-const GEMINI_KEY    = process.env.GEMINI_API_KEY;
-const PEXELS_KEY    = process.env.PEXELS_API_KEY || '';
+const CLIENT_ID     = (process.env.GBP_CLIENT_ID || '').trim();
+const CLIENT_SECRET = (process.env.GBP_CLIENT_SECRET || '').trim();
+const REFRESH_TOKEN = (process.env.GBP_REFRESH_TOKEN || '').trim();
+const GEMINI_KEY    = (process.env.GEMINI_API_KEY || '').trim();
+const PEXELS_KEY    = (process.env.PEXELS_API_KEY || '').trim();
 const LOCATION_ID   = '09996134269287007529';
 
 if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN || !GEMINI_KEY) {
@@ -27,6 +27,14 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN || !GEMINI_KEY) {
   console.error('Need: GBP_CLIENT_ID, GBP_CLIENT_SECRET, GBP_REFRESH_TOKEN, GEMINI_API_KEY');
   process.exit(1);
 }
+
+// Debug: log credential lengths (NEVER the actual values) to verify GitHub Secrets loaded correctly
+console.log('🔑 Credential check (lengths only):');
+console.log('   CLIENT_ID: ' + CLIENT_ID.length + ' chars, starts with: ' + CLIENT_ID.substring(0, 6) + '...');
+console.log('   CLIENT_SECRET: ' + CLIENT_SECRET.length + ' chars');
+console.log('   REFRESH_TOKEN: ' + REFRESH_TOKEN.length + ' chars');
+console.log('   GEMINI_KEY: ' + GEMINI_KEY.length + ' chars');
+console.log('   PEXELS_KEY: ' + (PEXELS_KEY ? PEXELS_KEY.length + ' chars' : 'not set'));
 
 // ── SERVICE PAGE LINKS (for LEARN_MORE CTAs) ──
 const SERVICE_LINKS = {

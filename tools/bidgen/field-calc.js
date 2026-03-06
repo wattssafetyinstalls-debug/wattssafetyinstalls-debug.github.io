@@ -43,7 +43,7 @@
         btn.title = 'Field Measurement Calculator';
         btn.innerHTML = '📐';
         var isMob = window.innerWidth <= 768;
-        btn.style.cssText = 'position:fixed;' + (isMob ? 'bottom:56px;right:12px;width:42px;height:42px;font-size:20px;' : 'bottom:90px;right:24px;width:52px;height:52px;font-size:24px;') + 'border-radius:50%;background:linear-gradient(135deg,#e67e22,#d35400);color:white;border:none;cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(230,126,34,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;';
+        btn.style.cssText = 'position:fixed;' + (isMob ? 'bottom:56px;right:12px;width:40px;height:40px;font-size:18px;' : 'bottom:90px;right:24px;width:44px;height:44px;font-size:20px;') + 'border-radius:12px;background:rgba(255,255,255,0.06);color:#a1a1aa;border:1px solid rgba(255,255,255,0.08);cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:all 0.2s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
         btn.onmouseenter = function() { btn.style.transform = 'scale(1.1)'; };
         btn.onmouseleave = function() { btn.style.transform = 'scale(1)'; };
         btn.onclick = togglePanel;
@@ -53,7 +53,7 @@
         var panel = document.createElement('div');
         panel.id = 'fieldCalcPanel';
         var isMobile = window.innerWidth <= 768;
-        panel.style.cssText = 'display:none;position:fixed;' + (isMobile ? 'top:0;left:0;right:0;bottom:0;width:100%;max-height:100vh;border-radius:0;' : 'bottom:155px;right:24px;width:520px;max-height:75vh;border-radius:16px;') + 'background:#0d1529;border:1px solid #2a3a5c;box-shadow:0 20px 60px rgba(0,0,0,0.5);z-index:9997;overflow:hidden;font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;color:#ecf0f1;font-size:13px;';
+        panel.style.cssText = 'display:none;position:fixed;' + (isMobile ? 'top:0;left:0;right:0;bottom:0;width:100%;max-height:100vh;border-radius:0;' : 'bottom:145px;right:24px;width:480px;max-height:72vh;border-radius:14px;') + 'background:rgba(9,9,11,0.96);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);box-shadow:0 20px 60px rgba(0,0,0,0.5);z-index:9997;overflow:hidden;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e4e4e7;font-size:13px;-webkit-font-smoothing:antialiased;';
         panel.innerHTML = buildPanelHTML();
         document.body.appendChild(panel);
     }
@@ -69,18 +69,18 @@
     // ================================================================
     function buildPanelHTML() {
         return '\
-<div style="background:linear-gradient(135deg,#e67e22,#d35400);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">\
+<div style="background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">\
     <div>\
-        <div style="font-size:14px;font-weight:700">📐 Field Calculator</div>\
-        <div style="font-size:9px;opacity:0.85;margin-top:1px">Material & cut planning • Gemini AI</div>\
+        <div style="font-size:14px;font-weight:600;color:#fafafa;letter-spacing:-0.2px">📐 Field Calculator</div>\
+        <div style="font-size:9px;color:#52525b;margin-top:1px">Material & cut planning • Gemini AI</div>\
     </div>\
     <div style="display:flex;gap:6px">\
-        <button onclick="fieldCalcClearAll()" style="background:rgba(255,255,255,0.15);color:white;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;font-weight:600">Clear</button>\
-        <button onclick="document.getElementById(\'fieldCalcPanel\').style.display=\'none\'" style="background:rgba(255,255,255,0.2);color:white;border:none;width:26px;height:26px;border-radius:50%;font-size:14px;cursor:pointer;font-weight:700">×</button>\
+        <button onclick="fieldCalcClearAll()" style="background:rgba(255,255,255,0.06);color:#a1a1aa;border:1px solid rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:500;transition:all 0.15s">Clear</button>\
+        <button onclick="document.getElementById(\'fieldCalcPanel\').style.display=\'none\'" style="background:rgba(255,255,255,0.06);color:#71717a;border:1px solid rgba(255,255,255,0.08);width:24px;height:24px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;justify-content:center">×</button>\
     </div>\
 </div>\
 \
-<div style="display:flex;border-bottom:1px solid #1a2744;background:#0f1a33" id="fcTabs">\
+<div style="display:flex;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)" id="fcTabs">\
     <button class="fc-tab active" onclick="fcSwitchTab(\'flooring\')">🏠 Flooring</button>\
     <button class="fc-tab" onclick="fcSwitchTab(\'drywall\')">🧱 Drywall</button>\
     <button class="fc-tab" onclick="fcSwitchTab(\'trim\')">📏 Trim & Base</button>\
@@ -95,50 +95,52 @@
 </div>\
 \
 <style>\
-    .fc-tab{flex:1;background:none;border:none;color:#7f8c8d;padding:10px 8px;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}\
-    .fc-tab.active{color:#e67e22;border-bottom-color:#e67e22;background:rgba(230,126,34,0.08)}\
-    .fc-tab:hover{color:#ecf0f1;background:rgba(255,255,255,0.03)}\
+    .fc-tab{flex:1;background:none;border:none;color:#52525b;padding:8px 6px;font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;font-family:inherit}\
+    .fc-tab.active{color:#e4e4e7;border-bottom-color:#e4e4e7}\
+    .fc-tab:hover{color:#a1a1aa}\
     .fc-section{display:none}\
     .fc-section.active{display:block}\
-    .fc-label{font-size:10px;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:4px}\
-    .fc-input{width:100%;background:#16213e;border:1px solid #2a3a5c;color:#ecf0f1;padding:8px 10px;border-radius:6px;font-size:13px;outline:none}\
-    .fc-input:focus{border-color:#e67e22}\
-    .fc-select{width:100%;background:#16213e;border:1px solid #2a3a5c;color:#ecf0f1;padding:8px 10px;border-radius:6px;font-size:13px;outline:none;cursor:pointer}\
-    .fc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}\
-    .fc-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}\
-    .fc-group{margin-bottom:12px}\
-    .fc-btn{width:100%;background:linear-gradient(135deg,#e67e22,#d35400);color:white;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;margin-top:8px}\
-    .fc-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(230,126,34,0.3)}\
-    .fc-btn-secondary{background:#2a3a5c;color:#bdc3c7}\
-    .fc-btn-secondary:hover{background:#3a4a6c}\
-    .fc-result{background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:14px;margin-top:12px}\
-    .fc-result-title{font-size:11px;color:#e67e22;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}\
-    .fc-result-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(42,58,92,0.5)}\
+    .fc-label{font-size:10px;color:#52525b;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;margin-bottom:4px}\
+    .fc-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#e4e4e7;padding:8px 10px;border-radius:8px;font-size:13px;outline:none;font-family:inherit;transition:all 0.15s}\
+    .fc-input:focus{border-color:rgba(59,130,246,0.5);box-shadow:0 0 0 3px rgba(59,130,246,0.08)}\
+    .fc-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#e4e4e7;padding:8px 10px;border-radius:8px;font-size:13px;outline:none;cursor:pointer;font-family:inherit}\
+    .fc-select option{background:#18181b;color:#e4e4e7}\
+    .fc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}\
+    .fc-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}\
+    .fc-group{margin-bottom:10px}\
+    .fc-btn{width:100%;background:#fafafa;color:#09090b;border:none;padding:9px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.15s;margin-top:6px;font-family:inherit}\
+    .fc-btn:hover{background:#e4e4e7;transform:translateY(-1px)}\
+    .fc-btn-secondary{background:rgba(255,255,255,0.06);color:#a1a1aa;border:1px solid rgba(255,255,255,0.08)}\
+    .fc-btn-secondary:hover{background:rgba(255,255,255,0.1);color:#e4e4e7;transform:none}\
+    .fc-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;margin-top:10px}\
+    .fc-result-title{font-size:10px;color:#a1a1aa;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}\
+    .fc-result-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,0.04)}\
     .fc-result-row:last-child{border-bottom:none}\
-    .fc-result-label{color:#7f8c8d}\
-    .fc-result-value{color:#ecf0f1;font-weight:600}\
-    .fc-result-value.highlight{color:#e67e22;font-size:14px}\
-    .fc-divider{border:none;border-top:1px solid #1a2744;margin:16px 0}\
-    .fc-note{font-size:11px;color:#7f8c8d;line-height:1.5;margin-top:8px;padding:8px;background:rgba(230,126,34,0.05);border-radius:6px;border-left:3px solid #e67e22}\
-    .fc-room-entry{background:#16213e;border:1px solid #2a3a5c;border-radius:8px;padding:12px;margin-bottom:8px}\
+    .fc-result-label{color:#71717a}\
+    .fc-result-value{color:#e4e4e7;font-weight:600;font-variant-numeric:tabular-nums}\
+    .fc-result-value.highlight{color:#4ade80;font-size:14px}\
+    .fc-divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:14px 0}\
+    .fc-note{font-size:11px;color:#71717a;line-height:1.5;margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:2px solid rgba(255,255,255,0.1)}\
+    .fc-room-entry{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;margin-bottom:8px}\
     .fc-room-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}\
-    .fc-remove{background:#e74c3c;color:white;border:none;width:22px;height:22px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}\
-    .fc-send-btn{background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;border:none;padding:8px 14px;border-radius:6px;font-weight:600;font-size:11px;cursor:pointer;margin-top:8px;width:100%;transition:all 0.2s}\
-    .fc-send-btn:hover{filter:brightness(1.15)}\
+    .fc-remove{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.2);width:22px;height:22px;border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}\
+    .fc-remove:hover{background:rgba(239,68,68,0.25)}\
+    .fc-send-btn{background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.2);padding:7px 14px;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer;margin-top:6px;width:100%;transition:all 0.15s;font-family:inherit}\
+    .fc-send-btn:hover{background:rgba(34,197,94,0.2)}\
     @media(max-width:768px){\
         .fc-row{grid-template-columns:1fr !important}\
         .fc-row3{grid-template-columns:1fr 1fr !important}\
-        .fc-tab{font-size:9px;padding:7px 3px}\
+        .fc-tab{font-size:10px;padding:7px 4px}\
         #fieldCalcPanel{font-size:12px}\
         .fc-input,.fc-select{padding:8px 10px;font-size:13px}\
-        .fc-btn{padding:10px;font-size:12px}\
-        .fc-btn-secondary{padding:8px 6px;font-size:11px}\
-        .fc-remove{width:24px;height:24px;font-size:12px}\
+        .fc-btn{padding:9px;font-size:12px}\
+        .fc-btn-secondary{padding:7px 6px;font-size:11px}\
+        .fc-remove{width:22px;height:22px;font-size:11px}\
         .fc-group{margin-bottom:8px}\
         .fc-result{padding:10px}\
-        .fc-result-title{font-size:10px;margin-bottom:6px}\
+        .fc-result-title{font-size:9px;margin-bottom:6px}\
         .fc-result-row{font-size:11px;padding:3px 0}\
-        .fc-note{font-size:10px;padding:6px;margin-top:6px}\
+        .fc-note{font-size:10px;padding:6px 8px;margin-top:6px}\
         .fc-room-entry{padding:8px;margin-bottom:6px}\
         .fc-label{font-size:9px;margin-bottom:3px}\
     }\

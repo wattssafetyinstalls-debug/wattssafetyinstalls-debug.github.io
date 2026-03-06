@@ -210,6 +210,101 @@
     };
 
     // ================================================================
+    // TEXT CONTRACT LINK — Creates encrypted link + sends via SMS
+    // ================================================================
+    window.textContractLink = async function(invoiceId) {
+        var invoice = null;
+        for (var status in invoiceData) {
+            if (invoiceData[status][invoiceId]) {
+                invoice = invoiceData[status][invoiceId];
+                break;
+            }
+        }
+        if (!invoice) {
+            showNotification('Invoice not found: ' + invoiceId, 'error');
+            return;
+        }
+
+        var phone = prompt('Client phone number (10 digits):', invoice.clientPhone || '');
+        if (!phone) return;
+        phone = phone.replace(/\D/g, '');
+        if (phone.length < 10) {
+            showNotification('Enter a valid 10-digit phone number', 'error');
+            return;
+        }
+
+        var carrier = prompt('Client carrier:\n1) att\n2) tmobile\n3) verizon\n4) sprint\n5) cricket\n6) metro\n7) boost\n8) uscellular\n\nType carrier name:', 'att');
+        if (!carrier) carrier = 'att';
+
+        // Store phone on invoice
+        invoice.clientPhone = phone;
+
+        showNotification('⏳ Creating secure link & sending text...', 'info');
+
+        try {
+            // Step 1: Create encrypted contract link (if not already created)
+            var contractUrl = '';
+            if (invoice.contractLink && invoice.contractLink.url) {
+                contractUrl = invoice.contractLink.url;
+            } else {
+                var res = await fetch(PROXY + '/contract/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        invoiceId: invoiceId,
+                        contractData: invoice,
+                        clientEmail: invoice.clientEmail || '',
+                        clientName: invoice.clientName,
+                        ownerPin: hashPIN(userPIN)
+                    })
+                });
+                var data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to create contract link');
+
+                invoice.contractLink = {
+                    token: data.token,
+                    signature: data.signature,
+                    url: data.url,
+                    sentAt: new Date().toISOString(),
+                    status: 'sent'
+                };
+                contractUrl = data.url;
+                saveInvoiceToFirebase(invoice);
+            }
+
+            // Step 2: Send SMS with the encrypted link
+            var companyName = invoice.companyInfo ? invoice.companyInfo.companyName || 'Watts Safety Installs' : 'Watts Safety Installs';
+            var msg = companyName + ': ' + invoice.clientName + ', your estimate #' + invoiceId + ' ($' + (invoice.amount || 0).toFixed(2) + ') is ready to review & sign: ' + contractUrl + ' — Justin Watts (405) 410-6402';
+
+            var smsRes = await fetch(PROXY + '/contract/send-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone: phone,
+                    message: msg,
+                    carrier: carrier,
+                    ownerPin: hashPIN(userPIN)
+                })
+            });
+            var smsData = await smsRes.json();
+
+            if (smsData.success) {
+                showNotification('✅ Contract link texted to ' + phone + '!', 'success');
+            } else {
+                showNotification('⚠️ Link created but SMS may have failed. Copy the link manually.', 'warning');
+            }
+
+            // Show the modal with the link for backup
+            var body = 'Your estimate #' + invoiceId + ' is ready to review and sign:\n\n' + contractUrl + '\n\n— Justin Watts, ' + companyName;
+            showContractModal(invoice, contractUrl, phone + ' (texted)', body);
+
+        } catch (err) {
+            showNotification('❌ Error: ' + err.message, 'error');
+            console.error('Text contract failed:', err);
+        }
+    };
+
+    // ================================================================
     // CHECK CONTRACT STATUS — Poll KV for sent/viewed/signed
     // ================================================================
     window.checkContractStatus = async function(invoiceId) {

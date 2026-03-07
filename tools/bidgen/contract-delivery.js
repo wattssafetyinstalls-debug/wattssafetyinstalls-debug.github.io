@@ -11,6 +11,65 @@
     // ================================================================
     // SEND CONTRACT — Creates KV link + opens email compose
     // ================================================================
+    // ================================================================
+    // INLINE INPUT MODAL — replaces window.prompt() to avoid Chrome suppression
+    // ================================================================
+    function showInputModal(title, fields, onSubmit) {
+        var existing = document.getElementById('cdInputModal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.id = 'cdInputModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+        var fieldsHTML = '';
+        for (var i = 0; i < fields.length; i++) {
+            var f = fields[i];
+            if (f.type === 'select') {
+                var opts = '';
+                for (var j = 0; j < f.options.length; j++) {
+                    var o = f.options[j];
+                    var sel = o.value === f.value ? ' selected' : '';
+                    opts += '<option value="' + o.value + '"' + sel + '>' + o.label + '</option>';
+                }
+                fieldsHTML += '<div style="margin-bottom:12px"><label style="font-size:11px;color:#7f8c8d;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px">' + f.label + '</label><select id="cdInput_' + i + '" style="width:100%;background:#0f1a33;border:1px solid #2a3a5c;color:#ecf0f1;padding:10px 12px;border-radius:6px;font-size:14px;font-family:inherit">' + opts + '</select></div>';
+            } else {
+                fieldsHTML += '<div style="margin-bottom:12px"><label style="font-size:11px;color:#7f8c8d;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px">' + f.label + '</label><input type="' + (f.type || 'text') + '" id="cdInput_' + i + '" value="' + (f.value || '') + '" placeholder="' + (f.placeholder || '') + '" style="width:100%;background:#0f1a33;border:1px solid #2a3a5c;color:#ecf0f1;padding:10px 12px;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box" /></div>';
+            }
+        }
+
+        modal.innerHTML = '<div style="background:#16213e;border:1px solid #2a3a5c;border-radius:16px;max-width:420px;width:100%;padding:24px">'
+            + '<h3 style="color:#ecf0f1;font-size:16px;margin:0 0 16px">' + title + '</h3>'
+            + fieldsHTML
+            + '<div style="display:flex;gap:8px;margin-top:16px">'
+            + '<button id="cdInputSubmit" style="flex:1;background:#3498db;color:white;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Continue</button>'
+            + '<button id="cdInputCancel" style="flex:1;background:#2a3a5c;color:#bdc3c7;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Cancel</button>'
+            + '</div></div>';
+
+        document.body.appendChild(modal);
+
+        // Focus first input
+        var firstInput = modal.querySelector('input, select');
+        if (firstInput) setTimeout(function() { firstInput.focus(); }, 50);
+
+        document.getElementById('cdInputCancel').onclick = function() { modal.remove(); };
+        modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+
+        document.getElementById('cdInputSubmit').onclick = function() {
+            var values = [];
+            for (var k = 0; k < fields.length; k++) {
+                values.push(document.getElementById('cdInput_' + k).value.trim());
+            }
+            modal.remove();
+            onSubmit(values);
+        };
+
+        // Enter key submits
+        modal.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('cdInputSubmit').click();
+        });
+    }
+
     window.sendContractToClient = async function(invoiceId) {
         // Find the invoice across all statuses
         var invoice = null;
@@ -25,64 +84,67 @@
             return;
         }
 
-        // Prompt for client email if not stored
-        var clientEmail = invoice.clientEmail || '';
-        clientEmail = prompt('Client email address:', clientEmail);
-        if (!clientEmail) return;
+        // Show inline modal for client email instead of prompt()
+        showInputModal('📧 Send Contract to Client', [
+            { label: 'Client Email Address', type: 'email', value: invoice.clientEmail || '', placeholder: 'client@example.com' }
+        ], async function(values) {
+            var clientEmail = values[0];
+            if (!clientEmail) return;
 
-        // Validate email format
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
-            showNotification('Invalid email address', 'error');
-            return;
-        }
-
-        // Store email on invoice for future use
-        invoice.clientEmail = clientEmail;
-
-        showNotification('⏳ Generating secure contract link...', 'info');
-
-        try {
-            var res = await fetch(PROXY + '/contract/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    invoiceId: invoiceId,
-                    contractData: invoice,
-                    clientEmail: clientEmail,
-                    clientName: invoice.clientName,
-                    ownerPin: hashPIN(userPIN)
-                })
-            });
-
-            var data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || 'Failed to create contract link');
+            // Validate email format
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
+                showNotification('Invalid email address', 'error');
+                return;
             }
 
-            // Store contract link info on the invoice
-            invoice.contractLink = {
-                token: data.token,
-                signature: data.signature,
-                url: data.url,
-                sentAt: new Date().toISOString(),
-                status: 'sent'
-            };
+            // Store email on invoice for future use
+            invoice.clientEmail = clientEmail;
 
-            // Save updated invoice to Firebase
-            saveInvoiceToFirebase(invoice);
+            showNotification('⏳ Generating secure contract link...', 'info');
 
-            // Show success and open email compose
-            showNotification('✅ Secure contract link created!', 'success');
-            openEmailCompose(invoice, data.url, clientEmail);
+            try {
+                var res = await fetch(PROXY + '/contract/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        invoiceId: invoiceId,
+                        contractData: invoice,
+                        clientEmail: clientEmail,
+                        clientName: invoice.clientName,
+                        ownerPin: hashPIN(userPIN)
+                    })
+                });
 
-            // Refresh the detail view if it's open
-            invViewDetails(invoiceId);
+                var data = await res.json();
 
-        } catch (err) {
-            showNotification('❌ Error: ' + err.message, 'error');
-            console.error('Contract creation failed:', err);
-        }
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to create contract link');
+                }
+
+                // Store contract link info on the invoice
+                invoice.contractLink = {
+                    token: data.token,
+                    signature: data.signature,
+                    url: data.url,
+                    sentAt: new Date().toISOString(),
+                    status: 'sent'
+                };
+
+                // Save updated invoice to Firebase
+                saveInvoiceToFirebase(invoice);
+
+                // Show success and open email compose
+                showNotification('✅ Secure contract link created!', 'success');
+                openEmailCompose(invoice, data.url, clientEmail);
+
+                // Refresh the detail view if it's open
+                invViewDetails(invoiceId);
+
+            } catch (err) {
+                showNotification('❌ Error: ' + err.message, 'error');
+                console.error('Contract creation failed:', err);
+            }
+        });
     };
 
     // ================================================================
@@ -225,21 +287,32 @@
             return;
         }
 
-        var phone = prompt('Client phone number (10 digits):', invoice.clientPhone || '');
-        if (!phone) return;
-        phone = phone.replace(/\D/g, '');
-        if (phone.length < 10) {
-            showNotification('Enter a valid 10-digit phone number', 'error');
-            return;
-        }
+        // Show inline modal for phone + carrier instead of prompt()
+        showInputModal('📱 Text Contract Link to Client', [
+            { label: 'Client Phone Number (10 digits)', type: 'tel', value: invoice.clientPhone || '', placeholder: '4055551234' },
+            { label: 'Client Carrier', type: 'select', value: 'att', options: [
+                { value: 'att', label: 'AT&T' },
+                { value: 'tmobile', label: 'T-Mobile' },
+                { value: 'verizon', label: 'Verizon' },
+                { value: 'sprint', label: 'Sprint' },
+                { value: 'cricket', label: 'Cricket' },
+                { value: 'metro', label: 'Metro PCS' },
+                { value: 'boost', label: 'Boost Mobile' },
+                { value: 'uscellular', label: 'US Cellular' }
+            ]}
+        ], async function(values) {
+            var phone = (values[0] || '').replace(/\D/g, '');
+            var carrier = values[1] || 'att';
 
-        var carrier = prompt('Client carrier:\n1) att\n2) tmobile\n3) verizon\n4) sprint\n5) cricket\n6) metro\n7) boost\n8) uscellular\n\nType carrier name:', 'att');
-        if (!carrier) carrier = 'att';
+            if (phone.length < 10) {
+                showNotification('Enter a valid 10-digit phone number', 'error');
+                return;
+            }
 
-        // Store phone on invoice
-        invoice.clientPhone = phone;
+            // Store phone on invoice
+            invoice.clientPhone = phone;
 
-        showNotification('⏳ Creating secure link & sending text...', 'info');
+            showNotification('⏳ Creating secure link & sending text...', 'info');
 
         try {
             // Step 1: Create encrypted contract link (if not already created)
@@ -302,6 +375,7 @@
             showNotification('❌ Error: ' + err.message, 'error');
             console.error('Text contract failed:', err);
         }
+        }); // end showInputModal callback
     };
 
     // ================================================================

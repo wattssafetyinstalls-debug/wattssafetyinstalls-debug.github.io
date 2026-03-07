@@ -196,26 +196,35 @@ async function getAccessToken() {
   return json.access_token;
 }
 
-// ── FIND GBP ACCOUNT ID ──
+// ── FIND GBP ACCOUNT ID (with retry for rate limits) ──
 async function getAccountId(accessToken) {
-  var res = await httpsRequest({
-    hostname: 'mybusinessaccountmanagement.googleapis.com',
-    path: '/v1/accounts', method: 'GET',
-    headers: { 'Authorization': 'Bearer ' + accessToken }
-  });
-  console.log('  Account API status: ' + res.status);
-  var json = JSON.parse(res.data);
-  if (json.accounts && json.accounts.length > 0) {
-    // accounts[].name is like "accounts/123456789"
-    var accountName = json.accounts[0].name;
-    console.log('  Account: ' + accountName);
-    return accountName;
+  var maxRetries = 5;
+  for (var attempt = 1; attempt <= maxRetries; attempt++) {
+    var res = await httpsRequest({
+      hostname: 'mybusinessaccountmanagement.googleapis.com',
+      path: '/v1/accounts', method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    console.log('  Account API status: ' + res.status + ' (attempt ' + attempt + '/' + maxRetries + ')');
+    if (res.status === 429 && attempt < maxRetries) {
+      var wait = attempt * 15; // 15s, 30s, 45s, 60s
+      console.log('  ⏳ Rate limited — waiting ' + wait + 's before retry...');
+      await new Promise(function(r) { setTimeout(r, wait * 1000); });
+      continue;
+    }
+    var json = JSON.parse(res.data);
+    if (json.accounts && json.accounts.length > 0) {
+      var accountName = json.accounts[0].name;
+      console.log('  Account: ' + accountName);
+      return accountName;
+    }
+    if (json.error) {
+      console.error('  Account Error: ' + json.error.message);
+      console.error('  Account Error Status: ' + json.error.status);
+    }
+    if (res.status !== 429) break; // non-retryable error
   }
-  if (json.error) {
-    console.error('  Account Error: ' + json.error.message);
-    console.error('  Account Error Status: ' + json.error.status);
-  }
-  throw new Error('No GBP accounts found: ' + res.data.substring(0, 300));
+  throw new Error('No GBP accounts found after ' + maxRetries + ' attempts');
 }
 
 // ── POST TO GBP ──

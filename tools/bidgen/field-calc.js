@@ -75,6 +75,7 @@
         <div style="font-size:9px;color:#52525b;margin-top:1px">Material & cut planning • Gemini AI</div>\
     </div>\
     <div style="display:flex;gap:6px">\
+        <button onclick="fcGenerateBid()" style="background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:600;transition:all 0.15s" title="Send all field calc data to Gemini AI and auto-populate a new bid">⚡ Build Bid</button>\
         <button onclick="fieldCalcClearAll()" style="background:rgba(255,255,255,0.06);color:#a1a1aa;border:1px solid rgba(255,255,255,0.08);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:500;transition:all 0.15s">Clear</button>\
         <button onclick="document.getElementById(\'fieldCalcPanel\').style.display=\'none\'" style="background:rgba(255,255,255,0.06);color:#71717a;border:1px solid rgba(255,255,255,0.08);width:24px;height:24px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;justify-content:center">×</button>\
     </div>\
@@ -1177,6 +1178,226 @@
         document.body.appendChild(toast);
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
+
+    // ================================================================
+    // GENERATE FULL BID — Collects all field calc data, sends to
+    // Gemini for structured bid JSON, auto-populates BidGen form
+    // ================================================================
+    window.fcGenerateBid = async function() {
+        // 1. Collect ALL field calc data
+        var floorType = document.getElementById('fcFloorType') ? document.getElementById('fcFloorType').value : '';
+        var rooms = (_fcRooms || []).filter(function(r) { return r.length > 0 && r.width > 0; });
+        var dwWalls = (_fcDwWalls || []).filter(function(w) { return w.length > 0 && w.height > 0; });
+        var trimPerim = parseFloat((document.getElementById('fcTrimPerimeter') || {}).value) || 0;
+        var trimWallsStr = (document.getElementById('fcTrimWalls') || {}).value || '';
+        var trimDoors = parseInt((document.getElementById('fcTrimDoors') || {}).value) || 0;
+        var transCount = parseInt((document.getElementById('fcTransCount') || {}).value) || 0;
+        var transType = (document.getElementById('fcTransType') || {}).value || '';
+
+        if (rooms.length === 0 && dwWalls.length === 0 && trimPerim <= 0 && !trimWallsStr) {
+            notify('Enter at least one room or wall measurement first');
+            return;
+        }
+
+        // Compute totals for context
+        var totalSqft = 0;
+        rooms.forEach(function(r) { totalSqft += r.length * r.width; });
+        var totalWallSqft = 0;
+        dwWalls.forEach(function(w) { totalWallSqft += w.length * w.height; });
+
+        // Get the current trade type from BidGen if available
+        var tradeEl = document.getElementById('tradeType');
+        var currentTrade = tradeEl ? tradeEl.value : 'flooring';
+        var jobCity = (document.getElementById('jobCity') || {}).value || 'Norfolk, NE';
+
+        // 2. Build the Gemini prompt
+        var roomsDesc = rooms.map(function(r) {
+            return '  - ' + r.name + ': ' + r.length + '\' × ' + r.width + '\' (' + (r.length * r.width).toFixed(1) + ' sq ft)';
+        }).join('\n');
+
+        var dwDesc = dwWalls.map(function(w) {
+            return '  - ' + w.name + ': ' + w.length + '\' × ' + w.height + '\' (' + (w.length * w.height).toFixed(0) + ' sq ft)';
+        }).join('\n');
+
+        var prompt = [
+            'You are a senior general contracting estimator for Nebraska. You are generating a REAL bid — every number must be defensible.',
+            '',
+            '## ABSOLUTE RULES — NO EXCEPTIONS:',
+            '1. **NEVER hallucinate.** Do NOT invent measurements, prices, or quantities that were not provided or cannot be calculated from the provided data.',
+            '2. **Use ONLY the measurements provided below.** Do not add rooms, change dimensions, or assume additional work not listed.',
+            '3. **Prices must reflect Nebraska 2025-2026 market rates** for the ' + jobCity + ' area. If you are uncertain about a specific price, output the field as 0 and add a note saying "VERIFY: [reason]".',
+            '4. **Show your math** in the notes. Every quantity must trace back to the input measurements.',
+            '5. **Itemize labor PER ROOM** — each room is a separate labor line item for installation.',
+            '6. **Materials must match the calculated quantities** from the field measurements — do not round up excessively or add items not needed for this specific job.',
+            '',
+            '## FIELD CALCULATOR DATA:',
+            'Trade: ' + currentTrade,
+            'Material type: ' + (floorType || currentTrade),
+            'Job location: ' + jobCity,
+            ''
+        ];
+
+        if (rooms.length > 0) {
+            prompt.push('### Flooring Rooms (' + totalSqft.toFixed(1) + ' total sq ft):');
+            prompt.push(roomsDesc);
+            prompt.push('');
+        }
+        if (dwWalls.length > 0) {
+            prompt.push('### Drywall Walls (' + totalWallSqft.toFixed(0) + ' total sq ft):');
+            prompt.push(dwDesc);
+            prompt.push('');
+        }
+        if (trimPerim > 0 || trimWallsStr) {
+            prompt.push('### Trim/Base:');
+            prompt.push('  Perimeter: ' + (trimPerim || trimWallsStr) + ' lf, ' + trimDoors + ' doors');
+            if (transCount > 0) prompt.push('  Transitions: ' + transCount + ' × ' + transType);
+            prompt.push('');
+        }
+
+        prompt.push('## REQUIRED OUTPUT FORMAT:');
+        prompt.push('Return ONLY valid JSON — no markdown, no backticks, no explanation. The JSON must match this exact schema:');
+        prompt.push('{');
+        prompt.push('  "scopeTitle": "string — e.g. Flooring Installation",');
+        prompt.push('  "areaDesc": "string — e.g. Living Room, Hallway, Kitchen",');
+        prompt.push('  "scope": ["string array — each item is one scope of work bullet"],');
+        prompt.push('  "labor": [');
+        prompt.push('    {');
+        prompt.push('      "desc": "string — description, include room name for install items",');
+        prompt.push('      "basis": "string — one of: per sq ft, per lin ft, per unit, per hour, per fixture, 1 lot, fixed",');
+        prompt.push('      "qty": "number — quantity (sq ft, units, hours, etc.)",');
+        prompt.push('      "price": "number — rate per unit in dollars (Nebraska market rate, 0 if unsure)"');
+        prompt.push('    }');
+        prompt.push('  ],');
+        prompt.push('  "materials": [');
+        prompt.push('    {');
+        prompt.push('      "desc": "string — product name with size/spec",');
+        prompt.push('      "qty": "string — e.g. 3 box, 1 bag, 24 sq yd",');
+        prompt.push('      "price": "number — unit price in dollars (Nebraska retail, 0 if unsure)"');
+        prompt.push('    }');
+        prompt.push('  ],');
+        prompt.push('  "notes": ["string array — include math verification, assumptions, VERIFY flags"],');
+        prompt.push('  "supplierNote": "string — note about who supplies the main material",');
+        prompt.push('  "disclaimer": "string — standard concealed-conditions disclaimer"');
+        prompt.push('}');
+        prompt.push('');
+        prompt.push('CRITICAL: Output raw JSON only. No markdown code fences. No text before or after the JSON.');
+
+        // 3. Show loading state
+        notify('⚡ AI is building your bid from field measurements...');
+        var loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'fcBidLoading';
+        loadingOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        loadingOverlay.innerHTML = '<div style="background:#16213e;border:1px solid #2a3a5c;border-radius:16px;padding:30px 40px;text-align:center"><div style="width:40px;height:40px;border:3px solid #2a3a5c;border-top-color:#4ade80;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div><div style="color:#e4e4e7;font-size:14px;font-weight:600">Building bid from field data...</div><div style="color:#71717a;font-size:12px;margin-top:6px">Gemini is itemizing rooms, calculating materials, and setting labor rates</div></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+        document.body.appendChild(loadingOverlay);
+
+        try {
+            var res = await fetch(PROXY + '?model=gemini-2.5-pro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ role: 'user', parts: [{ text: prompt.join('\n') }] }],
+                    generationConfig: { temperature: 0.2, maxOutputTokens: 8192 }
+                })
+            });
+
+            var data = await res.json();
+            // Extract text — skip thought parts for Gemini 2.5 Pro
+            var parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+            var rawText = '';
+            for (var pi = 0; pi < parts.length; pi++) {
+                if (parts[pi].thought) continue;
+                if (parts[pi].text) { rawText = parts[pi].text; break; }
+            }
+            if (!rawText) throw new Error('No response from AI');
+
+            // Clean any markdown fences the AI might add despite instructions
+            rawText = rawText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+
+            var bid;
+            try {
+                bid = JSON.parse(rawText);
+            } catch(parseErr) {
+                // Try to extract JSON from the response
+                var jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    bid = JSON.parse(jsonMatch[0]);
+                } else {
+                    throw new Error('AI returned invalid JSON. Raw: ' + rawText.substring(0, 200));
+                }
+            }
+
+            // 4. Auto-populate the BidGen form
+            // Set area description
+            var adEl = document.getElementById('areaDesc');
+            if (adEl && bid.areaDesc) adEl.value = bid.areaDesc;
+
+            // Set scope title
+            var stEl = document.getElementById('scopeTitle');
+            if (stEl && bid.scopeTitle) stEl.value = bid.scopeTitle;
+
+            // Set sq ft from our known total
+            var sfEl = document.getElementById('sqft');
+            if (sfEl && totalSqft > 0) sfEl.value = Math.round(totalSqft);
+
+            // Populate scope items
+            if (bid.scope && bid.scope.length) {
+                document.getElementById('scopeItemsContainer').innerHTML = '';
+                bid.scope.forEach(function(s) { if (typeof addScopeRow === 'function') addScopeRow(s); });
+            }
+
+            // Populate labor items — clear existing and add new
+            if (bid.labor && bid.labor.length) {
+                document.getElementById('laborItemsContainer').innerHTML = '';
+                bid.labor.forEach(function(li) {
+                    if (typeof addLaborRow === 'function') {
+                        addLaborRow(li.desc || '', li.basis || 'per sq ft', li.price || 0, li.qty || '');
+                    }
+                });
+            }
+
+            // Populate material items — clear existing and add new
+            if (bid.materials && bid.materials.length) {
+                document.getElementById('matItemsContainer').innerHTML = '';
+                bid.materials.forEach(function(mi) {
+                    if (typeof addMatRow === 'function') {
+                        addMatRow(mi.desc || '', mi.qty || '1', mi.price || 0);
+                    }
+                });
+            }
+
+            // Populate notes
+            if (bid.notes && bid.notes.length) {
+                document.getElementById('notesItemsContainer').innerHTML = '';
+                bid.notes.forEach(function(n) { if (typeof addNoteRow === 'function') addNoteRow(n); });
+            }
+
+            // Set supplier note and disclaimer
+            if (bid.supplierNote) {
+                var snEl = document.getElementById('supplierNote');
+                if (snEl) snEl.value = bid.supplierNote;
+            }
+            if (bid.disclaimer) {
+                var dcEl = document.getElementById('disclaimer');
+                if (dcEl) dcEl.value = bid.disclaimer;
+            }
+
+            // Recalculate totals
+            if (typeof liveCalc === 'function') liveCalc();
+
+            // Close the field calc panel
+            var fcPanel = document.getElementById('fieldCalcPanel');
+            if (fcPanel) fcPanel.style.display = 'none';
+
+            notify('⚡ Bid populated! Review all prices — items marked VERIFY need your input.');
+
+        } catch (err) {
+            notify('❌ Bid generation failed: ' + err.message);
+            console.error('fcGenerateBid error:', err);
+        } finally {
+            var overlay = document.getElementById('fcBidLoading');
+            if (overlay) overlay.remove();
+        }
+    };
 
     // ================================================================
     // INIT

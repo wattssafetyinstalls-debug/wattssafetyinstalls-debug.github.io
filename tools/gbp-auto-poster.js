@@ -248,6 +248,34 @@ async function postToGBP(accessToken, accountName, postBody) {
   throw new Error('GBP API ' + res.status + ': ' + res.data.substring(0, 500));
 }
 
+// ── POST TO GBP (direct — no account lookup needed) ──
+async function postToGBPDirect(accessToken, postBody) {
+  var body = JSON.stringify(postBody);
+  // Try multiple path formats that GBP API accepts
+  var paths = [
+    '/v4/accounts/-/locations/' + LOCATION_ID + '/localPosts',
+    '/v4/locations/' + LOCATION_ID + '/localPosts'
+  ];
+  var lastErr = '';
+  for (var i = 0; i < paths.length; i++) {
+    console.log('  Trying path: ' + paths[i]);
+    var res = await httpsRequest({
+      hostname: 'mybusiness.googleapis.com', path: paths[i], method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, body);
+    if (res.status >= 200 && res.status < 300) {
+      return res.data;
+    }
+    lastErr = 'GBP API ' + res.status + ': ' + res.data.substring(0, 500);
+    console.log('  → ' + res.status + ' — trying next path...');
+  }
+  throw new Error(lastErr);
+}
+
 // ── BUILD POST BODY ──
 function buildPostBody(content, topic, photoUrl) {
   var post = {
@@ -342,14 +370,24 @@ async function main() {
     var accessToken = await getAccessToken();
     console.log('   ✅ Token acquired');
 
-    // Step 4: Get account ID
+    // Step 4: Get account ID (try cache first, then API)
     console.log('\n4. Finding GBP account...');
-    var accountName = await getAccountId(accessToken);
+    var accountName;
+    try {
+      accountName = await getAccountId(accessToken);
+    } catch (e) {
+      // If account API fails (rate limit, etc), try direct post with location path
+      console.log('  ⚠ Account lookup failed: ' + e.message);
+      console.log('  → Trying direct location path...');
+      accountName = null;
+    }
 
     // Step 5: Build and publish post
     console.log('\n5. Publishing to GBP...');
     var postBody = buildPostBody(content, topic, photoUrl);
-    var result = await postToGBP(accessToken, accountName, postBody);
+    var result = accountName
+      ? await postToGBP(accessToken, accountName, postBody)
+      : await postToGBPDirect(accessToken, postBody);
     console.log('   ✅ Post published!');
 
     // Log result

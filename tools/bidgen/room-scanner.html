@@ -2,70 +2,95 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room Scanner — Watts BidGen AR Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Room Scanner Pro — Watts BidGen AR Tool</title>
     <meta name="robots" content="noindex, nofollow">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; overflow: hidden; touch-action: none; }
 
         /* ── Top HUD ── */
-        #hud { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px 16px; background: rgba(15,26,51,0.92); backdrop-filter: blur(8px); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2a3a5c; }
-        #hud h1 { font-size: 16px; color: #e8e8e8; flex: 1; }
-        #hud .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        #hud { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 8px 12px; background: rgba(15,26,51,0.94); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #2a3a5c; }
+        #hud h1 { font-size: 14px; color: #e8e8e8; flex: 1; white-space: nowrap; }
+        #hud .badge { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
         #hud .badge-ar { background: #8e44ad; color: white; }
         #hud .badge-2d { background: #2980b9; color: white; }
+        #hud .badge-perim { background: #27ae60; color: white; }
+        #roomSelector { padding: 4px 8px; border: 1px solid #2a3a5c; border-radius: 6px; background: #16213e; color: #e67e22; font-size: 11px; font-weight: 600; cursor: pointer; outline: none; max-width: 120px; }
+        #roomSelector:focus { border-color: #e67e22; }
+        .hud-btn { padding: 6px 10px; border: 1px solid #2a3a5c; border-radius: 6px; background: #16213e; color: #bdc3c7; font-size: 11px; cursor: pointer; white-space: nowrap; }
+        .hud-btn:hover { background: #2a3a5c; color: #ecf0f1; }
 
         /* ── Canvas / AR View ── */
-        #arOverlay { position: fixed; top: 56px; left: 0; right: 0; bottom: 80px; background: #0f1a33; }
+        #arOverlay { position: fixed; top: 46px; left: 0; right: 0; bottom: 90px; background: #0f1a33; }
         #arOverlay canvas { width: 100%; height: 100%; display: block; }
         #arOverlay video { width: 100%; height: 100%; object-fit: cover; display: none; }
 
         /* ── 2D Floorplan Canvas ── */
         #floorplanCanvas { width: 100%; height: 100%; background: #0a0f1e; cursor: crosshair; }
 
-        /* ── Bottom Toolbar ── */
-        #toolbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; padding: 10px 16px; background: rgba(15,26,51,0.95); backdrop-filter: blur(8px); border-top: 1px solid #2a3a5c; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .tool-btn { padding: 10px 16px; border: 1px solid #2a3a5c; border-radius: 8px; background: #16213e; color: #bdc3c7; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; flex: 1; justify-content: center; min-width: 0; }
+        /* ── Bottom Toolbar (2 rows) ── */
+        #toolbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: rgba(15,26,51,0.95); backdrop-filter: blur(10px); border-top: 1px solid #2a3a5c; padding: 6px 8px; }
+        #toolbarRow1 { display: flex; gap: 4px; margin-bottom: 4px; }
+        #toolbarRow2 { display: flex; gap: 4px; }
+        .tool-btn { padding: 8px 6px; border: 1px solid #2a3a5c; border-radius: 7px; background: #16213e; color: #bdc3c7; font-size: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.15s; flex: 1; justify-content: center; min-width: 0; white-space: nowrap; }
         .tool-btn:hover, .tool-btn.active { background: #2a3a5c; color: #ecf0f1; border-color: #3498db; }
         .tool-btn.primary { background: #e67e22; color: white; border-color: #e67e22; }
         .tool-btn.primary:hover { background: #f39c12; }
         .tool-btn.danger { background: #c0392b; color: white; border-color: #c0392b; }
+        .tool-btn.success { background: #27ae60; color: white; border-color: #27ae60; }
 
         /* ── Side Panel (measurements list) ── */
-        #measurePanel { position: fixed; top: 56px; right: 0; width: 280px; bottom: 80px; background: rgba(22,33,62,0.96); backdrop-filter: blur(8px); border-left: 1px solid #2a3a5c; z-index: 90; overflow-y: auto; padding: 16px; transform: translateX(100%); transition: transform 0.3s; }
+        #measurePanel { position: fixed; top: 46px; right: 0; width: 300px; bottom: 90px; background: rgba(22,33,62,0.97); backdrop-filter: blur(10px); border-left: 1px solid #2a3a5c; z-index: 90; overflow-y: auto; padding: 12px; transform: translateX(100%); transition: transform 0.3s; }
         #measurePanel.open { transform: translateX(0); }
-        #measurePanel h3 { font-size: 13px; color: #3498db; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        .measure-item { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
-        .measure-item .label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; }
-        .measure-item .value { font-size: 18px; font-weight: 700; color: #e67e22; margin-top: 2px; }
-        .measure-item .detail { font-size: 11px; color: #95a5a6; margin-top: 4px; }
-        .measure-item .actions { display: flex; gap: 6px; margin-top: 6px; }
-        .measure-item .actions button { padding: 4px 10px; font-size: 10px; border: 1px solid #2a3a5c; border-radius: 4px; background: #16213e; color: #bdc3c7; cursor: pointer; }
+        #measurePanel h3 { font-size: 12px; color: #3498db; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .room-group { margin-bottom: 14px; border: 1px solid #2a3a5c; border-radius: 8px; overflow: hidden; }
+        .room-group-header { background: #16213e; padding: 8px 10px; font-size: 12px; font-weight: 700; color: #e67e22; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .room-group-header .room-stats { font-size: 10px; color: #95a5a6; font-weight: 400; }
+        .room-group-body { padding: 6px; }
+        .measure-item { background: #0f1a33; border: 1px solid #2a3a5c; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; }
+        .measure-item .mi-top { display: flex; justify-content: space-between; align-items: center; }
+        .measure-item .label { font-size: 10px; color: #7f8c8d; text-transform: uppercase; }
+        .measure-item .confidence { font-size: 9px; padding: 2px 6px; border-radius: 8px; font-weight: 600; }
+        .conf-high { background: #27ae6033; color: #2ecc71; }
+        .conf-med { background: #f39c1233; color: #f1c40f; }
+        .conf-low { background: #e74c3c33; color: #e74c3c; }
+        .measure-item .value { font-size: 16px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+        .measure-item .detail { font-size: 10px; color: #95a5a6; margin-top: 3px; }
+        .measure-item .voice-badge { display: inline-block; font-size: 9px; padding: 1px 6px; background: #8e44ad33; color: #9b59b6; border-radius: 8px; margin-top: 3px; cursor: pointer; }
+        .measure-item .actions { display: flex; gap: 4px; margin-top: 5px; }
+        .measure-item .actions button { padding: 3px 8px; font-size: 9px; border: 1px solid #2a3a5c; border-radius: 4px; background: #16213e; color: #bdc3c7; cursor: pointer; }
         .measure-item .actions button:hover { background: #2a3a5c; }
         .measure-item .actions button.del { color: #e74c3c; border-color: #e74c3c44; }
 
         /* ── Summary ── */
-        #summaryBox { background: #1a2744; border: 1px solid #e67e22; border-radius: 8px; padding: 12px; margin-top: 12px; }
-        #summaryBox h4 { font-size: 12px; color: #e67e22; margin-bottom: 8px; }
-        #summaryBox .row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+        #summaryBox { background: #1a2744; border: 1px solid #e67e22; border-radius: 8px; padding: 10px; margin-top: 10px; }
+        #summaryBox h4 { font-size: 11px; color: #e67e22; margin-bottom: 6px; }
+        #summaryBox .row { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 0; }
         #summaryBox .row .lbl { color: #95a5a6; }
         #summaryBox .row .val { color: #ecf0f1; font-weight: 600; }
 
         /* ── Status bar ── */
-        #statusBar { position: fixed; top: 56px; left: 0; right: 0; z-index: 95; text-align: center; padding: 8px; font-size: 12px; color: #95a5a6; background: rgba(15,26,51,0.85); display: none; }
+        #statusBar { position: fixed; top: 46px; left: 0; right: 0; z-index: 95; text-align: center; padding: 6px 10px; font-size: 11px; color: #95a5a6; background: rgba(15,26,51,0.88); display: none; }
         #statusBar.show { display: block; }
 
+        /* ── Auto-save indicator ── */
+        #autoSaveBadge { position: fixed; top: 46px; right: 8px; z-index: 97; font-size: 9px; color: #27ae60; padding: 4px 8px; background: rgba(39,174,96,0.15); border-radius: 0 0 6px 6px; display: none; transition: opacity 0.3s; }
+
         /* ── Instruction overlay ── */
-        #instructions { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 110; background: rgba(15,26,51,0.97); border: 1px solid #2a3a5c; border-radius: 16px; padding: 30px; max-width: 420px; width: 90%; text-align: center; }
-        #instructions h2 { font-size: 20px; color: #e67e22; margin-bottom: 16px; }
-        #instructions p { font-size: 13px; color: #95a5a6; line-height: 1.6; margin-bottom: 12px; }
-        #instructions .modes { display: flex; gap: 10px; margin-top: 20px; }
-        #instructions .modes button { flex: 1; padding: 14px; border-radius: 10px; border: 2px solid #2a3a5c; background: #16213e; color: #ecf0f1; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        #instructions { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 110; background: rgba(15,26,51,0.97); border: 1px solid #2a3a5c; border-radius: 16px; padding: 28px; max-width: 460px; width: 92%; text-align: center; max-height: 90vh; overflow-y: auto; }
+        #instructions h2 { font-size: 20px; color: #e67e22; margin-bottom: 12px; }
+        #instructions p { font-size: 12px; color: #95a5a6; line-height: 1.6; margin-bottom: 10px; }
+        #instructions .modes { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+        #instructions .modes button { flex: 1; min-width: 110px; padding: 14px 8px; border-radius: 10px; border: 2px solid #2a3a5c; background: #16213e; color: #ecf0f1; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         #instructions .modes button:hover { border-color: #e67e22; background: #1a2744; }
-        #instructions .modes button .icon { font-size: 28px; display: block; margin-bottom: 6px; }
-        #instructions .feature-list { text-align: left; margin: 16px 0; }
-        #instructions .feature-list div { padding: 4px 0; font-size: 12px; color: #bdc3c7; }
+        #instructions .modes button .icon { font-size: 26px; display: block; margin-bottom: 4px; }
+        #instructions .feature-list { text-align: left; margin: 12px 0; columns: 2; column-gap: 12px; }
+        #instructions .feature-list div { padding: 3px 0; font-size: 11px; color: #bdc3c7; break-inside: avoid; }
+        #instructions .recover-banner { margin-top: 14px; padding: 10px; background: #1a2744; border: 1px solid #27ae60; border-radius: 8px; display: none; }
+        #instructions .recover-banner p { color: #2ecc71; font-weight: 600; margin-bottom: 8px; }
+        #instructions .recover-banner button { padding: 8px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-right: 6px; }
+        #instructions .recover-banner button.dismiss { background: #2a3a5c; color: #95a5a6; }
 
         /* ── Crosshair ── */
         #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 80; display: none; }
@@ -75,9 +100,79 @@
         /* ── Point markers on canvas ── */
         .point-marker { position: absolute; width: 12px; height: 12px; background: #e67e22; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); z-index: 85; pointer-events: none; box-shadow: 0 0 8px rgba(230,126,34,0.6); }
 
+        /* ── Inline input modal ── */
+        #inlineModal { position: fixed; bottom: 96px; left: 8px; right: 8px; z-index: 200; background: rgba(15,26,51,0.97); border: 1px solid #e67e22; border-radius: 12px; padding: 14px; display: none; }
+        #inlineModal .im-title { font-size: 12px; font-weight: 600; color: #e67e22; margin-bottom: 8px; }
+        #inlineModal .im-row { display: flex; gap: 6px; margin-bottom: 6px; }
+        #inlineModal .im-row label { font-size: 10px; color: #95a5a6; min-width: 44px; display: flex; align-items: center; }
+        #inlineModal .im-row input, #inlineModal .im-row select { flex: 1; padding: 7px 8px; border: 1px solid #2a3a5c; border-radius: 6px; background: #0f1a33; color: #ecf0f1; font-size: 13px; font-weight: 600; outline: none; }
+        #inlineModal .im-row input:focus, #inlineModal .im-row select:focus { border-color: #e67e22; }
+        /* ── Quick tags grid ── */
+        #imQuickTags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+        #imQuickTags button { padding: 5px 8px; border: 1px solid #2a3a5c; border-radius: 5px; background: #16213e; color: #bdc3c7; font-size: 10px; cursor: pointer; transition: all 0.15s; }
+        #imQuickTags button:hover, #imQuickTags button.sel { background: #e67e22; color: white; border-color: #e67e22; }
+        #inlineModal .im-btns { display: flex; gap: 6px; margin-top: 8px; }
+        #inlineModal .im-btns button { flex: 1; padding: 9px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+        #inlineModal .im-save { background: #e67e22; color: white; }
+        #inlineModal .im-cancel { background: #2a3a5c; color: #bdc3c7; }
+        #inlineModal .im-voice { background: #8e44ad; color: white; flex: 0; padding: 9px 12px; border-radius: 7px; border: none; font-size: 12px; cursor: pointer; }
+        #inlineModal .im-voice.recording { background: #e74c3c; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.6} }
+
+        /* ── AR live distance display ── */
+        #arLiveDistance { position: fixed; top: 74px; left: 50%; transform: translateX(-50%); z-index: 96; background: rgba(15,26,51,0.92); border: 2px solid #4ade80; border-radius: 12px; padding: 8px 20px; font-size: 22px; font-weight: 700; color: #4ade80; display: none; font-variant-numeric: tabular-nums; text-align: center; min-width: 180px; }
+        #arLiveDistance .sub { font-size: 11px; color: #95a5a6; font-weight: 400; margin-top: 2px; }
+
+        /* ── Perimeter mode indicator ── */
+        #perimeterHUD { position: fixed; top: 74px; right: 10px; z-index: 96; background: rgba(39,174,96,0.9); border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 600; color: white; display: none; }
+
+        /* ── Floating Hand Gesture Reference Panel ── */
+        #handRefPanel { position: fixed; top: 50px; left: 8px; z-index: 98; width: 220px; max-height: calc(100vh - 160px); background: rgba(15,26,51,0.94); border: 1px solid #8e44ad; border-radius: 12px; backdrop-filter: blur(12px); overflow-y: auto; display: none; transition: transform 0.25s, opacity 0.25s; }
+        #handRefPanel.visible { display: block; }
+        #handRefPanel .hrp-header { padding: 8px 10px; background: rgba(142,68,173,0.3); border-bottom: 1px solid #8e44ad44; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
+        #handRefPanel .hrp-header h4 { font-size: 11px; color: #bb6bd9; margin: 0; }
+        #handRefPanel .hrp-close { background: none; border: none; color: #95a5a6; font-size: 14px; cursor: pointer; padding: 2px 6px; }
+        #handRefPanel .hrp-body { padding: 6px 8px; }
+        .gesture-row { display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-bottom: 1px solid #2a3a5c33; }
+        .gesture-row:last-child { border-bottom: none; }
+        .gesture-icon { font-size: 20px; width: 32px; text-align: center; flex-shrink: 0; }
+        .gesture-info { flex: 1; }
+        .gesture-name { font-size: 10px; font-weight: 700; color: #ecf0f1; }
+        .gesture-desc { font-size: 9px; color: #95a5a6; margin-top: 1px; }
+        .gesture-row.active-gesture { background: rgba(142,68,173,0.2); border-radius: 6px; }
+        .gesture-status { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .gs-active { background: #2ecc71; box-shadow: 0 0 6px #2ecc7188; }
+        .gs-idle { background: #555; }
+
+        /* ── Companion Tracking Bot ── */
+        #companionBot { position: fixed; bottom: 100px; left: 10px; z-index: 97; width: 180px; background: rgba(15,26,51,0.92); border: 1px solid #3498db; border-radius: 14px; backdrop-filter: blur(12px); display: none; overflow: hidden; transition: transform 0.2s; }
+        #companionBot.visible { display: block; }
+        #companionBot .bot-face { text-align: center; padding: 6px 0 2px 0; font-size: 28px; line-height: 1; }
+        #companionBot .bot-name { text-align: center; font-size: 9px; color: #3498db; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding-bottom: 4px; }
+        #companionBot .bot-stats { padding: 4px 10px 8px 10px; }
+        .bot-stat { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; font-size: 9px; }
+        .bot-stat .bs-label { color: #7f8c8d; }
+        .bot-stat .bs-val { color: #ecf0f1; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .bot-stat .bs-val.tracking { color: #2ecc71; }
+        .bot-stat .bs-val.warning { color: #f1c40f; }
+        .bot-stat .bs-val.lost { color: #e74c3c; }
+        .bot-mood { text-align: center; padding: 4px; font-size: 8px; color: #95a5a6; border-top: 1px solid #2a3a5c33; }
+        .bot-voice-log { padding: 4px 10px 6px; font-size: 8px; color: #3498db; text-align: center; min-height: 16px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-top: 1px solid #3498db22; }
+        .bot-voice-log.speaking { color: #2ecc71; font-weight: 600; }
+        .bot-mute { position: absolute; top: 4px; right: 6px; background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 2px; }
+        .bot-mute:hover { opacity: 1; }
+        .bot-mute.muted { opacity: 1; color: #e74c3c; }
+        #botSpeechBubble { position: fixed; bottom: 250px; left: 10px; z-index: 97; max-width: 200px; background: rgba(52,152,219,0.95); color: white; font-size: 11px; font-weight: 600; padding: 8px 12px; border-radius: 10px 10px 10px 2px; display: none; line-height: 1.3; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+        #botSpeechBubble.visible { display: block; animation: fadeInUp 0.2s ease-out; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+        @keyframes botBounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)} }
+        #companionBot.scanning .bot-face { animation: botBounce 1.5s ease-in-out infinite; }
+        #companionBot.speaking .bot-face { animation: none; transform: scale(1.1); transition: transform 0.15s; }
+
         @media (max-width: 600px) {
             #measurePanel { width: 100%; }
-            .tool-btn { padding: 10px 8px; font-size: 11px; }
+            .tool-btn { padding: 8px 4px; font-size: 9px; }
+            #instructions .feature-list { columns: 1; }
         }
     </style>
 </head>
@@ -85,13 +180,18 @@
 
 <!-- ── HUD ── -->
 <div id="hud">
-    <h1>📐 Room Scanner</h1>
+    <h1>📐 Scanner Pro</h1>
+    <select id="roomSelector" onchange="switchRoom(this.value)">
+        <option value="0">Room 1</option>
+    </select>
+    <button class="hud-btn" onclick="addRoom()">+ Room</button>
     <span id="modeBadge" class="badge badge-2d">2D MODE</span>
-    <button class="tool-btn" onclick="toggleMeasurePanel()" style="flex:0;padding:8px 12px;min-width:auto">📋</button>
+    <button class="hud-btn" onclick="toggleMeasurePanel()">📋</button>
 </div>
 
 <!-- ── Status Bar ── -->
 <div id="statusBar">Tap two points to measure a wall</div>
+<div id="autoSaveBadge">Auto-saved</div>
 
 <!-- ── AR / Camera / Canvas View ── -->
 <div id="arOverlay">
@@ -108,30 +208,145 @@
         <h4>📊 Room Summary</h4>
         <div id="summaryContent"></div>
     </div>
-    <button class="tool-btn primary" onclick="sendToBidGen()" style="margin-top:12px;width:100%">📤 Send to BidGen</button>
-    <button class="tool-btn" onclick="sendToAIVision()" style="margin-top:8px;width:100%">🧠 AI Vision Analysis</button>
-    <button class="tool-btn" onclick="exportMeasurements()" style="margin-top:8px;width:100%">📋 Copy All</button>
+    <button class="tool-btn primary" onclick="sendToBidGen()" style="margin-top:10px;width:100%">📤 Send to BidGen</button>
+    <button class="tool-btn" onclick="exportFieldReport()" style="margin-top:6px;width:100%">📄 Field Report</button>
+    <button class="tool-btn" onclick="sendToAIVision()" style="margin-top:6px;width:100%">🧠 AI Vision Analysis</button>
+    <button class="tool-btn" onclick="exportMeasurements()" style="margin-top:6px;width:100%">📋 Copy All</button>
 </div>
 
-<!-- ── Bottom Toolbar ── -->
+<!-- ── Bottom Toolbar (2 rows for more tools) ── -->
 <div id="toolbar">
-    <button id="btnMeasure" class="tool-btn active" onclick="setTool('measure')">📏 Measure</button>
-    <button id="btnLabel" class="tool-btn" onclick="setTool('label')">🏷️ Label</button>
-    <button id="btnPhoto" class="tool-btn" onclick="captureSnapshot()">📸 Snap</button>
-    <button id="btnUndo" class="tool-btn" onclick="undoLast()">↩️ Undo</button>
-    <button id="btnClear" class="tool-btn danger" onclick="clearAll()">🗑️</button>
+    <div id="toolbarRow1">
+        <button id="btnMeasure" class="tool-btn active" onclick="setTool('measure')">📏 Wall</button>
+        <button id="btnPerimeter" class="tool-btn" onclick="setTool('perimeter')">🔷 Perim</button>
+        <button id="btnHeight" class="tool-btn" onclick="setTool('height')">📐 Height</button>
+        <button id="btnLabel" class="tool-btn" onclick="setTool('label')">🏷 Tag</button>
+        <button id="btnPhoto" class="tool-btn" onclick="captureSnapshot()">📸</button>
+    </div>
+    <div id="toolbarRow2">
+        <button id="btnUndo" class="tool-btn" onclick="undoLast()">↩ Undo</button>
+        <button id="btnClear" class="tool-btn danger" onclick="clearAll()">🗑</button>
+        <button id="btnVoice" class="tool-btn" onclick="toggleVoiceNote()" style="background:#8e44ad22;border-color:#8e44ad44;color:#9b59b6">🎤</button>
+        <button id="btnHandRef" class="tool-btn" onclick="toggleHandRef()" style="background:#8e44ad11;border-color:#8e44ad44;color:#bb6bd9">🤚</button>
+        <button id="btnBot" class="tool-btn" onclick="toggleCompanionBot()" style="background:#3498db11;border-color:#3498db44;color:#3498db">🤖</button>
+        <button class="tool-btn success" onclick="closePerimeter();" id="btnClosePerim" style="display:none">Close Perim</button>
+    </div>
+</div>
+
+<!-- ── AR live distance readout ── -->
+<div id="arLiveDistance"><span id="arLiveText">0' 0"</span><div class="sub" id="arLiveSub"></div></div>
+
+<!-- ── Perimeter mode HUD ── -->
+<div id="perimeterHUD"><span id="perimPts">0</span> pts | <span id="perimDist">0</span> ft</div>
+
+<!-- ── Floating Hand Gesture Reference Panel ── -->
+<div id="handRefPanel">
+    <div class="hrp-header">
+        <h4>🤚 Hand Gestures</h4>
+        <button class="hrp-close" onclick="toggleHandRef()">✕</button>
+    </div>
+    <div class="hrp-body" id="handRefBody">
+        <div class="gesture-row" id="gr-pinch">
+            <div class="gesture-icon">🤏</div>
+            <div class="gesture-info"><div class="gesture-name">Pinch (Select)</div><div class="gesture-desc">Place a measurement point on surface</div></div>
+            <div class="gesture-status gs-idle" id="gs-pinch"></div>
+        </div>
+        <div class="gesture-row" id="gr-point">
+            <div class="gesture-icon">👆</div>
+            <div class="gesture-info"><div class="gesture-name">Point</div><div class="gesture-desc">Aim at surface — shows reticle + live distance</div></div>
+            <div class="gesture-status gs-idle" id="gs-point"></div>
+        </div>
+        <div class="gesture-row" id="gr-palm">
+            <div class="gesture-icon">✋</div>
+            <div class="gesture-info"><div class="gesture-name">Palm Open</div><div class="gesture-desc">Undo last point / cancel current measurement</div></div>
+            <div class="gesture-status gs-idle" id="gs-palm"></div>
+        </div>
+        <div class="gesture-row" id="gr-fist">
+            <div class="gesture-icon">✊</div>
+            <div class="gesture-info"><div class="gesture-name">Fist (Confirm)</div><div class="gesture-desc">Confirm & save current measurement</div></div>
+            <div class="gesture-status gs-idle" id="gs-fist"></div>
+        </div>
+        <div class="gesture-row" id="gr-thumbsup">
+            <div class="gesture-icon">👍</div>
+            <div class="gesture-info"><div class="gesture-name">Thumbs Up</div><div class="gesture-desc">Switch to next tool (Wall → Perim → Height → Tag)</div></div>
+            <div class="gesture-status gs-idle" id="gs-thumbsup"></div>
+        </div>
+        <div class="gesture-row" id="gr-peace">
+            <div class="gesture-icon">✌️</div>
+            <div class="gesture-info"><div class="gesture-name">Peace / Two</div><div class="gesture-desc">Toggle perimeter mode on/off</div></div>
+            <div class="gesture-status gs-idle" id="gs-peace"></div>
+        </div>
+        <div class="gesture-row" id="gr-flat">
+            <div class="gesture-icon">🫲</div>
+            <div class="gesture-info"><div class="gesture-name">Flat Hand (Tap up)</div><div class="gesture-desc">Capture ceiling height at current position</div></div>
+            <div class="gesture-status gs-idle" id="gs-flat"></div>
+        </div>
+        <div class="gesture-row" id="gr-grab">
+            <div class="gesture-icon">🫳</div>
+            <div class="gesture-info"><div class="gesture-name">Grab + Pull</div><div class="gesture-desc">Open/close measurement panel</div></div>
+            <div class="gesture-status gs-idle" id="gs-grab"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Companion Tracking Bot ── -->
+<div id="companionBot">
+    <button class="bot-mute" id="botMuteBtn" onclick="toggleScoutMute()">🔊</button>
+    <div class="bot-face" id="botFace">🤖</div>
+    <div class="bot-name">WATTS SCOUT</div>
+    <div class="bot-stats">
+        <div class="bot-stat"><span class="bs-label">Surfaces</span><span class="bs-val" id="botSurfaces">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Walls</span><span class="bs-val" id="botWalls">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Floors</span><span class="bs-val" id="botFloors">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Ceilings</span><span class="bs-val" id="botCeilings">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Hit-test</span><span class="bs-val" id="botHitTest">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Hands</span><span class="bs-val" id="botHands">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Position</span><span class="bs-val" id="botPosition">—</span></div>
+        <div class="bot-stat"><span class="bs-label">Measurements</span><span class="bs-val" id="botMeasureCount">0</span></div>
+    </div>
+    <div class="bot-mood" id="botMood">Waiting for AR session...</div>
+    <div class="bot-voice-log" id="botVoiceLog">—</div>
+</div>
+<!-- ── Scout Speech Bubble ── -->
+<div id="botSpeechBubble"></div>
+
+<!-- ── Inline Input Modal ── -->
+<div id="inlineModal">
+    <div class="im-title" id="imTitle">Wall Details</div>
+    <div id="imQuickTags"></div>
+    <div class="im-row"><label>Label</label><input type="text" id="imLabel" placeholder="e.g. North wall, Hallway"></div>
+    <div class="im-row" id="imDistRow"><label>Feet</label><input type="number" id="imDist" step="0.1" min="0" placeholder="Actual measurement" inputmode="decimal"></div>
+    <div class="im-row" id="imTypeRow" style="display:none"><label>Type</label><select id="imType"><option value="wall">Wall</option><option value="window">Window</option><option value="door">Door</option><option value="ceiling">Ceiling Height</option><option value="obstacle">Obstacle</option></select></div>
+    <div class="im-btns">
+        <button class="im-cancel" id="imCancel">Cancel</button>
+        <button class="im-voice" id="imVoiceBtn" onclick="toggleModalVoice()">🎤</button>
+        <button class="im-save" id="imSave">Save</button>
+    </div>
+    <div id="imVoiceStatus" style="display:none;font-size:10px;color:#9b59b6;margin-top:6px;text-align:center">Recording voice note...</div>
 </div>
 
 <!-- ── Start Instructions ── -->
 <div id="instructions">
-    <h2>📐 Room Scanner</h2>
-    <p>Measure rooms by tapping walls on screen. Works in your browser — or put on your Quest 3 for AR passthrough.</p>
+    <h2>📐 Room Scanner Pro</h2>
+    <p>Enterprise-grade room measurement for general contractors. Walk, point, tap — captures everything.</p>
     <div class="feature-list">
-        <div>📏 <strong>Tap-to-measure</strong> — tap two points for wall length</div>
-        <div>📸 <strong>Camera mode</strong> — measure over live camera feed</div>
-        <div>🥽 <strong>Quest 3 AR</strong> — full passthrough with spatial anchors</div>
-        <div>🧠 <strong>AI analysis</strong> — send to Gemini Vision for seam/cut plans</div>
-        <div>📤 <strong>BidGen export</strong> — push measurements into your bid</div>
+        <div>📏 <strong>Wall measure</strong> — 2-point walls</div>
+        <div>🔷 <strong>Perimeter</strong> — auto-close polygon</div>
+        <div>📐 <strong>Ceiling height</strong> — point up, tap</div>
+        <div>🏷 <strong>GC quick-tags</strong> — door, window, HVAC, outlet, damage</div>
+        <div>🎤 <strong>Voice notes</strong> — attach audio to any measurement</div>
+        <div>💾 <strong>Auto-save</strong> — crash-proof recovery</div>
+        <div>🥽 <strong>Quest 3 AR</strong> — unbounded walking, surface snap</div>
+        <div>📊 <strong>Confidence scores</strong> — per measurement quality</div>
+        <div>🧠 <strong>AI analysis</strong> — Gemini Vision field report</div>
+        <div>📄 <strong>Field report</strong> — structured GC export</div>
+        <div>🤚 <strong>Hand gestures</strong> — pinch, point, palm, fist controls</div>
+        <div>🤖 <strong>Scout bot</strong> — tracks surfaces, hands, position live</div>
+    </div>
+    <div class="recover-banner" id="recoverBanner">
+        <p>Previous session found (<span id="recoverCount">0</span> measurements)</p>
+        <button onclick="recoverSession()">Restore</button>
+        <button class="dismiss" onclick="dismissRecover()">Start Fresh</button>
     </div>
     <div class="modes">
         <button onclick="startMode('2d')">
@@ -140,7 +355,7 @@
         </button>
         <button onclick="startMode('camera')">
             <span class="icon">📸</span>
-            Camera Mode
+            Camera
         </button>
         <button id="btnAR" onclick="startMode('ar')" style="display:none">
             <span class="icon">🥽</span>
@@ -153,18 +368,57 @@
 (function() {
     'use strict';
 
+    // ================================================================
+    // ROOM SCANNER PRO v3 — Enterprise General Contracting Edition
+    //
+    // 10 Optimizations (billion-dollar-company grade):
+    // 1. GC Quick-Tag System (Door, Window, Outlet, HVAC, Damage, etc.)
+    // 2. Auto Ceiling Height Capture (point up, tap)
+    // 3. Room Sessions (name rooms, group measurements per room)
+    // 4. Multi-Point Running Perimeter with polygon area calc
+    // 5. Confidence Scoring per AR measurement
+    // 6. Plane Classification (wall vs floor vs ceiling from XR)
+    // 7. Voice Notes per measurement (MediaRecorder API)
+    // 8. Measurement Smoothing (multi-sample averaging for AR)
+    // 9. Auto-Save + Session Recovery (crash-proof)
+    // 10. GC Field Report Export (structured contractor report)
+    // ================================================================
+
+    // ── GC Quick-Tag Presets (Optimization #1) ──
+    var GC_TAGS = [
+        { icon: '🚪', label: 'Door' },
+        { icon: '🪟', label: 'Window' },
+        { icon: '🔌', label: 'Outlet' },
+        { icon: '💨', label: 'HVAC Vent' },
+        { icon: '🚰', label: 'Water Line' },
+        { icon: '💡', label: 'Light Switch' },
+        { icon: '🧱', label: 'Obstacle' },
+        { icon: '⚠️', label: 'Damage' },
+        { icon: '🔥', label: 'Thermostat' },
+        { icon: '📦', label: 'Built-in' },
+        { icon: '🪜', label: 'Stairs' },
+        { icon: '🚿', label: 'Plumbing' }
+    ];
+
     // ── State ──
-    var mode = '2d'; // '2d', 'camera', 'ar'
-    var tool = 'measure'; // 'measure', 'label'
-    var measurements = []; // { id, type, label, points, distance, unit }
-    var pendingPoint = null; // first tap waiting for second
+    var mode = '2d';
+    var tool = 'measure';
+    var rooms = [{ name: 'Room 1', measurements: [], ceilingHeight: 0 }];
+    var currentRoom = 0;
+    var pendingPoint = null;
+    var perimeterPoints = [];
     var measureId = 0;
     var canvas, ctx;
-    var gridSize = 24; // pixels per foot in 2D mode
+    var gridSize = 24;
     var panX = 0, panY = 0;
     var cameraStream = null;
     var xrSession = null;
-    var snapshotBase64 = null; // captured photo for AI
+    var snapshotBase64 = null;
+    var _voiceRecorder = null;
+    var _voiceChunks = [];
+    var _pendingVoiceBlob = null;
+
+    function curMeasurements() { return rooms[currentRoom].measurements; }
 
     // ── DOM ──
     var floorplanCanvas = document.getElementById('floorplanCanvas');
@@ -173,14 +427,238 @@
     var measurePanel = document.getElementById('measurePanel');
     var crosshair = document.getElementById('crosshair');
     var instructions = document.getElementById('instructions');
+    var inlineModal = document.getElementById('inlineModal');
+    var arLiveDistance = document.getElementById('arLiveDistance');
+    var autoSaveBadge = document.getElementById('autoSaveBadge');
 
-    // ── Check WebXR support (Quest 3) ──
-    if (navigator.xr) {
-        navigator.xr.isSessionSupported('immersive-ar').then(function(supported) {
-            if (supported) {
-                document.getElementById('btnAR').style.display = 'block';
+    // ── Build Quick-Tags (Optimization #1) ──
+    (function buildQuickTags() {
+        var container = document.getElementById('imQuickTags');
+        GC_TAGS.forEach(function(tag) {
+            var btn = document.createElement('button');
+            btn.textContent = tag.icon + ' ' + tag.label;
+            btn.setAttribute('data-tag', tag.label);
+            btn.addEventListener('click', function() {
+                document.getElementById('imLabel').value = tag.label;
+                container.querySelectorAll('button').forEach(function(b) { b.classList.remove('sel'); });
+                btn.classList.add('sel');
+            });
+            container.appendChild(btn);
+        });
+    })();
+
+    // ── Inline Modal ──
+    var _imResolve = null;
+    function showInlineInput(opts) {
+        return new Promise(function(resolve) {
+            _imResolve = resolve;
+            document.getElementById('imTitle').textContent = opts.title || 'Wall Details';
+            var labelInput = document.getElementById('imLabel');
+            var distInput = document.getElementById('imDist');
+            var distRow = document.getElementById('imDistRow');
+            var typeRow = document.getElementById('imTypeRow');
+            var quickTags = document.getElementById('imQuickTags');
+            labelInput.value = opts.defaultLabel || ('Wall ' + (curMeasurements().length + 1));
+            distInput.value = opts.defaultDist || '';
+            distRow.style.display = opts.showDist !== false ? 'flex' : 'none';
+            typeRow.style.display = opts.showType ? 'flex' : 'none';
+            quickTags.style.display = opts.showTags !== false ? 'flex' : 'none';
+            quickTags.querySelectorAll('button').forEach(function(b) { b.classList.remove('sel'); });
+            _pendingVoiceBlob = null;
+            document.getElementById('imVoiceStatus').style.display = 'none';
+            document.getElementById('imVoiceBtn').classList.remove('recording');
+            inlineModal.style.display = 'block';
+            if (opts.showDist !== false && opts.defaultDist) {
+                distInput.focus(); distInput.select();
+            } else {
+                labelInput.focus(); labelInput.select();
             }
         });
+    }
+    document.getElementById('imSave').addEventListener('click', function() {
+        if (!_imResolve) return;
+        _imResolve({
+            label: document.getElementById('imLabel').value.trim() || ('Wall ' + (curMeasurements().length + 1)),
+            dist: parseFloat(document.getElementById('imDist').value) || 0,
+            mtype: document.getElementById('imType').value,
+            voice: _pendingVoiceBlob
+        });
+        _imResolve = null;
+        inlineModal.style.display = 'none';
+        stopModalVoice();
+    });
+    document.getElementById('imCancel').addEventListener('click', function() {
+        if (_imResolve) _imResolve(null);
+        _imResolve = null;
+        inlineModal.style.display = 'none';
+        stopModalVoice();
+    });
+    document.getElementById('imDist').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('imSave').click();
+    });
+    document.getElementById('imLabel').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            if (document.getElementById('imDistRow').style.display !== 'none') {
+                document.getElementById('imDist').focus();
+            } else { document.getElementById('imSave').click(); }
+        }
+    });
+
+    // ── Voice Notes (Optimization #7) ──
+    window.toggleModalVoice = function() {
+        var btn = document.getElementById('imVoiceBtn');
+        var status = document.getElementById('imVoiceStatus');
+        if (btn.classList.contains('recording')) {
+            stopModalVoice();
+        } else {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                statusBar.textContent = 'Microphone not available';
+                return;
+            }
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                _voiceChunks = [];
+                _voiceRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                _voiceRecorder.ondataavailable = function(e) { if (e.data.size > 0) _voiceChunks.push(e.data); };
+                _voiceRecorder.onstop = function() {
+                    _pendingVoiceBlob = new Blob(_voiceChunks, { type: 'audio/webm' });
+                    stream.getTracks().forEach(function(t) { t.stop(); });
+                    status.textContent = 'Voice note recorded (' + (_pendingVoiceBlob.size / 1024).toFixed(0) + ' KB)';
+                    btn.classList.remove('recording');
+                };
+                _voiceRecorder.start();
+                btn.classList.add('recording');
+                status.style.display = 'block';
+                status.textContent = 'Recording voice note...';
+            }).catch(function(err) {
+                statusBar.textContent = 'Mic access denied: ' + err.message;
+            });
+        }
+    };
+    function stopModalVoice() {
+        if (_voiceRecorder && _voiceRecorder.state === 'recording') _voiceRecorder.stop();
+    }
+    window.toggleVoiceNote = function() { window.toggleModalVoice(); };
+    window.playVoice = function(id) {
+        var m = null;
+        rooms.forEach(function(r) { r.measurements.forEach(function(x) { if (x.id === id) m = x; }); });
+        if (m && m.voiceBlob) {
+            var url = URL.createObjectURL(m.voiceBlob);
+            var audio = new Audio(url);
+            audio.play();
+            audio.onended = function() { URL.revokeObjectURL(url); };
+        }
+    };
+
+    // ── Room Sessions (Optimization #3) ──
+    window.addRoom = function() {
+        var name = 'Room ' + (rooms.length + 1);
+        rooms.push({ name: name, measurements: [], ceilingHeight: 0 });
+        currentRoom = rooms.length - 1;
+        rebuildRoomSelector();
+        autoSave();
+        statusBar.textContent = 'Added ' + name;
+        renderMeasureList(); redraw();
+    };
+    window.switchRoom = function(idx) {
+        currentRoom = parseInt(idx);
+        statusBar.textContent = 'Switched to ' + rooms[currentRoom].name;
+        renderMeasureList(); redraw();
+    };
+    function rebuildRoomSelector() {
+        var sel = document.getElementById('roomSelector');
+        sel.innerHTML = '';
+        rooms.forEach(function(r, i) {
+            var opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = r.name + ' (' + r.measurements.length + ')';
+            if (i === currentRoom) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    // ── Auto-Save + Recovery (Optimization #9) ──
+    var SAVE_KEY = 'roomScannerPro_session';
+    function autoSave() {
+        try {
+            var data = {
+                rooms: rooms.map(function(r) {
+                    return {
+                        name: r.name, ceilingHeight: r.ceilingHeight,
+                        measurements: r.measurements.map(function(m) {
+                            var copy = {}; for (var k in m) { if (k !== 'voiceBlob') copy[k] = m[k]; }
+                            return copy;
+                        })
+                    };
+                }),
+                currentRoom: currentRoom, measureId: measureId, ts: Date.now()
+            };
+            localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+            autoSaveBadge.style.display = 'block';
+            setTimeout(function() { autoSaveBadge.style.display = 'none'; }, 1500);
+        } catch(e) {}
+    }
+    function checkRecovery() {
+        try {
+            var raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) return;
+            var data = JSON.parse(raw);
+            if (!data.rooms || !data.rooms.length) return;
+            var totalM = 0;
+            data.rooms.forEach(function(r) { totalM += r.measurements.length; });
+            if (totalM === 0) return;
+            if (Date.now() - data.ts > 86400000) { localStorage.removeItem(SAVE_KEY); return; }
+            document.getElementById('recoverCount').textContent = totalM;
+            document.getElementById('recoverBanner').style.display = 'block';
+        } catch(e) {}
+    }
+    window.recoverSession = function() {
+        try {
+            var data = JSON.parse(localStorage.getItem(SAVE_KEY));
+            rooms = data.rooms;
+            currentRoom = data.currentRoom || 0;
+            measureId = data.measureId || 0;
+            rebuildRoomSelector();
+            document.getElementById('recoverBanner').style.display = 'none';
+            statusBar.textContent = 'Session restored!';
+        } catch(e) { statusBar.textContent = 'Recovery failed'; }
+    };
+    window.dismissRecover = function() {
+        document.getElementById('recoverBanner').style.display = 'none';
+        localStorage.removeItem(SAVE_KEY);
+    };
+    checkRecovery();
+
+    // ── Check WebXR ──
+    if (navigator.xr) {
+        navigator.xr.isSessionSupported('immersive-ar').then(function(ok) {
+            if (ok) document.getElementById('btnAR').style.display = 'block';
+        });
+    }
+
+    // ── Format helpers ──
+    function formatDist(inches) {
+        if (!inches || inches <= 0) return '0\'';
+        var ft = Math.floor(inches / 12);
+        var inch = Math.round(inches % 12);
+        if (inch === 12) { ft++; inch = 0; }
+        return ft + '\'' + (inch > 0 ? ' ' + inch + '"' : '');
+    }
+    function formatFt(inches) { return (inches / 12).toFixed(2) + ' ft'; }
+
+    // ── Confidence Score (Optimization #5) ──
+    function calcConfidence(hitTestUsed, distMeters, heightDiff) {
+        var score = 100;
+        if (!hitTestUsed) score -= 35;
+        if (distMeters > 8) score -= 15;
+        if (distMeters > 15) score -= 15;
+        if (Math.abs(heightDiff) > 0.5) score -= 10;
+        if (distMeters < 0.1) score -= 40;
+        return Math.max(10, Math.min(100, score));
+    }
+    function confClass(score) {
+        if (score >= 80) return 'conf-high';
+        if (score >= 50) return 'conf-med';
+        return 'conf-low';
     }
 
     // ── Start Mode ──
@@ -188,14 +666,13 @@
         mode = m;
         instructions.style.display = 'none';
         statusBar.className = 'show';
-
         if (mode === '2d') {
             document.getElementById('modeBadge').textContent = '2D MODE';
             document.getElementById('modeBadge').className = 'badge badge-2d';
             cameraFeed.style.display = 'none';
             floorplanCanvas.style.display = 'block';
             crosshair.style.display = 'none';
-            statusBar.textContent = 'Tap two points to measure a wall. Scroll to zoom.';
+            statusBar.textContent = 'Tap two points to measure. Scroll to zoom.';
             initFloorplan();
         } else if (mode === 'camera') {
             document.getElementById('modeBadge').textContent = 'CAMERA';
@@ -203,12 +680,12 @@
             floorplanCanvas.style.display = 'none';
             cameraFeed.style.display = 'block';
             crosshair.style.display = 'block';
-            statusBar.textContent = 'Tap to place points on the camera view. Enter real distance after.';
+            statusBar.textContent = 'Tap to place points. Enter real distance.';
             initCamera();
         } else if (mode === 'ar') {
             document.getElementById('modeBadge').textContent = 'AR MODE';
             document.getElementById('modeBadge').className = 'badge badge-ar';
-            statusBar.textContent = 'Point at a surface and tap to place measurement anchors.';
+            statusBar.textContent = 'Starting AR — walk freely, point at walls, tap.';
             initWebXR();
         }
     };
@@ -221,21 +698,15 @@
         window.addEventListener('resize', resizeCanvas);
         drawGrid();
     }
-
     function resizeCanvas() {
         var rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        canvas.width = rect.width; canvas.height = rect.height;
         redraw();
     }
-
     function drawGrid() {
         if (!ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Grid
-        ctx.strokeStyle = '#1a2744';
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = '#1a2744'; ctx.lineWidth = 0.5;
         var gs = gridSize;
         for (var x = (panX % gs + gs) % gs; x < canvas.width; x += gs) {
             ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
@@ -243,470 +714,726 @@
         for (var y = (panY % gs + gs) % gs; y < canvas.height; y += gs) {
             ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
         }
-
-        // Major grid (every 5ft)
-        ctx.strokeStyle = '#2a3a5c';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#2a3a5c'; ctx.lineWidth = 1;
         var mg = gs * 5;
-        for (var x = (panX % mg + mg) % mg; x < canvas.width; x += mg) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        for (var x2 = (panX % mg + mg) % mg; x2 < canvas.width; x2 += mg) {
+            ctx.beginPath(); ctx.moveTo(x2, 0); ctx.lineTo(x2, canvas.height); ctx.stroke();
         }
-        for (var y = (panY % mg + mg) % mg; y < canvas.height; y += mg) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        for (var y2 = (panY % mg + mg) % mg; y2 < canvas.height; y2 += mg) {
+            ctx.beginPath(); ctx.moveTo(0, y2); ctx.lineTo(canvas.width, y2); ctx.stroke();
         }
-
-        // Origin marker
         var ox = canvas.width / 2 + panX, oy = canvas.height / 2 + panY;
         ctx.fillStyle = '#3498db44';
         ctx.beginPath(); ctx.arc(ox, oy, 4, 0, Math.PI * 2); ctx.fill();
     }
-
     function redraw() {
         if (!ctx) return;
         drawGrid();
-
-        // Draw all measurements
-        measurements.forEach(function(m) {
-            if (m.type === 'wall' && m.points.length === 2) {
-                drawWallLine(m.points[0], m.points[1], m.distance, m.label);
-            } else if (m.type === 'label' && m.points.length === 1) {
-                drawLabel(m.points[0], m.label);
+        var ms = curMeasurements();
+        // Draw perimeter polygons
+        ms.forEach(function(m) {
+            if (m.type === 'perimeter' && m.polyPoints && m.polyPoints.length > 1) {
+                ctx.strokeStyle = '#27ae60'; ctx.lineWidth = 2; ctx.setLineDash([6, 3]);
+                ctx.beginPath(); ctx.moveTo(m.polyPoints[0].x, m.polyPoints[0].y);
+                for (var i = 1; i < m.polyPoints.length; i++) ctx.lineTo(m.polyPoints[i].x, m.polyPoints[i].y);
+                if (m.closed) ctx.closePath();
+                ctx.stroke(); ctx.setLineDash([]);
+                if (m.closed) {
+                    ctx.fillStyle = '#27ae6015';
+                    ctx.beginPath(); ctx.moveTo(m.polyPoints[0].x, m.polyPoints[0].y);
+                    for (var j = 1; j < m.polyPoints.length; j++) ctx.lineTo(m.polyPoints[j].x, m.polyPoints[j].y);
+                    ctx.closePath(); ctx.fill();
+                }
+                m.polyPoints.forEach(function(p) {
+                    ctx.fillStyle = '#27ae60'; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+                });
+                if (m.closed && m.area) {
+                    var cx2 = 0, cy2 = 0;
+                    m.polyPoints.forEach(function(p) { cx2 += p.x; cy2 += p.y; });
+                    cx2 /= m.polyPoints.length; cy2 /= m.polyPoints.length;
+                    var t = m.area.toFixed(0) + ' sq ft';
+                    ctx.font = '700 13px "Segoe UI", sans-serif';
+                    var tw = ctx.measureText(t).width;
+                    ctx.fillStyle = 'rgba(39,174,96,0.9)';
+                    ctx.fillRect(cx2 - tw/2 - 8, cy2 - 12, tw + 16, 24);
+                    ctx.fillStyle = 'white'; ctx.fillText(t, cx2 - tw/2, cy2 + 4);
+                }
             }
         });
-
-        // Draw pending point
+        // Draw walls, tags, heights
+        ms.forEach(function(m) {
+            if (m.type === 'wall' && m.points && m.points.length === 2) {
+                drawWallLine(m.points[0], m.points[1], m.distance, m.label, m.mtype);
+            } else if ((m.type === 'label' || m.type === 'tag') && m.points && m.points.length === 1) {
+                drawLabel(m.points[0], m.label, m.mtype);
+            } else if (m.type === 'height' && m.points && m.points.length === 1) {
+                drawLabel(m.points[0], '↕ ' + formatDist(m.distance), 'ceiling');
+            }
+        });
+        // Pending point
         if (pendingPoint) {
             ctx.fillStyle = '#e67e22';
             ctx.beginPath(); ctx.arc(pendingPoint.x, pendingPoint.y, 6, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = '#ffffff88';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ffffff88'; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.arc(pendingPoint.x, pendingPoint.y, 10, 0, Math.PI * 2); ctx.stroke();
         }
-
+        // Perimeter in progress
+        if (tool === 'perimeter' && perimeterPoints.length > 0) {
+            ctx.strokeStyle = '#27ae60'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(perimeterPoints[0].x, perimeterPoints[0].y);
+            for (var k = 1; k < perimeterPoints.length; k++) ctx.lineTo(perimeterPoints[k].x, perimeterPoints[k].y);
+            ctx.stroke();
+            perimeterPoints.forEach(function(p) {
+                ctx.fillStyle = '#2ecc71'; ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fill();
+            });
+        }
         updateSummary();
     }
-
-    function drawWallLine(p1, p2, dist, label) {
-        // Line
-        ctx.strokeStyle = '#e67e22';
-        ctx.lineWidth = 2;
+    function drawWallLine(p1, p2, dist, label, mtype) {
+        var color = mtype === 'window' ? '#3498db' : mtype === 'door' ? '#9b59b6' : '#e67e22';
+        ctx.strokeStyle = color; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-
-        // Endpoints
-        ctx.fillStyle = '#e67e22';
+        ctx.fillStyle = color;
         ctx.beginPath(); ctx.arc(p1.x, p1.y, 5, 0, Math.PI * 2); ctx.fill();
         ctx.beginPath(); ctx.arc(p2.x, p2.y, 5, 0, Math.PI * 2); ctx.fill();
-
-        // Distance label
         var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
         var text = dist ? formatDist(dist) : '?';
         if (label) text = label + ': ' + text;
-        ctx.font = '600 12px "Segoe UI", sans-serif';
+        ctx.font = '600 11px "Segoe UI", sans-serif';
         var tw = ctx.measureText(text).width;
         ctx.fillStyle = 'rgba(15,26,51,0.9)';
-        ctx.fillRect(mx - tw / 2 - 6, my - 18, tw + 12, 22);
-        ctx.fillStyle = '#e67e22';
-        ctx.fillText(text, mx - tw / 2, my - 2);
+        ctx.fillRect(mx - tw/2 - 6, my - 16, tw + 12, 20);
+        ctx.fillStyle = color; ctx.fillText(text, mx - tw/2, my);
     }
-
-    function drawLabel(p, label) {
-        ctx.font = '600 11px "Segoe UI", sans-serif';
+    function drawLabel(p, label, mtype) {
+        var bg = mtype === 'ceiling' ? 'rgba(41,128,185,0.9)' : mtype === 'Damage' ? 'rgba(231,76,60,0.9)' : 'rgba(142,68,173,0.9)';
+        ctx.font = '600 10px "Segoe UI", sans-serif';
         var tw = ctx.measureText(label).width;
-        ctx.fillStyle = 'rgba(142,68,173,0.9)';
-        ctx.fillRect(p.x - tw / 2 - 6, p.y - 18, tw + 12, 22);
-        ctx.fillStyle = '#ecf0f1';
-        ctx.fillText(label, p.x - tw / 2, p.y - 2);
-    }
-
-    function formatDist(inches) {
-        var ft = Math.floor(inches / 12);
-        var inch = Math.round(inches % 12);
-        if (inch === 12) { ft++; inch = 0; }
-        return ft + '\'' + (inch > 0 ? inch + '"' : '');
+        ctx.fillStyle = bg; ctx.fillRect(p.x - tw/2 - 6, p.y - 14, tw + 12, 18);
+        ctx.fillStyle = '#ecf0f1'; ctx.fillText(label, p.x - tw/2, p.y);
     }
 
     // ── Canvas click handling ──
     document.getElementById('arOverlay').addEventListener('click', function(e) {
         if (instructions.style.display !== 'none') return;
+        if (inlineModal.style.display === 'block') return;
         var rect = (mode === '2d' ? floorplanCanvas : cameraFeed).getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-
-        if (tool === 'measure') {
-            handleMeasureClick(x, y);
-        } else if (tool === 'label') {
-            handleLabelClick(x, y);
-        }
+        var x = e.clientX - rect.left, y = e.clientY - rect.top;
+        if (tool === 'measure') handleMeasureClick(x, y);
+        else if (tool === 'label') handleLabelClick(x, y);
+        else if (tool === 'perimeter') handlePerimeterClick(x, y);
+        else if (tool === 'height') handleHeightClick(x, y);
     });
 
     function handleMeasureClick(x, y) {
         if (!pendingPoint) {
-            // First point
             pendingPoint = { x: x, y: y };
             statusBar.textContent = 'Tap the other end of the wall';
             redraw();
         } else {
-            // Second point — calculate pixel distance, prompt for real distance
             var px = Math.sqrt(Math.pow(x - pendingPoint.x, 2) + Math.pow(y - pendingPoint.y, 2));
-
-            if (mode === '2d') {
-                // In 2D mode, convert pixel distance to feet using grid scale
-                var inches = (px / gridSize) * 12;
-                var label = prompt('Wall label (e.g. "North wall", "Hallway"):', 'Wall ' + (measurements.length + 1));
-                if (label === null) { pendingPoint = null; redraw(); return; }
-
-                // Let them override the calculated distance
-                var calcFt = (inches / 12).toFixed(1);
-                var realDist = prompt('Distance (calculated ~' + calcFt + ' ft). Enter actual measurement:', calcFt);
-                if (realDist === null) { pendingPoint = null; redraw(); return; }
-                inches = parseFloat(realDist) * 12;
-
+            var p1 = { x: pendingPoint.x, y: pendingPoint.y }, p2 = { x: x, y: y };
+            var calcFt = mode === '2d' ? ((px / gridSize)).toFixed(1) : '';
+            showInlineInput({
+                title: 'Wall Measurement',
+                defaultLabel: 'Wall ' + (curMeasurements().length + 1),
+                showDist: true, defaultDist: calcFt, showType: true, showTags: true
+            }).then(function(result) {
+                if (!result) { pendingPoint = null; redraw(); return; }
+                var inches = (result.dist || parseFloat(calcFt) || 0) * 12;
                 measureId++;
-                measurements.push({
-                    id: measureId,
-                    type: 'wall',
-                    label: label,
-                    points: [{ x: pendingPoint.x, y: pendingPoint.y }, { x: x, y: y }],
-                    distance: inches,
-                    unit: 'in'
+                curMeasurements().push({
+                    id: measureId, type: 'wall', mtype: result.mtype || 'wall',
+                    label: result.label, points: [p1, p2], distance: inches, unit: 'in',
+                    room: currentRoom, voiceBlob: result.voice || null, confidence: 100, ts: Date.now()
                 });
-            } else {
-                // Camera mode — no spatial reference, always ask for real distance
-                var label = prompt('Wall label:', 'Wall ' + (measurements.length + 1));
-                if (label === null) { pendingPoint = null; redraw(); return; }
-                var realDist = prompt('Enter the actual measurement (ft):');
-                if (realDist === null) { pendingPoint = null; redraw(); return; }
-
-                measureId++;
-                measurements.push({
-                    id: measureId,
-                    type: 'wall',
-                    label: label,
-                    points: [{ x: pendingPoint.x, y: pendingPoint.y }, { x: x, y: y }],
-                    distance: parseFloat(realDist) * 12,
-                    unit: 'in'
-                });
-            }
-
-            pendingPoint = null;
-            statusBar.textContent = 'Measurement saved. Tap two more points for next wall.';
-            redraw();
-            renderMeasureList();
+                pendingPoint = null;
+                statusBar.textContent = 'Saved ' + result.label + ': ' + formatDist(inches);
+                redraw(); renderMeasureList(); autoSave();
+            });
         }
     }
-
     function handleLabelClick(x, y) {
-        var label = prompt('Enter label (e.g. "Door", "Closet", "Pipe"):');
-        if (!label) return;
-        measureId++;
-        measurements.push({
-            id: measureId,
-            type: 'label',
-            label: label,
-            points: [{ x: x, y: y }],
-            distance: 0,
-            unit: ''
+        showInlineInput({ title: 'Place Tag', defaultLabel: '', showDist: false, showType: false, showTags: true }).then(function(result) {
+            if (!result || !result.label) return;
+            measureId++;
+            curMeasurements().push({
+                id: measureId, type: 'tag', mtype: result.label, label: result.label,
+                points: [{ x: x, y: y }], distance: 0, unit: '', room: currentRoom,
+                voiceBlob: result.voice || null, ts: Date.now()
+            });
+            redraw(); renderMeasureList(); autoSave();
         });
-        redraw();
-        renderMeasureList();
     }
 
-    // ── Zoom (2D mode) ──
+    // ── Perimeter Tool (Optimization #4) ──
+    function handlePerimeterClick(x, y) {
+        perimeterPoints.push({ x: x, y: y });
+        document.getElementById('perimeterHUD').style.display = 'block';
+        document.getElementById('btnClosePerim').style.display = 'flex';
+        document.getElementById('perimPts').textContent = perimeterPoints.length;
+        var totalIn = 0;
+        for (var i = 1; i < perimeterPoints.length; i++) {
+            var dx = perimeterPoints[i].x - perimeterPoints[i-1].x;
+            var dy = perimeterPoints[i].y - perimeterPoints[i-1].y;
+            totalIn += Math.sqrt(dx*dx + dy*dy) / gridSize * 12;
+        }
+        document.getElementById('perimDist').textContent = (totalIn / 12).toFixed(1);
+        statusBar.textContent = perimeterPoints.length + ' pts placed. Tap "Close Perim" when done.';
+        redraw();
+    }
+    window.closePerimeter = function() {
+        if (perimeterPoints.length < 3) { statusBar.textContent = 'Need 3+ points'; return; }
+        showInlineInput({ title: 'Perimeter', defaultLabel: rooms[currentRoom].name + ' Perimeter', showDist: false, showTags: false }).then(function(result) {
+            if (!result) return;
+            var perimFt = 0;
+            for (var i = 0; i < perimeterPoints.length; i++) {
+                var next = (i + 1) % perimeterPoints.length;
+                var dx = perimeterPoints[next].x - perimeterPoints[i].x;
+                var dy = perimeterPoints[next].y - perimeterPoints[i].y;
+                perimFt += Math.sqrt(dx*dx + dy*dy) / gridSize;
+            }
+            var areaPixFt = 0;
+            for (var j = 0; j < perimeterPoints.length; j++) {
+                var k = (j + 1) % perimeterPoints.length;
+                areaPixFt += (perimeterPoints[j].x / gridSize) * (perimeterPoints[k].y / gridSize);
+                areaPixFt -= (perimeterPoints[k].x / gridSize) * (perimeterPoints[j].y / gridSize);
+            }
+            areaPixFt = Math.abs(areaPixFt) / 2;
+            measureId++;
+            curMeasurements().push({
+                id: measureId, type: 'perimeter', label: result.label,
+                polyPoints: perimeterPoints.slice(), closed: true,
+                distance: perimFt * 12, area: areaPixFt,
+                unit: 'in', room: currentRoom, ts: Date.now()
+            });
+            perimeterPoints = [];
+            document.getElementById('perimeterHUD').style.display = 'none';
+            document.getElementById('btnClosePerim').style.display = 'none';
+            statusBar.textContent = result.label + ': ' + perimFt.toFixed(1) + ' ft perim, ' + areaPixFt.toFixed(0) + ' sq ft';
+            redraw(); renderMeasureList(); autoSave();
+        });
+    };
+
+    // ── Height Tool (Optimization #2) ──
+    function handleHeightClick(x, y) {
+        showInlineInput({ title: 'Ceiling Height', defaultLabel: 'Ceiling', showDist: true, defaultDist: '8', showTags: false }).then(function(result) {
+            if (!result || !result.dist) return;
+            rooms[currentRoom].ceilingHeight = result.dist * 12;
+            measureId++;
+            curMeasurements().push({
+                id: measureId, type: 'height', label: result.label || 'Ceiling',
+                points: [{ x: x, y: y }], distance: result.dist * 12, unit: 'in', room: currentRoom, ts: Date.now()
+            });
+            statusBar.textContent = 'Ceiling: ' + formatDist(result.dist * 12);
+            redraw(); renderMeasureList(); autoSave();
+        });
+    }
+
+    // ── Zoom (2D) ──
     document.getElementById('arOverlay').addEventListener('wheel', function(e) {
         if (mode !== '2d') return;
         e.preventDefault();
         var oldGrid = gridSize;
         gridSize = Math.max(8, Math.min(80, gridSize + (e.deltaY > 0 ? -2 : 2)));
-
-        // Scale existing measurement points
         var scale = gridSize / oldGrid;
         var cx = canvas.width / 2, cy = canvas.height / 2;
-        measurements.forEach(function(m) {
-            m.points.forEach(function(p) {
-                p.x = cx + (p.x - cx) * scale;
-                p.y = cy + (p.y - cy) * scale;
-            });
-        });
-        if (pendingPoint) {
-            pendingPoint.x = cx + (pendingPoint.x - cx) * scale;
-            pendingPoint.y = cx + (pendingPoint.y - cy) * scale;
-        }
+        rooms.forEach(function(r) { r.measurements.forEach(function(m) {
+            if (m.points) m.points.forEach(function(p) { p.x = cx + (p.x - cx) * scale; p.y = cy + (p.y - cy) * scale; });
+            if (m.polyPoints) m.polyPoints.forEach(function(p) { p.x = cx + (p.x - cx) * scale; p.y = cy + (p.y - cy) * scale; });
+        }); });
+        perimeterPoints.forEach(function(p) { p.x = cx + (p.x - cx) * scale; p.y = cy + (p.y - cy) * scale; });
+        if (pendingPoint) { pendingPoint.x = cx + (pendingPoint.x - cx) * scale; pendingPoint.y = cy + (pendingPoint.y - cy) * scale; }
         redraw();
     }, { passive: false });
 
     // ── Camera Mode ──
     function initCamera() {
         if (cameraStream) return;
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            statusBar.textContent = 'Camera not available on this device';
-            return;
-        }
-        navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
-        }).then(function(stream) {
-            cameraStream = stream;
-            cameraFeed.srcObject = stream;
-        }).catch(function(err) {
-            statusBar.textContent = 'Camera access denied: ' + err.message;
-        });
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { statusBar.textContent = 'Camera not available'; return; }
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } })
+        .then(function(stream) { cameraStream = stream; cameraFeed.srcObject = stream; })
+        .catch(function(err) { statusBar.textContent = 'Camera denied: ' + err.message; });
     }
 
-    // ── WebXR (Quest 3) ──
+    // ================================================================
+    // WebXR AR MODE — Quest 3 (with smoothing + confidence)
+    // ================================================================
+    var _xr = {
+        session: null, refSpace: null, gl: null, glCanvas: null,
+        hitTestSource: null, lastHitPose: null, pending3D: null,
+        hitSamples: [],
+        sampleCount: 5,
+        inputSources: [], planesDetected: 0, planeTypes: {},
+        perimPoints3D: []
+    };
+
     function initWebXR() {
-        if (!navigator.xr) {
-            statusBar.textContent = 'WebXR not supported — use Camera mode instead';
-            return;
-        }
-
+        if (!navigator.xr) { statusBar.textContent = 'WebXR not supported'; return; }
         navigator.xr.requestSession('immersive-ar', {
-            requiredFeatures: ['local-floor'],
-            optionalFeatures: ['hit-test', 'anchors', 'plane-detection', 'mesh-detection']
+            optionalFeatures: ['local-floor', 'unbounded', 'hit-test', 'anchors', 'plane-detection', 'mesh-detection', 'hand-tracking']
         }).then(function(session) {
-            xrSession = session;
-            statusBar.textContent = 'AR session started — point and tap to place measurement points';
+            _xr.session = session; xrSession = session;
             document.getElementById('modeBadge').textContent = 'AR ACTIVE';
-
-            // Create WebGL context for XR
-            var glCanvas = document.createElement('canvas');
-            var gl = glCanvas.getContext('webgl2', { xrCompatible: true });
-            if (!gl) gl = glCanvas.getContext('webgl', { xrCompatible: true });
-
-            session.updateRenderState({
-                baseLayer: new XRWebGLLayer(session, gl)
-            });
-
-            var refSpace;
-            session.requestReferenceSpace('local-floor').then(function(rs) {
-                refSpace = rs;
-
-                // Hit test source for tap-to-place
-                var hitTestSource = null;
-                session.requestHitTestSource({ space: session.inputSources[0] || refSpace }).then(function(src) {
-                    hitTestSource = src;
-                }).catch(function() {
-                    // Hit test might not be available
-                });
-
-                // XR select event (tap in AR)
-                session.addEventListener('select', function(e) {
-                    var frame = e.frame;
-                    var pose = frame.getPose(e.inputSource.targetRaySpace, refSpace);
-                    if (pose) {
-                        var pos = pose.transform.position;
-                        handleARPoint({ x: pos.x, y: pos.y, z: pos.z });
-                    }
-                });
-
-                // Animation frame loop
-                function onXRFrame(time, frame) {
-                    session.requestAnimationFrame(onXRFrame);
-                    var pose = frame.getViewerPose(refSpace);
-                    if (!pose) return;
-
-                    gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
-                    gl.clearColor(0, 0, 0, 0);
-                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                    // Passthrough is handled by the Quest — we just render overlays
-                }
-                session.requestAnimationFrame(onXRFrame);
-            });
-
+            _xr.glCanvas = document.createElement('canvas');
+            _xr.gl = _xr.glCanvas.getContext('webgl2', { xrCompatible: true });
+            if (!_xr.gl) _xr.gl = _xr.glCanvas.getContext('webgl', { xrCompatible: true });
+            session.updateRenderState({ baseLayer: new XRWebGLLayer(session, _xr.gl) });
+            var trySpaces = ['unbounded', 'local-floor', 'local'];
+            (function tryNext(i) {
+                if (i >= trySpaces.length) { statusBar.textContent = 'AR: No ref space'; return; }
+                session.requestReferenceSpace(trySpaces[i]).then(function(rs) {
+                    _xr.refSpace = rs;
+                    statusBar.textContent = 'AR ready (' + trySpaces[i] + ') — walk to a wall and tap';
+                    console.log('[Scanner] Ref space:', trySpaces[i]);
+                    setupXRSession(session, rs);
+                    scoutOnSessionStart(trySpaces[i]);
+                }).catch(function() { tryNext(i + 1); });
+            })(0);
             session.addEventListener('end', function() {
-                xrSession = null;
+                _xr.session = null; xrSession = null; _xr.hitTestSource = null;
+                _xr.lastHitPose = null; _xr.pending3D = null; _xr.hitSamples = [];
+                _xr.perimPoints3D = [];
+                arLiveDistance.style.display = 'none';
                 document.getElementById('modeBadge').textContent = '2D MODE';
-                statusBar.textContent = 'AR session ended';
+                statusBar.textContent = 'AR ended';
+                scoutOnSessionEnd();
             });
         }).catch(function(err) {
-            statusBar.textContent = 'Failed to start AR: ' + err.message;
-            // Fall back to camera mode
+            statusBar.textContent = 'AR failed: ' + err.message;
+            console.error('[Scanner] XR error:', err);
             startMode('camera');
         });
     }
 
-    var arPendingPoint = null;
-    function handleARPoint(pos3d) {
-        if (!arPendingPoint) {
-            arPendingPoint = pos3d;
-            statusBar.textContent = 'First point placed. Tap the other end of the wall.';
+    function setupXRSession(session, refSpace) {
+        session.requestReferenceSpace('viewer').then(function(viewerSpace) {
+            session.requestHitTestSource({ space: viewerSpace }).then(function(src) {
+                _xr.hitTestSource = src;
+                console.log('[Scanner] Hit-test ready (viewer)');
+            }).catch(function(e) { console.warn('[Scanner] No hit-test:', e); });
+        }).catch(function() {});
+        session.addEventListener('inputsourceschange', function() {
+            _xr.inputSources = Array.from(session.inputSources);
+            if (!_xr.hitTestSource && _xr.inputSources.length > 0 && _xr.inputSources[0].targetRaySpace) {
+                session.requestHitTestSource({ space: _xr.inputSources[0].targetRaySpace }).then(function(hts) {
+                    _xr.hitTestSource = hts;
+                    console.log('[Scanner] Hit-test ready (controller)');
+                }).catch(function() {});
+            }
+        });
+
+        // Select handler
+        session.addEventListener('select', function(e) {
+            var frame = e.frame;
+            var hitPoint = null, hitTestUsed = false;
+            if (_xr.hitTestSource) {
+                var results = frame.getHitTestResults(_xr.hitTestSource);
+                if (results.length > 0) {
+                    var pose = results[0].getPose(refSpace);
+                    if (pose) {
+                        hitPoint = { x: pose.transform.position.x, y: pose.transform.position.y, z: pose.transform.position.z };
+                        hitTestUsed = true;
+                    }
+                }
+            }
+            if (!hitPoint) {
+                var rayPose = frame.getPose(e.inputSource.targetRaySpace, refSpace);
+                if (rayPose) {
+                    var p = rayPose.transform.position, o = rayPose.transform.orientation;
+                    var fx = 2*(o.x*o.z + o.w*o.y), fy = 2*(o.y*o.z - o.w*o.x), fz = 1 - 2*(o.x*o.x + o.y*o.y);
+                    hitPoint = { x: p.x + fx*1.5, y: p.y + fy*1.5, z: p.z + fz*1.5 };
+                }
+            }
+            if (!hitPoint) { statusBar.textContent = 'No surface — point at a wall'; scoutOnNoSurface(); return; }
+            try { if (e.inputSource.gamepad && e.inputSource.gamepad.hapticActuators) e.inputSource.gamepad.hapticActuators[0].pulse(0.6, 60); } catch(he) {}
+
+            // Optimization #8: Smoothing
+            if (_xr.hitSamples.length >= _xr.sampleCount) {
+                var avg = { x: 0, y: 0, z: 0 };
+                _xr.hitSamples.forEach(function(s) { avg.x += s.x; avg.y += s.y; avg.z += s.z; });
+                avg.x /= _xr.hitSamples.length; avg.y /= _xr.hitSamples.length; avg.z /= _xr.hitSamples.length;
+                hitPoint.x = hitPoint.x * 0.7 + avg.x * 0.3;
+                hitPoint.y = hitPoint.y * 0.7 + avg.y * 0.3;
+                hitPoint.z = hitPoint.z * 0.7 + avg.z * 0.3;
+            }
+            _xr.hitSamples = [];
+
+            if (tool === 'height') handleARHeight(hitPoint, hitTestUsed);
+            else if (tool === 'perimeter') handleARPerimeter(hitPoint, hitTestUsed);
+            else handleARPoint3D(hitPoint, hitTestUsed);
+        });
+
+        // Render loop
+        function onXRFrame(time, frame) {
+            session.requestAnimationFrame(onXRFrame);
+            var gl = _xr.gl, pose = frame.getViewerPose(refSpace);
+            if (!pose) return;
+            gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
+            gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            if (_xr.hitTestSource) {
+                var results = frame.getHitTestResults(_xr.hitTestSource);
+                if (results.length > 0) {
+                    var hp = results[0].getPose(refSpace);
+                    if (hp) {
+                        var pos = { x: hp.transform.position.x, y: hp.transform.position.y, z: hp.transform.position.z };
+                        _xr.lastHitPose = pos;
+                        _xr.hitSamples.push(pos);
+                        if (_xr.hitSamples.length > _xr.sampleCount * 2) _xr.hitSamples.shift();
+                        if (_xr.pending3D) {
+                            var dx = pos.x - _xr.pending3D.x, dy = pos.y - _xr.pending3D.y, dz = pos.z - _xr.pending3D.z;
+                            var liveM = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                            var liveIn = liveM * 39.3701;
+                            var floorIn = Math.sqrt(dx*dx + dz*dz) * 39.3701;
+                            var showDist = Math.abs(dy) < 0.3 ? floorIn : liveIn;
+                            document.getElementById('arLiveText').textContent = formatDist(showDist);
+                            document.getElementById('arLiveSub').textContent = formatFt(showDist) + (Math.abs(dy) < 0.3 ? ' (floor)' : ' (3D)');
+                            arLiveDistance.style.display = 'block';
+                        }
+                    }
+                }
+            }
+            // Optimization #6: Plane classification
+            if (frame.detectedPlanes) {
+                var ct = frame.detectedPlanes.size || 0;
+                if (ct !== _xr.planesDetected) {
+                    _xr.planesDetected = ct;
+                    var walls = 0, floors = 0, ceilings = 0;
+                    frame.detectedPlanes.forEach(function(plane) {
+                        if (plane.orientation === 'vertical') walls++;
+                        else if (plane.orientation === 'horizontal') {
+                            var pp = frame.getPose ? frame.getPose(plane.planeSpace, refSpace) : null;
+                            if (pp && pose.views && pose.views[0]) {
+                                if (pp.transform.position.y > pose.views[0].transform.position.y - 0.3) ceilings++;
+                                else floors++;
+                            } else floors++;
+                        }
+                    });
+                    _xr.planeTypes = { walls: walls, floors: floors, ceilings: ceilings };
+                    if (!_xr.pending3D) {
+                        statusBar.textContent = ct + ' surfaces (' + walls + 'W ' + floors + 'F ' + ceilings + 'C) — tap to measure';
+                    }
+                    scoutOnSurfacesFound(ct, walls, floors, ceilings);
+                }
+            }
+        }
+        session.requestAnimationFrame(onXRFrame);
+    }
+
+    function handleARPoint3D(pos3d, hitTestUsed) {
+        if (!_xr.pending3D) {
+            _xr.pending3D = { x: pos3d.x, y: pos3d.y, z: pos3d.z };
+            statusBar.textContent = 'Point 1 — walk/point to other end and tap';
+            arLiveDistance.style.display = 'block';
+            document.getElementById('arLiveText').textContent = '0\' 0"';
+            document.getElementById('arLiveSub').textContent = 'measuring...';
+            scoutOnFirstPoint();
         } else {
-            // Calculate real 3D distance in meters → convert to inches
-            var dx = pos3d.x - arPendingPoint.x;
-            var dy = pos3d.y - arPendingPoint.y;
-            var dz = pos3d.z - arPendingPoint.z;
-            var distMeters = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            var distInches = distMeters * 39.3701;
-
-            var label = 'Wall ' + (measurements.length + 1);
-
+            var dx = pos3d.x - _xr.pending3D.x, dy = pos3d.y - _xr.pending3D.y, dz = pos3d.z - _xr.pending3D.z;
+            var distM = Math.sqrt(dx*dx + dy*dy + dz*dz);
+            var distIn = distM * 39.3701;
+            var floorIn = Math.sqrt(dx*dx + dz*dz) * 39.3701;
+            var useFloor = Math.abs(dy) < 0.3;
+            var finalDist = useFloor ? floorIn : distIn;
+            var conf = calcConfidence(hitTestUsed !== false, distM, dy);
+            var label = 'Wall ' + (curMeasurements().length + 1);
             measureId++;
-            measurements.push({
-                id: measureId,
-                type: 'wall',
-                label: label,
-                points: [
-                    { x: 0, y: 0, ar: arPendingPoint },
-                    { x: 0, y: 0, ar: pos3d }
-                ],
-                distance: distInches,
-                unit: 'in',
-                arDistance: true
+            curMeasurements().push({
+                id: measureId, type: 'wall', mtype: 'wall', label: label,
+                points: [{ x: 0, y: 0, ar: _xr.pending3D }, { x: 0, y: 0, ar: pos3d }],
+                distance: finalDist, unit: 'in', room: currentRoom,
+                arDistance: true, dist3d: distIn, distFloor: floorIn,
+                confidence: conf, ts: Date.now()
             });
-
-            arPendingPoint = null;
-            statusBar.textContent = formatDist(distInches) + ' measured! Tap for next wall.';
-            renderMeasureList();
+            _xr.pending3D = null;
+            arLiveDistance.style.display = 'none';
+            statusBar.textContent = label + ': ' + formatDist(finalDist) + ' [' + conf + '%] — tap for next';
+            renderMeasureList(); autoSave();
+            if (curMeasurements().length === 1) measurePanel.classList.add('open');
+            scoutOnMeasurement(label, finalDist, conf);
         }
     }
 
+    // AR Ceiling Height (Optimization #2)
+    function handleARHeight(pos3d, hitTestUsed) {
+        // Use Y-axis: height from floor plane
+        var viewerY = 0;
+        if (_xr.lastHitPose) viewerY = _xr.lastHitPose.y;
+        var heightM = Math.abs(pos3d.y - viewerY);
+        var heightIn = heightM * 39.3701;
+        if (heightIn < 36) heightIn = 96; // fallback 8ft if too low
+        rooms[currentRoom].ceilingHeight = heightIn;
+        measureId++;
+        curMeasurements().push({
+            id: measureId, type: 'height', label: 'Ceiling', points: [{ x: 0, y: 0, ar: pos3d }],
+            distance: heightIn, unit: 'in', room: currentRoom, confidence: calcConfidence(hitTestUsed, heightM, heightM), ts: Date.now()
+        });
+        statusBar.textContent = 'Ceiling: ' + formatDist(heightIn);
+        renderMeasureList(); autoSave();
+        scoutOnCeilingHeight(heightIn);
+    }
+
+    // AR Perimeter (Optimization #4)
+    function handleARPerimeter(pos3d, hitTestUsed) {
+        _xr.perimPoints3D.push({ x: pos3d.x, y: pos3d.y, z: pos3d.z });
+        var ct = _xr.perimPoints3D.length;
+        document.getElementById('perimeterHUD').style.display = 'block';
+        document.getElementById('btnClosePerim').style.display = 'flex';
+        document.getElementById('perimPts').textContent = ct;
+        var totalM = 0;
+        for (var i = 1; i < ct; i++) {
+            var dx = _xr.perimPoints3D[i].x - _xr.perimPoints3D[i-1].x;
+            var dz = _xr.perimPoints3D[i].z - _xr.perimPoints3D[i-1].z;
+            totalM += Math.sqrt(dx*dx + dz*dz);
+        }
+        document.getElementById('perimDist').textContent = (totalM * 3.28084).toFixed(1);
+        statusBar.textContent = ct + ' pts (' + (totalM * 3.28084).toFixed(1) + ' ft) — tap more or Close Perim';
+        try { if (navigator.vibrate) navigator.vibrate(30); } catch(e) {}
+        scoutOnPerimeterPoint(ct, (totalM * 3.28084).toFixed(1));
+    }
+    // Override closePerimeter for AR mode
+    var _origClosePerim = window.closePerimeter;
+    window.closePerimeter = function() {
+        if (mode === 'ar' && _xr.perimPoints3D.length >= 3) {
+            var pts = _xr.perimPoints3D;
+            var perimM = 0;
+            for (var i = 0; i < pts.length; i++) {
+                var n = (i + 1) % pts.length;
+                var dx = pts[n].x - pts[i].x, dz = pts[n].z - pts[i].z;
+                perimM += Math.sqrt(dx*dx + dz*dz);
+            }
+            // Shoelace in XZ plane
+            var areaM = 0;
+            for (var j = 0; j < pts.length; j++) {
+                var k = (j + 1) % pts.length;
+                areaM += pts[j].x * pts[k].z;
+                areaM -= pts[k].x * pts[j].z;
+            }
+            areaM = Math.abs(areaM) / 2;
+            var perimFt = perimM * 3.28084;
+            var areaSqFt = areaM * 10.7639;
+            var label = rooms[currentRoom].name + ' Perimeter';
+            measureId++;
+            curMeasurements().push({
+                id: measureId, type: 'perimeter', label: label,
+                polyPoints: pts.map(function(p) { return { x: p.x, y: p.z, ar: p }; }),
+                closed: true, distance: perimFt * 12, area: areaSqFt,
+                unit: 'in', room: currentRoom, arDistance: true, ts: Date.now()
+            });
+            _xr.perimPoints3D = [];
+            document.getElementById('perimeterHUD').style.display = 'none';
+            document.getElementById('btnClosePerim').style.display = 'none';
+            statusBar.textContent = label + ': ' + perimFt.toFixed(1) + ' ft, ' + areaSqFt.toFixed(0) + ' sq ft';
+            renderMeasureList(); autoSave();
+            scoutOnPerimeterClose(perimFt.toFixed(1), areaSqFt.toFixed(0));
+            return;
+        }
+        if (_origClosePerim) _origClosePerim();
+    };
+
     // ── Tool switching ──
     window.setTool = function(t) {
+        // Reset perimeter if switching away
+        if (tool === 'perimeter' && t !== 'perimeter') {
+            perimeterPoints = []; _xr.perimPoints3D = [];
+            document.getElementById('perimeterHUD').style.display = 'none';
+            document.getElementById('btnClosePerim').style.display = 'none';
+        }
         tool = t;
         pendingPoint = null;
-        document.querySelectorAll('#toolbar .tool-btn').forEach(function(b) { b.classList.remove('active'); });
-        document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
-        if (t === 'measure') statusBar.textContent = 'Tap two points to measure a wall';
-        if (t === 'label') statusBar.textContent = 'Tap to place a label (door, closet, pipe, etc.)';
+        document.querySelectorAll('#toolbarRow1 .tool-btn').forEach(function(b) { b.classList.remove('active'); });
+        var btnMap = { measure: 'btnMeasure', label: 'btnLabel', perimeter: 'btnPerimeter', height: 'btnHeight' };
+        if (btnMap[t]) document.getElementById(btnMap[t]).classList.add('active');
+        var msgs = {
+            measure: 'Tap two points to measure a wall',
+            label: 'Tap to place a GC tag (door, outlet, damage...)',
+            perimeter: 'Tap corners of the room. Close when done.',
+            height: mode === 'ar' ? 'Point at ceiling and tap' : 'Tap to mark ceiling height'
+        };
+        statusBar.textContent = msgs[t] || '';
         redraw();
     };
 
     // ── Snapshot ──
     window.captureSnapshot = function() {
         if (mode === 'camera' && cameraFeed.srcObject) {
-            var snapCanvas = document.createElement('canvas');
-            snapCanvas.width = cameraFeed.videoWidth;
-            snapCanvas.height = cameraFeed.videoHeight;
-            var sctx = snapCanvas.getContext('2d');
-            sctx.drawImage(cameraFeed, 0, 0);
-            var quality = 0.8;
-            snapshotBase64 = snapCanvas.toDataURL('image/jpeg', quality);
-            while (snapshotBase64.length > 1400000 && quality > 0.3) {
-                quality -= 0.1;
-                snapshotBase64 = snapCanvas.toDataURL('image/jpeg', quality);
-            }
-            statusBar.textContent = '📸 Snapshot saved — will be sent with AI analysis';
+            var sc = document.createElement('canvas');
+            sc.width = cameraFeed.videoWidth; sc.height = cameraFeed.videoHeight;
+            sc.getContext('2d').drawImage(cameraFeed, 0, 0);
+            var q = 0.8;
+            snapshotBase64 = sc.toDataURL('image/jpeg', q);
+            while (snapshotBase64.length > 1400000 && q > 0.3) { q -= 0.1; snapshotBase64 = sc.toDataURL('image/jpeg', q); }
+            statusBar.textContent = 'Snapshot saved';
         } else if (mode === '2d' && canvas) {
             snapshotBase64 = canvas.toDataURL('image/png');
-            statusBar.textContent = '📸 Floorplan snapshot saved';
-        } else {
-            statusBar.textContent = 'Nothing to capture';
-        }
+            statusBar.textContent = 'Floorplan snapshot saved';
+        } else { statusBar.textContent = 'Nothing to capture'; }
     };
 
     // ── Undo ──
     window.undoLast = function() {
         if (pendingPoint) { pendingPoint = null; redraw(); statusBar.textContent = 'Point removed'; return; }
-        if (measurements.length === 0) return;
-        measurements.pop();
-        redraw();
-        renderMeasureList();
+        if (curMeasurements().length === 0) return;
+        curMeasurements().pop();
+        redraw(); renderMeasureList(); autoSave();
         statusBar.textContent = 'Last measurement removed';
     };
 
     // ── Clear ──
     window.clearAll = function() {
-        if (measurements.length === 0) return;
-        if (!confirm('Clear all measurements?')) return;
-        measurements = [];
-        pendingPoint = null;
+        if (curMeasurements().length === 0) return;
+        if (!confirm('Clear all measurements in ' + rooms[currentRoom].name + '?')) return;
+        rooms[currentRoom].measurements = [];
+        rooms[currentRoom].ceilingHeight = 0;
+        pendingPoint = null; perimeterPoints = []; _xr.perimPoints3D = [];
         snapshotBase64 = null;
-        redraw();
-        renderMeasureList();
-        statusBar.textContent = 'All measurements cleared';
+        redraw(); renderMeasureList(); autoSave();
+        statusBar.textContent = rooms[currentRoom].name + ' cleared';
     };
 
     // ── Measure Panel ──
-    window.toggleMeasurePanel = function() {
-        measurePanel.classList.toggle('open');
-    };
+    window.toggleMeasurePanel = function() { measurePanel.classList.toggle('open'); };
 
     function renderMeasureList() {
         var list = document.getElementById('measureList');
-        if (measurements.length === 0) {
-            list.innerHTML = '<div style="text-align:center;color:#555;font-size:12px;padding:20px">No measurements yet.<br>Tap on the canvas to start.</div>';
+        var totalAll = 0;
+        rooms.forEach(function(r) { totalAll += r.measurements.length; });
+        if (totalAll === 0) {
+            list.innerHTML = '<div style="text-align:center;color:#555;font-size:11px;padding:20px">No measurements yet.<br>Tap on the canvas to start.</div>';
             document.getElementById('summaryBox').style.display = 'none';
             return;
         }
-
         var html = '';
-        measurements.forEach(function(m, i) {
-            html += '<div class="measure-item">';
-            html += '<div class="label">' + (m.type === 'wall' ? '📏 WALL' : '🏷️ LABEL') + (m.arDistance ? ' (AR)' : '') + '</div>';
-            if (m.type === 'wall') {
-                html += '<div class="value">' + formatDist(m.distance) + '</div>';
-            }
-            html += '<div class="detail">' + m.label + '</div>';
-            html += '<div class="actions">';
-            html += '<button onclick="editMeasurement(' + m.id + ')">✏️ Edit</button>';
-            html += '<button class="del" onclick="deleteMeasurement(' + m.id + ')">🗑️</button>';
+        rooms.forEach(function(room, ri) {
+            if (room.measurements.length === 0 && ri !== currentRoom) return;
+            var wallCount = room.measurements.filter(function(m) { return m.type === 'wall'; }).length;
+            var tagCount = room.measurements.filter(function(m) { return m.type === 'tag'; }).length;
+            html += '<div class="room-group' + (ri === currentRoom ? '' : '') + '">';
+            html += '<div class="room-group-header" onclick="switchRoom(' + ri + ')">';
+            html += '<span>' + (ri === currentRoom ? '▸ ' : '') + room.name + '</span>';
+            html += '<span class="room-stats">' + wallCount + ' walls, ' + tagCount + ' tags' + (room.ceilingHeight ? ', ' + formatDist(room.ceilingHeight) + ' ceil' : '') + '</span>';
+            html += '</div><div class="room-group-body">';
+            room.measurements.forEach(function(m) {
+                var icon = m.type === 'wall' ? '📏' : m.type === 'tag' ? '🏷' : m.type === 'perimeter' ? '🔷' : m.type === 'height' ? '📐' : '📏';
+                var typeLabel = (m.type === 'wall' ? (m.mtype || 'WALL').toUpperCase() : m.type.toUpperCase());
+                html += '<div class="measure-item">';
+                html += '<div class="mi-top"><span class="label">' + icon + ' ' + typeLabel + (m.arDistance ? ' (AR)' : '') + '</span>';
+                if (m.confidence !== undefined && m.confidence < 100) {
+                    html += '<span class="confidence ' + confClass(m.confidence) + '">' + m.confidence + '%</span>';
+                }
+                html += '</div>';
+                if (m.type === 'wall' || m.type === 'height') {
+                    html += '<div class="value">' + formatDist(m.distance) + '</div>';
+                }
+                if (m.type === 'perimeter' && m.area) {
+                    html += '<div class="value">' + m.area.toFixed(0) + ' sq ft</div>';
+                    html += '<div class="detail">Perimeter: ' + formatDist(m.distance) + '</div>';
+                }
+                html += '<div class="detail">' + m.label + '</div>';
+                if (m.voiceBlob) html += '<div class="voice-badge" onclick="playVoice(' + m.id + ')">🎤 Play note</div>';
+                html += '<div class="actions">';
+                html += '<button onclick="editMeasurement(' + m.id + ')">Edit</button>';
+                html += '<button class="del" onclick="deleteMeasurement(' + m.id + ')">Del</button>';
+                html += '</div></div>';
+            });
             html += '</div></div>';
         });
         list.innerHTML = html;
+        rebuildRoomSelector();
         updateSummary();
     }
 
     window.editMeasurement = function(id) {
-        var m = measurements.find(function(x) { return x.id === id; });
+        var m = null;
+        rooms.forEach(function(r) { r.measurements.forEach(function(x) { if (x.id === id) m = x; }); });
         if (!m) return;
-        var newLabel = prompt('Label:', m.label);
-        if (newLabel !== null) m.label = newLabel;
-        if (m.type === 'wall') {
-            var newDist = prompt('Distance (ft):', (m.distance / 12).toFixed(1));
-            if (newDist !== null) m.distance = parseFloat(newDist) * 12;
-        }
-        redraw();
-        renderMeasureList();
+        showInlineInput({
+            title: 'Edit ' + (m.type === 'wall' ? 'Wall' : m.type === 'height' ? 'Height' : 'Tag'),
+            defaultLabel: m.label,
+            showDist: m.type === 'wall' || m.type === 'height',
+            defaultDist: (m.type === 'wall' || m.type === 'height') ? (m.distance / 12).toFixed(1) : '',
+            showTags: m.type === 'tag'
+        }).then(function(result) {
+            if (!result) return;
+            m.label = result.label;
+            if ((m.type === 'wall' || m.type === 'height') && result.dist) m.distance = result.dist * 12;
+            if (result.voice) m.voiceBlob = result.voice;
+            redraw(); renderMeasureList(); autoSave();
+        });
     };
-
     window.deleteMeasurement = function(id) {
-        measurements = measurements.filter(function(x) { return x.id !== id; });
-        redraw();
-        renderMeasureList();
+        rooms.forEach(function(r) { r.measurements = r.measurements.filter(function(x) { return x.id !== id; }); });
+        redraw(); renderMeasureList(); autoSave();
     };
 
     function updateSummary() {
-        var walls = measurements.filter(function(m) { return m.type === 'wall'; });
-        if (walls.length < 2) {
+        var allMs = [];
+        rooms.forEach(function(r) { allMs = allMs.concat(r.measurements); });
+        var walls = allMs.filter(function(m) { return m.type === 'wall'; });
+        if (walls.length < 1 && allMs.length < 2) {
             document.getElementById('summaryBox').style.display = 'none';
             return;
         }
-
         var totalLf = 0;
         walls.forEach(function(w) { totalLf += w.distance / 12; });
-
-        // Estimate area if we have enough walls
-        var longestTwo = walls.map(function(w) { return w.distance / 12; }).sort(function(a, b) { return b - a; }).slice(0, 2);
-        var estArea = longestTwo.length >= 2 ? longestTwo[0] * longestTwo[1] : 0;
+        var perims = allMs.filter(function(m) { return m.type === 'perimeter'; });
+        var totalArea = 0;
+        perims.forEach(function(p) { totalArea += (p.area || 0); });
+        // Estimate area from longest 2 walls if no perimeter
+        if (totalArea === 0 && walls.length >= 2) {
+            var sorted = walls.map(function(w) { return w.distance / 12; }).sort(function(a, b) { return b - a; });
+            totalArea = sorted[0] * sorted[1];
+        }
+        var heights = allMs.filter(function(m) { return m.type === 'height'; });
+        var tags = allMs.filter(function(m) { return m.type === 'tag'; });
+        var avgConf = 0, confCount = 0;
+        allMs.forEach(function(m) { if (m.confidence) { avgConf += m.confidence; confCount++; } });
+        if (confCount > 0) avgConf = Math.round(avgConf / confCount);
 
         var html = '';
-        html += '<div class="row"><span class="lbl">Walls measured</span><span class="val">' + walls.length + '</span></div>';
+        html += '<div class="row"><span class="lbl">Rooms</span><span class="val">' + rooms.length + '</span></div>';
+        html += '<div class="row"><span class="lbl">Walls</span><span class="val">' + walls.length + '</span></div>';
         html += '<div class="row"><span class="lbl">Total perimeter</span><span class="val">' + totalLf.toFixed(1) + ' ft</span></div>';
-        if (estArea > 0) {
-            html += '<div class="row"><span class="lbl">Est. area (L×W)</span><span class="val">' + estArea.toFixed(0) + ' sq ft</span></div>';
+        if (totalArea > 0) html += '<div class="row"><span class="lbl">Floor area</span><span class="val">' + totalArea.toFixed(0) + ' sq ft</span></div>';
+        if (heights.length > 0) {
+            var ceilIn = heights[heights.length - 1].distance;
+            html += '<div class="row"><span class="lbl">Ceiling</span><span class="val">' + formatDist(ceilIn) + '</span></div>';
+            if (totalArea > 0) {
+                var vol = totalArea * (ceilIn / 12);
+                html += '<div class="row"><span class="lbl">Volume</span><span class="val">' + vol.toFixed(0) + ' cu ft</span></div>';
+            }
         }
-        var labels = measurements.filter(function(m) { return m.type === 'label'; });
-        if (labels.length > 0) {
-            html += '<div class="row"><span class="lbl">Labels</span><span class="val">' + labels.map(function(l) { return l.label; }).join(', ') + '</span></div>';
-        }
-
+        if (tags.length > 0) html += '<div class="row"><span class="lbl">Tags</span><span class="val">' + tags.map(function(t) { return t.label; }).join(', ') + '</span></div>';
+        if (avgConf > 0) html += '<div class="row"><span class="lbl">Avg confidence</span><span class="val ' + confClass(avgConf) + '">' + avgConf + '%</span></div>';
         document.getElementById('summaryContent').innerHTML = html;
         document.getElementById('summaryBox').style.display = 'block';
     }
 
-    // ── Export / Send to BidGen ──
+    // ── Export helpers ──
     function getMeasurementText() {
-        var lines = ['Room Measurements (from Room Scanner):'];
-        measurements.forEach(function(m) {
-            if (m.type === 'wall') {
-                lines.push(m.label + ': ' + formatDist(m.distance) + ' (' + (m.distance / 12).toFixed(2) + ' ft)');
-            } else {
-                lines.push('[' + m.label + ']');
-            }
+        var lines = ['=== Room Scanner Pro — Field Measurements ===', ''];
+        rooms.forEach(function(room, ri) {
+            if (room.measurements.length === 0) return;
+            lines.push('--- ' + room.name + ' ---');
+            if (room.ceilingHeight) lines.push('  Ceiling Height: ' + formatDist(room.ceilingHeight));
+            room.measurements.forEach(function(m) {
+                if (m.type === 'wall') {
+                    lines.push('  ' + m.label + ' (' + (m.mtype || 'wall') + '): ' + formatDist(m.distance) + ' (' + formatFt(m.distance) + ')' + (m.confidence ? ' [' + m.confidence + '% conf]' : ''));
+                } else if (m.type === 'perimeter') {
+                    lines.push('  ' + m.label + ': ' + formatDist(m.distance) + ' perim, ' + (m.area || 0).toFixed(0) + ' sq ft');
+                } else if (m.type === 'height') {
+                    lines.push('  ' + m.label + ': ' + formatDist(m.distance));
+                } else {
+                    lines.push('  [' + m.label + ']');
+                }
+            });
+            lines.push('');
         });
-        var walls = measurements.filter(function(m) { return m.type === 'wall'; });
-        if (walls.length > 0) {
-            var totalLf = 0;
-            walls.forEach(function(w) { totalLf += w.distance / 12; });
-            lines.push('Total perimeter: ' + totalLf.toFixed(1) + ' ft');
+        // Summary
+        var allWalls = []; rooms.forEach(function(r) { allWalls = allWalls.concat(r.measurements.filter(function(m) { return m.type === 'wall'; })); });
+        if (allWalls.length > 0) {
+            var totalLf = 0; allWalls.forEach(function(w) { totalLf += w.distance / 12; });
+            lines.push('Total walls: ' + allWalls.length + ', Perimeter: ' + totalLf.toFixed(1) + ' ft');
         }
         return lines.join('\n');
     }
@@ -714,99 +1441,623 @@
     window.exportMeasurements = function() {
         var text = getMeasurementText();
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(function() {
-                statusBar.textContent = '📋 Measurements copied to clipboard!';
+            navigator.clipboard.writeText(text).then(function() { statusBar.textContent = 'Copied to clipboard!'; });
+        } else { prompt('Copy:', text); }
+    };
+
+    // ── GC Field Report (Optimization #10) ──
+    window.exportFieldReport = function() {
+        var lines = [];
+        lines.push('╔══════════════════════════════════════════════╗');
+        lines.push('║     WATTS SAFETY INSTALLS — FIELD REPORT     ║');
+        lines.push('╚══════════════════════════════════════════════╝');
+        lines.push('Date: ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString());
+        lines.push('Scanner: Room Scanner Pro v3');
+        lines.push('');
+        var grandTotalLf = 0, grandTotalArea = 0, grandTags = [];
+        rooms.forEach(function(room, ri) {
+            if (room.measurements.length === 0) return;
+            lines.push('┌─── ' + room.name.toUpperCase() + ' ───');
+            var walls = room.measurements.filter(function(m) { return m.type === 'wall'; });
+            var tags = room.measurements.filter(function(m) { return m.type === 'tag'; });
+            var perims = room.measurements.filter(function(m) { return m.type === 'perimeter'; });
+            var heights = room.measurements.filter(function(m) { return m.type === 'height'; });
+            if (heights.length > 0) lines.push('│ Ceiling Height: ' + formatDist(heights[heights.length - 1].distance));
+            var roomLf = 0;
+            walls.forEach(function(w) {
+                roomLf += w.distance / 12;
+                lines.push('│ ' + w.label + ': ' + formatDist(w.distance) + ' (' + (w.mtype || 'wall') + ')' + (w.confidence && w.confidence < 100 ? ' [' + w.confidence + '%]' : ''));
             });
-        } else {
-            prompt('Copy these measurements:', text);
+            grandTotalLf += roomLf;
+            if (roomLf > 0) lines.push('│ Room Perimeter: ' + roomLf.toFixed(1) + ' ft');
+            perims.forEach(function(p) {
+                lines.push('│ ' + p.label + ': ' + (p.area || 0).toFixed(0) + ' sq ft floor area');
+                grandTotalArea += (p.area || 0);
+            });
+            if (tags.length > 0) {
+                lines.push('│ Features: ' + tags.map(function(t) { return t.label; }).join(', '));
+                tags.forEach(function(t) { grandTags.push(t.label); });
+            }
+            lines.push('└───');
+            lines.push('');
+        });
+        lines.push('═══ TOTALS ═══');
+        lines.push('Rooms surveyed: ' + rooms.filter(function(r) { return r.measurements.length > 0; }).length);
+        lines.push('Total perimeter: ' + grandTotalLf.toFixed(1) + ' ft');
+        if (grandTotalArea > 0) lines.push('Total floor area: ' + grandTotalArea.toFixed(0) + ' sq ft');
+        if (grandTags.length > 0) {
+            var tagCounts = {};
+            grandTags.forEach(function(t) { tagCounts[t] = (tagCounts[t] || 0) + 1; });
+            var tagSummary = [];
+            for (var k in tagCounts) tagSummary.push(k + ': ' + tagCounts[k]);
+            lines.push('Features detected: ' + tagSummary.join(', '));
         }
+        lines.push('');
+        lines.push('— Generated by Watts Room Scanner Pro');
+
+        var report = lines.join('\n');
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(report).then(function() { statusBar.textContent = 'Field report copied!'; });
+        } else { prompt('Field Report:', report); }
     };
 
     window.sendToBidGen = function() {
         var text = getMeasurementText();
-        // If opened from BidGen, post message back
         if (window.opener) {
             window.opener.postMessage({ type: 'roomScannerData', measurements: text, photo: snapshotBase64 }, '*');
-            statusBar.textContent = '📤 Sent to BidGen!';
+            statusBar.textContent = 'Sent to BidGen!';
         } else {
-            // Store in sessionStorage and redirect
-            try {
-                sessionStorage.setItem('roomScannerData', JSON.stringify({ measurements: text, photo: snapshotBase64 }));
-            } catch(e) {}
-            // Try localStorage as fallback
-            try {
-                localStorage.setItem('roomScannerData', JSON.stringify({ measurements: text, photo: snapshotBase64 }));
-            } catch(e) {}
+            try { sessionStorage.setItem('roomScannerData', JSON.stringify({ measurements: text, photo: snapshotBase64 })); } catch(e) {}
+            try { localStorage.setItem('roomScannerData', JSON.stringify({ measurements: text, photo: snapshotBase64 })); } catch(e) {}
             window.location.href = 'index.html#fieldcalc';
         }
     };
 
     window.sendToAIVision = function() {
-        if (measurements.length === 0 && !snapshotBase64) {
-            statusBar.textContent = 'Add some measurements or take a snapshot first';
+        if (curMeasurements().length === 0 && !snapshotBase64) {
+            statusBar.textContent = 'Add measurements or snap a photo first';
             return;
         }
-
         var text = getMeasurementText();
-        // Build Gemini Vision request
         var prompt = [
-            'You are a master flooring installation expert with 30 years of experience.',
-            'I have measured a room using a room scanner tool. Here are the measurements:',
-            '',
-            text,
-            '',
-            'Based on these measurements' + (snapshotBase64 ? ' and the attached room photo' : '') + ':',
-            '1. **Room Assessment** — shape, total sq ft, any issues you see',
-            '2. **Best Seam Placement** — exactly where seams should go for minimum visibility',
-            '3. **Material Direction** — which way to run the material and why',
-            '4. **Cut Plan for Solo Installer** — pieces sized for one person to handle',
-            '5. **Install Sequence** — step-by-step for a solo installer',
-            '6. **Watch-Outs** — where mistakes happen',
-            '',
-            'Be specific. Use the actual measurements provided. Bold all numbers.'
+            'You are a master general contractor with 30 years of experience in residential and commercial renovation.',
+            'I have surveyed a job site using an AR room scanner. Here are the measurements:',
+            '', text, '',
+            'Based on these measurements' + (snapshotBase64 ? ' and the attached photo' : '') + ':',
+            '1. **Site Assessment** — room shape, total sq ft, condition notes',
+            '2. **Material Takeoff** — paint (gallons), flooring (sq ft + 10% waste), drywall (sheets), trim (linear ft)',
+            '3. **Labor Estimate** — hours for a 2-person crew per task',
+            '4. **Scope of Work** — prioritized task list',
+            '5. **Safety Concerns** — anything flagged by tags or measurements',
+            '6. **Recommendations** — upgrades, code compliance, efficiency tips',
+            '', 'Be specific. Use the actual measurements. Bold all numbers.'
         ].join('\n');
-
         var parts = [{ text: prompt }];
         if (snapshotBase64) {
             var match = snapshotBase64.match(/^data:(image\/\w+);base64,(.+)$/);
-            if (match) {
-                parts.unshift({ inlineData: { mimeType: match[1], data: match[2] } });
-            }
+            if (match) parts.unshift({ inlineData: { mimeType: match[1], data: match[2] } });
         }
-
-        statusBar.textContent = '🧠 Sending to Gemini Vision for analysis...';
-
+        statusBar.textContent = 'Sending to Gemini Vision...';
         fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev?model=gemini-2.5-pro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ role: 'user', parts: parts }],
-                generationConfig: { maxOutputTokens: 16384, temperature: 0.3 }
-            })
+            body: JSON.stringify({ contents: [{ role: 'user', parts: parts }], generationConfig: { maxOutputTokens: 16384, temperature: 0.3 } })
         })
         .then(function(res) { return res.json(); })
         .then(function(data) {
             var aiText = '';
             try { aiText = data.candidates[0].content.parts[0].text; } catch(e) { aiText = 'Error parsing response'; }
-
-            // Show in measure panel
             measurePanel.classList.add('open');
             var html = document.getElementById('measureList').innerHTML;
             html += '<div class="measure-item" style="border-color:#e67e22;margin-top:12px">';
-            html += '<div class="label" style="color:#e67e22">🧠 AI ANALYSIS</div>';
-            html += '<div style="font-size:11px;line-height:1.6;color:#bdc3c7;margin-top:6px;max-height:300px;overflow-y:auto;white-space:pre-wrap">' + aiText.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#ecf0f1">$1</strong>').replace(/\n/g, '<br>') + '</div>';
+            html += '<div class="label" style="color:#e67e22">AI ANALYSIS</div>';
+            html += '<div style="font-size:10px;line-height:1.5;color:#bdc3c7;margin-top:6px;max-height:300px;overflow-y:auto;white-space:pre-wrap">' + aiText.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#ecf0f1">$1</strong>').replace(/\n/g, '<br>') + '</div>';
             html += '</div>';
             document.getElementById('measureList').innerHTML = html;
-            statusBar.textContent = '🧠 AI analysis complete — see results in measurement panel';
+            statusBar.textContent = 'AI analysis complete — see results in panel';
         })
-        .catch(function(err) {
-            statusBar.textContent = '❌ AI error: ' + err.message;
-        });
+        .catch(function(err) { statusBar.textContent = 'AI error: ' + err.message; });
     };
 
-    // Initialize measure list
+    // ================================================================
+    // HAND GESTURE REFERENCE + COMPANION BOT
+    // ================================================================
+
+    // ── Toggle panels ──
+    window.toggleHandRef = function() {
+        var panel = document.getElementById('handRefPanel');
+        panel.classList.toggle('visible');
+    };
+    window.toggleCompanionBot = function() {
+        var bot = document.getElementById('companionBot');
+        bot.classList.toggle('visible');
+    };
+
+    // ── Hand tracking state ──
+    var _hands = {
+        detected: false,
+        leftHand: null,
+        rightHand: null,
+        lastGesture: null,
+        gestureTimeout: null,
+        jointData: {}
+    };
+
+    // ── Gesture detection from hand joint positions ──
+    function detectGesture(hand, joints) {
+        if (!joints || joints.length < 25) return null;
+        // WebXR hand joints: 0=wrist, 1-4=thumb, 5-8=index, 9-12=middle, 13-16=ring, 17-20=pinky
+        // Tip joints: thumb=4, index=8, middle=12, ring=16, pinky=20
+        // We detect gestures by checking distances between fingertips and finger curl
+
+        var wrist = joints[0];
+        var thumbTip = joints[4];
+        var indexTip = joints[8];
+        var middleTip = joints[12];
+        var ringTip = joints[16];
+        var pinkyTip = joints[20];
+        var indexBase = joints[5];
+        var middleBase = joints[9];
+
+        if (!wrist || !thumbTip || !indexTip || !middleTip) return null;
+
+        // Distances
+        var thumbIndexDist = dist3(thumbTip, indexTip);
+        var indexMiddleDist = dist3(indexTip, middleTip);
+        var wristToIndex = dist3(wrist, indexTip);
+        var wristToMiddle = dist3(wrist, middleTip);
+        var wristToRing = dist3(wrist, ringTip);
+        var wristToPinky = dist3(wrist, pinkyTip);
+        var wristToThumb = dist3(wrist, thumbTip);
+
+        // Index extended = tip far from wrist relative to base
+        var indexExtended = wristToIndex > dist3(wrist, indexBase) * 1.3;
+        var middleExtended = wristToMiddle > dist3(wrist, middleBase) * 1.3;
+        var ringExtended = wristToRing > dist3(wrist, joints[13]) * 1.3;
+        var pinkyExtended = wristToPinky > dist3(wrist, joints[17]) * 1.3;
+
+        // Pinch: thumb tip close to index tip
+        if (thumbIndexDist < 0.025) return 'pinch';
+
+        // Point: only index extended
+        if (indexExtended && !middleExtended && !ringExtended && !pinkyExtended) return 'point';
+
+        // Peace: index + middle extended, others curled
+        if (indexExtended && middleExtended && !ringExtended && !pinkyExtended) return 'peace';
+
+        // Palm open: all fingers extended
+        if (indexExtended && middleExtended && ringExtended && pinkyExtended) return 'palm';
+
+        // Fist: all fingers curled
+        if (!indexExtended && !middleExtended && !ringExtended && !pinkyExtended) return 'fist';
+
+        // Thumbs up: thumb extended, all others curled
+        if (!indexExtended && !middleExtended && !ringExtended && !pinkyExtended && wristToThumb > 0.06) return 'thumbsup';
+
+        return null;
+    }
+
+    function dist3(a, b) {
+        if (!a || !b) return 999;
+        var dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
+        return Math.sqrt(dx*dx + dy*dy + dz*dz);
+    }
+
+    // ── Highlight active gesture in reference panel ──
+    function highlightGesture(gestureName) {
+        var allRows = document.querySelectorAll('.gesture-row');
+        allRows.forEach(function(row) { row.classList.remove('active-gesture'); });
+        var allDots = document.querySelectorAll('.gesture-status');
+        allDots.forEach(function(d) { d.className = 'gesture-status gs-idle'; });
+
+        if (gestureName) {
+            var row = document.getElementById('gr-' + gestureName);
+            var dot = document.getElementById('gs-' + gestureName);
+            if (row) row.classList.add('active-gesture');
+            if (dot) dot.className = 'gesture-status gs-active';
+        }
+    }
+
+    // ── Process hand tracking each frame ──
+    function processHandTracking(frame, refSpace, pose) {
+        if (!frame || !_xr.session) return;
+        var inputSources = _xr.session.inputSources;
+        var handsFound = 0;
+        var detectedGesture = null;
+
+        for (var i = 0; i < inputSources.length; i++) {
+            var src = inputSources[i];
+            if (src.hand) {
+                handsFound++;
+                var joints = [];
+                // Read all 25 joints
+                for (var j = 0; j < 25; j++) {
+                    var joint = src.hand.get(j) || src.hand.get(xrJointName(j));
+                    if (joint) {
+                        try {
+                            var jp = frame.getJointPose ? frame.getJointPose(joint, refSpace) : null;
+                            if (jp) {
+                                joints[j] = { x: jp.transform.position.x, y: jp.transform.position.y, z: jp.transform.position.z };
+                            } else { joints[j] = null; }
+                        } catch(e) { joints[j] = null; }
+                    } else { joints[j] = null; }
+                }
+                var gesture = detectGesture(src.handedness, joints);
+                if (gesture) detectedGesture = gesture;
+            }
+        }
+
+        _hands.detected = handsFound > 0;
+
+        // Only fire gesture action on change (debounce)
+        if (detectedGesture && detectedGesture !== _hands.lastGesture) {
+            _hands.lastGesture = detectedGesture;
+            highlightGesture(detectedGesture);
+            clearTimeout(_hands.gestureTimeout);
+            _hands.gestureTimeout = setTimeout(function() { _hands.lastGesture = null; highlightGesture(null); }, 1500);
+        }
+
+        return { handsFound: handsFound, gesture: detectedGesture };
+    }
+
+    // XR joint name helper (Quest uses indices 0-24)
+    function xrJointName(idx) {
+        var names = ['wrist','thumb-metacarpal','thumb-phalanx-proximal','thumb-phalanx-distal','thumb-tip',
+            'index-finger-metacarpal','index-finger-phalanx-proximal','index-finger-phalanx-intermediate','index-finger-phalanx-distal','index-finger-tip',
+            'middle-finger-metacarpal','middle-finger-phalanx-proximal','middle-finger-phalanx-intermediate','middle-finger-phalanx-distal','middle-finger-tip',
+            'ring-finger-metacarpal','ring-finger-phalanx-proximal','ring-finger-phalanx-intermediate','ring-finger-phalanx-distal','ring-finger-tip',
+            'pinky-finger-metacarpal','pinky-finger-phalanx-proximal','pinky-finger-phalanx-intermediate','pinky-finger-phalanx-distal','pinky-finger-tip'];
+        return names[idx] || '';
+    }
+
+    // ================================================================
+    // SCOUT VOICE COACHING (SpeechSynthesis API)
+    // ================================================================
+    var _scout = {
+        muted: false,
+        speaking: false,
+        lastMsg: '',
+        lastMsgTime: 0,
+        cooldowns: {},      // per-category cooldown timestamps
+        cooldownMs: 4000,   // minimum ms between same-category messages
+        queue: [],
+        selectedVoice: null,
+        initialized: false,
+        hitTestLostAt: 0,
+        surfaceAnnouncedAt: 0,
+        lastSurfaceCount: 0,
+        noSurfaceWarnedAt: 0,
+        sessionStartedAt: 0,
+        firstPointTime: 0,
+        measureCount: 0
+    };
+
+    // Initialize voice
+    function initScoutVoice() {
+        if (_scout.initialized) return;
+        _scout.initialized = true;
+        if (!window.speechSynthesis) return;
+        // Pick a good voice — prefer English, natural-sounding
+        function pickVoice() {
+            var voices = speechSynthesis.getVoices();
+            if (!voices.length) return;
+            // Prefer: Google US English > Microsoft Mark > any en-US > first en
+            var prefs = ['google us english', 'microsoft mark', 'microsoft david', 'samantha', 'alex'];
+            for (var p = 0; p < prefs.length; p++) {
+                for (var v = 0; v < voices.length; v++) {
+                    if (voices[v].name.toLowerCase().indexOf(prefs[p]) >= 0) { _scout.selectedVoice = voices[v]; return; }
+                }
+            }
+            // Fallback: first en voice
+            for (var i = 0; i < voices.length; i++) {
+                if (voices[i].lang && voices[i].lang.indexOf('en') === 0) { _scout.selectedVoice = voices[i]; return; }
+            }
+            _scout.selectedVoice = voices[0];
+        }
+        pickVoice();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = pickVoice;
+        }
+    }
+    initScoutVoice();
+
+    // Core speak function with cooldown, queue, and visual feedback
+    function scoutSpeak(text, category, priority) {
+        if (_scout.muted || !window.speechSynthesis) return;
+        if (!text) return;
+        category = category || 'general';
+        priority = priority || 'normal'; // 'normal', 'high', 'critical'
+
+        // Cooldown: don't repeat same category too fast
+        var now = Date.now();
+        if (_scout.cooldowns[category] && (now - _scout.cooldowns[category]) < _scout.cooldownMs) {
+            if (priority !== 'critical') return;
+        }
+        _scout.cooldowns[category] = now;
+        _scout.lastMsg = text;
+        _scout.lastMsgTime = now;
+
+        // Cancel current speech for critical messages
+        if (priority === 'critical' && speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
+
+        var utter = new SpeechSynthesisUtterance(text);
+        if (_scout.selectedVoice) utter.voice = _scout.selectedVoice;
+        utter.rate = 1.05;  // Slightly fast — professional, not robotic
+        utter.pitch = 1.0;
+        utter.volume = 0.85;
+
+        utter.onstart = function() {
+            _scout.speaking = true;
+            var bot = document.getElementById('companionBot');
+            if (bot) { bot.classList.add('speaking'); bot.classList.remove('scanning'); }
+            var log = document.getElementById('botVoiceLog');
+            if (log) { log.textContent = text; log.classList.add('speaking'); }
+            var bubble = document.getElementById('botSpeechBubble');
+            if (bubble) { bubble.textContent = text; bubble.classList.add('visible'); }
+        };
+        utter.onend = function() {
+            _scout.speaking = false;
+            var bot = document.getElementById('companionBot');
+            if (bot) { bot.classList.remove('speaking'); if (_xr.session) bot.classList.add('scanning'); }
+            var log = document.getElementById('botVoiceLog');
+            if (log) log.classList.remove('speaking');
+            setTimeout(function() {
+                var bubble = document.getElementById('botSpeechBubble');
+                if (bubble) bubble.classList.remove('visible');
+            }, 1500);
+        };
+        utter.onerror = function() { _scout.speaking = false; };
+
+        speechSynthesis.speak(utter);
+    }
+
+    // Mute toggle
+    window.toggleScoutMute = function() {
+        _scout.muted = !_scout.muted;
+        var btn = document.getElementById('botMuteBtn');
+        if (_scout.muted) {
+            btn.textContent = '🔇';
+            btn.classList.add('muted');
+            if (speechSynthesis.speaking) speechSynthesis.cancel();
+        } else {
+            btn.textContent = '🔊';
+            btn.classList.remove('muted');
+            scoutSpeak('Voice coaching enabled.', 'mute', 'normal');
+        }
+    };
+
+    // ── Voice hooks for AR events ──
+
+    // Called when AR session starts
+    function scoutOnSessionStart(refSpaceName) {
+        _scout.sessionStartedAt = Date.now();
+        _scout.measureCount = 0;
+        scoutSpeak('AR session active. Reference space: ' + refSpaceName + '. Walk to a wall and tap to place your first point.', 'session', 'high');
+    }
+
+    // Called when first point is placed
+    function scoutOnFirstPoint() {
+        _scout.firstPointTime = Date.now();
+        scoutSpeak('First point placed. Now walk to the other end of the wall and tap again.', 'point', 'normal');
+    }
+
+    // Called when measurement completes
+    function scoutOnMeasurement(label, distInches, confidence) {
+        _scout.measureCount++;
+        var ft = (distInches / 12).toFixed(1);
+        var msg = label + '. ' + ft + ' feet.';
+
+        if (confidence < 50) {
+            msg += ' Warning: low confidence at ' + confidence + ' percent. Try getting closer to the surface and re-measure.';
+            scoutSpeak(msg, 'measure', 'critical');
+        } else if (confidence < 75) {
+            msg += ' ' + confidence + ' percent confidence. Acceptable, but you could re-do this one for better accuracy.';
+            scoutSpeak(msg, 'measure', 'high');
+        } else {
+            msg += ' Confidence: ' + confidence + ' percent. Good measurement.';
+            scoutSpeak(msg, 'measure', 'normal');
+        }
+
+        // Milestone callouts
+        if (_scout.measureCount === 4) {
+            setTimeout(function() { scoutSpeak('Four walls measured. If this is a rectangular room, try the perimeter tool for automatic area calculation.', 'tip', 'normal'); }, 3000);
+        }
+        if (_scout.measureCount === 1) {
+            setTimeout(function() { scoutSpeak('First measurement saved. Keep going. Tap to start the next wall.', 'tip', 'normal'); }, 2500);
+        }
+    }
+
+    // Called when no surface is hit
+    function scoutOnNoSurface() {
+        scoutSpeak('No surface detected. Point directly at a wall or floor, and move a bit closer.', 'nosurface', 'critical');
+    }
+
+    // Called when hit-test is lost
+    function scoutOnHitTestLost() {
+        if (Date.now() - _scout.hitTestLostAt < 8000) return;
+        _scout.hitTestLostAt = Date.now();
+        scoutSpeak('Surface tracking lost. Move slowly and look at a flat surface to re-acquire.', 'hitlost', 'critical');
+    }
+
+    // Called when new surfaces are discovered
+    function scoutOnSurfacesFound(total, walls, floors, ceilings) {
+        if (Date.now() - _scout.surfaceAnnouncedAt < 10000) return;
+        if (total === _scout.lastSurfaceCount) return;
+        _scout.surfaceAnnouncedAt = Date.now();
+        _scout.lastSurfaceCount = total;
+        if (total >= 6 && _scout.lastSurfaceCount < 6) {
+            scoutSpeak('Excellent. ' + total + ' surfaces detected. ' + walls + ' walls, ' + floors + ' floors, ' + ceilings + ' ceilings. Full room coverage.', 'surfaces', 'normal');
+        } else if (total >= 3 && _scout.lastSurfaceCount < 3) {
+            scoutSpeak(total + ' surfaces found. ' + walls + ' walls detected. You can start measuring.', 'surfaces', 'normal');
+        } else if (total === 1) {
+            scoutSpeak('First surface detected. Look around slowly to find more walls.', 'surfaces', 'normal');
+        }
+    }
+
+    // Called for ceiling height capture
+    function scoutOnCeilingHeight(heightInches) {
+        var ft = (heightInches / 12).toFixed(1);
+        scoutSpeak('Ceiling height recorded. ' + ft + ' feet.', 'ceiling', 'normal');
+    }
+
+    // Called for perimeter point
+    function scoutOnPerimeterPoint(pointCount, totalFt) {
+        if (pointCount === 1) {
+            scoutSpeak('Perimeter started. Walk to each corner and tap.', 'perim', 'normal');
+        } else if (pointCount === 3) {
+            scoutSpeak(pointCount + ' corners placed. ' + totalFt + ' feet so far. Close when ready.', 'perim', 'normal');
+        }
+    }
+
+    // Called when perimeter closes
+    function scoutOnPerimeterClose(perimFt, areaSqFt) {
+        scoutSpeak('Perimeter closed. ' + perimFt + ' linear feet. Floor area: ' + areaSqFt + ' square feet.', 'perimclose', 'high');
+    }
+
+    // Called when session ends
+    function scoutOnSessionEnd() {
+        var total = 0;
+        rooms.forEach(function(r) { total += r.measurements.length; });
+        scoutSpeak('AR session ended. ' + total + ' total measurements saved across ' + rooms.length + ' rooms. Don\'t forget to export your field report.', 'session', 'high');
+    }
+
+    // Proactive coaching — called periodically from bot update
+    function scoutProactiveCoach() {
+        if (!_xr.session || _scout.muted) return;
+        var now = Date.now();
+        var elapsed = now - _scout.sessionStartedAt;
+
+        // If 30 seconds in and no measurements, nudge
+        if (elapsed > 30000 && _scout.measureCount === 0 && (now - (_scout.cooldowns['nudge'] || 0)) > 30000) {
+            scoutSpeak('Tip: walk up close to a wall, point at it, and pinch or tap to place your first point.', 'nudge', 'normal');
+        }
+
+        // If hit-test source is gone and we had one
+        if (!_xr.hitTestSource && _scout.sessionStartedAt > 0) {
+            scoutOnHitTestLost();
+        }
+
+        // If no surfaces after 15 seconds
+        if (elapsed > 15000 && _xr.planesDetected === 0 && (now - _scout.noSurfaceWarnedAt) > 15000) {
+            _scout.noSurfaceWarnedAt = now;
+            scoutSpeak('No surfaces detected yet. Try looking at the floor or a large flat wall. Move slowly.', 'nosurfwarn', 'high');
+        }
+    }
+
+    // ── Update companion bot display ──
+    var _botUpdateCounter = 0;
+    var _botMoods = [
+        { min: 0, face: '😴', mood: 'Waiting for AR session...' },
+        { min: 1, face: '👀', mood: 'Scanning... looking for surfaces' },
+        { min: 3, face: '🤖', mood: 'Found surfaces! Ready to measure' },
+        { min: 6, face: '😎', mood: 'Great coverage — keep going!' },
+        { min: 10, face: '🔥', mood: 'Excellent scan! Room is well mapped' },
+        { min: 15, face: '🏆', mood: 'Pro-level scan — full room coverage' }
+    ];
+
+    function updateCompanionBot(handInfo) {
+        _botUpdateCounter++;
+        if (_botUpdateCounter % 10 !== 0) return; // Update every 10 frames for perf
+
+        var bot = document.getElementById('companionBot');
+        if (!bot.classList.contains('visible')) return;
+
+        var planes = _xr.planeTypes || {};
+        var totalSurfaces = _xr.planesDetected || 0;
+        var hasHitTest = _xr.hitTestSource ? true : false;
+        var handsCount = handInfo ? handInfo.handsFound : 0;
+        var mCount = 0;
+        rooms.forEach(function(r) { mCount += r.measurements.length; });
+
+        // Update stats
+        document.getElementById('botSurfaces').textContent = totalSurfaces;
+        document.getElementById('botSurfaces').className = 'bs-val' + (totalSurfaces > 0 ? ' tracking' : '');
+        document.getElementById('botWalls').textContent = planes.walls || 0;
+        document.getElementById('botWalls').className = 'bs-val' + (planes.walls > 0 ? ' tracking' : '');
+        document.getElementById('botFloors').textContent = planes.floors || 0;
+        document.getElementById('botFloors').className = 'bs-val' + (planes.floors > 0 ? ' tracking' : '');
+        document.getElementById('botCeilings').textContent = planes.ceilings || 0;
+        document.getElementById('botCeilings').className = 'bs-val' + (planes.ceilings > 0 ? ' tracking' : '');
+        document.getElementById('botHitTest').textContent = hasHitTest ? 'Active' : 'None';
+        document.getElementById('botHitTest').className = 'bs-val' + (hasHitTest ? ' tracking' : ' lost');
+        document.getElementById('botHands').textContent = handsCount > 0 ? handsCount + ' tracked' : 'Not detected';
+        document.getElementById('botHands').className = 'bs-val' + (handsCount > 0 ? ' tracking' : '');
+        document.getElementById('botMeasureCount').textContent = mCount;
+
+        // Viewer position
+        if (_xr.lastHitPose) {
+            var p = _xr.lastHitPose;
+            document.getElementById('botPosition').textContent = p.x.toFixed(1) + ', ' + p.y.toFixed(1) + ', ' + p.z.toFixed(1);
+        }
+
+        // Mood based on total surfaces
+        var mood = _botMoods[0];
+        for (var i = _botMoods.length - 1; i >= 0; i--) {
+            if (totalSurfaces >= _botMoods[i].min) { mood = _botMoods[i]; break; }
+        }
+        document.getElementById('botFace').textContent = mood.face;
+        document.getElementById('botMood').textContent = mood.mood;
+
+        // Scanning animation
+        if (_xr.session) {
+            bot.classList.add('scanning');
+        } else {
+            bot.classList.remove('scanning');
+        }
+    }
+
+    // ── Auto-show bot and hand ref when AR starts ──
+    var _origStartMode = window.startMode;
+    window.startMode = function(m) {
+        _origStartMode(m);
+        if (m === 'ar') {
+            // Auto-show companion bot in AR mode
+            document.getElementById('companionBot').classList.add('visible');
+            document.getElementById('botMood').textContent = 'Starting AR...';
+            document.getElementById('botFace').textContent = '👀';
+        } else {
+            document.getElementById('companionBot').classList.remove('visible');
+            document.getElementById('handRefPanel').classList.remove('visible');
+        }
+    };
+
+    // ── Hook into XR render loop to add hand tracking + bot updates ──
+    // We need to patch setupXRSession's onXRFrame. We'll do this by
+    // listening for the session start and adding our processing.
+    var _origSetupXR = setupXRSession;
+    // Can't override setupXRSession since it's in a closure, so instead
+    // we'll add a secondary frame processor via the session event.
+    // The approach: override the render loop indirectly by patching the
+    // frame callback to include our hand tracking logic.
+
+    // Since setupXRSession is local, we inject our logic by watching
+    // _xr.session changes and hooking requestAnimationFrame.
+    (function patchXRLoop() {
+        var origRAF = null;
+        var checkInterval = setInterval(function() {
+            if (_xr.session && !origRAF) {
+                origRAF = true;
+                // Add a secondary processing loop
+                function handTrackLoop(time, frame) {
+                    if (!_xr.session) { origRAF = null; return; }
+                    _xr.session.requestAnimationFrame(handTrackLoop);
+                    var pose = null;
+                    try { pose = frame.getViewerPose(_xr.refSpace); } catch(e) {}
+                    var handInfo = processHandTracking(frame, _xr.refSpace, pose);
+                    updateCompanionBot(handInfo);
+                    scoutProactiveCoach();
+                }
+                _xr.session.requestAnimationFrame(handTrackLoop);
+            }
+            if (!_xr.session) origRAF = null;
+        }, 500);
+    })();
+
     renderMeasureList();
 })();
+
 </script>
 </body>
 </html>

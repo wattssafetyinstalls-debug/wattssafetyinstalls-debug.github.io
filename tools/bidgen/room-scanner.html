@@ -1,747 +1,724 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Room Scanner — Watts Safety Installs</title>
-    <meta name="robots" content="noindex, nofollow">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #000; color: #fff; min-height: 100vh; overflow: hidden; touch-action: none; }
-
-        /* ── Launch Screen (shown before AR) ── */
-        #launchScreen {
-            position: fixed; inset: 0; z-index: 500;
-            background: linear-gradient(135deg, #0a1628 0%, #1a1a2e 50%, #0d1b2a 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 40px 24px; text-align: center;
-        }
-        #launchScreen h1 { font-size: 32px; font-weight: 800; color: #e67e22; margin-bottom: 8px; }
-        #launchScreen .sub { font-size: 14px; color: #7f8c8d; margin-bottom: 40px; }
-        #enterAR {
-            width: 280px; height: 280px; border-radius: 50%; border: 4px solid #e67e22;
-            background: rgba(230,126,34,0.15); color: #e67e22;
-            font-size: 24px; font-weight: 800; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 8px; transition: all 0.3s;
-        }
-        #enterAR:hover, #enterAR:active { background: rgba(230,126,34,0.3); transform: scale(1.05); }
-        #enterAR .big-icon { font-size: 64px; }
-        #enterAR .hint { font-size: 12px; color: #95a5a6; font-weight: 400; margin-top: 4px; }
-        #noXRMsg { display: none; margin-top: 24px; padding: 16px 24px; background: #1a2744; border: 1px solid #e74c3c; border-radius: 12px; max-width: 360px; }
-        #noXRMsg p { font-size: 13px; color: #e74c3c; line-height: 1.5; }
-        #fallbackBtns { margin-top: 20px; display: none; gap: 12px; }
-        #fallbackBtns button { padding: 16px 28px; border-radius: 12px; border: 2px solid #2a3a5c; background: #16213e; color: #ecf0f1; font-size: 15px; font-weight: 600; cursor: pointer; }
-
-        /* ── AR HUD (in-session overlay) ── */
-        #arHUD { position: fixed; inset: 0; z-index: 100; display: none; pointer-events: none; }
-
-        /* Live distance — big, centered, always visible when measuring */
-        #liveDist {
-            position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.7); border: 3px solid #4ade80;
-            border-radius: 20px; padding: 14px 32px;
-            font-size: 42px; font-weight: 800; color: #4ade80;
-            font-variant-numeric: tabular-nums; text-align: center;
-            min-width: 240px; display: none;
-            pointer-events: none;
-        }
-        #liveDist .unit { font-size: 18px; color: #95a5a6; font-weight: 400; display: block; margin-top: 2px; }
-
-        /* Status message — top center */
-        #arStatus {
-            position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.6); border-radius: 12px; padding: 8px 20px;
-            font-size: 16px; color: #ecf0f1; font-weight: 500;
-            pointer-events: none; white-space: nowrap;
-        }
-
-        /* Bottom action bar — BIG buttons for VR hand/controller tap */
-        #actionBar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 12px; pointer-events: auto;
-        }
-        .ar-btn {
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.6);
-            color: white; font-size: 28px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px); transition: all 0.15s;
-        }
-        .ar-btn:hover, .ar-btn:active { background: rgba(230,126,34,0.5); border-color: #e67e22; transform: scale(1.1); }
-        .ar-btn.active-tool { background: rgba(230,126,34,0.4); border-color: #e67e22; }
-        .ar-btn .label { position: absolute; bottom: -18px; font-size: 10px; color: #aaa; white-space: nowrap; font-weight: 600; }
-
-        /* Measurement counter pill */
-        #measureCount {
-            position: fixed; top: 16px; right: 20px;
-            background: rgba(0,0,0,0.6); border-radius: 20px; padding: 6px 16px;
-            font-size: 14px; color: #e67e22; font-weight: 700;
-            pointer-events: auto; cursor: pointer;
-        }
-
-        /* Surface count indicator */
-        #surfaceCount {
-            position: fixed; top: 16px; left: 20px;
-            background: rgba(0,0,0,0.6); border-radius: 20px; padding: 6px 16px;
-            font-size: 13px; color: #4ade80; font-weight: 600;
-            pointer-events: none;
-        }
-
-        /* Speech bubble from scout */
-        #scoutBubble {
-            position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
-            background: rgba(52,152,219,0.9); color: white;
-            font-size: 15px; font-weight: 600; padding: 12px 20px;
-            border-radius: 16px; max-width: 400px; text-align: center;
-            pointer-events: none; display: none; line-height: 1.4;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-        #scoutBubble.visible { display: block; animation: bubbleIn 0.25s ease-out; }
-        @keyframes bubbleIn { from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)} }
-
-        /* Results panel — full screen overlay when tapped */
-        #resultsPanel {
-            position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.92);
-            backdrop-filter: blur(12px); overflow-y: auto; padding: 24px;
-            display: none;
-        }
-        #resultsPanel.open { display: block; }
-        #resultsPanel h2 { font-size: 22px; color: #e67e22; margin-bottom: 16px; }
-        #resultsPanel .close-btn {
-            position: fixed; top: 20px; right: 20px;
-            width: 60px; height: 60px; border-radius: 50%;
-            background: rgba(231,76,60,0.3); border: 2px solid #e74c3c;
-            color: white; font-size: 24px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .result-card {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; padding: 14px 18px; margin-bottom: 10px;
-        }
-        .result-card .rc-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; }
-        .result-card .rc-value { font-size: 28px; font-weight: 800; color: #e67e22; margin-top: 2px; }
-        .result-card .rc-detail { font-size: 12px; color: #95a5a6; margin-top: 4px; }
-        .result-card .rc-conf { font-size: 11px; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 4px; }
-        .rc-conf-high { background: rgba(46,204,113,0.2); color: #2ecc71; }
-        .rc-conf-med { background: rgba(241,196,15,0.2); color: #f1c40f; }
-        .rc-conf-low { background: rgba(231,76,60,0.2); color: #e74c3c; }
-        #resultsSummary { background: rgba(230,126,34,0.1); border: 1px solid #e67e22; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-        #resultsSummary .sum-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
-        #resultsSummary .sum-row .sl { color: #95a5a6; }
-        #resultsSummary .sum-row .sv { color: #ecf0f1; font-weight: 700; }
-        .results-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-        .results-actions button {
-            flex: 1; min-width: 140px; padding: 16px; border-radius: 12px; border: none;
-            font-size: 15px; font-weight: 700; cursor: pointer;
-        }
-        .ra-primary { background: #e67e22; color: white; }
-        .ra-secondary { background: rgba(255,255,255,0.1); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.2) !important; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Room Scanner — Watts Safety Installs</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#000;color:#fff;min-height:100vh;overflow:hidden;touch-action:none}
+#launch{position:fixed;inset:0;z-index:500;background:linear-gradient(135deg,#0a1628,#1a1a2e,#0d1b2a);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+#launch h1{font-size:28px;font-weight:800;color:#e67e22;margin-bottom:6px}
+#launch .sub{font-size:13px;color:#7f8c8d;margin-bottom:32px}
+#goAR{width:240px;height:240px;border-radius:50%;border:4px solid #e67e22;background:rgba(230,126,34,.12);color:#e67e22;font-size:22px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:all .3s}
+#goAR:active{background:rgba(230,126,34,.3);transform:scale(1.05)}
+#goAR .ico{font-size:56px}
+#goAR .hint{font-size:11px;color:#95a5a6;font-weight:400}
+#noXR{display:none;margin-top:20px;padding:14px 20px;background:#1a2744;border:1px solid #e74c3c;border-radius:10px;max-width:340px;font-size:12px;color:#e74c3c;line-height:1.5}
+/* results overlay */
+#results{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);backdrop-filter:blur(10px);overflow-y:auto;padding:24px;display:none}
+#results.open{display:block}
+#results h2{font-size:20px;color:#e67e22;margin-bottom:14px}
+#results .xbtn{position:fixed;top:16px;right:16px;width:56px;height:56px;border-radius:50%;background:rgba(231,76,60,.25);border:2px solid #e74c3c;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.rcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 16px;margin-bottom:8px}
+.rcard .rl{font-size:10px;color:#7f8c8d;text-transform:uppercase;letter-spacing:.8px}
+.rcard .rv{font-size:26px;font-weight:800;color:#e67e22;margin-top:2px}
+.rcard .rd{font-size:11px;color:#95a5a6;margin-top:3px}
+.rcard .rc{font-size:10px;padding:2px 7px;border-radius:8px;display:inline-block;margin-top:3px}
+.rc-h{background:rgba(46,204,113,.15);color:#2ecc71}
+.rc-m{background:rgba(241,196,15,.15);color:#f1c40f}
+.rc-l{background:rgba(231,76,60,.15);color:#e74c3c}
+#rsum{background:rgba(230,126,34,.08);border:1px solid #e67e2266;border-radius:10px;padding:14px;margin-bottom:14px}
+#rsum .sr{display:flex;justify-content:space-between;padding:3px 0;font-size:13px}
+#rsum .sr .sl{color:#95a5a6} #rsum .sr .sv{color:#ecf0f1;font-weight:700}
+.racts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.racts button{flex:1;min-width:130px;padding:14px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer}
+.ra1{background:#e67e22;color:#fff} .ra2{background:rgba(255,255,255,.08);color:#ecf0f1;border:1px solid rgba(255,255,255,.15)!important}
+</style>
 </head>
 <body>
-
-<!-- ═══ LAUNCH SCREEN ═══ -->
-<div id="launchScreen">
-    <h1>📐 Room Scanner</h1>
-    <div class="sub">Watts Safety Installs — Spatial Measurement Tool</div>
-    <button id="enterAR" onclick="launchAR()">
-        <span class="big-icon">🥽</span>
-        ENTER AR
-        <span class="hint">Tap to start scanning your room</span>
-    </button>
-    <div id="noXRMsg">
-        <p>WebXR AR is not available on this device. Use this tool on a Meta Quest 3 for the full spatial experience.</p>
-    </div>
-    <div id="fallbackBtns">
-        <button onclick="launchCamera()">📸 Camera Mode</button>
-        <button onclick="launch2D()">📐 2D Sketch</button>
-    </div>
+<div id="launch">
+<h1>📐 Room Scanner</h1>
+<div class="sub">Watts Safety Installs — Spatial Measurement</div>
+<button id="goAR" onclick="startAR()"><span class="ico">🥽</span>ENTER AR<span class="hint">Full spatial scanning with hand tracking</span></button>
+<div id="noXR">WebXR not available. Open on Meta Quest 3 for spatial scanning.</div>
 </div>
-
-<!-- ═══ AR HUD (visible during immersive session) ═══ -->
-<div id="arHUD">
-    <div id="arStatus">Looking for surfaces...</div>
-    <div id="surfaceCount">0 surfaces</div>
-    <div id="liveDist"><span id="liveDistVal">0' 0"</span><span class="unit" id="liveDistUnit">measuring...</span></div>
-    <div id="measureCount" onclick="openResults()">0 measurements</div>
-    <div id="actionBar">
-        <button class="ar-btn active-tool" id="abMeasure" onclick="setARTool('measure')">📏</button>
-        <button class="ar-btn" id="abUndo" onclick="arUndo()">↩️</button>
-        <button class="ar-btn" id="abDone" onclick="openResults()">✅</button>
-        <button class="ar-btn" id="abMute" onclick="toggleMute()">🔊</button>
-    </div>
-    <div id="scoutBubble"></div>
+<div id="results">
+<button class="xbtn" onclick="closeResults()">✕</button>
+<h2>📏 Measurements</h2>
+<div id="rsum"></div>
+<div id="rlist"></div>
+<div class="racts">
+<button class="ra1" onclick="sendBidGen()">📤 BidGen</button>
+<button class="ra2" onclick="fieldReport()">📄 Report</button>
+<button class="ra2" onclick="copyAll()">📋 Copy</button>
+<button class="ra2" onclick="aiAnalysis()">🧠 AI</button>
+<button class="ra2" onclick="closeResults()">← Back</button>
 </div>
-
-<!-- ═══ RESULTS PANEL ═══ -->
-<div id="resultsPanel">
-    <button class="close-btn" onclick="closeResults()">✕</button>
-    <h2>📏 Measurements</h2>
-    <div id="resultsSummary"></div>
-    <div id="resultsList"></div>
-    <div class="results-actions">
-        <button class="ra-primary" onclick="sendToBidGen()">📤 Send to BidGen</button>
-        <button class="ra-secondary" onclick="exportFieldReport()">📄 Field Report</button>
-        <button class="ra-secondary" onclick="copyAll()">📋 Copy All</button>
-        <button class="ra-secondary" onclick="sendToAI()">🧠 AI Analysis</button>
-        <button class="ra-secondary" onclick="closeResults()">← Back to AR</button>
-    </div>
 </div>
-
 <script>
 (function(){
 'use strict';
-
 // ═══════════════════════════════════════════════════════════
-// ROOM SCANNER v4 — Quest 3 Spatial-First Architecture
+// ROOM SCANNER v5 — TRUE SPATIAL 3D
 //
-// Design principles:
-// 1. AR-first: launch straight into immersive passthrough
-// 2. Voice-first: Scout talks, minimal visual UI
-// 3. Giant touch targets: sized for VR hand/controller
-// 4. Zero clutter: only show what matters RIGHT NOW
-// 5. Auto-everything: auto-label, auto-save, auto-detect
+// ALL visual elements rendered in WebGL inside the XR
+// framebuffer: anchor markers, measurement lines, distance
+// labels, hand tracers, mentor bot. Nothing is DOM overlay
+// except the launch screen and post-scan results panel.
 // ═══════════════════════════════════════════════════════════
 
-// ── State ──
-var measurements = [];
-var measureId = 0;
-var arTool = 'measure';
-var snapshotBase64 = null;
+var M = []; // measurements [{id,label,dist,conf,p1:{x,y,z},p2:{x,y,z}}]
+var mid = 0;
+var snap = null; // snapshot
 
-// ── DOM refs ──
-var launchScreen = document.getElementById('launchScreen');
-var arHUD = document.getElementById('arHUD');
-var liveDist = document.getElementById('liveDist');
-var arStatus = document.getElementById('arStatus');
-var surfaceCountEl = document.getElementById('surfaceCount');
-var measureCountEl = document.getElementById('measureCount');
-var scoutBubble = document.getElementById('scoutBubble');
-var resultsPanel = document.getElementById('resultsPanel');
-
-// ── XR State ──
-var _xr = {
-    session: null, refSpace: null, gl: null, glCanvas: null,
-    hitTestSource: null, lastHitPose: null,
-    pending3D: null, hitSamples: [], sampleCount: 5,
-    planesDetected: 0, planeTypes: {}
+// ── XR ──
+var xr = {
+    session:null, ref:null, gl:null, canvas:null,
+    hitSrc:null, lastHit:null, pending:null,
+    samples:[], sampleN:8, // 8-sample averaging for accuracy
+    planes:0, planeInfo:{w:0,f:0,c:0},
+    anchors:[]  // placed 3D anchor points for rendering
 };
 
-// ═══ SCOUT VOICE ═══
-var _scout = {
-    muted: false, speaking: false, voice: null, initialized: false,
-    cooldowns: {}, cooldownMs: 4000
+// ── GL programs ──
+var prg = {}; // {line, point, sprite}
+var ubo = {}; // uniform locations
+
+// ── Hand tracking ──
+var hands = { left:[], right:[], trails:[] };
+var TRAIL_LEN = 20; // frames of trail history
+
+// ── Mentor bot ──
+var mentor = { pos:{x:0,y:0,z:0}, targetPos:{x:0,y:0,z:0}, visible:false };
+
+// ── Voice ──
+var voice = {
+    muted:false, v:null, init:false, cd:{}, cdMs:3500,
+    speaking:false
 };
 
-function initVoice() {
-    if (_scout.initialized || !window.speechSynthesis) return;
-    _scout.initialized = true;
-    function pick() {
-        var v = speechSynthesis.getVoices();
-        if (!v.length) return;
-        var prefs = ['google us english','microsoft mark','microsoft david','samantha','alex'];
-        for (var p = 0; p < prefs.length; p++)
-            for (var i = 0; i < v.length; i++)
-                if (v[i].name.toLowerCase().indexOf(prefs[p]) >= 0) { _scout.voice = v[i]; return; }
-        for (var j = 0; j < v.length; j++)
-            if (v[j].lang && v[j].lang.indexOf('en') === 0) { _scout.voice = v[j]; return; }
-        _scout.voice = v[0];
+function initVoice(){
+    if(voice.init||!window.speechSynthesis)return;
+    voice.init=true;
+    function pick(){
+        var vs=speechSynthesis.getVoices(); if(!vs.length)return;
+        var p=['google us english','microsoft mark','microsoft david','samantha'];
+        for(var i=0;i<p.length;i++)for(var j=0;j<vs.length;j++)
+            if(vs[j].name.toLowerCase().indexOf(p[i])>=0){voice.v=vs[j];return;}
+        for(var k=0;k<vs.length;k++)if(vs[k].lang&&vs[k].lang.indexOf('en')===0){voice.v=vs[k];return;}
+        voice.v=vs[0];
     }
     pick();
-    if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = pick;
+    if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=pick;
 }
 initVoice();
 
-function say(text, cat, priority) {
-    if (_scout.muted || !window.speechSynthesis || !text) return;
-    cat = cat || 'gen';
-    priority = priority || 'normal';
-    var now = Date.now();
-    if (_scout.cooldowns[cat] && (now - _scout.cooldowns[cat]) < _scout.cooldownMs && priority !== 'critical') return;
-    _scout.cooldowns[cat] = now;
-
-    if (priority === 'critical' && speechSynthesis.speaking) speechSynthesis.cancel();
-
-    var u = new SpeechSynthesisUtterance(text);
-    if (_scout.voice) u.voice = _scout.voice;
-    u.rate = 1.1; u.pitch = 1.0; u.volume = 0.9;
-
-    u.onstart = function() {
-        _scout.speaking = true;
-        showBubble(text);
-    };
-    u.onend = function() {
-        _scout.speaking = false;
-        setTimeout(hideBubble, 1200);
-    };
-    u.onerror = function() { _scout.speaking = false; };
-
+function say(t,cat,pri){
+    if(voice.muted||!window.speechSynthesis||!t)return;
+    cat=cat||'g'; pri=pri||'n';
+    var now=Date.now();
+    if(voice.cd[cat]&&(now-voice.cd[cat])<voice.cdMs&&pri!=='c')return;
+    voice.cd[cat]=now;
+    if(pri==='c'&&speechSynthesis.speaking)speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(t);
+    if(voice.v)u.voice=voice.v;
+    u.rate=1.1;u.pitch=1.0;u.volume=0.9;
+    u.onstart=function(){voice.speaking=true;};
+    u.onend=function(){voice.speaking=false;};
+    u.onerror=function(){voice.speaking=false;};
     speechSynthesis.speak(u);
 }
 
-function showBubble(text) {
-    scoutBubble.textContent = text;
-    scoutBubble.classList.add('visible');
+// ── Format ──
+function fmt(inches){
+    if(!inches||inches<=0)return"0'";
+    var ft=Math.floor(inches/12),inc=Math.round(inches%12);
+    if(inc===12){ft++;inc=0;}
+    return ft+"'"+(inc>0?' '+inc+'"':'');
 }
-function hideBubble() {
-    scoutBubble.classList.remove('visible');
-}
-
-window.toggleMute = function() {
-    _scout.muted = !_scout.muted;
-    document.getElementById('abMute').textContent = _scout.muted ? '🔇' : '🔊';
-    if (_scout.muted && speechSynthesis.speaking) speechSynthesis.cancel();
-    if (!_scout.muted) say('Voice on.', 'mute');
-};
-
-// ═══ FORMAT HELPERS ═══
-function fmtDist(inches) {
-    if (!inches || inches <= 0) return "0'";
-    var ft = Math.floor(inches / 12);
-    var inc = Math.round(inches % 12);
-    if (inc === 12) { ft++; inc = 0; }
-    return ft + "'" + (inc > 0 ? ' ' + inc + '"' : '');
-}
-function fmtFt(inches) { return (inches / 12).toFixed(2) + ' ft'; }
-
-function calcConf(hitUsed, distM, dy) {
-    var s = 100;
-    if (!hitUsed) s -= 35;
-    if (distM > 8) s -= 15;
-    if (distM > 15) s -= 15;
-    if (Math.abs(dy) > 0.5) s -= 10;
-    if (distM < 0.1) s -= 40;
-    return Math.max(10, Math.min(100, s));
+function fmtFt(i){return(i/12).toFixed(2)+' ft';}
+function conf(hu,dm,dy){
+    var s=100;if(!hu)s-=35;if(dm>8)s-=15;if(dm>15)s-=15;
+    if(Math.abs(dy)>.5)s-=10;if(dm<.1)s-=40;
+    return Math.max(10,Math.min(100,s));
 }
 
-// ═══ AUTO-SAVE ═══
-var SAVE_KEY = 'roomScanner_v4';
-function autoSave() {
-    try {
-        localStorage.setItem(SAVE_KEY, JSON.stringify({
-            measurements: measurements, measureId: measureId, ts: Date.now()
-        }));
-    } catch(e) {}
-}
-function autoRecover() {
-    try {
-        var d = JSON.parse(localStorage.getItem(SAVE_KEY));
-        if (d && d.measurements && d.measurements.length && (Date.now() - d.ts) < 86400000) {
-            measurements = d.measurements;
-            measureId = d.measureId || 0;
-            updateCount();
-            say('Recovered ' + measurements.length + ' measurements from your last session.', 'recover', 'high');
-        }
-    } catch(e) {}
+// ── Auto save ──
+function save(){try{localStorage.setItem('rs5',JSON.stringify({M:M,mid:mid,t:Date.now()}));}catch(e){}}
+function recover(){
+    try{var d=JSON.parse(localStorage.getItem('rs5'));
+    if(d&&d.M&&d.M.length&&(Date.now()-d.t)<86400000){
+        M=d.M;mid=d.mid||0;
+        say('Recovered '+M.length+' measurements from last session.','rec','h');
+    }}catch(e){}
 }
 
-function updateCount() {
-    measureCountEl.textContent = measurements.length + ' measurement' + (measurements.length !== 1 ? 's' : '');
+// ═══ WEBGL SHADER SETUP ═══
+var VS_LINE = `
+attribute vec3 aPos;
+uniform mat4 uVP;
+void main(){ gl_Position = uVP * vec4(aPos, 1.0); }
+`;
+var FS_LINE = `
+precision mediump float;
+uniform vec4 uColor;
+void main(){ gl_FragColor = uColor; }
+`;
+var VS_POINT = `
+attribute vec3 aPos;
+uniform mat4 uVP;
+uniform float uSize;
+void main(){
+    gl_Position = uVP * vec4(aPos, 1.0);
+    gl_PointSize = uSize;
 }
-
-// ═══ CHECK XR SUPPORT ═══
-var xrSupported = false;
-if (navigator.xr) {
-    navigator.xr.isSessionSupported('immersive-ar').then(function(ok) {
-        xrSupported = ok;
-        if (!ok) showFallback();
-    });
-} else {
-    showFallback();
+`;
+var FS_POINT = `
+precision mediump float;
+uniform vec4 uColor;
+void main(){
+    float d = distance(gl_PointCoord, vec2(0.5));
+    if(d > 0.5) discard;
+    float alpha = smoothstep(0.5, 0.35, d);
+    gl_FragColor = vec4(uColor.rgb, uColor.a * alpha);
 }
-
-function showFallback() {
-    document.getElementById('noXRMsg').style.display = 'block';
-    document.getElementById('fallbackBtns').style.display = 'flex';
+`;
+var VS_SPRITE = `
+attribute vec3 aPos;
+attribute vec2 aUV;
+uniform mat4 uVP;
+uniform vec3 uOffset;
+uniform float uScale;
+varying vec2 vUV;
+void main(){
+    vec3 p = aPos * uScale + uOffset;
+    gl_Position = uVP * vec4(p, 1.0);
+    vUV = aUV;
 }
+`;
+var FS_SPRITE = `
+precision mediump float;
+uniform vec4 uColor;
+varying vec2 vUV;
+void main(){
+    gl_FragColor = uColor;
+}
+`;
 
-// ═══ LAUNCH AR ═══
-window.launchAR = function() {
-    if (!xrSupported) {
-        showFallback();
-        return;
+function compileShader(gl, src, type){
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
+        console.error('Shader:', gl.getShaderInfoLog(s));
+        gl.deleteShader(s); return null;
     }
-    navigator.xr.requestSession('immersive-ar', {
-        optionalFeatures: ['local-floor','unbounded','hit-test','anchors','plane-detection','mesh-detection','hand-tracking']
-    }).then(function(session) {
-        _xr.session = session;
-        launchScreen.style.display = 'none';
-        arHUD.style.display = 'block';
+    return s;
+}
+function makeProgram(gl, vs, fs){
+    var v = compileShader(gl, vs, gl.VERTEX_SHADER);
+    var f = compileShader(gl, fs, gl.FRAGMENT_SHADER);
+    if(!v||!f) return null;
+    var p = gl.createProgram();
+    gl.attachShader(p, v); gl.attachShader(p, f);
+    gl.linkProgram(p);
+    if(!gl.getProgramParameter(p, gl.LINK_STATUS)){
+        console.error('Program:', gl.getProgramInfoLog(p)); return null;
+    }
+    return p;
+}
 
-        _xr.glCanvas = document.createElement('canvas');
-        _xr.gl = _xr.glCanvas.getContext('webgl2', { xrCompatible: true });
-        if (!_xr.gl) _xr.gl = _xr.glCanvas.getContext('webgl', { xrCompatible: true });
-        session.updateRenderState({ baseLayer: new XRWebGLLayer(session, _xr.gl) });
+function initGL(gl){
+    // Line program
+    prg.line = makeProgram(gl, VS_LINE, FS_LINE);
+    prg.lineVP = gl.getUniformLocation(prg.line, 'uVP');
+    prg.lineColor = gl.getUniformLocation(prg.line, 'uColor');
+    prg.linePos = gl.getAttribLocation(prg.line, 'aPos');
 
-        var spaces = ['unbounded','local-floor','local'];
-        (function trySpace(i) {
-            if (i >= spaces.length) { say('Could not find a reference space. Try restarting.','err','critical'); return; }
-            session.requestReferenceSpace(spaces[i]).then(function(rs) {
-                _xr.refSpace = rs;
-                say('Scanner ready. Point at a wall and tap to start measuring.', 'session', 'high');
-                arStatus.textContent = 'Point at a wall and tap';
-                setupSession(session, rs);
-            }).catch(function() { trySpace(i+1); });
+    // Point program (anchors, hand joints)
+    prg.point = makeProgram(gl, VS_POINT, FS_POINT);
+    prg.pointVP = gl.getUniformLocation(prg.point, 'uVP');
+    prg.pointColor = gl.getUniformLocation(prg.point, 'uColor');
+    prg.pointSize = gl.getUniformLocation(prg.point, 'uSize');
+    prg.pointPos = gl.getAttribLocation(prg.point, 'aPos');
+
+    // Sprite program (mentor bot, labels)
+    prg.sprite = makeProgram(gl, VS_SPRITE, FS_SPRITE);
+    prg.spriteVP = gl.getUniformLocation(prg.sprite, 'uVP');
+    prg.spriteColor = gl.getUniformLocation(prg.sprite, 'uColor');
+    prg.spriteOffset = gl.getUniformLocation(prg.sprite, 'uOffset');
+    prg.spriteScale = gl.getUniformLocation(prg.sprite, 'uScale');
+    prg.spritePos = gl.getAttribLocation(prg.sprite, 'aPos');
+
+    // Shared buffer
+    prg.buf = gl.createBuffer();
+    prg.ready = true;
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+}
+
+// ── Draw helpers ──
+function drawPoints(gl, vp, points, color, size){
+    if(!points.length||!prg.ready) return;
+    var data = new Float32Array(points.length * 3);
+    for(var i=0;i<points.length;i++){
+        data[i*3] = points[i].x;
+        data[i*3+1] = points[i].y;
+        data[i*3+2] = points[i].z;
+    }
+    gl.useProgram(prg.point);
+    gl.uniformMatrix4fv(prg.pointVP, false, vp);
+    gl.uniform4fv(prg.pointColor, color);
+    gl.uniform1f(prg.pointSize, size);
+    gl.bindBuffer(gl.ARRAY_BUFFER, prg.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(prg.pointPos);
+    gl.vertexAttribPointer(prg.pointPos, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.POINTS, 0, points.length);
+}
+
+function drawLine(gl, vp, p1, p2, color, width){
+    if(!prg.ready) return;
+    var data = new Float32Array([p1.x,p1.y,p1.z, p2.x,p2.y,p2.z]);
+    gl.useProgram(prg.line);
+    gl.uniformMatrix4fv(prg.lineVP, false, vp);
+    gl.uniform4fv(prg.lineColor, color);
+    gl.lineWidth(width || 3);
+    gl.bindBuffer(gl.ARRAY_BUFFER, prg.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(prg.linePos);
+    gl.vertexAttribPointer(prg.linePos, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.LINES, 0, 2);
+}
+
+function drawLineStrip(gl, vp, points, color){
+    if(!prg.ready || points.length < 2) return;
+    var data = new Float32Array(points.length * 3);
+    for(var i=0;i<points.length;i++){
+        data[i*3]=points[i].x; data[i*3+1]=points[i].y; data[i*3+2]=points[i].z;
+    }
+    gl.useProgram(prg.line);
+    gl.uniformMatrix4fv(prg.lineVP, false, vp);
+    gl.uniform4fv(prg.lineColor, color);
+    gl.lineWidth(2);
+    gl.bindBuffer(gl.ARRAY_BUFFER, prg.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(prg.linePos);
+    gl.vertexAttribPointer(prg.linePos, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.LINE_STRIP, 0, points.length);
+}
+
+// Draw a small 3D cross marker at a point
+function drawCross(gl, vp, p, color, size){
+    var s = size || 0.03;
+    drawLine(gl, vp, {x:p.x-s,y:p.y,z:p.z},{x:p.x+s,y:p.y,z:p.z}, color, 3);
+    drawLine(gl, vp, {x:p.x,y:p.y-s,z:p.z},{x:p.x,y:p.y+s,z:p.z}, color, 3);
+    drawLine(gl, vp, {x:p.x,y:p.y,z:p.z-s},{x:p.x,y:p.y,z:p.z+s}, color, 3);
+}
+
+// Draw mentor bot (diamond shape in 3D)
+function drawMentor(gl, vp, pos){
+    var s = 0.06;
+    var top = {x:pos.x, y:pos.y+s*2, z:pos.z};
+    var bot = {x:pos.x, y:pos.y-s, z:pos.z};
+    var l = {x:pos.x-s, y:pos.y+s*0.5, z:pos.z};
+    var r = {x:pos.x+s, y:pos.y+s*0.5, z:pos.z};
+    var f = {x:pos.x, y:pos.y+s*0.5, z:pos.z-s};
+    var b = {x:pos.x, y:pos.y+s*0.5, z:pos.z+s};
+    var c = [0.2, 0.6, 1.0, 0.9]; // blue glow
+    drawLine(gl, vp, top, l, c, 2);
+    drawLine(gl, vp, top, r, c, 2);
+    drawLine(gl, vp, top, f, c, 2);
+    drawLine(gl, vp, top, b, c, 2);
+    drawLine(gl, vp, bot, l, c, 2);
+    drawLine(gl, vp, bot, r, c, 2);
+    drawLine(gl, vp, bot, f, c, 2);
+    drawLine(gl, vp, bot, b, c, 2);
+    drawLine(gl, vp, l, f, c, 2);
+    drawLine(gl, vp, f, r, c, 2);
+    drawLine(gl, vp, r, b, c, 2);
+    drawLine(gl, vp, b, l, c, 2);
+    // Glow point at center
+    drawPoints(gl, vp, [pos], [0.3, 0.7, 1.0, 1.0], 18.0);
+    // Eye dots
+    drawPoints(gl, vp, [
+        {x:pos.x-0.015, y:pos.y+s*1.2, z:pos.z-s*0.8},
+        {x:pos.x+0.015, y:pos.y+s*1.2, z:pos.z-s*0.8}
+    ], [1.0, 1.0, 1.0, 1.0], 6.0);
+}
+
+// ═══ MATRIX MATH ═══
+function matMul(a, b){
+    var r = new Float32Array(16);
+    for(var i=0;i<4;i++)for(var j=0;j<4;j++){
+        r[i*4+j]=0;
+        for(var k=0;k<4;k++) r[i*4+j]+=a[i*4+k]*b[k*4+j];
+    }
+    return r;
+}
+
+// ═══ CHECK XR ═══
+var canXR = false;
+if(navigator.xr){
+    navigator.xr.isSessionSupported('immersive-ar').then(function(ok){
+        canXR=ok;
+        if(!ok)document.getElementById('noXR').style.display='block';
+    });
+} else { document.getElementById('noXR').style.display='block'; }
+
+// ═══ START AR ═══
+window.startAR = function(){
+    if(!canXR){document.getElementById('noXR').style.display='block';return;}
+    navigator.xr.requestSession('immersive-ar',{
+        optionalFeatures:['local-floor','unbounded','hit-test','anchors','plane-detection','mesh-detection','hand-tracking']
+    }).then(function(session){
+        xr.session=session;
+        document.getElementById('launch').style.display='none';
+        xr.canvas=document.createElement('canvas');
+        xr.gl=xr.canvas.getContext('webgl2',{xrCompatible:true});
+        if(!xr.gl)xr.gl=xr.canvas.getContext('webgl',{xrCompatible:true});
+        session.updateRenderState({baseLayer:new XRWebGLLayer(session,xr.gl)});
+        initGL(xr.gl);
+        var spaces=['unbounded','local-floor','local'];
+        (function tryS(i){
+            if(i>=spaces.length){say('No reference space. Restart.','e','c');return;}
+            session.requestReferenceSpace(spaces[i]).then(function(rs){
+                xr.ref=rs;
+                say('Scanner ready. Walk to a wall. Point at it. Tap to mark the corner.','s','h');
+                setup(session,rs);
+            }).catch(function(){tryS(i+1);});
         })(0);
-
-        session.addEventListener('end', function() {
-            _xr.session = null; _xr.hitTestSource = null;
-            _xr.pending3D = null; _xr.hitSamples = [];
-            arHUD.style.display = 'none';
-            liveDist.style.display = 'none';
-            launchScreen.style.display = 'flex';
-            var n = measurements.length;
-            if (n > 0) {
-                say(n + ' measurements saved. Opening results.', 'end', 'high');
-                setTimeout(openResults, 1500);
-            }
+        session.addEventListener('end',function(){
+            xr.session=null;xr.hitSrc=null;xr.pending=null;xr.samples=[];xr.anchors=[];
+            hands.left=[];hands.right=[];hands.trails=[];
+            document.getElementById('launch').style.display='flex';
+            if(M.length>0){say(M.length+' measurements saved.','end','h');setTimeout(openResults,1000);}
         });
-
-        autoRecover();
-
-    }).catch(function(err) {
-        say('Failed to start AR. ' + err.message, 'err', 'critical');
-        arStatus.textContent = 'AR failed: ' + err.message;
-        showFallback();
+        recover();
+    }).catch(function(err){
+        say('AR failed. '+err.message,'e','c');
+        document.getElementById('noXR').style.display='block';
+        document.getElementById('noXR').textContent='AR failed: '+err.message;
     });
 };
 
-// ═══ SETUP XR SESSION ═══
-function setupSession(session, refSpace) {
-    // Hit-test from viewer gaze
-    session.requestReferenceSpace('viewer').then(function(vs) {
-        session.requestHitTestSource({ space: vs }).then(function(src) {
-            _xr.hitTestSource = src;
-        }).catch(function(){});
+// ═══ SESSION SETUP ═══
+function setup(session, ref){
+    // Hit-test
+    session.requestReferenceSpace('viewer').then(function(vs){
+        session.requestHitTestSource({space:vs}).then(function(s){xr.hitSrc=s;}).catch(function(){});
     }).catch(function(){});
-
-    // Controller hit-test fallback
-    session.addEventListener('inputsourceschange', function() {
-        if (!_xr.hitTestSource) {
-            var sources = Array.from(session.inputSources);
-            if (sources.length > 0 && sources[0].targetRaySpace) {
-                session.requestHitTestSource({ space: sources[0].targetRaySpace }).then(function(hts) {
-                    _xr.hitTestSource = hts;
-                }).catch(function(){});
-            }
-        }
-    });
-
-    // ── TAP = PLACE POINT ──
-    session.addEventListener('select', function(e) {
-        var frame = e.frame;
-        var hitPoint = null, hitUsed = false;
-
-        if (_xr.hitTestSource) {
-            var results = frame.getHitTestResults(_xr.hitTestSource);
-            if (results.length > 0) {
-                var pose = results[0].getPose(refSpace);
-                if (pose) {
-                    hitPoint = { x: pose.transform.position.x, y: pose.transform.position.y, z: pose.transform.position.z };
-                    hitUsed = true;
+    session.addEventListener('inputsourceschange',function(){
+        if(!xr.hitSrc){
+            var srcs=Array.from(session.inputSources);
+            for(var i=0;i<srcs.length;i++){
+                if(srcs[i].targetRaySpace){
+                    session.requestHitTestSource({space:srcs[i].targetRaySpace}).then(function(h){xr.hitSrc=h;}).catch(function(){});
+                    break;
                 }
             }
         }
-        if (!hitPoint) {
-            var rp = frame.getPose(e.inputSource.targetRaySpace, refSpace);
-            if (rp) {
-                var p = rp.transform.position, o = rp.transform.orientation;
-                var fx = 2*(o.x*o.z + o.w*o.y), fy = 2*(o.y*o.z - o.w*o.x), fz = 1-2*(o.x*o.x + o.y*o.y);
-                hitPoint = { x: p.x+fx*1.5, y: p.y+fy*1.5, z: p.z+fz*1.5 };
+    });
+
+    // ── TAP ──
+    session.addEventListener('select',function(e){
+        var frame=e.frame, hp=null, hu=false;
+        if(xr.hitSrc){
+            var r=frame.getHitTestResults(xr.hitSrc);
+            if(r.length>0){var p=r[0].getPose(ref);if(p){hp={x:p.transform.position.x,y:p.transform.position.y,z:p.transform.position.z};hu=true;}}
+        }
+        if(!hp){
+            var rp=frame.getPose(e.inputSource.targetRaySpace,ref);
+            if(rp){var pp=rp.transform.position,oo=rp.transform.orientation;
+                var fx=2*(oo.x*oo.z+oo.w*oo.y),fy=2*(oo.y*oo.z-oo.w*oo.x),fz=1-2*(oo.x*oo.x+oo.y*oo.y);
+                hp={x:pp.x+fx*1.5,y:pp.y+fy*1.5,z:pp.z+fz*1.5};
             }
         }
-        if (!hitPoint) {
-            say('No surface found. Move closer and point at a wall.', 'nosurf', 'critical');
-            arStatus.textContent = 'No surface — move closer';
-            return;
+        if(!hp){say('No surface. Move closer to the wall.','ns','c');return;}
+        try{if(e.inputSource.gamepad&&e.inputSource.gamepad.hapticActuators)e.inputSource.gamepad.hapticActuators[0].pulse(0.7,80);}catch(he){}
+
+        // 8-sample smoothing
+        if(xr.samples.length>=xr.sampleN){
+            var avg={x:0,y:0,z:0};
+            xr.samples.forEach(function(s){avg.x+=s.x;avg.y+=s.y;avg.z+=s.z;});
+            avg.x/=xr.samples.length;avg.y/=xr.samples.length;avg.z/=xr.samples.length;
+            // 60% tap, 40% average — stronger smoothing than before
+            hp.x=hp.x*0.6+avg.x*0.4;
+            hp.y=hp.y*0.6+avg.y*0.4;
+            hp.z=hp.z*0.6+avg.z*0.4;
         }
+        xr.samples=[];
 
-        // Haptic
-        try { if (e.inputSource.gamepad && e.inputSource.gamepad.hapticActuators) e.inputSource.gamepad.hapticActuators[0].pulse(0.6, 60); } catch(he){}
+        // Snap to detected plane if close
+        // (uses the hit-test result which already snaps to geometry)
 
-        // Smoothing
-        if (_xr.hitSamples.length >= _xr.sampleCount) {
-            var avg = {x:0,y:0,z:0};
-            _xr.hitSamples.forEach(function(s){avg.x+=s.x;avg.y+=s.y;avg.z+=s.z;});
-            avg.x/=_xr.hitSamples.length; avg.y/=_xr.hitSamples.length; avg.z/=_xr.hitSamples.length;
-            hitPoint.x = hitPoint.x*0.7 + avg.x*0.3;
-            hitPoint.y = hitPoint.y*0.7 + avg.y*0.3;
-            hitPoint.z = hitPoint.z*0.7 + avg.z*0.3;
-        }
-        _xr.hitSamples = [];
-
-        placePoint(hitPoint, hitUsed);
+        placePoint(hp, hu);
     });
 
     // ── RENDER LOOP ──
-    var _frameCount = 0;
-    var _sessionStart = Date.now();
-    var _nudged = false;
-
-    function onFrame(time, frame) {
+    var t0=Date.now(), nudged=false, fc=0;
+    function onFrame(time,frame){
         session.requestAnimationFrame(onFrame);
-        _frameCount++;
-        var gl = _xr.gl;
-        var pose = frame.getViewerPose(refSpace);
-        if (!pose) return;
-
-        gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
+        fc++;
+        var gl=xr.gl, pose=frame.getViewerPose(ref);
+        if(!pose)return;
+        var layer=session.renderState.baseLayer;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, layer.framebuffer);
         gl.clearColor(0,0,0,0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 
-        // Hit-test tracking
-        if (_xr.hitTestSource) {
-            var results = frame.getHitTestResults(_xr.hitTestSource);
-            if (results.length > 0) {
-                var hp = results[0].getPose(refSpace);
-                if (hp) {
-                    var pos = { x: hp.transform.position.x, y: hp.transform.position.y, z: hp.transform.position.z };
-                    _xr.lastHitPose = pos;
-                    _xr.hitSamples.push(pos);
-                    if (_xr.hitSamples.length > _xr.sampleCount * 2) _xr.hitSamples.shift();
+        // Process each view (one per eye on Quest 3)
+        for(var vi=0;vi<pose.views.length;vi++){
+            var view=pose.views[vi];
+            var vp=layer.getViewport(view);
+            gl.viewport(vp.x, vp.y, vp.width, vp.height);
 
-                    // Live distance while measuring
-                    if (_xr.pending3D) {
-                        var dx = pos.x - _xr.pending3D.x, dy = pos.y - _xr.pending3D.y, dz = pos.z - _xr.pending3D.z;
-                        var floorIn = Math.sqrt(dx*dx + dz*dz) * 39.3701;
-                        var fullIn = Math.sqrt(dx*dx + dy*dy + dz*dz) * 39.3701;
-                        var show = Math.abs(dy) < 0.3 ? floorIn : fullIn;
-                        document.getElementById('liveDistVal').textContent = fmtDist(show);
-                        document.getElementById('liveDistUnit').textContent = fmtFt(show);
-                        liveDist.style.display = 'block';
+            // View-projection matrix
+            var vpMat=matMul(view.projectionMatrix, view.transform.inverse.matrix);
+
+            // ── Draw all placed anchors (glowing markers) ──
+            var anchorColor = [1.0, 0.5, 0.0, 1.0]; // orange
+            var anchorGlow = [1.0, 0.5, 0.0, 0.4];
+            xr.anchors.forEach(function(a){
+                drawPoints(gl, vpMat, [a], anchorColor, 16.0); // solid center
+                drawPoints(gl, vpMat, [a], anchorGlow, 32.0);  // glow ring
+                drawCross(gl, vpMat, a, [1.0, 0.6, 0.1, 0.7], 0.04); // 3D cross
+            });
+
+            // ── Draw completed measurement lines ──
+            M.forEach(function(m){
+                var c = m.confidence >= 80 ? [0.18,0.8,0.44,1.0] : m.confidence >= 50 ? [0.95,0.77,0.06,1.0] : [0.91,0.3,0.24,1.0];
+                drawLine(gl, vpMat, m.p1, m.p2, c, 4);
+                // Midpoint marker
+                var mp={x:(m.p1.x+m.p2.x)/2, y:(m.p1.y+m.p2.y)/2+0.05, z:(m.p1.z+m.p2.z)/2};
+                drawPoints(gl, vpMat, [mp], [1.0,1.0,1.0,0.9], 10.0);
+            });
+
+            // ── Draw pending line (first point to current aim) ──
+            if(xr.pending && xr.lastHit){
+                drawLine(gl, vpMat, xr.pending, xr.lastHit, [0.29,0.86,0.5,0.6], 2);
+                // Pulsing endpoint
+                var pulse = 0.5 + Math.sin(time * 0.005) * 0.3;
+                drawPoints(gl, vpMat, [xr.lastHit], [0.29,0.86,0.5,pulse], 20.0);
+            }
+
+            // ── Draw hand joints + trails ──
+            var handJointColor = [0.6, 0.4, 1.0, 0.8]; // purple
+            if(hands.left.length > 0) drawPoints(gl, vpMat, hands.left, handJointColor, 6.0);
+            if(hands.right.length > 0) drawPoints(gl, vpMat, hands.right, handJointColor, 6.0);
+            // Fingertip trails
+            hands.trails.forEach(function(trail){
+                if(trail.length > 1) drawLineStrip(gl, vpMat, trail, [0.6, 0.4, 1.0, 0.3]);
+            });
+
+            // ── Draw mentor bot ──
+            if(mentor.visible){
+                drawMentor(gl, vpMat, mentor.pos);
+            }
+
+            // ── Draw hit-test reticle ──
+            if(xr.lastHit && !xr.pending){
+                drawPoints(gl, vpMat, [xr.lastHit], [0.29,0.86,0.5,0.5], 14.0);
+                drawCross(gl, vpMat, xr.lastHit, [0.29,0.86,0.5,0.3], 0.02);
+            }
+        }
+
+        // ── Hit-test tracking ──
+        if(xr.hitSrc){
+            var hr=frame.getHitTestResults(xr.hitSrc);
+            if(hr.length>0){var hp2=hr[0].getPose(ref);if(hp2){
+                xr.lastHit={x:hp2.transform.position.x,y:hp2.transform.position.y,z:hp2.transform.position.z};
+                xr.samples.push(xr.lastHit);
+                if(xr.samples.length>xr.sampleN*3)xr.samples.shift();
+            }}
+        }
+
+        // ── Hand tracking ──
+        var srcs=session.inputSources;
+        var leftJ=[], rightJ=[], indexTips=[];
+        for(var si=0;si<srcs.length;si++){
+            var src=srcs[si];
+            if(src.hand){
+                var joints=[];
+                for(var ji=0;ji<25;ji++){
+                    var jname=jointName(ji);
+                    var joint=src.hand.get(jname);
+                    if(joint){
+                        try{
+                            var jp=frame.getJointPose(joint,ref);
+                            if(jp)joints.push({x:jp.transform.position.x,y:jp.transform.position.y,z:jp.transform.position.z});
+                        }catch(e){}
                     }
+                }
+                if(src.handedness==='left')leftJ=joints; else rightJ=joints;
+                // Index fingertip trail (joint 8 = index tip)
+                if(joints.length>8){
+                    indexTips.push(joints[8]);
                 }
             }
         }
+        hands.left=leftJ; hands.right=rightJ;
+        // Update trails
+        if(indexTips.length>0){
+            indexTips.forEach(function(tip,idx){
+                if(!hands.trails[idx])hands.trails[idx]=[];
+                hands.trails[idx].push(tip);
+                if(hands.trails[idx].length>TRAIL_LEN)hands.trails[idx].shift();
+            });
+        }
 
-        // Plane detection
-        if (frame.detectedPlanes && _frameCount % 30 === 0) {
-            var ct = frame.detectedPlanes.size || 0;
-            if (ct !== _xr.planesDetected) {
-                _xr.planesDetected = ct;
-                var w=0, f=0, c=0;
-                frame.detectedPlanes.forEach(function(pl) {
-                    if (pl.orientation === 'vertical') w++;
-                    else {
-                        var pp = frame.getPose ? frame.getPose(pl.planeSpace, refSpace) : null;
-                        if (pp && pose.views && pose.views[0]) {
-                            if (pp.transform.position.y > pose.views[0].transform.position.y - 0.3) c++; else f++;
-                        } else f++;
-                    }
+        // ── Plane detection ──
+        if(frame.detectedPlanes&&fc%30===0){
+            var ct=frame.detectedPlanes.size||0;
+            if(ct!==xr.planes){
+                xr.planes=ct;
+                var w=0,f=0,c=0;
+                frame.detectedPlanes.forEach(function(pl){
+                    if(pl.orientation==='vertical')w++;
+                    else{var pp2=frame.getPose?frame.getPose(pl.planeSpace,ref):null;
+                        if(pp2&&pose.views[0]){if(pp2.transform.position.y>pose.views[0].transform.position.y-.3)c++;else f++;}else f++;}
                 });
-                _xr.planeTypes = {walls:w, floors:f, ceilings:c};
-                surfaceCountEl.textContent = ct + ' surfaces';
-
-                if (ct === 1) say('Surface found. Keep looking around.', 'surf', 'normal');
-                else if (ct >= 4 && _xr.planesDetected < 4) say(ct + ' surfaces. ' + w + ' walls detected. Ready to measure.', 'surf', 'normal');
+                xr.planeInfo={w:w,f:f,c:c};
+                if(ct===1)say('Surface found. Look around slowly.','sf');
+                else if(ct>=3&&xr.planes<3)say(ct+' surfaces. '+w+' walls. Ready to measure.','sf');
             }
         }
 
-        // Proactive nudge
-        if (!_nudged && (Date.now() - _sessionStart) > 20000 && measurements.length === 0) {
-            _nudged = true;
-            say('Point at a wall and tap your controller or pinch to place the first point.', 'nudge', 'normal');
+        // ── Update mentor bot position (follows viewer, offset to right) ──
+        if(pose.views[0]){
+            var vt=pose.views[0].transform;
+            var vp2=vt.position;
+            var vo=vt.orientation;
+            // Right-side offset from viewer gaze
+            var rx=1-2*(vo.y*vo.y+vo.z*vo.z), rz=2*(vo.x*vo.z-vo.w*vo.y);
+            mentor.targetPos={x:vp2.x+rx*0.6, y:vp2.y-0.2, z:vp2.z+rz*0.6};
+            // Smooth follow
+            mentor.pos.x+=(mentor.targetPos.x-mentor.pos.x)*0.05;
+            mentor.pos.y+=(mentor.targetPos.y-mentor.pos.y)*0.05;
+            mentor.pos.z+=(mentor.targetPos.z-mentor.pos.z)*0.05;
+            if(!mentor.visible&&xr.planes>0)mentor.visible=true;
+        }
+
+        // ── Proactive nudges ──
+        if(!nudged&&(Date.now()-t0)>20000&&M.length===0){
+            nudged=true;
+            say('Walk up to a wall corner. Point at it. Tap to mark it. Then walk to the next corner and tap again.','nudge');
         }
     }
     session.requestAnimationFrame(onFrame);
 }
 
-// ═══ PLACE MEASUREMENT POINT ═══
-function placePoint(pos, hitUsed) {
-    if (!_xr.pending3D) {
-        // First point
-        _xr.pending3D = { x: pos.x, y: pos.y, z: pos.z };
-        liveDist.style.display = 'block';
-        document.getElementById('liveDistVal').textContent = "0' 0\"";
-        document.getElementById('liveDistUnit').textContent = 'measuring...';
-        arStatus.textContent = 'Point 1 set → tap the other end';
-        say('First point. Walk to the other end and tap.', 'point');
+// ═══ PLACE POINT ═══
+function placePoint(pos, hitUsed){
+    // Add visible anchor
+    xr.anchors.push({x:pos.x, y:pos.y, z:pos.z});
+
+    if(!xr.pending){
+        xr.pending={x:pos.x,y:pos.y,z:pos.z};
+        say('Corner marked. Now walk to the other end of this wall and tap.','pt');
     } else {
-        // Second point — complete measurement
-        var dx = pos.x - _xr.pending3D.x, dy = pos.y - _xr.pending3D.y, dz = pos.z - _xr.pending3D.z;
-        var distM = Math.sqrt(dx*dx + dy*dy + dz*dz);
-        var distIn = distM * 39.3701;
-        var floorIn = Math.sqrt(dx*dx + dz*dz) * 39.3701;
-        var useFloor = Math.abs(dy) < 0.3;
-        var finalIn = useFloor ? floorIn : distIn;
-        var conf = calcConf(hitUsed, distM, dy);
-
-        measureId++;
-        var label = 'Wall ' + measureId;
-        measurements.push({
-            id: measureId, label: label, distance: finalIn,
-            confidence: conf, ts: Date.now(),
-            p1: _xr.pending3D, p2: { x: pos.x, y: pos.y, z: pos.z },
-            dist3d: distIn, distFloor: floorIn
+        var dx=pos.x-xr.pending.x, dy=pos.y-xr.pending.y, dz=pos.z-xr.pending.z;
+        var dm=Math.sqrt(dx*dx+dy*dy+dz*dz);
+        var di=dm*39.3701;
+        var fi=Math.sqrt(dx*dx+dz*dz)*39.3701;
+        var useF=Math.abs(dy)<0.3;
+        var final_d=useF?fi:di;
+        var c=conf(hitUsed,dm,dy);
+        mid++;
+        var label='Wall '+mid;
+        M.push({id:mid,label:label,distance:final_d,confidence:c,ts:Date.now(),
+            p1:{x:xr.pending.x,y:xr.pending.y,z:xr.pending.z},
+            p2:{x:pos.x,y:pos.y,z:pos.z},
+            dist3d:di,distFloor:fi
         });
+        xr.pending=null;
+        save();
 
-        _xr.pending3D = null;
-        liveDist.style.display = 'none';
-        updateCount();
-        autoSave();
-
-        arStatus.textContent = label + ': ' + fmtDist(finalIn) + ' → tap for next';
-
-        // Voice feedback based on confidence
-        var ft = (finalIn / 12).toFixed(1);
-        if (conf < 50) {
-            say(label + '. ' + ft + ' feet. Low confidence. Try again closer to the wall.', 'meas', 'critical');
-        } else if (conf < 75) {
-            say(label + '. ' + ft + ' feet. ' + conf + ' percent.', 'meas', 'high');
+        var ft=(final_d/12).toFixed(1);
+        if(c<50){
+            say(label+'. '+ft+' feet. Low confidence. Try getting closer to the wall.','ms','c');
+        } else if(c<75){
+            say(ft+' feet. '+c+' percent confidence.','ms');
         } else {
-            say(ft + ' feet. Good.', 'meas', 'normal');
+            say(ft+' feet. Solid.','ms');
         }
     }
 }
 
-// ═══ AR TOOLS ═══
-window.setARTool = function(t) { arTool = t; };
+// Joint name lookup
+function jointName(i){
+    var n=['wrist','thumb-metacarpal','thumb-phalanx-proximal','thumb-phalanx-distal','thumb-tip',
+    'index-finger-metacarpal','index-finger-phalanx-proximal','index-finger-phalanx-intermediate','index-finger-phalanx-distal','index-finger-tip',
+    'middle-finger-metacarpal','middle-finger-phalanx-proximal','middle-finger-phalanx-intermediate','middle-finger-phalanx-distal','middle-finger-tip',
+    'ring-finger-metacarpal','ring-finger-phalanx-proximal','ring-finger-phalanx-intermediate','ring-finger-phalanx-distal','ring-finger-tip',
+    'pinky-finger-metacarpal','pinky-finger-phalanx-proximal','pinky-finger-phalanx-intermediate','pinky-finger-phalanx-distal','pinky-finger-tip'];
+    return n[i]||'wrist';
+}
 
-window.arUndo = function() {
-    if (_xr.pending3D) {
-        _xr.pending3D = null;
-        liveDist.style.display = 'none';
-        arStatus.textContent = 'Point removed. Tap to start again.';
-        say('Undone.', 'undo');
-        return;
-    }
-    if (measurements.length === 0) return;
-    measurements.pop();
-    updateCount(); autoSave();
-    arStatus.textContent = 'Last measurement removed';
-    say('Removed.', 'undo');
-};
-
-// ═══ RESULTS PANEL ═══
-window.openResults = function() {
-    resultsPanel.classList.add('open');
-    renderResults();
-};
-window.closeResults = function() {
-    resultsPanel.classList.remove('open');
-};
-
-function renderResults() {
-    var list = document.getElementById('resultsList');
-    var sum = document.getElementById('resultsSummary');
-
-    if (measurements.length === 0) {
-        list.innerHTML = '<p style="color:#7f8c8d;text-align:center;padding:40px">No measurements yet. Go back and start tapping walls!</p>';
-        sum.innerHTML = '';
-        return;
-    }
-
-    // Summary
-    var totalLf = 0;
-    measurements.forEach(function(m) { totalLf += m.distance / 12; });
-    var sorted = measurements.map(function(m) { return m.distance/12; }).sort(function(a,b){return b-a;});
-    var estArea = sorted.length >= 2 ? sorted[0] * sorted[1] : 0;
-    var avgConf = 0;
-    measurements.forEach(function(m) { avgConf += (m.confidence || 100); });
-    avgConf = Math.round(avgConf / measurements.length);
-
-    var sh = '';
-    sh += '<div class="sum-row"><span class="sl">Walls measured</span><span class="sv">' + measurements.length + '</span></div>';
-    sh += '<div class="sum-row"><span class="sl">Total perimeter</span><span class="sv">' + totalLf.toFixed(1) + ' ft</span></div>';
-    if (estArea > 0) sh += '<div class="sum-row"><span class="sl">Est. floor area</span><span class="sv">' + estArea.toFixed(0) + ' sq ft</span></div>';
-    sh += '<div class="sum-row"><span class="sl">Avg confidence</span><span class="sv">' + avgConf + '%</span></div>';
-    sum.innerHTML = sh;
-
-    // List
-    var html = '';
-    measurements.forEach(function(m) {
-        var cc = m.confidence >= 80 ? 'rc-conf-high' : m.confidence >= 50 ? 'rc-conf-med' : 'rc-conf-low';
-        html += '<div class="result-card">';
-        html += '<div class="rc-label">WALL</div>';
-        html += '<div class="rc-value">' + fmtDist(m.distance) + '</div>';
-        html += '<div class="rc-detail">' + m.label + ' — ' + fmtFt(m.distance) + '</div>';
-        html += '<span class="rc-conf ' + cc + '">' + m.confidence + '% confidence</span>';
-        html += '</div>';
+// ═══ RESULTS ═══
+window.openResults=function(){document.getElementById('results').classList.add('open');renderRes();};
+window.closeResults=function(){document.getElementById('results').classList.remove('open');};
+function renderRes(){
+    var list=document.getElementById('rlist'), sum=document.getElementById('rsum');
+    if(!M.length){list.innerHTML='<p style="color:#7f8c8d;text-align:center;padding:30px">No measurements yet.</p>';sum.innerHTML='';return;}
+    var tl=0; M.forEach(function(m){tl+=m.distance/12;});
+    var sorted=M.map(function(m){return m.distance/12;}).sort(function(a,b){return b-a;});
+    var area=sorted.length>=2?sorted[0]*sorted[1]:0;
+    var ac=0;M.forEach(function(m){ac+=m.confidence;});ac=Math.round(ac/M.length);
+    var sh='<div class="sr"><span class="sl">Walls</span><span class="sv">'+M.length+'</span></div>';
+    sh+='<div class="sr"><span class="sl">Perimeter</span><span class="sv">'+tl.toFixed(1)+' ft</span></div>';
+    if(area>0)sh+='<div class="sr"><span class="sl">Est. area</span><span class="sv">'+area.toFixed(0)+' sq ft</span></div>';
+    sh+='<div class="sr"><span class="sl">Avg confidence</span><span class="sv">'+ac+'%</span></div>';
+    sum.innerHTML=sh;
+    var h='';M.forEach(function(m){
+        var cc=m.confidence>=80?'rc-h':m.confidence>=50?'rc-m':'rc-l';
+        h+='<div class="rcard"><div class="rl">WALL</div><div class="rv">'+fmt(m.distance)+'</div>';
+        h+='<div class="rd">'+m.label+' — '+fmtFt(m.distance)+'</div>';
+        h+='<span class="rc '+cc+'">'+m.confidence+'%</span></div>';
     });
-    list.innerHTML = html;
+    list.innerHTML=h;
 }
 
 // ═══ EXPORTS ═══
-function getMeasText() {
-    var lines = ['Room Scanner — Field Measurements', ''];
-    measurements.forEach(function(m) {
-        lines.push(m.label + ': ' + fmtDist(m.distance) + ' (' + fmtFt(m.distance) + ') [' + m.confidence + '%]');
-    });
-    var totalLf = 0;
-    measurements.forEach(function(m) { totalLf += m.distance / 12; });
-    lines.push('');
-    lines.push('Total: ' + measurements.length + ' walls, ' + totalLf.toFixed(1) + ' ft perimeter');
-    return lines.join('\n');
+function getTxt(){
+    var l=['Room Scanner — Watts Safety Installs',''];
+    M.forEach(function(m){l.push(m.label+': '+fmt(m.distance)+' ('+fmtFt(m.distance)+') ['+m.confidence+'%]');});
+    var t=0;M.forEach(function(m){t+=m.distance/12;});
+    l.push('');l.push('Total: '+M.length+' walls, '+t.toFixed(1)+' ft');
+    return l.join('\n');
 }
-
-window.copyAll = function() {
-    var t = getMeasText();
-    if (navigator.clipboard) navigator.clipboard.writeText(t).then(function() { say('Copied to clipboard.','copy'); });
+window.copyAll=function(){if(navigator.clipboard)navigator.clipboard.writeText(getTxt()).then(function(){say('Copied.','cp');});};
+window.fieldReport=function(){
+    var l=['WATTS SAFETY INSTALLS — FIELD REPORT','Date: '+new Date().toLocaleString(),'Scanner: Room Scanner v5',''];
+    var t=0;M.forEach(function(m){t+=m.distance/12;l.push(m.label+': '+fmt(m.distance)+' ('+fmtFt(m.distance)+')');});
+    l.push('');l.push('Total: '+M.length+' walls, '+t.toFixed(1)+' ft');
+    if(navigator.clipboard)navigator.clipboard.writeText(l.join('\n')).then(function(){say('Field report copied.','cp');});
 };
-
-window.exportFieldReport = function() {
-    var lines = [];
-    lines.push('WATTS SAFETY INSTALLS — FIELD REPORT');
-    lines.push('Date: ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString());
-    lines.push('Scanner: Room Scanner v4');
-    lines.push('');
-    var totalLf = 0;
-    measurements.forEach(function(m) {
-        totalLf += m.distance / 12;
-        lines.push(m.label + ': ' + fmtDist(m.distance) + ' (' + fmtFt(m.distance) + ')' + (m.confidence < 80 ? ' [' + m.confidence + '%]' : ''));
-    });
-    lines.push('');
-    lines.push('Total: ' + measurements.length + ' walls, ' + totalLf.toFixed(1) + ' ft perimeter');
-    var report = lines.join('\n');
-    if (navigator.clipboard) navigator.clipboard.writeText(report).then(function() { say('Field report copied.','copy'); });
+window.sendBidGen=function(){
+    var t=getTxt();
+    if(window.opener){window.opener.postMessage({type:'roomScannerData',measurements:t,photo:snap},'*');say('Sent.','sd');}
+    else{try{sessionStorage.setItem('roomScannerData',JSON.stringify({measurements:t,photo:snap}));}catch(e){}
+    try{localStorage.setItem('roomScannerData',JSON.stringify({measurements:t,photo:snap}));}catch(e){}
+    window.location.href='index.html#fieldcalc';}
 };
-
-window.sendToBidGen = function() {
-    var t = getMeasText();
-    if (window.opener) {
-        window.opener.postMessage({ type: 'roomScannerData', measurements: t, photo: snapshotBase64 }, '*');
-        say('Sent to BidGen.','send');
-    } else {
-        try { sessionStorage.setItem('roomScannerData', JSON.stringify({ measurements: t, photo: snapshotBase64 })); } catch(e){}
-        try { localStorage.setItem('roomScannerData', JSON.stringify({ measurements: t, photo: snapshotBase64 })); } catch(e){}
-        window.location.href = 'index.html#fieldcalc';
-    }
-};
-
-window.sendToAI = function() {
-    if (measurements.length === 0) { say('No measurements to analyze.','ai'); return; }
-    var t = getMeasText();
-    var prompt = [
-        'You are a master general contractor. Here are room measurements from an AR scanner:',
-        '', t, '',
-        'Provide: 1) Site Assessment 2) Material Takeoff 3) Labor Estimate 4) Scope of Work 5) Recommendations',
-        'Be specific. Use the actual measurements. Bold all numbers.'
-    ].join('\n');
-    say('Sending to AI for analysis...', 'ai');
-    fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev?model=gemini-2.5-pro', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 16384, temperature: 0.3 } })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        var aiText = '';
-        try { aiText = data.candidates[0].content.parts[0].text; } catch(e) { aiText = 'Error parsing.'; }
-        var el = document.getElementById('resultsList');
-        el.innerHTML += '<div class="result-card" style="border-color:#3498db"><div class="rc-label" style="color:#3498db">AI ANALYSIS</div><div style="font-size:13px;line-height:1.6;color:#bdc3c7;margin-top:8px;white-space:pre-wrap">' + aiText.replace(/\*\*(.+?)\*\*/g,'<strong style="color:#ecf0f1">$1</strong>').replace(/\n/g,'<br>') + '</div></div>';
-        say('AI analysis complete. Scroll down to see results.', 'ai');
-    })
-    .catch(function(err) { say('AI error: ' + err.message, 'ai', 'critical'); });
-};
-
-// ═══ FALLBACK MODES (non-Quest) ═══
-window.launchCamera = function() {
-    launchScreen.style.display = 'none';
-    document.body.innerHTML += '<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;font-size:18px;padding:40px;text-align:center">Camera mode works best on Quest 3.<br>Open this URL on your headset for the full spatial experience.</div>';
-};
-window.launch2D = function() {
-    launchScreen.style.display = 'none';
-    document.body.innerHTML += '<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;font-size:18px;padding:40px;text-align:center">2D mode coming soon.<br>Open this URL on your Quest 3 for the full experience.</div>';
+window.aiAnalysis=function(){
+    if(!M.length){say('No measurements.','ai');return;}
+    say('Sending to AI...','ai');
+    var t=getTxt();
+    var pr='You are a master general contractor. Measurements:\n'+t+'\n\nProvide: 1) Assessment 2) Material Takeoff 3) Labor Estimate 4) Scope 5) Recommendations. Use the numbers. Bold all numbers.';
+    fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev?model=gemini-2.5-pro',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user',parts:[{text:pr}]}],generationConfig:{maxOutputTokens:16384,temperature:0.3}})
+    }).then(function(r){return r.json();}).then(function(d){
+        var ai='';try{ai=d.candidates[0].content.parts[0].text;}catch(e){ai='Error';}
+        document.getElementById('rlist').innerHTML+='<div class="rcard" style="border-color:#3498db"><div class="rl" style="color:#3498db">AI ANALYSIS</div><div style="font-size:12px;line-height:1.5;color:#bdc3c7;margin-top:6px;white-space:pre-wrap">'+ai.replace(/\*\*(.+?)\*\*/g,'<strong style="color:#ecf0f1">$1</strong>').replace(/\n/g,'<br>')+'</div></div>';
+        say('Analysis complete.','ai');
+    }).catch(function(e){say('AI error.','ai','c');});
 };
 
 })();

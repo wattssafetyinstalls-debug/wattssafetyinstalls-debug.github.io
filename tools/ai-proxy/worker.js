@@ -526,7 +526,7 @@ async function handleNotifications(request, env, corsHeaders) {
   const url = new URL(request.url);
   const pin = url.searchParams.get('pin');
 
-  if (!pin || pin !== env.OWNER_PIN) {
+  if (!pin || pin.trim() !== (env.OWNER_PIN || '').trim()) {
     return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
   }
 
@@ -727,7 +727,7 @@ async function handleLeadStats(request, env, corsHeaders) {
   const url = new URL(request.url);
   const pin = url.searchParams.get('pin');
 
-  if (!pin || pin !== env.OWNER_PIN) {
+  if (!pin || pin.trim() !== (env.OWNER_PIN || '').trim()) {
     return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
   }
 
@@ -855,7 +855,7 @@ async function handleContractSendSMS(request, env, corsHeaders) {
       return jsonResponse({ error: 'Missing required fields: phone, message, ownerPin' }, 400, corsHeaders);
     }
 
-    if (ownerPin !== env.OWNER_PIN) {
+    if ((ownerPin || '').trim() !== (env.OWNER_PIN || '').trim()) {
       return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
     }
 
@@ -912,7 +912,7 @@ async function handleContractSendEmail(request, env, corsHeaders) {
       return jsonResponse({ error: 'Missing required fields' }, 400, corsHeaders);
     }
 
-    if (ownerPin !== env.OWNER_PIN) {
+    if ((ownerPin || '').trim() !== (env.OWNER_PIN || '').trim()) {
       return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
     }
 

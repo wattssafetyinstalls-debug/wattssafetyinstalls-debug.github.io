@@ -559,7 +559,19 @@ async function callGemini(prompt, outputId, maxTokens = 2048) {
         }
 
         const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+        // Gemini 2.5 Pro returns thought parts first — skip those, grab actual text
+        const parts = data.candidates?.[0]?.content?.parts || [];
+        let text = '';
+        for (let i = 0; i < parts.length; i++) {
+            if (parts[i].thought) continue;
+            if (parts[i].text) { text = parts[i].text; break; }
+        }
+        if (!text) {
+            for (let i = 0; i < parts.length; i++) {
+                if (parts[i].text) { text = parts[i].text; break; }
+            }
+        }
+        if (!text) text = 'No response generated.';
         el.innerHTML = formatOutput(text);
         return text;
     } catch (err) {

@@ -123,7 +123,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:#000;color:#fff;
   <div id="topBar">
     <div id="roomPill" onclick="openRoomModal()"><span id="roomName">Room 1</span><span class="arrow">▼</span></div>
     <div id="statusText">Searching for surfaces...</div>
-    <div id="surfPill" id="surfCount">0 surfaces</div>
+    <div id="surfPill">0 surfaces</div>
   </div>
 
   <!-- Live distance -->
@@ -265,7 +265,7 @@ var hands = {left:[],right:[],trails:[]};
 var TRAIL_LEN = 20;
 
 // ── Mentor bot ──
-var mentor = {pos:{x:0,y:0,z:0},targetPos:{x:0,y:0,z:0},visible:false,bobPhase:0};
+var mentor = {pos:null,targetPos:{x:0,y:0,z:0},visible:true,bobPhase:0,initialized:false};
 
 // ── Voice ──
 var voice = {muted:false,v:null,init:false,cd:{},cdMs:3500,speaking:false};
@@ -510,23 +510,35 @@ function drawCross(gl,vp,p,col,sz){
     drawLine(gl,vp,{x:p.x,y:p.y,z:p.z-s},{x:p.x,y:p.y,z:p.z+s},col,3);
 }
 
-// ── Mentor bot (wireframe diamond) ──
+// ── Mentor bot (wireframe diamond — LARGE visible companion) ──
 function drawMentor(gl,vp,pos,time){
-    var s=.06;
-    var bob=Math.sin((time||0)*.002)*.01;
+    var s=.12; // doubled size for visibility
+    var bob=Math.sin((time||0)*.002)*.015;
     var p={x:pos.x,y:pos.y+bob,z:pos.z};
     var top={x:p.x,y:p.y+s*2,z:p.z},bot={x:p.x,y:p.y-s,z:p.z};
     var l={x:p.x-s,y:p.y+s*.5,z:p.z},r={x:p.x+s,y:p.y+s*.5,z:p.z};
     var f={x:p.x,y:p.y+s*.5,z:p.z-s},b={x:p.x,y:p.y+s*.5,z:p.z+s};
-    var c=[.2,.6,1,.9];
-    drawLine(gl,vp,top,l,c,2);drawLine(gl,vp,top,r,c,2);drawLine(gl,vp,top,f,c,2);drawLine(gl,vp,top,b,c,2);
-    drawLine(gl,vp,bot,l,c,2);drawLine(gl,vp,bot,r,c,2);drawLine(gl,vp,bot,f,c,2);drawLine(gl,vp,bot,b,c,2);
-    drawLine(gl,vp,l,f,c,2);drawLine(gl,vp,f,r,c,2);drawLine(gl,vp,r,b,c,2);drawLine(gl,vp,b,l,c,2);
-    drawPoints(gl,vp,[p],[.3,.7,1,1],18);
-    // Speaking indicator
+    var c=[.2,.7,1,.95]; // brighter blue
+    // Wireframe edges
+    drawLine(gl,vp,top,l,c,3);drawLine(gl,vp,top,r,c,3);drawLine(gl,vp,top,f,c,3);drawLine(gl,vp,top,b,c,3);
+    drawLine(gl,vp,bot,l,c,3);drawLine(gl,vp,bot,r,c,3);drawLine(gl,vp,bot,f,c,3);drawLine(gl,vp,bot,b,c,3);
+    drawLine(gl,vp,l,f,c,3);drawLine(gl,vp,f,r,c,3);drawLine(gl,vp,r,b,c,3);drawLine(gl,vp,b,l,c,3);
+    // Core glow
+    drawPoints(gl,vp,[p],[.3,.8,1,1],28);
+    // Outer glow halo (pulsing)
+    var gp=.3+Math.sin((time||0)*.003)*.2;
+    drawPoints(gl,vp,[p],[.2,.6,1,gp],50);
+    // Eyes
+    drawPoints(gl,vp,[
+        {x:p.x-.025,y:p.y+s*1.2,z:p.z-s*.8},
+        {x:p.x+.025,y:p.y+s*1.2,z:p.z-s*.8}
+    ],[1,1,1,1],10);
+    // Speaking indicator — pulsing ring above head
     if(voice.speaking){
-        var pulse=.4+Math.sin((time||0)*.01)*.3;
-        drawPoints(gl,vp,[{x:p.x,y:p.y+s*2.5,z:p.z}],[.2,.8,1,pulse],12);
+        var pulse=.4+Math.sin((time||0)*.01)*.4;
+        drawPoints(gl,vp,[{x:p.x,y:p.y+s*2.8,z:p.z}],[.3,.9,1,pulse],16);
+        drawPoints(gl,vp,[{x:p.x-.04,y:p.y+s*2.5,z:p.z}],[.3,.9,1,pulse*.7],10);
+        drawPoints(gl,vp,[{x:p.x+.04,y:p.y+s*2.5,z:p.z}],[.3,.9,1,pulse*.7],10);
     }
 }
 
@@ -569,20 +581,23 @@ else{document.getElementById('noXR').style.display='block';}
 window.startAR=function(){
     if(!canXR){document.getElementById('noXR').style.display='block';return;}
     var hudEl=document.getElementById('hud');
+    // Show HUD BEFORE requesting session — Quest needs DOM overlay root visible
+    hudEl.style.display='block';
     var opts={
-        requiredFeatures:['local-floor','dom-overlay'],
-        optionalFeatures:['unbounded','hit-test','anchors','plane-detection','mesh-detection','hand-tracking'],
+        requiredFeatures:['local-floor'],
+        optionalFeatures:['unbounded','hit-test','anchors','plane-detection','mesh-detection','hand-tracking','dom-overlay'],
         domOverlay:{root:hudEl}
     };
-    navigator.xr.requestSession('immersive-ar',opts).catch(function(){
-        // Fallback without dom-overlay as required
-        opts.requiredFeatures=['local-floor'];
-        opts.optionalFeatures.push('dom-overlay');
+    navigator.xr.requestSession('immersive-ar',opts).catch(function(e1){
+        console.warn('[Scanner] First session attempt failed:',e1);
+        // Fallback without dom-overlay
+        delete opts.domOverlay;
+        opts.optionalFeatures=opts.optionalFeatures.filter(function(f){return f!=='dom-overlay';});
         return navigator.xr.requestSession('immersive-ar',opts);
     }).then(function(session){
         xr.session=session;
         document.getElementById('launch').style.display='none';
-        hudEl.style.display='block';
+        console.log('[Scanner] Session started. DOM overlay:',!!session.domOverlayState);
 
         xr.canvas=document.createElement('canvas');
         xr.gl=xr.canvas.getContext('webgl2',{xrCompatible:true});
@@ -605,6 +620,7 @@ window.startAR=function(){
             xr.session=null;xr.hitSrc=null;xr.pending=null;xr.samples=[];xr.anchors=[];xr.perimPts=[];
             hands.left=[];hands.right=[];hands.trails=[];
             hudEl.style.display='none';
+            mentor.pos=null;mentor.initialized=false;
             document.getElementById('launch').style.display='flex';
             var totalM=0;rooms.forEach(function(r){totalM+=r.measurements.length;});
             if(totalM>0){say(totalM+' measurements saved across '+rooms.length+' rooms.','end','h');setTimeout(openResults,1200);}
@@ -693,7 +709,7 @@ function setupSession(session,ref){
         session.requestAnimationFrame(onFrame);
         fc++;
         var gl=xr.gl,pose=frame.getViewerPose(ref);
-        if(!pose)return;
+        if(!pose){if(fc<3)console.warn('[Scanner] No viewer pose frame',fc);return;}
         var layer=session.renderState.baseLayer;
         gl.bindFramebuffer(gl.FRAMEBUFFER,layer.framebuffer);
         gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
@@ -745,8 +761,10 @@ function setupSession(session,ref){
             if(hands.right.length>0)drawPoints(gl,vpMat,hands.right,[.6,.4,1,.8],6);
             hands.trails.forEach(function(tr){if(tr.length>1)drawLineStrip(gl,vpMat,tr,[.6,.4,1,.3]);});
 
-            // Mentor
-            if(mentor.visible)drawMentor(gl,vpMat,mentor.pos,time);
+            // Mentor bot
+            if(mentor.visible&&mentor.pos){
+                try{drawMentor(gl,vpMat,mentor.pos,time);}catch(me){if(fc<5)console.error('[Scanner] Mentor draw error:',me);}
+            }
 
             // Reticle
             if(xr.lastHit&&!xr.pending&&!pendingFix&&!pendingGC){
@@ -788,14 +806,31 @@ function setupSession(session,ref){
             }
         }
 
-        // Update mentor position
+        // Update mentor position — forward-right of viewer
         if(pose.views[0]){
             var vt=pose.views[0].transform,vp2=vt.position,vo=vt.orientation;
-            var rx=1-2*(vo.y*vo.y+vo.z*vo.z),rz=2*(vo.x*vo.z-vo.w*vo.y);
-            mentor.targetPos={x:vp2.x+rx*.6,y:vp2.y-.15,z:vp2.z+rz*.6};
-            mentor.pos.x+=(mentor.targetPos.x-mentor.pos.x)*.05;
-            mentor.pos.y+=(mentor.targetPos.y-mentor.pos.y)*.05;
-            mentor.pos.z+=(mentor.targetPos.z-mentor.pos.z)*.05;
+            // Proper forward vector from quaternion
+            var fwdX=2*(vo.x*vo.z+vo.w*vo.y);
+            var fwdZ=1-2*(vo.x*vo.x+vo.y*vo.y);
+            // Right vector from quaternion
+            var rightX=1-2*(vo.y*vo.y+vo.z*vo.z);
+            var rightZ=2*(vo.x*vo.z-vo.w*vo.y);
+            // Place bot 0.5m forward + 0.4m right, slightly below eye level
+            var tx=vp2.x - fwdX*0.5 + rightX*0.4;
+            var ty=vp2.y - 0.15;
+            var tz=vp2.z - fwdZ*0.5 + rightZ*0.4;
+            mentor.targetPos={x:tx,y:ty,z:tz};
+            // First frame: snap immediately instead of slow lerp from (0,0,0)
+            if(!mentor.initialized||!mentor.pos){
+                mentor.pos={x:tx,y:ty,z:tz};
+                mentor.initialized=true;
+                console.log('[Scanner] Mentor bot initialized at',tx.toFixed(2),ty.toFixed(2),tz.toFixed(2));
+            } else {
+                // Smooth follow (15% lerp = responsive but not jittery)
+                mentor.pos.x+=(tx-mentor.pos.x)*.15;
+                mentor.pos.y+=(ty-mentor.pos.y)*.15;
+                mentor.pos.z+=(tz-mentor.pos.z)*.15;
+            }
             mentor.visible=true;
         }
 

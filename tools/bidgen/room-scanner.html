@@ -374,8 +374,20 @@ if(navigator.xr){
 // ═══ START AR ═══
 window.startAR = function(){
     if(!canXR){document.getElementById('noXR').style.display='block';return;}
-    navigator.xr.requestSession('immersive-ar',{
-        optionalFeatures:['local-floor','unbounded','hit-test','anchors','plane-detection','mesh-detection','hand-tracking']
+    // dom-overlay tells Quest browser this is a spatial app, not a flat panel
+    // requiredFeatures: local-floor ensures we get floor-relative tracking
+    // unbounded in optional lets us walk past guardian boundary
+    var domRoot = document.getElementById('launch');
+    var sessionOpts = {
+        requiredFeatures: ['local-floor'],
+        optionalFeatures: ['unbounded','hit-test','anchors','plane-detection','mesh-detection','hand-tracking','dom-overlay'],
+        domOverlay: { root: domRoot }
+    };
+    // If dom-overlay not supported, try without it
+    navigator.xr.requestSession('immersive-ar', sessionOpts).catch(function(){
+        delete sessionOpts.domOverlay;
+        sessionOpts.optionalFeatures = sessionOpts.optionalFeatures.filter(function(f){return f!=='dom-overlay';});
+        return navigator.xr.requestSession('immersive-ar', sessionOpts);
     }).then(function(session){
         xr.session=session;
         document.getElementById('launch').style.display='none';
@@ -384,14 +396,26 @@ window.startAR = function(){
         if(!xr.gl)xr.gl=xr.canvas.getContext('webgl',{xrCompatible:true});
         session.updateRenderState({baseLayer:new XRWebGLLayer(session,xr.gl)});
         initGL(xr.gl);
-        var spaces=['unbounded','local-floor','local'];
+        // Try unbounded FIRST — this is what removes the guardian boundary
+        // Quest 3 supports this and it allows full room-scale walkabout
+        var spaces=['unbounded','local-floor','local','viewer'];
         (function tryS(i){
-            if(i>=spaces.length){say('No reference space. Restart.','e','c');return;}
+            if(i>=spaces.length){
+                say('Could not get reference space. Try disabling guardian in Quest settings.','e','c');
+                console.error('[Scanner] All ref spaces failed');
+                return;
+            }
+            console.log('[Scanner] Trying ref space:', spaces[i]);
             session.requestReferenceSpace(spaces[i]).then(function(rs){
                 xr.ref=rs;
-                say('Scanner ready. Walk to a wall. Point at it. Tap to mark the corner.','s','h');
+                console.log('[Scanner] Got ref space:', spaces[i]);
+                say('Scanner active. ' + (spaces[i]==='unbounded' ? 'Full room access. ' : '') + 'Walk to a wall. Point at it. Tap to mark the corner.','s','h');
+                mentor.visible = true; // Bot visible immediately
                 setup(session,rs);
-            }).catch(function(){tryS(i+1);});
+            }).catch(function(err){
+                console.warn('[Scanner] Ref space', spaces[i], 'failed:', err.message || err);
+                tryS(i+1);
+            });
         })(0);
         session.addEventListener('end',function(){
             xr.session=null;xr.hitSrc=null;xr.pending=null;xr.samples=[];xr.anchors=[];
@@ -601,7 +625,7 @@ function setup(session, ref){
             mentor.pos.x+=(mentor.targetPos.x-mentor.pos.x)*0.05;
             mentor.pos.y+=(mentor.targetPos.y-mentor.pos.y)*0.05;
             mentor.pos.z+=(mentor.targetPos.z-mentor.pos.z)*0.05;
-            if(!mentor.visible&&xr.planes>0)mentor.visible=true;
+            mentor.visible=true; // Always visible — your companion from frame 1
         }
 
         // ── Proactive nudges ──

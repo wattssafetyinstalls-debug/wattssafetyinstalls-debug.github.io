@@ -116,19 +116,29 @@ function initVoice(){
 initVoice();
 
 function say(t,cat,pri){
-    if(voice.muted||!window.speechSynthesis||!t)return;
+    if(voice.muted||!t)return;
     cat=cat||'g'; pri=pri||'n';
     var now=Date.now();
     if(voice.cd[cat]&&(now-voice.cd[cat])<voice.cdMs&&pri!=='c')return;
     voice.cd[cat]=now;
-    if(pri==='c'&&speechSynthesis.speaking)speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(t);
-    if(voice.v)u.voice=voice.v;
-    u.rate=1.1;u.pitch=1.0;u.volume=0.9;
-    u.onstart=function(){voice.speaking=true;};
-    u.onend=function(){voice.speaking=false;};
-    u.onerror=function(){voice.speaking=false;};
-    speechSynthesis.speak(u);
+    // Try speechSynthesis first
+    if(window.speechSynthesis){
+        try{
+            if(pri==='c'&&speechSynthesis.speaking)speechSynthesis.cancel();
+            var u=new SpeechSynthesisUtterance(t);
+            if(voice.v)u.voice=voice.v;
+            u.rate=1.1;u.pitch=1.0;u.volume=0.9;
+            u.onstart=function(){voice.speaking=true;};
+            u.onend=function(){voice.speaking=false;};
+            u.onerror=function(){voice.speaking=false;};
+            speechSynthesis.speak(u);
+            console.log('[Scout]',t);
+        }catch(e){
+            console.warn('[Scout] Speech failed:',e);
+        }
+    } else {
+        console.log('[Scout]',t);
+    }
 }
 
 // ── Format ──
@@ -353,11 +363,16 @@ function drawMentor(gl, vp, pos){
 }
 
 // ═══ MATRIX MATH ═══
+// WebXR matrices are COLUMN-MAJOR Float32Arrays
+// Column-major: element at column c, row r = index [c*4+r]
 function matMul(a, b){
     var r = new Float32Array(16);
-    for(var i=0;i<4;i++)for(var j=0;j<4;j++){
-        r[i*4+j]=0;
-        for(var k=0;k<4;k++) r[i*4+j]+=a[i*4+k]*b[k*4+j];
+    for(var c=0;c<4;c++){
+        for(var row=0;row<4;row++){
+            var sum=0;
+            for(var k=0;k<4;k++) sum += a[k*4+row] * b[c*4+k];
+            r[c*4+row]=sum;
+        }
     }
     return r;
 }
@@ -433,18 +448,44 @@ window.startAR = function(){
 
 // ═══ SESSION SETUP ═══
 function setup(session, ref){
-    // Hit-test
-    session.requestReferenceSpace('viewer').then(function(vs){
-        session.requestHitTestSource({space:vs}).then(function(s){xr.hitSrc=s;}).catch(function(){});
-    }).catch(function(){});
+    // Hit-test: TRY CONTROLLER FIRST, then viewer gaze as fallback
+    // Controller ray is what you're actually pointing, viewer is head gaze
+    var _hitTestReady = false;
+    function tryControllerHitTest(){
+        var srcs=Array.from(session.inputSources);
+        for(var i=0;i<srcs.length;i++){
+            if(srcs[i].targetRaySpace){
+                session.requestHitTestSource({space:srcs[i].targetRaySpace}).then(function(h){
+                    xr.hitSrc=h; _hitTestReady=true;
+                    console.log('[Scanner] Hit-test from controller');
+                }).catch(function(){});
+                return true;
+            }
+        }
+        return false;
+    }
+    // Try controller immediately
+    if(!tryControllerHitTest()){
+        // Fallback to viewer gaze
+        session.requestReferenceSpace('viewer').then(function(vs){
+            session.requestHitTestSource({space:vs}).then(function(s){
+                xr.hitSrc=s; _hitTestReady=true;
+                console.log('[Scanner] Hit-test from viewer gaze');
+            }).catch(function(e){console.warn('[Scanner] No hit-test:',e);});
+        }).catch(function(){});
+    }
+    // When controllers connect, upgrade to controller hit-test
     session.addEventListener('inputsourceschange',function(){
-        if(!xr.hitSrc){
-            var srcs=Array.from(session.inputSources);
-            for(var i=0;i<srcs.length;i++){
-                if(srcs[i].targetRaySpace){
-                    session.requestHitTestSource({space:srcs[i].targetRaySpace}).then(function(h){xr.hitSrc=h;}).catch(function(){});
-                    break;
-                }
+        if(!_hitTestReady) tryControllerHitTest();
+        // If we had viewer gaze, upgrade to controller
+        var srcs=Array.from(session.inputSources);
+        for(var i=0;i<srcs.length;i++){
+            if(srcs[i].targetRaySpace && srcs[i].targetRayMode === 'tracked-pointer'){
+                session.requestHitTestSource({space:srcs[i].targetRaySpace}).then(function(h){
+                    xr.hitSrc=h;
+                    console.log('[Scanner] Upgraded hit-test to controller');
+                }).catch(function(){});
+                break;
             }
         }
     });

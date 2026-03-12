@@ -109,6 +109,25 @@
     '- GFCI required: bathrooms, kitchens, garages, outdoors, basements, within 6ft of water',
     '- When uncertain about a specific code, say so and recommend checking with local AHJ',
     '',
+    '## INVOICE LIBRARY ACCESS',
+    'You have FULL READ ACCESS to Justin\'s entire invoice/quote database. It is provided in the context data.',
+    'When he references an invoice number, client name, project, or property — FIND the matching document and use its ACTUAL data.',
+    'When generating a change order, ALWAYS pull the original invoice data and reference it explicitly.',
+    '',
+    '## DOCUMENT GENERATION — THIS IS YOUR #1 JOB',
+    'When asked to create a change order, invoice, scope of work, bid, quote, or any formal document:',
+    '- Generate the COMPLETE document ready to copy-paste into an email, text, or print. NOT a summary. NOT an outline.',
+    '- Include: header (Watts Safety Installs, NE Licensed #54690-25), date, client info, scope, itemized cost breakdown, subtotals, grand total, terms, signature block, contact info.',
+    '- For change orders: reference the original contract amount, show what is NEW vs what was already bid, compute the net change.',
+    '',
+    '## CRITICAL: STRUCTURED OUTPUT FOR BIDGEN INTEGRATION',
+    'When you generate ANY quote, change order, invoice, bid, or scope of work, you MUST include a ```bidgen-json code block at the END of your response.',
+    'This JSON gets parsed and loaded directly into the bid generator form. Here is the schema:',
+    '```',
+    '{"documentType":"quote","clientName":"...","complexName":"...","unitNum":"...","jobCity":"...","sqft":72,"areaDesc":"...","estimateDate":"YYYY-MM-DD","tradeType":"general","materialsMarkup":20,"scopeTitle":"...","scopeItems":["..."],"noteItems":["..."],"laborItems":[{"desc":"...","basis":"per sq ft","qty":72,"price":4.50}],"materialItems":[{"desc":"...","qtyNum":2,"qtyUnit":"bag","price":45.00}]}',
+    '```',
+    'ALWAYS include this JSON block. Use ACTUAL numbers from your breakdown.',
+    '',
     '## SCOPE & CHANGE ORDER ANALYSIS',
     'Always check for missing: demolition, waste hauling, surface protection, permits, travel/mobilization, contingency.',
     'Common change order triggers: hidden water damage, rot, mold, non-level subfloors, lead paint (pre-1978), asbestos in old mastic, plumbing not to code once exposed.',
@@ -135,7 +154,7 @@
 
     var contents = [];
     contents.push({ role: 'user', parts: [{ text: 'System Instructions:\n\n' + SYS }] });
-    contents.push({ role: 'model', parts: [{ text: 'Ready. I\'m your BidGen AI Mentor — think of me as a 90-year-old master tradesman who types fast. I can see your current bid data and I\'ll give you thorough, fact-checked, no-BS answers. Ask me anything.' }] });
+    contents.push({ role: 'model', parts: [{ text: 'Ready. I\'m your BidGen AI Mentor — your business partner who handles the paperwork. I can see your entire invoice library, bid data, and material catalog. I generate COMPLETE documents — change orders, quotes, scope of work — with a bidgen-json block so you can load them directly into the form. I will NEVER cut myself off or give half answers.' }] });
     for (var i = 0; i < messages.length; i++) {
       contents.push(messages[i]);
     }
@@ -299,6 +318,41 @@
           if (catKeys.length > 25) ctx += '  ... and ' + (catKeys.length - 25) + ' more\n';
         }
       }
+
+      // Invoice library — AI sees ALL invoices/quotes/COs
+      if (typeof _aiGatherInvoiceLibrary === 'function') {
+        ctx += _aiGatherInvoiceLibrary();
+      } else if (typeof invoiceData !== 'undefined') {
+        var allInv = [];
+        ['temporary', 'permanent', 'lost'].forEach(function(status) {
+          var bucket = invoiceData[status] || {};
+          Object.keys(bucket).forEach(function(id) {
+            allInv.push(Object.assign({}, bucket[id], { _status: status }));
+          });
+        });
+        if (allInv.length > 0) {
+          ctx += '\n\n## YOUR INVOICE/QUOTE LIBRARY (' + allInv.length + ' documents)\n';
+          allInv.forEach(function(inv) {
+            ctx += '### ' + (inv.id || '?') + ' — ' + (inv.clientName || '?') + '\n';
+            ctx += '- Status: **' + inv._status + '** | Total: **$' + (inv.amount || 0).toFixed(2) + '**\n';
+            if (inv.laborItems && inv.laborItems.length > 0) {
+              ctx += '- Labor: ';
+              inv.laborItems.forEach(function(li) { ctx += li.desc + ' ($' + ((li.qty||1)*(li.price||0)).toFixed(2) + '), '; });
+              ctx += '\n';
+            }
+            if (inv.materialItems && inv.materialItems.length > 0) {
+              ctx += '- Materials: ';
+              inv.materialItems.forEach(function(mi) { ctx += mi.desc + ' ($' + (mi.price||0) + '), '; });
+              ctx += '\n';
+            }
+            if (inv.scope) ctx += '- Scope: ' + (typeof inv.scope === 'string' ? inv.scope.substring(0, 200) : '') + '\n';
+            if (inv.changeOrders && inv.changeOrders.length > 0) {
+              ctx += '- Change Orders: ' + inv.changeOrders.length + '\n';
+            }
+            ctx += '\n';
+          });
+        }
+      }
     } catch (e) { /* silent */ }
     return ctx;
   }
@@ -389,12 +443,20 @@
       label: 'Draft Change Order',
       icon: '\uD83D\uDCDD',
       prompt: function(ctx) {
-        return 'Help me draft a change order:\n' +
-          '1. **Template** — professional language for the scope change\n' +
-          '2. **Pricing** — labor + materials breakdown for additional work\n' +
-          '3. **Impact** — timeline and cost impact statement\n' +
-          '4. **Protection** — clauses to protect me if client disputes\n' +
-          'If you do not know the specific change, suggest common ones for this job type.\n\n' + ctx;
+        return 'Generate a COMPLETE change order document. Pull the most recent awarded invoice from my library and reference it.\n' +
+          'If you don\'t see a specific invoice, ask me which one — but DO generate the full document structure.\n' +
+          'Include: company header, date, CO number, client info, original scope reference, new/changed scope, full itemized breakdown (labor + materials), subtotals, grand total, terms, authorization block.\n' +
+          'MUST include the ```bidgen-json block at the end so I can load it into the form.\n\n' + ctx;
+      }
+    },
+    newquote: {
+      label: 'New Quote',
+      icon: '\uD83D\uDCB0',
+      prompt: function(ctx) {
+        return 'Generate a new quote. Ask me about the client, scope, and job details if you need them.\n' +
+          'Pull pricing from your knowledge base and give me a COMPLETE document ready to send.\n' +
+          'Include: company header, date, client info, scope, itemized labor + material breakdown, subtotals, markup, grand total, terms, signature block.\n' +
+          'MUST include the ```bidgen-json block at the end so I can load it into the form.\n\n' + ctx;
       }
     },
     compare: {
@@ -670,7 +732,7 @@
     });
 
     // Welcome
-    addBotMsg('**Hey Justin.** I\'m your BidGen AI Mentor \u2014 think of me as a 90-year-old master tradesman who types fast.\n\nI can see your current bid data in real time. Ask me anything:\n- \u2022 "Am I pricing this right?"\n- \u2022 "Walk me through a tub-to-shower conversion"\n- \u2022 "Tell me everything about ARDEX K 15"\n- \u2022 "What am I missing in this scope?"\n\nOr hit one of the quick actions above. **No question is too long or too detailed.** I will match your energy.');
+    addBotMsg('**Hey Justin.** I\'m your BidGen AI Mentor \u2014 your business partner who handles the paperwork.\n\nI can see your **entire invoice library**, current bid data, and material catalog in real time.\n\n\u2022 Hit **Draft Change Order** or **New Quote** \u2014 I\'ll generate a complete document\n\u2022 Click **Load into BidGen** on any response to fill the form automatically\n\u2022 Ask me pricing, materials, codes, scope review \u2014 anything\n\n**No question is too long or too detailed.** I will never cut myself off or give you half an answer.');
   }
 
   function autoSize(el) {
@@ -703,6 +765,78 @@
     var div = document.createElement('div');
     div.className = 'bgai-msg bot';
     div.innerHTML = renderMd(text);
+
+    // Action buttons on substantive responses
+    if (text.length > 200) {
+      var acts = document.createElement('div');
+      acts.style.cssText = 'margin-top:10px;padding-top:8px;border-top:1px solid #1a2540;display:flex;gap:6px;flex-wrap:wrap';
+
+      // Load into BidGen — parse bidgen-json block
+      var jsonData = null;
+      if (typeof _aiExtractBidGenJSON === 'function') {
+        jsonData = _aiExtractBidGenJSON(text);
+      } else {
+        var jm = text.match(/```(?:bidgen-json|bidgen|json)\s*\n([\s\S]*?)```/);
+        if (jm) { try { jsonData = JSON.parse(jm[1].trim()); } catch(e) {} }
+      }
+      if (jsonData && typeof _aiLoadIntoBidGen === 'function') {
+        var loadBtn = document.createElement('button');
+        loadBtn.style.cssText = 'background:linear-gradient(135deg,#e67e22,#f39c12);border:none;color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700';
+        loadBtn.textContent = '\uD83D\uDCE5 Load into BidGen';
+        loadBtn.onclick = function() {
+          var id = _aiLoadIntoBidGen(jsonData);
+          if (id) { loadBtn.textContent = '\u2705 Loaded as ' + id; loadBtn.disabled = true; loadBtn.style.background = '#27ae60'; }
+        };
+        acts.appendChild(loadBtn);
+      }
+
+      // Copy
+      var copyBtn = document.createElement('button');
+      copyBtn.style.cssText = 'background:#0d1929;border:1px solid #1a2540;color:#6b7a8d;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer';
+      copyBtn.textContent = '\uD83D\uDCCB Copy';
+      copyBtn.onclick = function() {
+        navigator.clipboard.writeText(text).then(function() {
+          copyBtn.textContent = '\u2705 Copied!';
+          setTimeout(function() { copyBtn.textContent = '\uD83D\uDCCB Copy'; }, 2000);
+        });
+      };
+      acts.appendChild(copyBtn);
+
+      // Save as Change Order
+      var lc = text.toLowerCase();
+      if (lc.indexOf('change order') >= 0 || lc.indexOf('c.o.') >= 0) {
+        if (typeof _aiSaveChangeOrder === 'function') {
+          var coBtn = document.createElement('button');
+          coBtn.style.cssText = 'background:#8e44ad;border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600';
+          coBtn.textContent = '\uD83D\uDCBE Save as CO';
+          coBtn.onclick = function() {
+            var idM = text.match(/(?:WSI-\d{4}-\d{4}|#?\d{2}-\d{4})/i);
+            var refId = idM ? idM[0].replace(/^#/, '') : '';
+            var amtM = text.match(/(?:total|grand total)[:\s]*\$?([\d,]+\.?\d*)/i);
+            var amt = amtM ? parseFloat(amtM[1].replace(/,/g, '')) : 0;
+            var coId = _aiSaveChangeOrder(refId, text, amt, 'AI-Generated Change Order');
+            coBtn.textContent = '\u2705 Saved ' + coId; coBtn.disabled = true; coBtn.style.background = '#27ae60';
+          };
+          acts.appendChild(coBtn);
+        }
+      }
+
+      // Email Draft
+      var emailBtn = document.createElement('button');
+      emailBtn.style.cssText = 'background:#0d1929;border:1px solid #1a2540;color:#6b7a8d;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer';
+      emailBtn.textContent = '\u2709\uFE0F Email';
+      emailBtn.onclick = function() {
+        var sub = 'Watts Safety Installs \u2014 Document';
+        var sm = text.match(/(?:change order|quote|invoice|bid|estimate)[:\s#]*([^\n]{0,60})/i);
+        if (sm) sub = 'Watts Safety Installs \u2014 ' + sm[0].substring(0, 80);
+        var body = text.replace(/\*\*/g, '').replace(/#{1,4}\s/g, '');
+        window.open('mailto:?subject=' + encodeURIComponent(sub) + '&body=' + encodeURIComponent(body));
+      };
+      acts.appendChild(emailBtn);
+
+      div.appendChild(acts);
+    }
+
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
   }

@@ -5159,6 +5159,23 @@ function _aiRenderMessage(role, text, fileNames) {
             acts.appendChild(coBtn);
         }
 
+        // Load into BidGen button — detects structured JSON in response
+        var jsonData = _aiExtractBidGenJSON(text);
+        if (jsonData) {
+            var loadBtn = document.createElement('button');
+            loadBtn.style.cssText = 'background:linear-gradient(135deg,#e67e22,#f39c12);border:none;color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;';
+            loadBtn.textContent = '📥 Load into BidGen';
+            loadBtn.onclick = function() {
+                var invoiceId = _aiLoadIntoBidGen(jsonData);
+                if (invoiceId) {
+                    loadBtn.textContent = '✅ Loaded as ' + invoiceId;
+                    loadBtn.disabled = true;
+                    loadBtn.style.background = '#27ae60';
+                }
+            };
+            acts.appendChild(loadBtn);
+        }
+
         // Email draft button
         var emailBtn = document.createElement('button');
         emailBtn.style.cssText = 'background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;';
@@ -5179,6 +5196,111 @@ function _aiRenderMessage(role, text, fileNames) {
     log.scrollTop = log.scrollHeight;
     return div;
 }
+
+// ── Load AI output into actual BidGen form ──
+function _aiExtractBidGenJSON(text) {
+    // Look for ```bidgen-json ... ``` or ```json ... ``` blocks
+    var match = text.match(/```(?:bidgen-json|bidgen|json)\s*\n([\s\S]*?)```/);
+    if (match) {
+        try { return JSON.parse(match[1].trim()); } catch(e) { console.warn('[AI] JSON parse failed:', e); }
+    }
+    // Fallback: look for raw JSON object at end of response
+    var raw = text.match(/\{[\s\S]*"laborItems"[\s\S]*\}$/m);
+    if (raw) {
+        try { return JSON.parse(raw[0]); } catch(e) {}
+    }
+    return null;
+}
+
+function _aiLoadIntoBidGen(data) {
+    if (!data) { showNotification('No structured data found in AI response.', 'error'); return; }
+
+    // 1. Fill job detail fields
+    if (data.clientName) document.getElementById('clientName').value = data.clientName;
+    if (data.complexName) document.getElementById('complexName').value = data.complexName;
+    if (data.unitNum) document.getElementById('unitNum').value = data.unitNum;
+    if (data.jobCity) document.getElementById('jobCity').value = data.jobCity;
+    if (data.sqft) document.getElementById('sqft').value = data.sqft;
+    if (data.linft) document.getElementById('linft').value = data.linft || 0;
+    if (data.areaDesc) document.getElementById('areaDesc').value = data.areaDesc;
+    if (data.estimateDate) document.getElementById('estimateDate').value = data.estimateDate;
+    else document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
+    if (data.tradeType) {
+        document.getElementById('tradeType').value = data.tradeType;
+        try { onTradeChange(); } catch(e) {}
+    }
+    if (data.materialsMarkup !== undefined) document.getElementById('materialsMarkup').value = data.materialsMarkup;
+
+    // 2. Scope
+    if (data.scopeTitle) document.getElementById('scopeTitle').value = data.scopeTitle;
+    if (data.scopeItems && data.scopeItems.length > 0) {
+        document.getElementById('scopeItemsContainer').innerHTML = '';
+        data.scopeItems.forEach(function(s) { addScopeRow(s); });
+    }
+
+    // 3. Notes
+    if (data.noteItems && data.noteItems.length > 0) {
+        document.getElementById('notesItemsContainer').innerHTML = '';
+        data.noteItems.forEach(function(n) { addNoteRow(n); });
+    }
+
+    // 4. Labor items
+    if (data.laborItems && data.laborItems.length > 0) {
+        document.getElementById('laborItemsContainer').innerHTML = '';
+        data.laborItems.forEach(function(li) {
+            addLaborRow(
+                li.desc || li.description || '',
+                li.basis || 'flat',
+                li.price || 0,
+                li.qty || 1
+            );
+        });
+    }
+
+    // 5. Material items
+    if (data.materialItems && data.materialItems.length > 0) {
+        document.getElementById('matItemsContainer').innerHTML = '';
+        data.materialItems.forEach(function(mi) {
+            var qtyStr = '';
+            if (mi.qtyNum && mi.qtyUnit) qtyStr = mi.qtyNum + ' ' + mi.qtyUnit;
+            else if (mi.qty) qtyStr = String(mi.qty);
+            else qtyStr = '1 ea';
+            addMatRow(mi.desc || mi.description || '', qtyStr, mi.price || 0);
+        });
+    }
+
+    // 6. Distributor materials
+    if (data.distItems && data.distItems.length > 0) {
+        document.getElementById('distMatContainer').innerHTML = '';
+        if (data.distName) document.getElementById('distName').value = data.distName;
+        if (data.distPO) document.getElementById('distPO').value = data.distPO;
+        data.distItems.forEach(function(di) {
+            var qtyStr = di.qty ? String(di.qty) : '1 ea';
+            addDistMatRow(di.desc || di.description || '', qtyStr, di.price || 0);
+        });
+    }
+
+    // 7. Supplier note
+    if (data.supplierNote) document.getElementById('supplierNote').value = data.supplierNote;
+
+    // 8. Recalculate
+    liveCalc();
+
+    // 9. Auto-save as invoice
+    var docType = data.documentType || 'quote';
+    var invoiceId = autoSaveInvoice(docType);
+
+    // 10. Scroll to top of form so user can review
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 11. Switch to main bid tab if on AI tab
+    var scanTabs = document.querySelectorAll('.scan-tab');
+    scanTabs.forEach(function(t) { t.classList.remove('active'); });
+
+    showNotification('📥 Document loaded into BidGen as ' + invoiceId + '! Review and send.', 'success');
+    return invoiceId;
+}
+window._aiLoadIntoBidGen = _aiLoadIntoBidGen;
 
 // ── Invoice library context for AI ──
 function _aiGatherInvoiceLibrary() {
@@ -5452,7 +5574,39 @@ async function aiSendMessage() {
             '  11. **Authorization Block**: Signature lines for both parties, date lines',
             '  12. **Contact Info**: Phone, email for follow-up',
             '',
-            'After generating any document, the user will see buttons to: **Copy** it, **Save as Change Order** to Firebase, or **Email Draft** it directly.',
+            'After generating any document, the user will see buttons to: **Load into BidGen** (populates the actual bid form), **Copy**, **Save as Change Order**, or **Email Draft**.',
+            '',
+            '## CRITICAL: STRUCTURED OUTPUT FOR BIDGEN INTEGRATION',
+            'When you generate ANY quote, change order, invoice, bid, or scope of work, you MUST include a ```bidgen-json code block at the END of your response.',
+            'This JSON gets parsed and loaded directly into the bid generator form. The user clicks "Load into BidGen" and the form is filled out automatically.',
+            'Here is the EXACT JSON schema to use:',
+            '```',
+            '{',
+            '  "documentType": "quote" or "change_order" or "invoice" or "scope",',
+            '  "clientName": "Client or PM company name",',
+            '  "complexName": "Property or complex name",',
+            '  "unitNum": "Unit/address",',
+            '  "jobCity": "City, State",',
+            '  "sqft": 72,',
+            '  "linft": 0,',
+            '  "areaDesc": "e.g. Kitchen floor, Bathroom, etc.",',
+            '  "estimateDate": "YYYY-MM-DD",',
+            '  "tradeType": "flooring" or "painting" or "general" or "plumbing" or "electrical" or "custom",',
+            '  "materialsMarkup": 20,',
+            '  "scopeTitle": "One-line scope heading",',
+            '  "scopeItems": ["Scope bullet 1", "Scope bullet 2"],',
+            '  "noteItems": ["Note 1", "Note 2"],',
+            '  "laborItems": [',
+            '    {"desc": "Description", "basis": "per sq ft" or "per lin ft" or "per hour" or "per unit" or "flat", "qty": 72, "price": 4.50}',
+            '  ],',
+            '  "materialItems": [',
+            '    {"desc": "Material name", "qtyNum": 2, "qtyUnit": "bag", "price": 45.00}',
+            '  ],',
+            '  "supplierNote": "optional supplier note"',
+            '}',
+            '```',
+            'ALWAYS include this JSON block. It is what makes the "Load into BidGen" button appear. Without it, the user has to manually type everything.',
+            'Use the ACTUAL numbers from your pricing breakdown — do not approximate. The JSON should exactly match the itemized breakdown in your document.',
             '',
             '## PRICING KNOWLEDGE (Nebraska 2025-2026)',
             '| Task | Budget | Mid-Range | Premium |',

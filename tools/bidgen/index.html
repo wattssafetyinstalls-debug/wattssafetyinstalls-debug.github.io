@@ -1010,14 +1010,16 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
             <div style="background:#0f1a33;border:1px solid #2a3a5c;border-radius:8px;padding:12px;margin-bottom:12px">
                 <div style="font-size:12px;color:#7f8c8d;margin-bottom:8px">💡 Talk to Gemini about your quotes, scans, and bids. Give it instructions before scanning, ask for pricing advice, or have it analyze documents.</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">
-                    <button onclick="aiQuickPrompt('What items and pricing do you see in this scanned document?')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">Analyze scan</button>
-                    <button onclick="aiQuickPrompt('Help me estimate pricing for a bathroom accessibility remodel')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">Estimate pricing</button>
-                    <button onclick="aiQuickPrompt('Review my current bid items and suggest anything I might be missing')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">Review bid</button>
-                    <button onclick="aiQuickPrompt('What standard items should be on a Nebraska ATP quote form for this job?')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">ATP form help</button>
+                    <button onclick="aiQuickPrompt('Generate a change order for my most recent awarded contract. Pull the original invoice data from my library and ask me what changed.')" style="background:linear-gradient(135deg,#8e44ad,#3498db);border:none;color:#fff;padding:5px 12px;border-radius:12px;font-size:11px;cursor:pointer;font-weight:600">📝 Change Order</button>
+                    <button onclick="aiQuickPrompt('Generate a new quote. Ask me about the client, scope, and job details. Pull pricing from your knowledge base and give me a complete document ready to send.')" style="background:linear-gradient(135deg,#e67e22,#f39c12);border:none;color:#fff;padding:5px 12px;border-radius:12px;font-size:11px;cursor:pointer;font-weight:600">💰 New Quote</button>
+                    <button onclick="aiQuickPrompt('Generate a scope of work document. Ask me for the project details.')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">📋 Scope of Work</button>
+                    <button onclick="aiQuickPrompt('What items and pricing do you see in this scanned document?')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">🔍 Analyze scan</button>
+                    <button onclick="aiQuickPrompt('Review my current bid items and suggest anything I might be missing')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">✅ Review bid</button>
+                    <button onclick="aiQuickPrompt('Show me a summary of all my invoices and quotes. Which ones are expiring soon? Any patterns in my pricing?')" style="background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer">📊 Invoice summary</button>
                 </div>
             </div>
-            <div id="aiChatLog" style="background:#080f1e;border:1px solid #1a2744;border-radius:8px;min-height:260px;max-height:400px;overflow-y:auto;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px">
-                <div style="color:#7f8c8d;font-size:12px;text-align:center;padding:40px 10px">Send a message to start a conversation with Gemini AI.<br>It has context about your current scan, bid data, and templates.</div>
+            <div id="aiChatLog" style="background:#080f1e;border:1px solid #1a2744;border-radius:8px;min-height:260px;max-height:600px;overflow-y:auto;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px">
+                <div style="color:#7f8c8d;font-size:12px;text-align:center;padding:40px 10px">Hey Justin — I'm your AI bidding co-pilot. Ask me about pricing, materials, or hit one of the quick actions above.<br>I can see your <strong style="color:#e67e22">entire invoice library</strong>, current bid data, and scan data. I generate complete documents — change orders, quotes, scope of work — ready to email or text.</div>
             </div>
             <div id="aiFilePreview" style="display:none;margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap"></div>
             <div style="display:flex;gap:8px">
@@ -5032,6 +5034,51 @@ function aiClearChat() {
     log.innerHTML = '<div style="color:#7f8c8d;font-size:12px;text-align:center;padding:40px 10px">Send a message to start a conversation with Gemini AI.<br>It has context about your current scan, bid data, and templates.</div>';
 }
 
+function _aiMd(text) {
+    // Lightweight markdown renderer for AI responses
+    var h = text;
+    // Escape HTML first
+    h = h.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Code blocks (``` ... ```)
+    h = h.replace(/```([a-z]*)\n([\s\S]*?)```/g, '<pre style="background:#080f1e;border:1px solid #2a3a5c;border-radius:6px;padding:10px;margin:8px 0;font-size:12px;overflow-x:auto;color:#2ecc71;white-space:pre-wrap">$2</pre>');
+    // Inline code
+    h = h.replace(/`([^`]+)`/g, '<code style="background:#0a1628;padding:1px 5px;border-radius:3px;font-size:12px;color:#2ecc71">$1</code>');
+    // Headers
+    h = h.replace(/^#### (.+)$/gm, '<div style="font-size:13px;font-weight:700;color:#3498db;margin:10px 0 4px">$1</div>');
+    h = h.replace(/^### (.+)$/gm, '<div style="font-size:14px;font-weight:700;color:#e67e22;margin:12px 0 6px">$1</div>');
+    h = h.replace(/^## (.+)$/gm, '<div style="font-size:15px;font-weight:800;color:#e67e22;margin:14px 0 6px;border-bottom:1px solid #2a3a5c;padding-bottom:4px">$1</div>');
+    h = h.replace(/^# (.+)$/gm, '<div style="font-size:17px;font-weight:800;color:#ecf0f1;margin:16px 0 8px;border-bottom:2px solid #e67e22;padding-bottom:4px">$1</div>');
+    // Bold
+    h = h.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#ecf0f1">$1</strong>');
+    // Italic
+    h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    // Tables (simple)
+    h = h.replace(/^\|(.+)\|$/gm, function(m, inner) {
+        var cells = inner.split('|').map(function(c) { return c.trim(); });
+        var isHeader = cells.every(function(c) { return /^[-:]+$/.test(c); });
+        if (isHeader) return '';
+        var tag = 'td';
+        return '<tr>' + cells.map(function(c) { return '<' + tag + ' style="padding:4px 8px;border:1px solid #2a3a5c">' + c + '</' + tag + '>'; }).join('') + '</tr>';
+    });
+    h = h.replace(/(<tr>[\s\S]*?<\/tr>)/g, function(m) {
+        if (m.indexOf('<table') >= 0) return m;
+        return '<table style="border-collapse:collapse;margin:8px 0;font-size:12px;width:100%">' + m + '</table>';
+    });
+    // Checkboxes
+    h = h.replace(/^- \[x\] (.+)$/gm, '<div style="margin:2px 0;color:#2ecc71">☑ $1</div>');
+    h = h.replace(/^- \[ \] (.+)$/gm, '<div style="margin:2px 0;color:#95a5a6">☐ $1</div>');
+    // Numbered lists
+    h = h.replace(/^(\d+)\. (.+)$/gm, '<div style="margin:2px 0;padding-left:16px"><strong style="color:#e67e22">$1.</strong> $2</div>');
+    // Bullet lists
+    h = h.replace(/^[-*] (.+)$/gm, '<div style="margin:2px 0;padding-left:12px">• $1</div>');
+    // Horizontal rule
+    h = h.replace(/^---+$/gm, '<hr style="border:none;border-top:1px solid #2a3a5c;margin:10px 0">');
+    // Line breaks
+    h = h.replace(/\n\n/g, '<div style="height:8px"></div>');
+    h = h.replace(/\n/g, '<br>');
+    return h;
+}
+
 function _aiRenderMessage(role, text, fileNames) {
     var log = document.getElementById('aiChatLog');
     // Clear placeholder if first message
@@ -5042,10 +5089,10 @@ function _aiRenderMessage(role, text, fileNames) {
     var div = document.createElement('div');
     div.style.cssText = role === 'user'
         ? 'background:#1a2744;border:1px solid #2a3a5c;border-radius:10px;padding:10px 14px;font-size:13px;color:#ecf0f1;align-self:flex-end;max-width:85%;word-wrap:break-word;'
-        : 'background:#0d2137;border:1px solid #1a3a5c;border-radius:10px;padding:10px 14px;font-size:13px;color:#bdc3c7;align-self:flex-start;max-width:85%;word-wrap:break-word;white-space:pre-wrap;';
+        : 'background:#0d2137;border:1px solid #1a3a5c;border-radius:10px;padding:10px 14px;font-size:13px;color:#bdc3c7;align-self:flex-start;max-width:92%;word-wrap:break-word;';
     var label = document.createElement('div');
     label.style.cssText = 'font-size:10px;font-weight:700;margin-bottom:4px;color:' + (role === 'user' ? '#e67e22' : '#8e44ad');
-    label.textContent = role === 'user' ? 'YOU' : 'GEMINI AI';
+    label.textContent = role === 'user' ? 'YOU' : 'GEMINI 2.5 PRO';
     div.appendChild(label);
     // Show file badges if any
     if (fileNames && fileNames.length > 0) {
@@ -5060,12 +5107,215 @@ function _aiRenderMessage(role, text, fileNames) {
         div.appendChild(fDiv);
     }
     var body = document.createElement('div');
-    body.textContent = text;
+    if (role === 'user') {
+        body.textContent = text;
+    } else {
+        // Render markdown for AI responses
+        body.innerHTML = _aiMd(text);
+    }
     div.appendChild(body);
+
+    // Action buttons on AI responses (copy, save as CO, email)
+    if (role !== 'user' && text.length > 100) {
+        var acts = document.createElement('div');
+        acts.style.cssText = 'margin-top:8px;padding-top:8px;border-top:1px solid #1a2744;display:flex;gap:6px;flex-wrap:wrap;';
+
+        // Copy button
+        var copyBtn = document.createElement('button');
+        copyBtn.style.cssText = 'background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;';
+        copyBtn.textContent = '📋 Copy';
+        copyBtn.onclick = function() {
+            navigator.clipboard.writeText(text).then(function() {
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(function() { copyBtn.textContent = '📋 Copy'; }, 2000);
+            });
+        };
+        acts.appendChild(copyBtn);
+
+        // Save as Change Order button (if text mentions change order or CO)
+        var lcText = text.toLowerCase();
+        if (lcText.indexOf('change order') >= 0 || lcText.indexOf('change-order') >= 0 || lcText.indexOf('c.o.') >= 0) {
+            var coBtn = document.createElement('button');
+            coBtn.style.cssText = 'background:#8e44ad;border:none;color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;';
+            coBtn.textContent = '💾 Save as Change Order';
+            coBtn.onclick = function() {
+                // Try to find referenced invoice ID in the text
+                var idMatch = text.match(/(?:WSI-\d{4}-\d{4}|#?\d{2}-\d{4}|invoice[:\s#]*\w+-?\d+)/i);
+                var refId = idMatch ? idMatch[0].replace(/^#/, '') : '';
+
+                // Try to extract total amount
+                var amtMatch = text.match(/(?:total|grand total|change order total|co total)[:\s]*\$?([\d,]+\.?\d*)/i);
+                var amt = amtMatch ? parseFloat(amtMatch[1].replace(/,/g, '')) : 0;
+
+                // Try to extract description
+                var descMatch = text.match(/(?:description|scope|re:|regarding|for:?)\s*[:\-]?\s*(.{10,80})/i);
+                var desc = descMatch ? descMatch[1].trim() : 'AI-Generated Change Order';
+
+                var coId = _aiSaveChangeOrder(refId, text, amt, desc);
+                coBtn.textContent = '✅ Saved as ' + coId;
+                coBtn.disabled = true;
+                coBtn.style.background = '#27ae60';
+            };
+            acts.appendChild(coBtn);
+        }
+
+        // Email draft button
+        var emailBtn = document.createElement('button');
+        emailBtn.style.cssText = 'background:#1a2744;border:1px solid #2a3a5c;color:#bdc3c7;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;';
+        emailBtn.textContent = '✉️ Email Draft';
+        emailBtn.onclick = function() {
+            var subject = 'Watts Safety Installs — Document';
+            var subMatch = text.match(/(?:change order|quote|invoice|bid|estimate|scope of work)[:\s#]*([^\n]{0,60})/i);
+            if (subMatch) subject = 'Watts Safety Installs — ' + subMatch[0].substring(0, 80);
+            var mailBody = text.replace(/\*\*/g, '').replace(/#{1,4}\s/g, '').replace(/\|/g, ' | ');
+            window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(mailBody));
+        };
+        acts.appendChild(emailBtn);
+
+        div.appendChild(acts);
+    }
+
     log.appendChild(div);
     log.scrollTop = log.scrollHeight;
     return div;
 }
+
+// ── Invoice library context for AI ──
+function _aiGatherInvoiceLibrary() {
+    var ctx = '';
+    var allInvoices = [];
+    ['temporary', 'permanent', 'lost'].forEach(function(status) {
+        var bucket = invoiceData[status] || {};
+        Object.keys(bucket).forEach(function(id) {
+            var inv = bucket[id];
+            allInvoices.push(Object.assign({}, inv, { _status: status }));
+        });
+    });
+    if (allInvoices.length === 0) return '';
+
+    ctx += '\n\n## YOUR INVOICE/QUOTE LIBRARY (' + allInvoices.length + ' documents)\n';
+    ctx += 'You have FULL ACCESS to read all of these. When the user references an invoice or client, find the matching document and use its actual data.\n\n';
+
+    allInvoices.forEach(function(inv) {
+        ctx += '### ' + (inv.id || 'Unknown') + ' — ' + (inv.clientName || 'Unknown') + '\n';
+        ctx += '- Status: **' + inv._status + '**' + (inv.type ? ' | Type: ' + inv.type : '') + '\n';
+        ctx += '- Created: ' + (inv.createdDate ? new Date(inv.createdDate).toLocaleDateString() : 'N/A') + '\n';
+        if (inv.expiresDate) ctx += '- Expires: ' + new Date(inv.expiresDate).toLocaleDateString() + '\n';
+        ctx += '- **Total: $' + (inv.amount || 0).toFixed(2) + '**\n';
+        ctx += '- Labor: $' + (inv.laborTotal || 0).toFixed(2) + ' | Materials: $' + (inv.materialsTotal || 0).toFixed(2) + '\n';
+
+        if (inv.jobDetails) {
+            var jd = inv.jobDetails;
+            var parts = [];
+            if (jd.complexName) parts.push(jd.complexName);
+            if (jd.unitNum) parts.push('Unit ' + jd.unitNum);
+            if (jd.jobCity) parts.push(jd.jobCity);
+            if (jd.tradeType) parts.push(jd.tradeType);
+            if (jd.sqft) parts.push(jd.sqft + ' sqft');
+            if (jd.areaDesc) parts.push(jd.areaDesc);
+            if (parts.length) ctx += '- Job: ' + parts.join(' | ') + '\n';
+        }
+
+        if (inv.laborItems && inv.laborItems.length > 0) {
+            ctx += '- Labor Items:\n';
+            inv.laborItems.forEach(function(li) {
+                ctx += '  - ' + (li.desc || li.description || 'Labor') + ' — Qty: ' + (li.qty || 1) + ' × $' + (li.price || 0) + ' = $' + ((li.qty || 1) * (li.price || 0)).toFixed(2) + '\n';
+            });
+        }
+
+        if (inv.materialItems && inv.materialItems.length > 0) {
+            ctx += '- Material Items:\n';
+            inv.materialItems.forEach(function(mi) {
+                ctx += '  - ' + (mi.desc || mi.description || 'Material') + ' — Qty: ' + (mi.qty || mi.qtyNum || 1) + ' × $' + (mi.price || 0) + '\n';
+            });
+        }
+
+        if (inv.scope) ctx += '- Scope: ' + (typeof inv.scope === 'string' ? inv.scope.substring(0, 300) : JSON.stringify(inv.scope).substring(0, 300)) + '\n';
+        if (inv.notes) ctx += '- Notes: ' + (typeof inv.notes === 'string' ? inv.notes.substring(0, 200) : '') + '\n';
+        if (inv.changeOrders && inv.changeOrders.length > 0) {
+            ctx += '- Change Orders: ' + inv.changeOrders.length + '\n';
+            inv.changeOrders.forEach(function(co, ci) {
+                ctx += '  - CO#' + (ci + 1) + ': ' + (co.description || 'Change') + ' — $' + (co.amount || 0).toFixed(2) + ' (' + (co.date || 'N/A') + ')\n';
+            });
+        }
+        ctx += '\n';
+    });
+    return ctx;
+}
+
+// ── Save AI-generated change order to Firebase ──
+function _aiSaveChangeOrder(originalInvoiceId, coText, coAmount, coDescription) {
+    // Find original invoice
+    var original = null, originalStatus = null;
+    ['temporary', 'permanent', 'lost'].forEach(function(status) {
+        if (invoiceData[status] && invoiceData[status][originalInvoiceId]) {
+            original = invoiceData[status][originalInvoiceId];
+            originalStatus = status;
+        }
+    });
+
+    if (!original) {
+        // Try fuzzy match on ID
+        ['temporary', 'permanent', 'lost'].forEach(function(status) {
+            Object.keys(invoiceData[status] || {}).forEach(function(id) {
+                if (id.toLowerCase().indexOf(originalInvoiceId.toLowerCase()) >= 0 ||
+                    originalInvoiceId.toLowerCase().indexOf(id.toLowerCase()) >= 0) {
+                    original = invoiceData[status][id];
+                    originalStatus = status;
+                }
+            });
+        });
+    }
+
+    var coId = generateInvoiceId();
+    saveInvoiceCounter();
+
+    var changeOrder = {
+        id: coId,
+        type: 'change_order',
+        status: 'temporary',
+        clientName: original ? original.clientName : 'Unknown',
+        originalInvoiceId: originalInvoiceId,
+        estimateDate: new Date().toISOString().split('T')[0],
+        createdDate: new Date().toISOString(),
+        expiresDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+        amount: coAmount || 0,
+        laborTotal: coAmount || 0,
+        materialsTotal: 0,
+        laborItems: [],
+        materialItems: [],
+        scope: coDescription || 'Change Order',
+        notes: coText,
+        changeOrderText: coText,
+        jobDetails: original ? original.jobDetails : {},
+        companyInfo: original ? original.companyInfo : {}
+    };
+
+    // Also attach CO to original invoice
+    if (original) {
+        if (!original.changeOrders) original.changeOrders = [];
+        original.changeOrders.push({
+            coId: coId,
+            description: coDescription || 'Change Order',
+            amount: coAmount || 0,
+            date: new Date().toISOString(),
+            text: coText.substring(0, 500)
+        });
+        saveInvoiceToFirebase(original);
+    }
+
+    // Save the CO as its own invoice
+    invoiceData.temporary[coId] = changeOrder;
+    saveInvoiceToFirebase(changeOrder);
+
+    invRenderList();
+    updateInvoiceStats();
+    renderWidgetBanner();
+
+    showNotification('Change Order ' + coId + ' saved!' + (original ? ' Linked to ' + originalInvoiceId : ''), 'success');
+    return coId;
+}
+window._aiSaveChangeOrder = _aiSaveChangeOrder;
 
 function _aiGatherContext() {
     var ctx = '';
@@ -5106,6 +5356,8 @@ function _aiGatherContext() {
             });
         }
     }
+    // Invoice library — AI sees ALL your invoices/quotes/COs
+    ctx += _aiGatherInvoiceLibrary();
     return ctx;
 }
 
@@ -5152,15 +5404,16 @@ async function aiSendMessage() {
     document.getElementById('aiChatLog').scrollTop = document.getElementById('aiChatLog').scrollHeight;
 
     try {
-        // Full GC Mentor system prompt — matches bidgen-ai.js quality
+        // Full GC Mentor system prompt with invoice library access
         var systemCtx = [
-            'You are the BidGen AI Mentor — a senior-level general contracting advisor embedded inside the Bid Document Generator for Watts Safety Installs and Watts ATP Contractor.',
+            'You are the BidGen AI Mentor — a senior-level general contracting advisor and business operations assistant embedded inside the Bid Document Generator for Watts Safety Installs and Watts ATP Contractor.',
             '',
             '## WHO YOU SERVE',
             'Justin Watts — Owner, Lead GC, Nebraska Licensed Contractor #54690-25, based in Norfolk, Nebraska.',
             'He runs two sister companies:',
             '- **Watts ATP Contractor** — accessibility modifications (grab bars, ramps, stairlifts, bathroom ADA conversions) funded by Nebraska ATP program',
             '- **Watts Safety Installs** — general residential & commercial work (flooring, painting, remodeling, repairs, roofing)',
+            'He has strong trade knowledge but needs a business partner who handles the paperwork side. YOU are that partner. You generate quotes, change orders, scope documents, and invoices so he can focus on the work.',
             '',
             '## HOW TO COMMUNICATE',
             '- Justin is sharp and capable. NEVER dumb things down. Give full technical depth with good formatting.',
@@ -5171,49 +5424,78 @@ async function aiSendMessage() {
             '',
             '## CORE RULES',
             '1. **NEVER hallucinate.** If uncertain, say "verify this." Wrong info costs money on a jobsite.',
-            '2. **NEVER cut yourself short.** If the answer needs 3000 words, write 3000 words. FINISH every response completely. Do NOT stop mid-sentence or mid-section.',
+            '2. **NEVER cut yourself short.** If the answer needs 3000 words, write 3000 words. FINISH every response completely. Do NOT stop mid-sentence or mid-section. NEVER leave a section incomplete.',
             '3. **ALWAYS show your math.** Break down every number: quantity × unit price = line total. Show subtotals, markup, overhead, profit.',
             '4. **ALWAYS analyze actual bid data** when provided. Do NOT give generic advice when you have specific numbers.',
             '5. **Use markdown formatting** — headers, bold, tables, numbered lists, bullet points.',
             '',
-            '## DOCUMENT GENERATION',
-            'When asked to create a change order, invoice, scope of work, bid, or any formal document:',
-            '- Generate the COMPLETE document ready to copy-paste into an email or print.',
-            '- Include: header with company info, date, client info, project reference, invoice/CO number, full itemized breakdown with quantities and pricing, terms, signature lines.',
-            '- Format it professionally. This should be ready to send — not a summary or outline.',
-            '- For change orders specifically: reference the original contract/invoice, clearly state what changed and why, itemize ALL new costs, show the delta from original scope, include authorization signature block.',
+            '## INVOICE LIBRARY ACCESS',
+            'You have FULL READ ACCESS to Justin\'s entire invoice/quote database. It is provided below in the context data.',
+            'When he references an invoice number, client name, project, or property — FIND the matching document in the library and use its ACTUAL data.',
+            'You can cross-reference invoices, compare pricing across jobs, and pull historical data to inform new quotes.',
+            'When generating a change order, ALWAYS pull the original invoice data and reference it explicitly.',
+            '',
+            '## DOCUMENT GENERATION — THIS IS YOUR #1 JOB',
+            'When asked to create a change order, invoice, scope of work, bid, quote, or any formal document:',
+            '- Generate the COMPLETE document ready to copy-paste into an email, text, or print. NOT a summary. NOT an outline. The FULL document.',
+            '- Include ALL of these sections:',
+            '  1. **Header**: Watts Safety Installs / Watts ATP Contractor, Nebraska Licensed #54690-25, Norfolk NE',
+            '  2. **Date** and **Document Number** (reference original invoice # if this is a CO)',
+            '  3. **Client Info**: Name, property/complex, unit if applicable',
+            '  4. **Subject/RE line**: Clear one-line description of the document',
+            '  5. **Original Scope Reference** (for change orders): What was originally contracted and for how much',
+            '  6. **New/Changed Scope**: Detailed description of what changed, discovered, or is being added',
+            '  7. **Itemized Cost Breakdown**: Table or list with every line item — description, quantity, unit, unit price, line total',
+            '  8. **Subtotals**: Labor subtotal, materials subtotal, markup/overhead if applicable',
+            '  9. **Grand Total**: The final number, prominently displayed',
+            '  10. **Terms**: Payment terms, validity period, any conditions',
+            '  11. **Authorization Block**: Signature lines for both parties, date lines',
+            '  12. **Contact Info**: Phone, email for follow-up',
+            '',
+            'After generating any document, the user will see buttons to: **Copy** it, **Save as Change Order** to Firebase, or **Email Draft** it directly.',
             '',
             '## PRICING KNOWLEDGE (Nebraska 2025-2026)',
             '| Task | Budget | Mid-Range | Premium |',
             '|------|--------|-----------|---------|',
             '| LVP/Laminate install | $2.00/sf | $3.25/sf | $5.00+/sf |',
             '| Ceramic/Porcelain tile | $4.00/sf | $7.00/sf | $12.00+/sf |',
+            '| Carpet install | $0.75/sf | $1.50/sf | $3.00+/sf |',
             '| Demo (flooring) | $1.50/sf | $3.50/sf | $6.00+/sf |',
             '| Self-leveling pour | $2.00/sf | $3.50/sf | $5.00+/sf |',
             '| Interior painting | $1.25/sf | $2.50/sf | $4.50+/sf |',
+            '| Exterior painting | $2.00/sf | $3.50/sf | $6.00+/sf |',
             '| Drywall hang+finish | $1.50/sf | $2.75/sf | $4.50+/sf |',
             '| Grab bar install | $175/ea | $275/ea | $450+/ea |',
+            '| Wheelchair ramp | $80/lf | $150/lf | $250+/lf |',
+            '| Tub-to-shower | $3,500 | $6,000 | $12,000+ |',
+            '| Toilet R&R | $100 | $150 | $225+ |',
             '| General labor | $45/hr | $65/hr | $95+/hr |',
             '| Plumbing | $75/hr | $110/hr | $175+/hr |',
             '| Electrical | $75/hr | $120/hr | $185+/hr |',
+            '| Mold remediation | $3.00/sf | $6.00/sf | $12.00+/sf |',
+            '| Subfloor rebuild | $4.00/sf | $7.00/sf | $12.00+/sf |',
+            '| Gyp-Crete demo | $3.00/sf | $5.00/sf | $8.00+/sf |',
             '',
             '### Markup & Overhead',
-            '- Material markup: **20-25%**',
-            '- Overhead: **10-20%** of direct costs',
-            '- Profit margin: **10-20%** on top',
+            '- Material markup: **20-25%** sweet spot',
+            '- Overhead: **10-20%** of direct costs (truck, insurance, tools, fuel)',
+            '- Profit margin: **10-20%** on top. Net **8-15%** is healthy.',
+            '- Travel: $1-2/mile or flat $50-150/trip',
+            '- Dumpster: $350-$600 for 10-15 yd roll-off',
             '',
             '## SCOPE & CHANGE ORDERS',
             'Common triggers: hidden water damage, rot, mold, non-level subfloors, lead paint (pre-1978), asbestos, plumbing not to code once exposed.',
-            'Always check for missing: demolition, waste hauling, surface protection, permits, travel/mobilization, contingency.'
+            'Always check for missing: demolition, waste hauling, surface protection, permits, travel/mobilization, contingency.',
+            'For change orders: ALWAYS reference the original contract amount, show what is NEW vs what was already bid, and compute the net change.'
         ].join('\n');
 
         var context = _aiGatherContext();
-        if (context) systemCtx += '\n\n## CURRENT BID DATA\n' + context;
+        if (context) systemCtx += '\n\n' + context;
 
         // Build conversation for Gemini via Cloudflare proxy
         var contents = [];
         contents.push({ role: 'user', parts: [{ text: systemCtx + '\n\nAcknowledge you are ready.' }] });
-        contents.push({ role: 'model', parts: [{ text: 'Ready. I\'m your BidGen AI Mentor. I can see your current bid data and I\'ll give you thorough, complete answers. I will NEVER cut myself off mid-response. Ask me anything — change orders, pricing, scope, materials, documents.' }] });
+        contents.push({ role: 'model', parts: [{ text: 'Ready. I\'m your BidGen AI Mentor — think of me as your business partner who handles the paperwork. I can see your entire invoice library, all bid data, and scan data. Tell me what you need — a change order, a new quote, a scope of work, pricing check, whatever — and I\'ll generate the COMPLETE document ready to email or text. I will never cut myself off or give you half an answer.' }] });
 
         // Add conversation history (last 20 exchanges for better context)
         var histSlice = _aiChatHistory.slice(-20);

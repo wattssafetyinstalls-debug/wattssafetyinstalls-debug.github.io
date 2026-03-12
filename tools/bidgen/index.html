@@ -5115,16 +5115,6 @@ async function aiSendMessage() {
     if (!userMsg && _aiStagedFiles.length === 0) return;
     if (!userMsg) userMsg = 'Analyze the attached file(s).';
 
-    var geminiKey = '', geminiModel = '';
-    try {
-        geminiKey = localStorage.getItem('gemini_api_key') || '';
-        geminiModel = localStorage.getItem('gemini_model') || '';
-    } catch(e) {}
-    if (!geminiKey || !geminiModel) {
-        showNotification('Set your Gemini API key in the Scan tab first.', 'error');
-        return;
-    }
-
     // Capture staged files and clear
     var sendFiles = _aiStagedFiles.slice();
     var fileNames = sendFiles.map(function(f) { return f.name; });
@@ -5143,45 +5133,96 @@ async function aiSendMessage() {
     });
 
     var fullMsg = userMsg + (fileTextParts ? fileTextParts : '');
-    var displayMsg = userMsg + (fileNames.length > 0 ? '' : '');
 
     // Add to history and render
     _aiChatHistory.push({ role: 'user', text: fullMsg, files: fileNames });
     _aiRenderMessage('user', userMsg, fileNames);
 
-    // Show typing indicator
+    // Show typing indicator with timer
     var typingDiv = document.createElement('div');
     typingDiv.style.cssText = 'color:#8e44ad;font-size:12px;padding:8px;font-style:italic;';
-    typingDiv.textContent = 'Gemini is thinking' + (sendFiles.length > 0 ? ' (processing ' + sendFiles.length + ' file' + (sendFiles.length > 1 ? 's' : '') + ')' : '') + '...';
     typingDiv.id = 'aiTyping';
+    var _typingStart = Date.now();
+    typingDiv.textContent = 'Gemini 2.5 Pro is thinking' + (sendFiles.length > 0 ? ' (processing ' + sendFiles.length + ' file' + (sendFiles.length > 1 ? 's' : '') + ')' : '') + '...';
+    var _typingInterval = setInterval(function() {
+        var s = Math.round((Date.now() - _typingStart) / 1000);
+        typingDiv.textContent = 'Gemini 2.5 Pro is thinking... ' + s + 's';
+    }, 1000);
     document.getElementById('aiChatLog').appendChild(typingDiv);
     document.getElementById('aiChatLog').scrollTop = document.getElementById('aiChatLog').scrollHeight;
 
     try {
-        // Build system context
-        var systemCtx = 'You are an AI assistant embedded in a bid generator tool for a safety/accessibility contractor business (Watts Safety Installs). '
-            + 'You help with quotes, pricing, invoice analysis, Nebraska ATP quote forms, material estimation, and bid preparation. '
-            + 'Be concise, practical, and specific. If providing pricing, note these are estimates. '
-            + 'The user works with accessibility modifications: grab bars, shower pans, ramps, stairlifts, door widening, bathroom remodels, etc. '
-            + 'When the user attaches files, analyze them thoroughly and provide useful insights about pricing, line items, and how they relate to the current bid.';
+        // Full GC Mentor system prompt — matches bidgen-ai.js quality
+        var systemCtx = [
+            'You are the BidGen AI Mentor — a senior-level general contracting advisor embedded inside the Bid Document Generator for Watts Safety Installs and Watts ATP Contractor.',
+            '',
+            '## WHO YOU SERVE',
+            'Justin Watts — Owner, Lead GC, Nebraska Licensed Contractor #54690-25, based in Norfolk, Nebraska.',
+            'He runs two sister companies:',
+            '- **Watts ATP Contractor** — accessibility modifications (grab bars, ramps, stairlifts, bathroom ADA conversions) funded by Nebraska ATP program',
+            '- **Watts Safety Installs** — general residential & commercial work (flooring, painting, remodeling, repairs, roofing)',
+            '',
+            '## HOW TO COMMUNICATE',
+            '- Justin is sharp and capable. NEVER dumb things down. Give full technical depth with good formatting.',
+            '- Lead with the bottom line first, then unpack the full reasoning underneath.',
+            '- BOLD all key numbers: **$3.50/sf**, **10% waste factor**.',
+            '- Use headers (##), tables, checklists, bullet points for scannability.',
+            '- Talk like a veteran GC on a jobsite — direct, practical, no corporate fluff.',
+            '',
+            '## CORE RULES',
+            '1. **NEVER hallucinate.** If uncertain, say "verify this." Wrong info costs money on a jobsite.',
+            '2. **NEVER cut yourself short.** If the answer needs 3000 words, write 3000 words. FINISH every response completely. Do NOT stop mid-sentence or mid-section.',
+            '3. **ALWAYS show your math.** Break down every number: quantity × unit price = line total. Show subtotals, markup, overhead, profit.',
+            '4. **ALWAYS analyze actual bid data** when provided. Do NOT give generic advice when you have specific numbers.',
+            '5. **Use markdown formatting** — headers, bold, tables, numbered lists, bullet points.',
+            '',
+            '## DOCUMENT GENERATION',
+            'When asked to create a change order, invoice, scope of work, bid, or any formal document:',
+            '- Generate the COMPLETE document ready to copy-paste into an email or print.',
+            '- Include: header with company info, date, client info, project reference, invoice/CO number, full itemized breakdown with quantities and pricing, terms, signature lines.',
+            '- Format it professionally. This should be ready to send — not a summary or outline.',
+            '- For change orders specifically: reference the original contract/invoice, clearly state what changed and why, itemize ALL new costs, show the delta from original scope, include authorization signature block.',
+            '',
+            '## PRICING KNOWLEDGE (Nebraska 2025-2026)',
+            '| Task | Budget | Mid-Range | Premium |',
+            '|------|--------|-----------|---------|',
+            '| LVP/Laminate install | $2.00/sf | $3.25/sf | $5.00+/sf |',
+            '| Ceramic/Porcelain tile | $4.00/sf | $7.00/sf | $12.00+/sf |',
+            '| Demo (flooring) | $1.50/sf | $3.50/sf | $6.00+/sf |',
+            '| Self-leveling pour | $2.00/sf | $3.50/sf | $5.00+/sf |',
+            '| Interior painting | $1.25/sf | $2.50/sf | $4.50+/sf |',
+            '| Drywall hang+finish | $1.50/sf | $2.75/sf | $4.50+/sf |',
+            '| Grab bar install | $175/ea | $275/ea | $450+/ea |',
+            '| General labor | $45/hr | $65/hr | $95+/hr |',
+            '| Plumbing | $75/hr | $110/hr | $175+/hr |',
+            '| Electrical | $75/hr | $120/hr | $185+/hr |',
+            '',
+            '### Markup & Overhead',
+            '- Material markup: **20-25%**',
+            '- Overhead: **10-20%** of direct costs',
+            '- Profit margin: **10-20%** on top',
+            '',
+            '## SCOPE & CHANGE ORDERS',
+            'Common triggers: hidden water damage, rot, mold, non-level subfloors, lead paint (pre-1978), asbestos, plumbing not to code once exposed.',
+            'Always check for missing: demolition, waste hauling, surface protection, permits, travel/mobilization, contingency.'
+        ].join('\n');
 
         var context = _aiGatherContext();
-        if (context) systemCtx += '\n' + context;
+        if (context) systemCtx += '\n\n## CURRENT BID DATA\n' + context;
 
-        // Build conversation for Gemini
+        // Build conversation for Gemini via Cloudflare proxy
         var contents = [];
-        contents.push({ role: 'user', parts: [{ text: systemCtx + '\n\nPlease acknowledge you understand the context and are ready to help.' }] });
-        contents.push({ role: 'model', parts: [{ text: 'Understood. I have your current bid and scan data. How can I help?' }] });
+        contents.push({ role: 'user', parts: [{ text: systemCtx + '\n\nAcknowledge you are ready.' }] });
+        contents.push({ role: 'model', parts: [{ text: 'Ready. I\'m your BidGen AI Mentor. I can see your current bid data and I\'ll give you thorough, complete answers. I will NEVER cut myself off mid-response. Ask me anything — change orders, pricing, scope, materials, documents.' }] });
 
-        // Add conversation history (last 10 exchanges max)
-        var histSlice = _aiChatHistory.slice(-10);
+        // Add conversation history (last 20 exchanges for better context)
+        var histSlice = _aiChatHistory.slice(-20);
         for (var i = 0; i < histSlice.length; i++) {
             var entry = histSlice[i];
             if (entry.role === 'user') {
                 var parts = [{ text: entry.text }];
                 // For the LATEST user message, attach image files and scanned image
                 if (i === histSlice.length - 1) {
-                    // Attach uploaded image files
                     sendFiles.forEach(function(f) {
                         if ((f.type === 'image' || f.type === 'binary') && f.dataUrl) {
                             var b64 = f.dataUrl.replace(/^data:[^;]+;base64,/, '');
@@ -5189,7 +5230,6 @@ async function aiSendMessage() {
                             parts.push({ inline_data: { mime_type: mType, data: b64 } });
                         }
                     });
-                    // Also attach scanned image if checkbox checked
                     if (document.getElementById('aiIncludeImage').checked && _scanImageData) {
                         var b64s = _scanImageData.replace(/^data:image\/[a-z]+;base64,/, '');
                         var mimes = (_scanImageData.match(/^data:(image\/[a-z]+);/) || [])[1] || 'image/jpeg';
@@ -5202,16 +5242,23 @@ async function aiSendMessage() {
             }
         }
 
-        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + geminiModel + ':generateContent?key=' + geminiKey;
-        var response = await fetch(url, {
+        // Use Cloudflare proxy — NO raw API key exposure
+        var response = await fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev?model=gemini-2.5-pro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: contents,
-                generationConfig: { temperature: 0.7, maxOutputTokens: 4096 }
+                tools: [{ googleSearch: {} }],
+                generationConfig: {
+                    temperature: 0.8,
+                    maxOutputTokens: 65536,
+                    topP: 0.95,
+                    topK: 64
+                }
             })
         });
 
+        clearInterval(_typingInterval);
         var ti = document.getElementById('aiTyping');
         if (ti) ti.remove();
 
@@ -5224,8 +5271,21 @@ async function aiSendMessage() {
 
         var data = await response.json();
         var aiText = '';
+        // Handle multi-part responses and filter out thought tokens
         if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-            aiText = data.candidates[0].content.parts[0].text || '';
+            var textParts = [];
+            for (var pi = 0; pi < data.candidates[0].content.parts.length; pi++) {
+                var part = data.candidates[0].content.parts[pi];
+                if (part.thought) continue; // skip reasoning tokens
+                if (part.text) textParts.push(part.text);
+            }
+            // If all parts were thoughts, fall back to including them
+            if (textParts.length === 0) {
+                for (var pj = 0; pj < data.candidates[0].content.parts.length; pj++) {
+                    if (data.candidates[0].content.parts[pj].text) textParts.push(data.candidates[0].content.parts[pj].text);
+                }
+            }
+            aiText = textParts.join('\n\n');
         }
         if (!aiText) aiText = '(No response from Gemini)';
 
@@ -5233,10 +5293,13 @@ async function aiSendMessage() {
         _aiRenderMessage('ai', aiText);
 
     } catch(err) {
+        clearInterval(_typingInterval);
         var ti = document.getElementById('aiTyping');
         if (ti) ti.remove();
         console.error('AI chat error:', err);
-        var errText = 'Error: ' + err.message;
+        var errText = 'Connection issue — try again in a sec. If this keeps happening, check your internet or the Cloudflare proxy status.';
+        if (err.name === 'AbortError') errText = 'Request timed out. Try a shorter question or check internet.';
+        else if (err.message) errText += '\n\nDetail: ' + err.message;
         _aiChatHistory.push({ role: 'ai', text: errText });
         _aiRenderMessage('ai', errText);
     }

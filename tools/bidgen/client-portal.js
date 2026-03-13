@@ -26,13 +26,21 @@ function waitForBidGen(fn) {
     var attempts = 0;
     var iv = setInterval(function() {
         attempts++;
-        if (typeof window.hashPIN === 'function' && typeof window.invoiceData !== 'undefined' && window.userPIN) {
+        // userPIN is a let, not on window — check via the sync device label which shows PIN after login
+        var loggedIn = false;
+        try {
+            var syncEl = document.getElementById('syncDevice');
+            loggedIn = syncEl && syncEl.textContent && syncEl.textContent.indexOf('PIN:') !== -1;
+        } catch(e) {}
+        var hasHash = typeof window.hashPIN === 'function';
+        if (hasHash && loggedIn) {
             clearInterval(iv);
+            console.log('[Client Portal] BidGen ready — login detected');
             fn();
         }
-        if (attempts > 60) {
+        if (attempts > 120) {
             clearInterval(iv);
-            console.warn('[Client Portal] Timed out waiting for BidGen. hashPIN:', typeof window.hashPIN, '| invoiceData:', typeof window.invoiceData, '| userPIN:', !!window.userPIN);
+            console.warn('[Client Portal] Timed out. hashPIN:', hasHash, '| loggedIn:', loggedIn);
         }
     }, 500);
 }
@@ -44,7 +52,9 @@ waitForBidGen(function() {
 
 function initPortalSystem() {
     var db = firebase.database();
-    var hashedPIN = hashPIN(userPIN);
+    var _pin = window._bidgenUserPIN ? window._bidgenUserPIN() : sessionStorage.getItem('bid_pin');
+    if (!_pin) { console.warn('[Client Portal] No PIN found'); return; }
+    var hashedPIN = hashPIN(_pin);
 
     // ================================================================
     // 1. PUBLISH INVOICE TO PORTAL
@@ -447,8 +457,7 @@ function initPortalSystem() {
                 if (inv && inv.status === 'temporary') {
                     inv.status = 'permanent';
                     inv.awardedDate = data.signedAt;
-                    invoiceData.permanent[invoiceId] = inv;
-                    delete invoiceData.temporary[invoiceId];
+                    try { var _id = window._bidgenInvoiceData(); if(_id) { _id.permanent[invoiceId] = inv; delete _id.temporary[invoiceId]; } } catch(e) {}
                     db.ref('invoices/' + hashedPIN + '/temporary/' + invoiceId).remove();
                     saveInvoiceToFirebase(inv);
                     if (typeof invRenderList === 'function') invRenderList();
@@ -614,11 +623,12 @@ function initPortalSystem() {
     // HELPERS
     // ================================================================
     function findInvoiceGlobal(invoiceId) {
-        if (typeof invoiceData === 'undefined') return null;
+        var iData = window._bidgenInvoiceData ? window._bidgenInvoiceData() : null;
+        if (!iData) return null;
         var statuses = ['temporary', 'permanent', 'lost'];
         for (var i = 0; i < statuses.length; i++) {
-            if (invoiceData[statuses[i]] && invoiceData[statuses[i]][invoiceId]) {
-                return invoiceData[statuses[i]][invoiceId];
+            if (iData[statuses[i]] && iData[statuses[i]][invoiceId]) {
+                return iData[statuses[i]][invoiceId];
             }
         }
         return null;

@@ -1109,6 +1109,8 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let userPIN = null;
+window._bidgenUserPIN = function() { return userPIN; };
+window._bidgenInvoiceData = function() { return typeof invoiceData !== 'undefined' ? invoiceData : null; };
 let dbRef = null; // will be db.ref('users/<hashed_pin>')
 let companyRef = null;
 let jobsRef = null;

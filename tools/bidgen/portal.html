@@ -524,7 +524,8 @@ function trackView() {
 // RENDER PORTAL
 // ================================================================
 function renderPortal() {
-    document.getElementById('portalLoading').style.display = 'none';
+    var loadEl = document.getElementById('portalLoading');
+    if (loadEl) loadEl.style.display = 'none';
 
     // Determine brand
     var brandKey = invoice.brand || invoice.brandSelect || 'wsi';
@@ -775,7 +776,9 @@ function renderPortal() {
         h += '</div></div>';
     }
 
-    document.getElementById('portalRoot').innerHTML = h;
+    var portalRoot = document.getElementById('portalRoot');
+    if (!portalRoot) { document.body.innerHTML = h; return; }
+    portalRoot.innerHTML = h;
 
     // Init signature canvas after DOM is ready
     if (!isSigned && !isDeclined) {
@@ -972,18 +975,26 @@ window.portalSign = function() {
             });
         });
 
-        // Re-render with signed state
-        invoice._portalData = invoice._portalData || {};
-        invoice._portalData.signedAt = signPayload.signedAt;
-        invoice._portalData.signerName = name;
-        renderPortal();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Re-render with signed state (wrapped in try/catch so render errors don't show as save errors)
+        try {
+            invoice._portalData = invoice._portalData || {};
+            invoice._portalData.signedAt = signPayload.signedAt;
+            invoice._portalData.signerName = name;
+            renderPortal();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch(renderErr) {
+            console.warn('Re-render after sign:', renderErr);
+            // Reload to show signed state cleanly
+            window.location.reload();
+        }
     }).catch(function(err) {
+        console.error('Signature save error:', err);
         alert('Error saving signature: ' + err.message);
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = '✅ Accept & Sign Estimate';
-            submitBtn.style.opacity = '1';
+        var btn = document.querySelector('#sigSection .p-btn-accept');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '✅ Accept & Sign Estimate';
+            btn.style.opacity = '1';
         }
     });
 };
@@ -997,10 +1008,18 @@ window.portalDecline = function() {
         declinedAt: new Date().toISOString(),
         declineReason: reason || ''
     }).then(function() {
-        invoice._portalData = invoice._portalData || {};
-        invoice._portalData.declinedAt = new Date().toISOString();
-        renderPortal();
-        window.scrollTo({top:0,behavior:'smooth'});
+        try {
+            invoice._portalData = invoice._portalData || {};
+            invoice._portalData.declinedAt = new Date().toISOString();
+            renderPortal();
+            window.scrollTo({top:0,behavior:'smooth'});
+        } catch(e) {
+            console.warn('Re-render after decline:', e);
+            window.location.reload();
+        }
+    }).catch(function(err) {
+        console.error('Decline error:', err);
+        alert('Error: ' + err.message);
     });
 };
 
@@ -1026,6 +1045,7 @@ function listenForMessages() {
 
 window.portalSendMessage = function() {
     var input = document.getElementById('qaInput');
+    if (!input) return;
     var text = (input.value || '').trim();
     if (!text) return;
     messagesRef.push({
@@ -1045,7 +1065,8 @@ window.portalSendMessage = function() {
 // ERROR STATE
 // ================================================================
 function showError(title, msg) {
-    document.getElementById('portalRoot').innerHTML = '<div class="portal-error"><h2>' + title + '</h2><p>' + msg + '</p></div>';
+    var root = document.getElementById('portalRoot');
+    if (root) root.innerHTML = '<div class="portal-error"><span class="err-icon">⚠️</span><h2>' + esc(title) + '</h2><p>' + esc(msg) + '</p></div>';
 }
 
 // ================================================================

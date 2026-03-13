@@ -2741,21 +2741,62 @@ function generateChangeOrder() {
     h += '<div class="info-grid-3"><div class="info-box hl"><label>Change Order #</label><div class="value" data-invoice-id>'+E(invId || 'CO-001')+'</div></div><div class="info-box"><label>Date Issued</label><div class="value">'+E(fd(new Date().toISOString().split('T')[0]))+'</div></div><div class="info-box"><label>Response Required By</label><div class="value">'+E('3 Business Days')+'</div></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div></div>';
     h += '<div class="ref"><h4>Reference &mdash; Original Estimate</h4><p><strong>Original Date:</strong> '+fd(gv('estimateDate'))+'</p><p><strong>Original Amount:</strong> Labor $'+f(labTot)+' + Materials $'+f(matTot)+' = <strong>$'+f(orig)+'</strong></p><p><strong>Clause:</strong> '+E(disc || 'Unforeseen Conditions')+'</p></div>';
-    h += '<h3 class="stitle">Section 1 &mdash; Discovered Conditions</h3>';
-    h += '<div class="dbox"><label>Describe the concealed condition(s):</label><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div></div>';
-    h += '<div class="dbox"><label>Location within the unit:</label><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div></div>';
-    h += '<div class="pbox"><p><strong>PHOTO DOCUMENTATION</strong> &mdash; Attach dated photos. Count: '+E('______')+'</p></div>';
-    h += '<h3 class="stitle">Section 2 &mdash; Additional Work</h3>';
-    h += '<table><thead><tr><th style="width:30px">#</th><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
-    var letters = 'ABCDEFGHIJ';
-    for (var i = 0; i < 5; i++) {
-        h += '<tr><td class="item-num">'+letters[i]+'</td><td class="item-desc"><strong>'+E('[Description]')+'</strong></td><td>'+E('______')+'</td><td>'+P('$______')+'</td><td><strong>'+P('$______','data-line-total')+'</strong></td></tr>';
+    h += '<h3 class="stitle">Section 1 &mdash; Scope of Change</h3>';
+    // Pull scope items from the form
+    var scopeList = getScope();
+    if (scopeList.length > 0) {
+        h += '<div class="dbox"><label>Changed/Additional Scope:</label>';
+        h += '<ul style="margin:6px 0 0 18px;padding:0;list-style:disc">';
+        scopeList.forEach(function(s) { h += '<li style="margin:4px 0;line-height:1.5">'+E(s)+'</li>'; });
+        h += '</ul></div>';
+    } else {
+        h += '<div class="dbox"><label>Describe the scope change / concealed condition(s):</label><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div><div class="wl" data-editable contenteditable="false">&nbsp;</div></div>';
     }
-    h += '<tr class="subtotal-row"><td></td><td colspan="3">CHANGE ORDER SUBTOTAL</td><td><span data-subtotal>$0.00</span></td></tr>';
-    h += '<tr class="total-row"><td></td><td colspan="3">CHANGE ORDER TOTAL</td><td><span data-total>$0.00</span></td></tr>';
+    // Pull notes as updated expectations / conditions
+    var notesList = getNotes();
+    if (notesList.length > 0) {
+        h += '<div class="dbox"><label>Updated Expectations &amp; Conditions:</label>';
+        h += '<ul style="margin:6px 0 0 18px;padding:0;list-style:disc">';
+        notesList.forEach(function(n) { h += '<li style="margin:4px 0;line-height:1.5">'+E(n)+'</li>'; });
+        h += '</ul></div>';
+    }
+    h += '<div class="dbox"><label>Location within the unit:</label><div class="value">'+E(loc() || '______')+'</div></div>';
+    h += '<div class="pbox"><p><strong>PHOTO DOCUMENTATION</strong> &mdash; Attach dated photos. Count: '+E('______')+'</p></div>';
+    h += '<h3 class="stitle">Section 2 &mdash; Additional Work — Itemized Breakdown</h3>';
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
+    var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var coSubtotal = 0;
+    // Pull actual labor items from form
+    if (litems.length > 0) {
+        for (var i = 0; i < litems.length; i++) {
+            var li = litems[i];
+            var lineTotal = li.qty * li.price;
+            coSubtotal += lineTotal;
+            h += '<tr><td class="item-num">'+letters[i % 26]+'</td><td class="item-desc"><strong>'+E(li.desc)+'</strong>'+(li.basis ? ' <small style="color:#888">('+E(li.basis)+')</small>' : '')+'</td><td>'+E(String(li.qty))+'</td><td>'+P('$'+f(li.price))+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
+        }
+    }
+    // Pull actual material items from form
+    if (mitems.length > 0) {
+        h += '<tr><td colspan="5" style="background:#0d1929;color:#7f8c8d;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;padding:6px 8px">Materials</td></tr>';
+        for (var j = 0; j < mitems.length; j++) {
+            var mi = mitems[j];
+            var mLineTotal = mi.qtyNum * mi.price;
+            var mWithMarkup = mLineTotal + (mLineTotal * mk);
+            coSubtotal += mWithMarkup;
+            h += '<tr><td class="item-num">M'+(j+1)+'</td><td class="item-desc">'+E(mi.desc)+'</td><td>'+E(mi.qty || String(mi.qtyNum))+'</td><td>'+P('$'+f(mi.price))+'</td><td><strong>'+P('$'+f(mWithMarkup),'data-line-total')+'</strong></td></tr>';
+        }
+    }
+    // If no items at all, show blank rows for manual fill
+    if (litems.length === 0 && mitems.length === 0) {
+        for (var k = 0; k < 5; k++) {
+            h += '<tr><td class="item-num">'+letters[k]+'</td><td class="item-desc"><strong>'+E('[Description]')+'</strong></td><td>'+E('______')+'</td><td>'+P('$______')+'</td><td><strong>'+P('$______','data-line-total')+'</strong></td></tr>';
+        }
+    }
+    h += '<tr class="subtotal-row"><td></td><td colspan="3">CHANGE ORDER SUBTOTAL</td><td><span data-subtotal>$'+f(coSubtotal)+'</span></td></tr>';
+    h += '<tr class="total-row"><td></td><td colspan="3">CHANGE ORDER TOTAL</td><td><span data-total>$'+f(coSubtotal)+'</span></td></tr>';
     h += '</tbody></table>';
     h += '<h3 class="stitle">Section 3 &mdash; Project Impact</h3>';
-    h += '<div class="impact"><div class="impact-box"><label>Original Contract</label><div class="val grn">$'+f(orig)+'</div></div><div class="impact-box"><label>This Change Order</label><div class="val">'+E('$______')+'</div></div><div class="impact-box"><label>Revised Total</label><div class="val">'+E('$______')+'</div></div></div>';
+    h += '<div class="impact"><div class="impact-box"><label>Original Contract</label><div class="val grn">$'+f(orig)+'</div></div><div class="impact-box"><label>This Change Order</label><div class="val" style="color:#e67e22;font-weight:800">$'+f(coSubtotal)+'</div></div><div class="impact-box"><label>Revised Total</label><div class="val" style="color:#2ecc71;font-weight:800">$'+f(orig + coSubtotal)+'</div></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Schedule Impact</label><div class="value">'+E('Additional ___ day(s)')+'</div></div><div class="info-box"><label>Revised Completion</label><div class="value">'+E('______')+'</div></div></div>';
     h += '<div class="legal"><h4>Terms &amp; Conditions</h4><p>1. This Change Order amends the original estimate upon execution by both parties.</p><p>2. Work shall not commence until written authorization is received.</p><p>3. Additional compensation reflects actual cost plus applicable overhead.</p><p>4. If declined, Contractor restores area to safe condition. Not responsible for unaddressed damage.</p><p>5. Payment due upon completion of additional scope.</p><p>6. Consistent with Nebraska Revised Statute &sect;73-1117.</p></div>';
     h += '<div class="auth"><h3>Client Authorization</h3>';
@@ -5205,7 +5246,7 @@ function _aiExtractBidGenJSON(text) {
         try { return JSON.parse(match[1].trim()); } catch(e) { console.warn('[AI] JSON parse failed:', e); }
     }
     // Fallback: look for raw JSON object at end of response
-    var raw = text.match(/\{[\s\S]*"laborItems"[\s\S]*\}$/m);
+    var raw = text.match(/\{[\s\S]*(?:"laborItems"|"labor"|"scopeItems"|"scope"|"materialItems"|"materials")[\s\S]*\}$/m);
     if (raw) {
         try { return JSON.parse(raw[0]); } catch(e) {}
     }
@@ -5215,57 +5256,92 @@ function _aiExtractBidGenJSON(text) {
 function _aiLoadIntoBidGen(data) {
     if (!data) { showNotification('No structured data found in AI response.', 'error'); return; }
 
+    // ── Normalize field names — Gemini outputs many variations ──
+    // Scope items: scopeItems, scope, scope_items, changedScope, newScope, updatedScope
+    var scopeArr = data.scopeItems || data.scope_items || data.changedScope || data.changed_scope || data.newScope || data.updatedScope || null;
+    if (!scopeArr && data.scope) {
+        if (Array.isArray(data.scope)) scopeArr = data.scope;
+        else if (typeof data.scope === 'string') scopeArr = data.scope.split(/\n|;/).map(function(s){ return s.replace(/^[-•*\d.)\s]+/, '').trim(); }).filter(Boolean);
+    }
+    // Note items: noteItems, notes, note_items, updatedExpectations, conditions, terms
+    var noteArr = data.noteItems || data.note_items || data.notes || data.updatedExpectations || data.updated_expectations || data.conditions || data.terms || null;
+    if (noteArr && !Array.isArray(noteArr)) {
+        if (typeof noteArr === 'string') noteArr = noteArr.split(/\n|;/).map(function(s){ return s.replace(/^[-•*\d.)\s]+/, '').trim(); }).filter(Boolean);
+        else noteArr = null;
+    }
+    // Labor items: laborItems, labor_items, labor, additionalLabor, newLabor
+    var laborArr = data.laborItems || data.labor_items || data.labor || data.additionalLabor || data.additional_labor || data.newLabor || null;
+    if (laborArr && !Array.isArray(laborArr)) laborArr = null;
+    // Material items: materialItems, material_items, materials, additionalMaterials, newMaterials
+    var matArr = data.materialItems || data.material_items || data.materials || data.additionalMaterials || data.additional_materials || data.newMaterials || null;
+    if (matArr && !Array.isArray(matArr)) matArr = null;
+    // Scope title: scopeTitle, scope_title, title, subject, re
+    var scopeTitle = data.scopeTitle || data.scope_title || data.title || data.subject || data.re || '';
+    // Client name: clientName, client_name, client, preparedFor
+    var clientName = data.clientName || data.client_name || data.client || data.preparedFor || data.prepared_for || '';
+    // Markup: materialsMarkup, materials_markup, markup
+    var markup = data.materialsMarkup !== undefined ? data.materialsMarkup : (data.materials_markup !== undefined ? data.materials_markup : (data.markup !== undefined ? data.markup : null));
+
+    console.log('[BidGen Load] Normalized:', { scopeArr: scopeArr, noteArr: noteArr, laborArr: laborArr, matArr: matArr, scopeTitle: scopeTitle });
+
     // 1. Fill job detail fields
-    if (data.clientName) document.getElementById('clientName').value = data.clientName;
-    if (data.complexName) document.getElementById('complexName').value = data.complexName;
-    if (data.unitNum) document.getElementById('unitNum').value = data.unitNum;
-    if (data.jobCity) document.getElementById('jobCity').value = data.jobCity;
+    if (clientName) document.getElementById('clientName').value = clientName;
+    if (data.complexName || data.complex_name || data.property) document.getElementById('complexName').value = data.complexName || data.complex_name || data.property || '';
+    if (data.unitNum || data.unit_num || data.unit) document.getElementById('unitNum').value = data.unitNum || data.unit_num || data.unit || '';
+    if (data.jobCity || data.job_city || data.city) document.getElementById('jobCity').value = data.jobCity || data.job_city || data.city || '';
     if (data.sqft) document.getElementById('sqft').value = data.sqft;
     if (data.linft) document.getElementById('linft').value = data.linft || 0;
-    if (data.areaDesc) document.getElementById('areaDesc').value = data.areaDesc;
-    if (data.estimateDate) document.getElementById('estimateDate').value = data.estimateDate;
+    if (data.areaDesc || data.area_desc || data.area) document.getElementById('areaDesc').value = data.areaDesc || data.area_desc || data.area || '';
+    if (data.estimateDate || data.estimate_date || data.date) document.getElementById('estimateDate').value = data.estimateDate || data.estimate_date || data.date || '';
     else document.getElementById('estimateDate').value = new Date().toISOString().split('T')[0];
-    if (data.tradeType) {
-        document.getElementById('tradeType').value = data.tradeType;
+    if (data.tradeType || data.trade_type || data.trade) {
+        document.getElementById('tradeType').value = data.tradeType || data.trade_type || data.trade || 'general';
         try { onTradeChange(); } catch(e) {}
     }
-    if (data.materialsMarkup !== undefined) document.getElementById('materialsMarkup').value = data.materialsMarkup;
+    if (markup !== null) document.getElementById('materialsMarkup').value = markup;
 
     // 2. Scope
-    if (data.scopeTitle) document.getElementById('scopeTitle').value = data.scopeTitle;
-    if (data.scopeItems && data.scopeItems.length > 0) {
+    if (scopeTitle) document.getElementById('scopeTitle').value = scopeTitle;
+    if (scopeArr && scopeArr.length > 0) {
         document.getElementById('scopeItemsContainer').innerHTML = '';
-        data.scopeItems.forEach(function(s) { addScopeRow(s); });
+        scopeArr.forEach(function(s) {
+            var txt = (typeof s === 'string') ? s : (s.text || s.description || s.desc || s.item || JSON.stringify(s));
+            if (txt.trim()) addScopeRow(txt.trim());
+        });
     }
 
     // 3. Notes
-    if (data.noteItems && data.noteItems.length > 0) {
+    if (noteArr && noteArr.length > 0) {
         document.getElementById('notesItemsContainer').innerHTML = '';
-        data.noteItems.forEach(function(n) { addNoteRow(n); });
+        noteArr.forEach(function(n) {
+            var txt = (typeof n === 'string') ? n : (n.text || n.description || n.note || n.item || JSON.stringify(n));
+            if (txt.trim()) addNoteRow(txt.trim());
+        });
     }
 
     // 4. Labor items
-    if (data.laborItems && data.laborItems.length > 0) {
+    if (laborArr && laborArr.length > 0) {
         document.getElementById('laborItemsContainer').innerHTML = '';
-        data.laborItems.forEach(function(li) {
+        laborArr.forEach(function(li) {
             addLaborRow(
-                li.desc || li.description || '',
-                li.basis || 'flat',
-                li.price || 0,
-                li.qty || 1
+                li.desc || li.description || li.name || li.item || '',
+                li.basis || li.unit || li.per || 'flat',
+                li.price || li.rate || li.unitPrice || li.unit_price || 0,
+                li.qty || li.quantity || li.hours || 1
             );
         });
     }
 
     // 5. Material items
-    if (data.materialItems && data.materialItems.length > 0) {
+    if (matArr && matArr.length > 0) {
         document.getElementById('matItemsContainer').innerHTML = '';
-        data.materialItems.forEach(function(mi) {
+        matArr.forEach(function(mi) {
             var qtyStr = '';
             if (mi.qtyNum && mi.qtyUnit) qtyStr = mi.qtyNum + ' ' + mi.qtyUnit;
             else if (mi.qty) qtyStr = String(mi.qty);
+            else if (mi.quantity) qtyStr = String(mi.quantity);
             else qtyStr = '1 ea';
-            addMatRow(mi.desc || mi.description || '', qtyStr, mi.price || 0);
+            addMatRow(mi.desc || mi.description || mi.name || mi.item || '', qtyStr, mi.price || mi.unitPrice || mi.unit_price || 0);
         });
     }
 
@@ -5281,7 +5357,7 @@ function _aiLoadIntoBidGen(data) {
     }
 
     // 7. Supplier note
-    if (data.supplierNote) document.getElementById('supplierNote').value = data.supplierNote;
+    if (data.supplierNote || data.supplier_note) document.getElementById('supplierNote').value = data.supplierNote || data.supplier_note || '';
 
     // 8. Recalculate
     liveCalc();

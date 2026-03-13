@@ -2765,43 +2765,59 @@ function generateChangeOrder() {
     }
     h += '<div class="dbox"><label>Location within the unit:</label><div class="value">'+E(loc() || '______')+'</div></div>';
     h += '<div class="pbox"><p><strong>PHOTO DOCUMENTATION</strong> &mdash; Attach dated photos. Count: '+E('______')+'</p></div>';
-    h += '<h3 class="stitle">Section 2 &mdash; Additional Work — Itemized Breakdown</h3>';
-    h += '<table><thead><tr><th style="width:30px">#</th><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
     var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    var coSubtotal = 0;
-    // Pull actual labor items from form
+    var coLaborTotal = 0, coMatTotal = 0;
+    // ---- Section 2A: Labor ----
+    h += '<h3 class="stitle">Section 2A &mdash; Labor</h3>';
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
     if (litems.length > 0) {
         for (var i = 0; i < litems.length; i++) {
             var li = litems[i];
             var lineTotal = li.qty * li.price;
-            coSubtotal += lineTotal;
+            coLaborTotal += lineTotal;
             h += '<tr><td class="item-num">'+letters[i % 26]+'</td><td class="item-desc"><strong>'+E(li.desc)+'</strong>'+(li.basis ? ' <small style="color:#888">('+E(li.basis)+')</small>' : '')+'</td><td>'+E(String(li.qty))+'</td><td>'+P('$'+f(li.price))+'</td><td><strong>'+P('$'+f(lineTotal),'data-line-total')+'</strong></td></tr>';
         }
+    } else {
+        for (var k = 0; k < 3; k++) {
+            h += '<tr><td class="item-num">'+letters[k]+'</td><td class="item-desc"><strong>'+E('[Description]')+'</strong></td><td>'+E('______')+'</td><td>'+P('$______')+'</td><td><strong>'+P('$______','data-line-total')+'</strong></td></tr>';
+        }
     }
-    // Pull actual material items from form
+    h += '<tr class="subtotal-row"><td></td><td colspan="3">LABOR SUBTOTAL</td><td><span data-labor-subtotal>$'+f(coLaborTotal)+'</span></td></tr>';
+    h += '</tbody></table>';
+    h += '<p style="font-size:10px;color:#7f8c8d;margin:6px 0 16px;font-style:italic">Labor balances are due upon completion of additional scope unless otherwise arranged.</p>';
+    // ---- Section 2B: Materials & Consumables ----
+    h += '<h3 class="stitle">Section 2B &mdash; Materials &amp; Consumables</h3>';
+    h += '<table><thead><tr><th style="width:30px">#</th><th>Description</th><th>Qty</th><th>Unit Cost</th><th>Total</th></tr></thead><tbody>';
     if (mitems.length > 0) {
-        h += '<tr><td colspan="5" style="background:#0d1929;color:#7f8c8d;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;padding:6px 8px">Materials</td></tr>';
         for (var j = 0; j < mitems.length; j++) {
             var mi = mitems[j];
             var mLineTotal = mi.qtyNum * mi.price;
             var mWithMarkup = mLineTotal + (mLineTotal * mk);
-            coSubtotal += mWithMarkup;
+            coMatTotal += mWithMarkup;
             h += '<tr><td class="item-num">M'+(j+1)+'</td><td class="item-desc">'+E(mi.desc)+'</td><td>'+E(mi.qty || String(mi.qtyNum))+'</td><td>'+P('$'+f(mi.price))+'</td><td><strong>'+P('$'+f(mWithMarkup),'data-line-total')+'</strong></td></tr>';
         }
-    }
-    // If no items at all, show blank rows for manual fill
-    if (litems.length === 0 && mitems.length === 0) {
-        for (var k = 0; k < 5; k++) {
-            h += '<tr><td class="item-num">'+letters[k]+'</td><td class="item-desc"><strong>'+E('[Description]')+'</strong></td><td>'+E('______')+'</td><td>'+P('$______')+'</td><td><strong>'+P('$______','data-line-total')+'</strong></td></tr>';
+        if (mk > 0) {
+            h += '<tr><td></td><td colspan="4" style="font-size:10px;color:#7f8c8d;padding:4px 8px">Includes '+(mk*100).toFixed(0)+'% materials handling/markup</td></tr>';
+        }
+    } else {
+        for (var m = 0; m < 3; m++) {
+            h += '<tr><td class="item-num">M'+(m+1)+'</td><td class="item-desc">'+E('[Material/Consumable]')+'</td><td>'+E('______')+'</td><td>'+P('$______')+'</td><td><strong>'+P('$______','data-line-total')+'</strong></td></tr>';
         }
     }
-    h += '<tr class="subtotal-row"><td></td><td colspan="3">CHANGE ORDER SUBTOTAL</td><td><span data-subtotal>$'+f(coSubtotal)+'</span></td></tr>';
-    h += '<tr class="total-row"><td></td><td colspan="3">CHANGE ORDER TOTAL</td><td><span data-total>$'+f(coSubtotal)+'</span></td></tr>';
+    h += '<tr class="subtotal-row"><td></td><td colspan="3">MATERIALS &amp; CONSUMABLES SUBTOTAL</td><td><span data-mat-subtotal>$'+f(coMatTotal)+'</span></td></tr>';
     h += '</tbody></table>';
+    h += '<div style="background:#1a1207;border:1px solid #5c4813;border-radius:6px;padding:10px 14px;margin:8px 0 16px;font-size:10.5px;color:#f5d78e;line-height:1.6"><strong style="color:#fbbf24">⚠ MATERIALS DUE UPON NOTICE:</strong> All materials and consumables listed in Section 2B are required up front upon due notice and must be paid in full before materials are ordered or work begins. Work may proceed as remaining labor balances are handled accordingly.</div>';
+    // ---- Combined Summary ----
+    var coSubtotal = coLaborTotal + coMatTotal;
+    h += '<div style="background:#0d1929;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin:6px 0 20px">';
+    h += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:#94a3b8"><span>Labor</span><span>$'+f(coLaborTotal)+'</span></div>';
+    h += '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;color:#94a3b8"><span>Materials &amp; Consumables</span><span>$'+f(coMatTotal)+'</span></div>';
+    h += '<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#2ecc71;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1)"><span>CHANGE ORDER TOTAL</span><span data-total>$'+f(coSubtotal)+'</span></div>';
+    h += '</div>';
     h += '<h3 class="stitle">Section 3 &mdash; Project Impact</h3>';
     h += '<div class="impact"><div class="impact-box"><label>Original Contract</label><div class="val grn">$'+f(orig)+'</div></div><div class="impact-box"><label>This Change Order</label><div class="val" style="color:#e67e22;font-weight:800">$'+f(coSubtotal)+'</div></div><div class="impact-box"><label>Revised Total</label><div class="val" style="color:#2ecc71;font-weight:800">$'+f(orig + coSubtotal)+'</div></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Schedule Impact</label><div class="value">'+E('Additional ___ day(s)')+'</div></div><div class="info-box"><label>Revised Completion</label><div class="value">'+E('______')+'</div></div></div>';
-    h += '<div class="legal"><h4>Terms &amp; Conditions</h4><p>1. This Change Order amends the original estimate upon execution by both parties.</p><p>2. Work shall not commence until written authorization is received.</p><p>3. Additional compensation reflects actual cost plus applicable overhead.</p><p>4. If declined, Contractor restores area to safe condition. Not responsible for unaddressed damage.</p><p>5. Payment due upon completion of additional scope.</p><p>6. Consistent with Nebraska Revised Statute &sect;73-1117.</p></div>';
+    h += '<div class="legal"><h4>Terms &amp; Conditions</h4><p>1. This Change Order amends the original estimate upon execution by both parties.</p><p>2. Work shall not commence until written authorization is received.</p><p>3. <strong>Materials &amp; consumables (Section 2B) are required up front upon due notice and must be paid in full before materials are ordered or work begins.</strong></p><p>4. Labor balances (Section 2A) are due upon completion of the additional scope. Work may proceed as balances are handled accordingly.</p><p>5. Additional compensation reflects actual cost plus applicable overhead.</p><p>6. If declined, Contractor restores area to safe condition. Not responsible for unaddressed damage.</p><p>7. Consistent with Nebraska Revised Statute &sect;73-1117.</p></div>';
     h += '<div class="auth"><h3>Client Authorization</h3>';
     h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>APPROVED</strong><small>I authorize the Contractor to proceed at the stated price.</small></div></div>';
     h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>APPROVED WITH MODIFICATIONS</strong><small>Proceed with modifications: '+E('______________________________')+'</small></div></div>';

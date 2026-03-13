@@ -353,6 +353,30 @@ body {
 .portal-signed-banner h3 { color: var(--green); font-size: 18px; margin-bottom: 6px; font-weight: 700; }
 .portal-signed-banner p { color: var(--text3); font-size: 14px; line-height: 1.5; }
 
+/* Signature proof display */
+.p-sig-proof {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid rgba(5,150,105,0.12);
+}
+.p-sig-proof img {
+    max-width: 280px; max-height: 100px; margin: 0 auto;
+    display: block; filter: contrast(1.2);
+}
+.p-sig-proof-typed {
+    font-family: 'Dancing Script', cursive; font-size: 32px;
+    color: #1a202c; margin: 8px 0;
+}
+.p-sig-proof-meta {
+    font-size: 11px; color: var(--text3); margin-top: 8px;
+    line-height: 1.6;
+}
+.p-receipt-id {
+    display: inline-block; background: rgba(5,150,105,0.08);
+    padding: 4px 12px; border-radius: 8px;
+    font-size: 11px; font-weight: 700; color: var(--green);
+    letter-spacing: 0.5px; margin-top: 12px;
+}
+
 /* View tracker */
 .p-views {
     font-size: 12px; color: var(--text3); text-align: center;
@@ -397,11 +421,17 @@ body {
 
 /* Print */
 @media print {
-    .portal-banner, .p-actions, .p-qa-input-row, #qaSection { display: none !important; }
-    body { background: white; color: #1a1a1a; }
-    .p-card { border: 1px solid #ddd; break-inside: avoid; box-shadow: none; }
+    .portal-banner, .p-actions, .p-qa-input-row, #qaSection, .p-views { display: none !important; }
+    body { background: white; color: #1a1a1a; font-size: 12px; }
+    .portal-body { padding: 0 8px 20px; }
+    .p-card { border: 1px solid #ddd; break-inside: avoid; box-shadow: none; margin-bottom: 8px; }
     .p-total-grand { background: #f0f7ff; }
     .portal-hero { padding-top: 0; }
+    .portal-signed-banner { break-inside: avoid; }
+    .p-sig-proof img { max-width: 200px; filter: contrast(1.5); }
+    .p-receipt-header { display: block !important; text-align: center; padding: 20px 0 10px; border-bottom: 2px solid #1a1a1a; margin-bottom: 16px; }
+    .p-receipt-header h2 { font-size: 18px; margin-bottom: 4px; }
+    .p-receipt-header p { font-size: 11px; color: #666; }
 }
 </style>
 </head>
@@ -568,22 +598,49 @@ function renderPortal() {
     h += '</div></div>';
 
     // ── WELCOME HERO ──
-    if (!isSigned && !isDeclined) {
+    if (isSigned) {
+        h += '<div class="portal-hero">';
+        h += '<h2>Thank you, ' + esc(clientFirst) + '!</h2>';
+        h += '<p>Your signed estimate is your permanent receipt. You can print or save a PDF copy anytime using the button below.</p>';
+        h += '</div>';
+    } else if (!isDeclined) {
         h += '<div class="portal-hero">';
         h += '<h2>Hi ' + esc(clientFirst) + ', your estimate is ready</h2>';
         h += '<p>Review the details below. You can accept with a digital signature, ask questions, or download a PDF copy.</p>';
         h += '</div>';
     }
 
+    // ── Print-only receipt header (shows only when printing) ──
+    h += '<div class="p-receipt-header" style="display:none">';
+    h += '<h2>' + esc(brandName) + '</h2>';
+    h += '<p>Nebraska Licensed Contractor ' + esc(license) + ' · ' + esc(phone) + ' · ' + esc(email) + '</p>';
+    h += '</div>';
+
     // ── BODY ──
     h += '<div class="portal-body">';
 
-    // Signed / Declined banner
+    // Signed banner with signature proof
     if (isSigned) {
+        var pd = invoice._portalData;
+        var signedDate = new Date(pd.signedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'});
+        var receiptId = (invoiceId + '-' + pd.signedAt.replace(/[^0-9]/g,'').substring(0,12)).toUpperCase();
+
         h += '<div class="portal-signed-banner">';
         h += '<span class="icon">✅</span>';
         h += '<h3>Estimate Accepted & Signed</h3>';
-        h += '<p>Signed by ' + esc(invoice._portalData.signerName || 'Client') + ' on ' + new Date(invoice._portalData.signedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) + '</p>';
+        h += '<p>Signed by <strong>' + esc(pd.signerName || 'Client') + '</strong> on ' + signedDate + '</p>';
+
+        // Show actual signature
+        h += '<div class="p-sig-proof">';
+        if (pd.signatureType === 'draw' && pd.signatureData) {
+            h += '<img src="' + pd.signatureData + '" alt="Signature" />';
+        } else if (pd.signatureType === 'type' && pd.signatureData) {
+            h += '<div class="p-sig-proof-typed">' + esc(pd.signatureData) + '</div>';
+        }
+        h += '<div class="p-sig-proof-meta">This digital signature is legally binding and was captured electronically on ' + signedDate + '</div>';
+        h += '</div>';
+
+        h += '<div class="p-receipt-id">Receipt # ' + esc(receiptId) + '</div>';
         h += '</div>';
     }
     if (isDeclined) {
@@ -950,6 +1007,25 @@ window.portalSign = function() {
         userAgent: navigator.userAgent.substring(0, 120)
     };
 
+    // Save a permanent snapshot of the invoice alongside signature
+    // This means the client's receipt link will ALWAYS work, even if
+    // the contractor later edits or deletes the original invoice
+    var snapshot = {
+        clientName: invoice.clientName,
+        amount: invoice.amount,
+        laborTotal: invoice.laborTotal,
+        materialsTotal: invoice.materialsTotal,
+        estimateDate: invoice.estimateDate,
+        scopeItems: invoice.scope || invoice.scopeItems || [],
+        laborItems: invoice.laborItems || [],
+        materialItems: invoice.materialItems || invoice.matItems || [],
+        notes: invoice.notes || invoice.noteItems || [],
+        companyInfo: invoice.companyInfo || {},
+        brand: invoice.brand || invoice.brandSelect || 'wsi',
+        jobDetails: invoice.jobDetails || {}
+    };
+    signPayload.invoiceSnapshot = snapshot;
+
     portalRef.update(signPayload).then(function() {
         // Also update the invoice status to permanent
         var statuses = ['temporary', 'permanent', 'lost'];
@@ -980,11 +1056,12 @@ window.portalSign = function() {
             invoice._portalData = invoice._portalData || {};
             invoice._portalData.signedAt = signPayload.signedAt;
             invoice._portalData.signerName = name;
+            invoice._portalData.signatureData = sigData;
+            invoice._portalData.signatureType = sigType;
             renderPortal();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch(renderErr) {
             console.warn('Re-render after sign:', renderErr);
-            // Reload to show signed state cleanly
             window.location.reload();
         }
     }).catch(function(err) {

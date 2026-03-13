@@ -522,7 +522,163 @@ function initPortalSystem() {
     });
 
     // ================================================================
-    // 6. INJECT "SHARE PORTAL" BUTTONS INTO EXISTING UI
+    // 6. PORTAL OVERVIEW DASHBOARD — all portals at a glance
+    // ================================================================
+    window.openPortalDashboard = function() {
+        var existing = document.getElementById('portalDashModal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.id = 'portalDashModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;flex-direction:column;overflow:hidden';
+        modal.innerHTML = '\
+<div style="background:#0b1121;border-bottom:1px solid rgba(59,130,246,0.2);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">\
+    <div style="display:flex;align-items:center;gap:12px">\
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:18px">🌐</div>\
+        <div><div style="font-size:18px;font-weight:800;color:white;letter-spacing:-0.3px">Portal Dashboard</div>\
+        <div style="font-size:11px;color:#64748b">All published estimates — real-time status</div></div>\
+    </div>\
+    <button onclick="document.getElementById(\'portalDashModal\').remove()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#94a3b8;font-size:18px;cursor:pointer;padding:6px 12px;border-radius:8px;font-weight:700">&times;</button>\
+</div>\
+<div style="padding:16px 24px;display:flex;gap:12px;align-items:center;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.04)">\
+    <div id="pdStatSigned" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1">\
+        <div style="font-size:22px;font-weight:800;color:#22c55e">—</div>\
+        <div style="font-size:10px;color:#22c55e;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Signed</div>\
+    </div>\
+    <div id="pdStatViewed" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1">\
+        <div style="font-size:22px;font-weight:800;color:#f59e0b">—</div>\
+        <div style="font-size:10px;color:#f59e0b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Viewed</div>\
+    </div>\
+    <div id="pdStatPending" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1">\
+        <div style="font-size:22px;font-weight:800;color:#3b82f6">—</div>\
+        <div style="font-size:10px;color:#3b82f6;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Pending</div>\
+    </div>\
+    <div id="pdStatDeclined" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1">\
+        <div style="font-size:22px;font-weight:800;color:#ef4444">—</div>\
+        <div style="font-size:10px;color:#ef4444;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Declined</div>\
+    </div>\
+</div>\
+<div id="pdList" style="flex:1;overflow-y:auto;padding:16px 24px">\
+    <div style="text-align:center;padding:40px 0;color:#64748b;font-size:13px">Loading portal data...</div>\
+</div>';
+
+        document.body.appendChild(modal);
+        modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+
+        // Load all portal data
+        db.ref('portal/' + hashedPIN).once('value').then(function(snap) {
+            var allData = snap.val() || {};
+            var items = [];
+            var stats = { signed: 0, viewed: 0, pending: 0, declined: 0 };
+
+            Object.keys(allData).forEach(function(id) {
+                var d = allData[id];
+                if (!d || !d.invoice) return;
+                var status = 'pending';
+                if (d.signedAt) { status = 'signed'; stats.signed++; }
+                else if (d.declinedAt) { status = 'declined'; stats.declined++; }
+                else if (d.viewCount > 0) { status = 'viewed'; stats.viewed++; }
+                else { stats.pending++; }
+                items.push({
+                    id: id,
+                    data: d,
+                    invoice: d.invoice,
+                    status: status,
+                    lastActivity: d.signedAt || d.declinedAt || d.lastViewedAt || d.publishedAt || ''
+                });
+            });
+
+            // Sort by last activity (newest first)
+            items.sort(function(a, b) { return (b.lastActivity || '').localeCompare(a.lastActivity || ''); });
+
+            // Update stat cards
+            _pdUpdateStat('pdStatSigned', stats.signed);
+            _pdUpdateStat('pdStatViewed', stats.viewed);
+            _pdUpdateStat('pdStatPending', stats.pending);
+            _pdUpdateStat('pdStatDeclined', stats.declined);
+
+            // Render list
+            var list = document.getElementById('pdList');
+            if (!list) return;
+            if (items.length === 0) {
+                list.innerHTML = '<div style="text-align:center;padding:60px 0;color:#64748b"><div style="font-size:40px;margin-bottom:12px">🌐</div><div style="font-size:15px;font-weight:600;color:#94a3b8;margin-bottom:6px">No portals published yet</div><div style="font-size:13px">Publish an estimate to see it here</div></div>';
+                return;
+            }
+
+            var h = '';
+            items.forEach(function(item) {
+                var d = item.data;
+                var inv = item.invoice;
+                var vc = d.viewCount || 0;
+                var url = buildPortalUrl(item.id);
+
+                // Status badge
+                var badge = '';
+                if (item.status === 'signed') badge = '<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700">✓ SIGNED</span>';
+                else if (item.status === 'declined') badge = '<span style="background:rgba(239,68,68,0.15);color:#ef4444;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700">✕ DECLINED</span>';
+                else if (item.status === 'viewed') badge = '<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700">👁 VIEWED</span>';
+                else badge = '<span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700">● SENT</span>';
+
+                h += '<div style="background:#0f172a;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;margin-bottom:10px;transition:border-color 0.15s" onmouseover="this.style.borderColor=\'rgba(59,130,246,0.3)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.06)\'">';
+
+                // Top row: client name, amount, status badge
+                h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">';
+                h += '<div style="display:flex;align-items:center;gap:10px;min-width:0">';
+                h += '<div style="font-size:15px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(inv.clientName || 'Client') + '</div>';
+                h += '<div style="font-size:13px;font-weight:800;color:#3b82f6">$' + (parseFloat(inv.amount) || 0).toFixed(2) + '</div>';
+                h += '</div>';
+                h += badge;
+                h += '</div>';
+
+                // Middle row: invoice #, date, views, time spent
+                h += '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:11px;color:#64748b">';
+                h += '<span>#' + esc(item.id) + '</span>';
+                if (d.publishedAt) h += '<span>Published ' + timeAgo(d.publishedAt) + '</span>';
+                h += '<span>' + vc + ' view' + (vc !== 1 ? 's' : '') + '</span>';
+                if (d.lastViewedAt) h += '<span>Last: ' + timeAgo(d.lastViewedAt) + '</span>';
+                if (d.unreadClient > 0) h += '<span style="color:#3b82f6;font-weight:700">💬 ' + d.unreadClient + ' unread</span>';
+                h += '</div>';
+
+                // Signed info
+                if (d.signedAt) {
+                    h += '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.12);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#86efac">';
+                    h += 'Signed by <strong>' + esc(d.signerName || 'Client') + '</strong> on ' + new Date(d.signedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+                    h += '</div>';
+                }
+                if (d.declinedAt) {
+                    h += '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.12);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#fca5a5">';
+                    h += 'Declined ' + timeAgo(d.declinedAt);
+                    if (d.declineReason) h += ' — "' + esc(d.declineReason) + '"';
+                    h += '</div>';
+                }
+
+                // Action buttons
+                h += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+                h += '<button onclick="cpQuickPortal(\'' + url.replace(/'/g, "\\'") + '\')" style="background:#1e293b;color:#94a3b8;border:1px solid rgba(255,255,255,0.06);padding:6px 12px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit">📋 Copy Link</button>';
+                h += '<button onclick="openPortalMessages(\'' + esc(item.id) + '\')" style="background:#1e293b;color:#94a3b8;border:1px solid rgba(255,255,255,0.06);padding:6px 12px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit">💬 Messages</button>';
+                h += '<a href="' + url + '" target="_blank" style="background:#1e293b;color:#94a3b8;border:1px solid rgba(255,255,255,0.06);padding:6px 12px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;text-decoration:none;font-family:inherit">🔗 Open Portal</a>';
+                h += '<button onclick="publishToPortal(\'' + esc(item.id) + '\')" style="background:#1e293b;color:#94a3b8;border:1px solid rgba(255,255,255,0.06);padding:6px 12px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit">🔄 Republish</button>';
+                h += '</div>';
+
+                h += '</div>';
+            });
+
+            list.innerHTML = h;
+        }).catch(function(err) {
+            var list = document.getElementById('pdList');
+            if (list) list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#ef4444">Error loading portal data: ' + esc(err.message) + '</div>';
+        });
+    };
+
+    function _pdUpdateStat(id, val) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var numEl = el.querySelector('div');
+        if (numEl) numEl.textContent = val;
+    }
+
+    // ================================================================
+    // 7. INJECT "SHARE PORTAL" BUTTONS INTO EXISTING UI
     // ================================================================
     function injectPortalButtons() {
         // Patch invViewDetails to include portal section
@@ -586,6 +742,9 @@ function initPortalSystem() {
         BidGen.on('pro:ready', function() {
             if (window._bgpCommands) {
                 window._bgpCommands.push(
+                    { label: 'Portal Dashboard', desc: 'View all published estimates — status, views, signatures, messages', action: function() {
+                        openPortalDashboard();
+                    }},
                     { label: 'Publish to Client Portal', desc: 'Create a shareable portal link for the current invoice', action: function() {
                         var id = window._lastInvoiceId;
                         if (id) publishToPortal(id);

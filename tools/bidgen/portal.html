@@ -751,20 +751,25 @@ function renderPortal() {
             h += '</div>';
         });
         h += '<div class="p-line-subtotal"><span>Labor Subtotal</span><span>$' + n(lSub) + '</span></div>';
+        if (isChangeOrder) {
+            h += '<div style="font-size:11px;color:var(--text3);padding:6px 0 0;font-style:italic">Labor balances are due upon completion of additional scope.</div>';
+        }
         h += '</div></div>';
     }
 
     // ── MATERIALS BREAKDOWN ──
     var matItems = invoice.materialItems || (invoice.jobDetails ? invoice.jobDetails.matItems : null) || invoice.matItems || [];
+    var mkPct = (invoice.materialsMarkup || 0) / 100;
     if (matItems && matItems.length > 0) {
         h += '<div class="p-card">';
-        h += '<div class="p-card-title"><span>📦</span> Materials</div>';
+        h += '<div class="p-card-title"><span>📦</span> ' + (isChangeOrder ? 'Materials & Consumables' : 'Materials') + '</div>';
         h += '<div class="p-line-items">';
         var mSub = 0;
         matItems.forEach(function(item, i) {
             var qty = item.qtyNum || parseFloat(item.qty) || 1;
             var price = item.price || 0;
-            var total = qty * price;
+            var rawTotal = qty * price;
+            var total = rawTotal + (rawTotal * mkPct);
             mSub += total;
             h += '<div class="p-line-item">';
             h += '<span class="p-line-num" style="background:' + accentBg + ';color:' + accentColor + '">' + (i+1) + '</span>';
@@ -778,8 +783,17 @@ function renderPortal() {
             }
             h += '</div>';
         });
-        h += '<div class="p-line-subtotal"><span>Materials Subtotal</span><span>$' + n(mSub) + '</span></div>';
-        h += '</div></div>';
+        h += '<div class="p-line-subtotal"><span>' + (isChangeOrder ? 'Materials & Consumables Subtotal' : 'Materials Subtotal') + '</span><span>$' + n(mSub) + '</span></div>';
+        if (mkPct > 0) {
+            h += '<div style="font-size:11px;color:var(--text3);padding:6px 0 0;font-style:italic">Includes ' + (mkPct * 100).toFixed(0) + '% materials handling</div>';
+        }
+        h += '</div>';
+        if (isChangeOrder && mSub > 0) {
+            h += '<div style="margin-top:12px;background:rgba(217,119,6,0.06);border:1px solid rgba(217,119,6,0.12);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--amber);line-height:1.6">';
+            h += '<strong>⚠ Due Upon Notice:</strong> Materials & consumables ($' + n(mSub) + ') are required up front and must be paid before materials are ordered or work begins.';
+            h += '</div>';
+        }
+        h += '</div>';
     }
 
     // ── NOTES ──

@@ -162,10 +162,23 @@ function initPortalSystem() {
         var brandName = (invoice.companyInfo && invoice.companyInfo.companyName) || 'Watts Safety Installs';
         var clientName = invoice.clientName || 'Client';
         var total = (invoice.amount || 0).toFixed(2);
+        var docType = invoice.type || invoice.documentType || 'quote';
+        var isCO = docType === 'change_order' || (invoice.id && invoice.id.indexOf('CO-') === 0);
+        var laborAmt = (invoice.laborTotal || 0).toFixed(2);
+        var matAmt = (invoice.materialsTotal || 0).toFixed(2);
+        var origAmt = invoice.originalAmount || 0;
+        var revisedAmt = origAmt > 0 ? (origAmt + (invoice.amount || 0)).toFixed(2) : '';
 
-        var smsBody = brandName + ': Hi ' + clientName + ', your estimate #' + invoice.id + ' ($' + total + ') is ready for review. View, approve & sign online: ' + portalUrl + ' — Justin Watts (405) 410-6402';
-        var emailSubject = encodeURIComponent('Your Estimate from ' + brandName + ' — #' + invoice.id);
-        var emailBody = encodeURIComponent('Hi ' + clientName + ',\n\nYour estimate is ready to review, approve, and sign online:\n\n' + portalUrl + '\n\nEstimate Details:\n  Invoice: ' + invoice.id + '\n  Total: $' + total + '\n\nYou can review the full scope of work, ask questions, and accept with a digital signature — all from your phone or computer.\n\nIf you have any questions, just reply to this email or call me.\n\nBest regards,\nJustin Watts\n' + brandName + '\nNebraska Licensed Contractor #54690-25\n(405) 410-6402');
+        var smsBody, emailSubject, emailBody;
+        if (isCO) {
+            smsBody = brandName + ': Hi ' + clientName + ', a change order (#' + invoice.id + ') has been issued for your project. Additional work: $' + total + ' (Labor: $' + laborAmt + ' / Materials: $' + matAmt + ').' + (revisedAmt ? ' Revised project total: $' + revisedAmt + '.' : '') + ' Review & approve: ' + portalUrl + ' — Justin Watts (405) 410-6402';
+            emailSubject = encodeURIComponent('Change Order from ' + brandName + ' — #' + invoice.id);
+            emailBody = encodeURIComponent('Hi ' + clientName + ',\n\nA change order has been issued for your project. Please review and approve online:\n\n' + portalUrl + '\n\nChange Order Details:\n  CO #: ' + invoice.id + (invoice.originalInvoiceId ? '\n  Original Estimate: #' + invoice.originalInvoiceId : '') + '\n  Labor: $' + laborAmt + '\n  Materials & Consumables: $' + matAmt + '\n  Change Order Total: $' + total + (origAmt > 0 ? '\n\n  Original Contract: $' + origAmt.toFixed(2) + '\n  This Change Order: + $' + total + '\n  Revised Project Total: $' + revisedAmt : '') + '\n\nIMPORTANT: Materials & consumables ($' + matAmt + ') are required up front upon due notice before work begins. Labor balances are due upon completion.\n\nYou can review the full scope, ask questions, and approve with a digital signature — all from your phone or computer.\n\nBest regards,\nJustin Watts\n' + brandName + '\nNebraska Licensed Contractor #54690-25\n(405) 410-6402');
+        } else {
+            smsBody = brandName + ': Hi ' + clientName + ', your estimate #' + invoice.id + ' ($' + total + ') is ready for review. View, approve & sign online: ' + portalUrl + ' — Justin Watts (405) 410-6402';
+            emailSubject = encodeURIComponent('Your Estimate from ' + brandName + ' — #' + invoice.id);
+            emailBody = encodeURIComponent('Hi ' + clientName + ',\n\nYour estimate is ready to review, approve, and sign online:\n\n' + portalUrl + '\n\nEstimate Details:\n  Invoice: ' + invoice.id + '\n  Labor: $' + laborAmt + '\n  Materials: $' + matAmt + '\n  Total: $' + total + '\n\nYou can review the full scope of work, ask questions, and accept with a digital signature — all from your phone or computer.\n\nIf you have any questions, just reply to this email or call me.\n\nBest regards,\nJustin Watts\n' + brandName + '\nNebraska Licensed Contractor #54690-25\n(405) 410-6402');
+        }
 
         var modal = document.createElement('div');
         modal.id = 'portalShareModal';

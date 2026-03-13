@@ -5998,6 +5998,7 @@ function autoSaveInvoice(type) {
         amount: grandTotal,
         laborTotal: laborTotal,
         materialsTotal: matTotal,
+        materialsMarkup: gn('materialsMarkup'),
         laborItems: litems,
         materialItems: mitems,
         scope: getScope(),
@@ -6588,6 +6589,31 @@ generateMaterials = function() {
 const originalGenerateChangeOrder = generateChangeOrder;
 generateChangeOrder = function() {
     _lastInvoiceId = autoSaveInvoice('change_order');
+
+    // Link this CO to the most recent invoice for this client so the portal
+    // can show Original Contract + CO = Revised Total
+    var savedCO = invoiceData.temporary[_lastInvoiceId];
+    if (savedCO) {
+        var clientName = (savedCO.clientName || '').toLowerCase();
+        var bestMatch = null, bestDate = '';
+        ['permanent','temporary'].forEach(function(bucket) {
+            Object.keys(invoiceData[bucket] || {}).forEach(function(id) {
+                var inv = invoiceData[bucket][id];
+                if (id === _lastInvoiceId) return; // skip self
+                if (inv.type === 'change_order') return; // skip other COs
+                if ((inv.clientName || '').toLowerCase() === clientName) {
+                    var d = inv.createdDate || inv.estimateDate || '';
+                    if (d > bestDate) { bestDate = d; bestMatch = inv; }
+                }
+            });
+        });
+        if (bestMatch) {
+            savedCO.originalInvoiceId = bestMatch.id;
+            savedCO.originalAmount = bestMatch.amount || 0;
+            saveInvoiceToFirebase(savedCO);
+        }
+    }
+
     originalGenerateChangeOrder();
 };
 

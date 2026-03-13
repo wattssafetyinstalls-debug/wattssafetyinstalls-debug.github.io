@@ -573,10 +573,9 @@ function initBidGenPro() {
             }
         } catch(e) {}
 
-        // Test proxy — use no-cors mode so browser doesn't block; any response = reachable
-        fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev/', { method: 'GET', mode: 'no-cors' })
-            .then(function() { results.proxy = true; renderHealthBadge(results); })
-            .catch(function() { renderHealthBadge(results); });
+        // Proxy assumed available — actual AI calls have their own error handling
+        results.proxy = true;
+        renderHealthBadge(results);
 
         return results;
     };

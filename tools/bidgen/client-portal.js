@@ -66,6 +66,20 @@ function initPortalSystem() {
             return;
         }
 
+        // Detect document type and change order context
+        var docType = invoice.type || invoice.documentType || 'quote';
+        var isChangeOrder = docType === 'change_order' || (invoice.id && invoice.id.indexOf('CO-') === 0);
+        var originalAmount = 0;
+        if (isChangeOrder && invoice.originalInvoiceId) {
+            var origInv = findInvoiceGlobal(invoice.originalInvoiceId);
+            if (origInv) originalAmount = origInv.amount || 0;
+        }
+        // Also try to read from the invoice itself (AI-generated COs store this)
+        if (isChangeOrder && !originalAmount && invoice.originalAmount) {
+            originalAmount = invoice.originalAmount;
+        }
+        var materialsMarkup = invoice.materialsMarkup || (invoice.jobDetails || {}).materialsMarkup || 0;
+
         // Build portal-safe data (strip any sensitive internal fields)
         var portalData = {
             invoice: {
@@ -77,7 +91,13 @@ function initPortalSystem() {
                 laborTotal: invoice.laborTotal,
                 materialsTotal: invoice.materialsTotal,
                 status: invoice.status,
+                documentType: isChangeOrder ? 'change_order' : docType,
                 brand: invoice.brand || invoice.brandSelect || gv('brandSelect') || 'wsi',
+                // Change order context
+                originalInvoiceId: isChangeOrder ? (invoice.originalInvoiceId || '') : '',
+                originalAmount: isChangeOrder ? originalAmount : 0,
+                revisedTotal: isChangeOrder ? (originalAmount + (invoice.amount || 0)) : 0,
+                materialsMarkup: materialsMarkup,
                 jobDetails: {
                     complexName: (invoice.jobDetails || {}).complexName || '',
                     unitNum: (invoice.jobDetails || {}).unitNum || '',

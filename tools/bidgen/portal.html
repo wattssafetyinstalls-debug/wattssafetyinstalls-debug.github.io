@@ -573,7 +573,8 @@ function renderPortal() {
     var clientFirst = (invoice.clientName || 'there').split(' ')[0];
 
     // Page title
-    document.title = 'Estimate for ' + (invoice.clientName || 'Client') + ' — ' + brandName;
+    var isCO = invoice.documentType === 'change_order';
+    document.title = (isCO ? 'Change Order' : 'Estimate') + ' for ' + (invoice.clientName || 'Client') + ' — ' + brandName;
 
     // Status pill
     var statusHTML = '';
@@ -594,6 +595,7 @@ function renderPortal() {
     h += '<div class="portal-brand-icon" style="background:' + accentColor + ';color:white">W</div>';
     h += '<div><h1 style="color:' + headerText + '">' + esc(brandName) + '</h1>';
     h += '<p style="color:rgba(255,255,255,0.6)">Nebraska Licensed Contractor ' + esc(license) + '</p></div></div>';
+    if (isCO) h += '<div style="background:rgba(230,126,34,0.12);color:#e67e22;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.5px">CHANGE ORDER</div>';
     h += statusHTML;
     h += '</div></div>';
 
@@ -605,8 +607,13 @@ function renderPortal() {
         h += '</div>';
     } else if (!isDeclined) {
         h += '<div class="portal-hero">';
-        h += '<h2>Hi ' + esc(clientFirst) + ', your estimate is ready</h2>';
-        h += '<p>Review the details below. You can accept with a digital signature, ask questions, or download a PDF copy.</p>';
+        if (isCO) {
+            h += '<h2>Hi ' + esc(clientFirst) + ', a change order has been issued</h2>';
+            h += '<p>Additional work is needed on your project. Review the scope changes and updated pricing below, then approve with a digital signature.</p>';
+        } else {
+            h += '<h2>Hi ' + esc(clientFirst) + ', your estimate is ready</h2>';
+            h += '<p>Review the details below. You can accept with a digital signature, ask questions, or download a PDF copy.</p>';
+        }
         h += '</div>';
     }
 
@@ -655,23 +662,52 @@ function renderPortal() {
     var laborTotal = invoice.laborTotal || 0;
     var materialsTotal = invoice.materialsTotal || 0;
     var grandTotal = invoice.amount || (laborTotal + materialsTotal);
+    var isChangeOrder = invoice.documentType === 'change_order';
+    var origAmount = invoice.originalAmount || 0;
+    var revisedTotal = invoice.revisedTotal || (origAmount + grandTotal);
 
     h += '<div class="p-card">';
-    h += '<div class="p-card-title"><span>💰</span> Project Total</div>';
-    h += '<div class="p-totals">';
-    h += totalBox('Labor', '$' + n(laborTotal), 'color:var(--accent)');
-    h += totalBox('Materials', '$' + n(materialsTotal), 'color:var(--text2)');
-    h += '<div class="p-total-box p-total-grand"><div class="p-total-label">Grand Total</div><div class="p-total-value">$' + n(grandTotal) + '</div></div>';
-    h += '</div></div>';
+    if (isChangeOrder) {
+        h += '<div class="p-card-title"><span>🔴</span> Change Order — Scope Amendment</div>';
+        // Change order breakdown
+        h += '<div class="p-totals">';
+        h += totalBox('Labor (this CO)', '$' + n(laborTotal), 'color:var(--accent)');
+        h += totalBox('Materials (this CO)', '$' + n(materialsTotal), 'color:var(--text2)');
+        h += '<div class="p-total-box" style="background:rgba(230,126,34,0.08);border-color:rgba(230,126,34,0.15)"><div class="p-total-label">Change Order Total</div><div class="p-total-value" style="color:#e67e22">$' + n(grandTotal) + '</div></div>';
+        h += '</div>';
+        // Original + Revised summary
+        if (origAmount > 0) {
+            h += '<div style="margin-top:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">';
+            h += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text2)"><span>Original Contract</span><span>$' + n(origAmount) + '</span></div>';
+            h += '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#e67e22"><span>This Change Order</span><span>+ $' + n(grandTotal) + '</span></div>';
+            h += '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--green);padding-top:8px;border-top:1px solid var(--border)"><span>Revised Project Total</span><span>$' + n(revisedTotal) + '</span></div>';
+            h += '</div>';
+        }
+        // Upfront materials notice
+        if (materialsTotal > 0) {
+            h += '<div style="margin-top:14px;background:rgba(217,119,6,0.06);border:1px solid rgba(217,119,6,0.15);border-radius:12px;padding:12px 16px;font-size:13px;color:var(--amber);line-height:1.6">';
+            h += '<strong>⚠ Materials Due Upon Notice:</strong> All materials and consumables ($' + n(materialsTotal) + ') are required up front upon due notice and must be paid in full before materials are ordered or work begins. Work may proceed as remaining labor balances are handled accordingly.';
+            h += '</div>';
+        }
+    } else {
+        h += '<div class="p-card-title"><span>💰</span> Project Total</div>';
+        h += '<div class="p-totals">';
+        h += totalBox('Labor', '$' + n(laborTotal), 'color:var(--accent)');
+        h += totalBox('Materials', '$' + n(materialsTotal), 'color:var(--text2)');
+        h += '<div class="p-total-box p-total-grand"><div class="p-total-label">Grand Total</div><div class="p-total-value">$' + n(grandTotal) + '</div></div>';
+        h += '</div>';
+    }
+    h += '</div>';
 
     // ── CLIENT & PROJECT INFO ──
     h += '<div class="p-card">';
-    h += '<div class="p-card-title"><span>📋</span> Estimate Details</div>';
+    h += '<div class="p-card-title"><span>📋</span> ' + (isChangeOrder ? 'Change Order Details' : 'Estimate Details') + '</div>';
     h += '<div class="p-info-grid">';
     h += infoBox('Prepared For', invoice.clientName || 'Client');
-    h += infoBox('Invoice #', invoice.id || invoiceId);
-    h += infoBox('Estimate Date', formatDate(invoice.estimateDate));
-    h += infoBox('Valid Until', invoice.expiresDate ? formatDate(invoice.expiresDate) : '30 days');
+    h += infoBox(isChangeOrder ? 'Change Order #' : 'Invoice #', invoice.id || invoiceId);
+    h += infoBox('Date Issued', formatDate(invoice.estimateDate));
+    if (!isChangeOrder) h += infoBox('Valid Until', invoice.expiresDate ? formatDate(invoice.expiresDate) : '30 days');
+    if (isChangeOrder && invoice.originalInvoiceId) h += infoBox('Original Estimate', '#' + invoice.originalInvoiceId);
     h += infoBox('Project Location', buildLocation());
     h += infoBox('Contact', phone);
     h += '</div></div>';

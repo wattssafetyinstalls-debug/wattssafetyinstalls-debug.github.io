@@ -697,9 +697,10 @@ function initBidGenPro() {
     // 15. COMMAND PALETTE — Ctrl+K spotlight for any action
     // ═════════════════════════════════════════════════════════════════
     var _paletteOpen = false;
+    if (!window._bgpCommands) window._bgpCommands = [];
 
     function getCommands() {
-        return [
+        var cmds = [
             { id: 'gen-labor', label: 'Generate Labor Estimate', desc: 'Open Estimate A', icon: '📄', action: function() { generateLabor(); } },
             { id: 'gen-materials', label: 'Generate Materials Estimate', desc: 'Open Estimate B', icon: '📦', action: function() { generateMaterials(); } },
             { id: 'gen-co', label: 'Generate Change Order', desc: 'Create scope amendment', icon: '🔴', action: function() { generateChangeOrder(); } },
@@ -724,6 +725,13 @@ function initBidGenPro() {
             { id: 'trade-electrical', label: 'Switch to Electrical', desc: 'Load electrical presets', icon: '⚡', action: function() { document.getElementById('tradeType').value = 'electrical'; onTradeChange(); } },
             { id: 'trade-general', label: 'Switch to General', desc: 'Load general presets', icon: '🔨', action: function() { document.getElementById('tradeType').value = 'general'; onTradeChange(); } }
         ];
+        // Merge externally registered commands (e.g. from client-portal.js)
+        if (window._bgpCommands && window._bgpCommands.length) {
+            window._bgpCommands.forEach(function(ext) {
+                cmds.push({ id: ext.id || ('ext-' + ext.label.toLowerCase().replace(/\s+/g,'-')), label: ext.label, desc: ext.desc || '', icon: ext.icon || '🔌', action: ext.action });
+            });
+        }
+        return cmds;
     }
 
     function openCommandPalette() {

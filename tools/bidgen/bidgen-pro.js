@@ -573,9 +573,9 @@ function initBidGenPro() {
             }
         } catch(e) {}
 
-        // Test proxy (OPTIONS preflight is always handled by CORS layer → 200)
-        fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev/', { method: 'OPTIONS', mode: 'cors' })
-            .then(function(r) { results.proxy = r.ok || r.status === 204; renderHealthBadge(results); })
+        // Test proxy — use no-cors mode so browser doesn't block; any response = reachable
+        fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev/', { method: 'GET', mode: 'no-cors' })
+            .then(function() { results.proxy = true; renderHealthBadge(results); })
             .catch(function() { renderHealthBadge(results); });
 
         return results;

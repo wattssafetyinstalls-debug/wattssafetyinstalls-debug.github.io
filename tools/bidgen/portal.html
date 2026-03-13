@@ -2,36 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Your Estimate — Review & Sign</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <style>
 :root {
-    --bg: #09090b;
-    --card: #18181b;
-    --card2: #1c1c20;
-    --border: rgba(255,255,255,0.06);
-    --border2: rgba(255,255,255,0.1);
-    --text: #fafafa;
-    --text2: #a1a1aa;
-    --text3: #71717a;
+    --bg: #fafbfc;
+    --card: #ffffff;
+    --card2: #f4f6f8;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.12);
+    --text: #1a202c;
+    --text2: #4a5568;
+    --text3: #718096;
     --accent: #3b82f6;
-    --green: #22c55e;
-    --red: #ef4444;
-    --amber: #f59e0b;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --red: #dc2626;
+    --amber: #d97706;
     --radius: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
 }
 
 /* Loading state */
@@ -40,7 +45,7 @@ body {
     min-height: 100vh; flex-direction: column; gap: 16px;
 }
 .portal-loading .spinner {
-    width: 40px; height: 40px; border: 3px solid var(--border2);
+    width: 36px; height: 36px; border: 3px solid var(--border2);
     border-top-color: var(--accent); border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -49,238 +54,354 @@ body {
 /* Error state */
 .portal-error {
     display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; flex-direction: column; gap: 12px; text-align: center; padding: 20px;
+    min-height: 100vh; flex-direction: column; gap: 16px;
+    text-align: center; padding: 24px;
 }
-.portal-error h2 { font-size: 20px; color: var(--red); }
-.portal-error p { color: var(--text3); font-size: 14px; max-width: 400px; }
+.portal-error .err-icon { font-size: 48px; margin-bottom: 8px; }
+.portal-error h2 { font-size: 20px; font-weight: 700; color: var(--text); }
+.portal-error p { color: var(--text3); font-size: 15px; max-width: 380px; line-height: 1.6; }
 
 /* Header banner */
 .portal-banner {
-    background: linear-gradient(135deg, #0a1628 0%, #162240 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 24px 0;
+    padding: 0;
     position: sticky; top: 0; z-index: 100;
-    backdrop-filter: blur(20px);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.1);
 }
 .portal-banner-inner {
-    max-width: 780px; margin: 0 auto; padding: 0 20px;
+    max-width: 680px; margin: 0 auto; padding: 16px 20px;
     display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
 }
-.portal-brand { display: flex; align-items: center; gap: 12px; }
+.portal-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .portal-brand-icon {
-    width: 40px; height: 40px; border-radius: 10px;
+    width: 42px; height: 42px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: 800;
+    font-size: 18px; font-weight: 800; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
-.portal-brand h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-.portal-brand p { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.portal-brand h1 {
+    font-size: 15px; font-weight: 700; letter-spacing: -0.3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.portal-brand p {
+    font-size: 11px; opacity: 0.7; margin-top: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .portal-status-pill {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 20px; flex-shrink: 0;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* Welcome hero */
+.portal-hero {
+    max-width: 680px; margin: 0 auto; padding: 32px 20px 0;
+    text-align: center;
+}
+.portal-hero h2 {
+    font-size: clamp(22px, 5vw, 28px); font-weight: 800;
+    letter-spacing: -0.5px; color: var(--text); margin-bottom: 8px;
+    line-height: 1.2;
+}
+.portal-hero p {
+    font-size: 15px; color: var(--text3); max-width: 420px;
+    margin: 0 auto; line-height: 1.6;
 }
 
 /* Main content */
-.portal-body { max-width: 780px; margin: 0 auto; padding: 24px 20px 120px; }
+.portal-body { max-width: 680px; margin: 0 auto; padding: 20px 16px 140px; }
 
 /* Section card */
 .p-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
 }
-.p-card:hover { border-color: var(--border2); }
+.p-card:hover { box-shadow: var(--shadow); }
 .p-card-title {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.8px; color: var(--text3); margin-bottom: 16px;
+    font-size: 13px; font-weight: 700;
+    color: var(--text); margin-bottom: 16px;
     display: flex; align-items: center; gap: 8px;
 }
+.p-card-title span { font-size: 16px; }
 
 /* Client info grid */
-.p-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.p-info-box { background: var(--card2); border-radius: 10px; padding: 14px; }
-.p-info-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
-.p-info-value { font-size: 15px; font-weight: 600; color: var(--text); }
+.p-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.p-info-box {
+    background: var(--card2); border-radius: 12px; padding: 14px;
+    border: 1px solid transparent; transition: border-color 0.15s;
+}
+.p-info-label {
+    font-size: 10px; color: var(--text3); text-transform: uppercase;
+    letter-spacing: 0.6px; margin-bottom: 4px; font-weight: 600;
+}
+.p-info-value {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    word-break: break-word;
+}
 
-/* Totals highlight */
-.p-totals {
-    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
-}
+/* Totals — responsive grid */
+.p-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .p-total-box {
-    background: var(--card2); border-radius: 12px; padding: 16px; text-align: center;
+    background: var(--card2); border-radius: 14px; padding: 16px 12px;
+    text-align: center; border: 1px solid transparent;
 }
-.p-total-label { font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; font-weight: 600; }
-.p-total-value { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.p-total-label {
+    font-size: 10px; color: var(--text3); text-transform: uppercase;
+    margin-bottom: 6px; letter-spacing: 0.5px; font-weight: 600;
+}
+.p-total-value {
+    font-size: clamp(18px, 4vw, 24px); font-weight: 800;
+    letter-spacing: -0.5px; word-break: break-all;
+}
 .p-total-grand {
-    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
-    border: 1px solid rgba(59,130,246,0.2);
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border: 2px solid rgba(5,150,105,0.2);
 }
-.p-total-grand .p-total-value { color: var(--accent); }
+.p-total-grand .p-total-value { color: var(--green); }
+.p-total-grand .p-total-label { color: var(--green); }
 
 /* Scope of work */
 .p-scope-list { list-style: none; padding: 0; }
 .p-scope-list li {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-    font-size: 14px; color: var(--text); line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px; color: var(--text); line-height: 1.6;
 }
 .p-scope-list li:last-child { border-bottom: none; }
 .p-scope-check {
-    width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0; margin-top: 1px;
+    width: 24px; height: 24px; border-radius: 8px; flex-shrink: 0; margin-top: 1px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
 }
 
-/* Line items table */
-.p-table { width: 100%; border-collapse: collapse; }
-.p-table thead th {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
-    color: var(--text3); font-weight: 700; padding: 10px 12px;
-    text-align: left; border-bottom: 1px solid var(--border2);
+/* Line items — mobile-friendly cards on small screens */
+.p-line-items { display: flex; flex-direction: column; gap: 8px; }
+.p-line-item {
+    background: var(--card2); border-radius: 12px; padding: 14px 16px;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+    border: 1px solid transparent; transition: border-color 0.15s;
 }
-.p-table thead th:last-child,
-.p-table thead th:nth-child(3),
-.p-table thead th:nth-child(4),
-.p-table thead th:nth-child(5) { text-align: right; }
-.p-table tbody td {
-    padding: 12px; font-size: 13px; color: var(--text);
-    border-bottom: 1px solid var(--border); vertical-align: top;
+.p-line-item:hover { border-color: var(--border2); }
+.p-line-num {
+    font-size: 11px; font-weight: 800; min-width: 22px; height: 22px;
+    border-radius: 6px; display: inline-flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
 }
-.p-table tbody td:last-child,
-.p-table tbody td:nth-child(3),
-.p-table tbody td:nth-child(4),
-.p-table tbody td:nth-child(5) { text-align: right; white-space: nowrap; }
-.p-table tbody tr:hover { background: rgba(255,255,255,0.02); }
-.p-table .p-row-total { font-weight: 700; }
-.p-table .p-subtotal td {
-    border-top: 2px solid var(--border2); font-weight: 700; padding-top: 14px;
+.p-line-desc {
+    flex: 1; min-width: 120px; font-size: 14px; font-weight: 600;
+    color: var(--text);
 }
+.p-line-detail {
+    font-size: 12px; color: var(--text3); width: 100%;
+    padding-left: 34px; margin-top: 2px;
+}
+.p-line-amount {
+    font-size: 15px; font-weight: 700; color: var(--text);
+    margin-left: auto; white-space: nowrap;
+}
+.p-line-subtotal {
+    background: transparent; border-top: 2px solid var(--border2);
+    border-radius: 0; padding: 14px 16px 4px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 700; font-size: 14px;
+}
+.p-line-subtotal span:last-child { font-size: 16px; }
 
 /* Notes */
 .p-note {
-    display: flex; align-items: flex-start; gap: 8px; padding: 8px 0;
-    font-size: 13px; color: var(--text2); line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
+    font-size: 14px; color: var(--text2); line-height: 1.6;
+    border-bottom: 1px solid var(--border);
 }
-.p-note::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%;
-    flex-shrink: 0; margin-top: 6px;
+.p-note:last-child { border-bottom: none; }
+.p-note-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 8px;
 }
 
 /* Client Q&A */
-.p-qa-thread { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-.p-qa-msg {
-    max-width: 85%; padding: 12px 16px; border-radius: 14px;
-    font-size: 13px; line-height: 1.5;
+.p-qa-thread {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 16px; max-height: 300px; overflow-y: auto;
+    scroll-behavior: smooth;
 }
-.p-qa-msg.client { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
-.p-qa-msg.contractor { align-self: flex-start; background: var(--card2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.p-qa-msg {
+    max-width: 85%; padding: 10px 14px; border-radius: 16px;
+    font-size: 14px; line-height: 1.5;
+}
+.p-qa-msg.client {
+    align-self: flex-end; background: var(--accent); color: white;
+    border-bottom-right-radius: 4px;
+}
+.p-qa-msg.contractor {
+    align-self: flex-start; background: var(--card2);
+    border: 1px solid var(--border); color: var(--text);
+    border-bottom-left-radius: 4px;
+}
 .p-qa-meta { font-size: 10px; margin-top: 4px; opacity: 0.6; }
-.p-qa-input-row { display: flex; gap: 8px; }
+.p-qa-input-row { display: flex; gap: 8px; align-items: flex-end; }
 .p-qa-input {
     flex: 1; background: var(--card2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px 16px; color: var(--text);
-    font-size: 13px; font-family: inherit; resize: none; outline: none;
+    border-radius: 14px; padding: 12px 16px; color: var(--text);
+    font-size: 14px; font-family: inherit; resize: none; outline: none;
+    min-height: 44px; max-height: 100px;
+    transition: border-color 0.15s;
 }
-.p-qa-input:focus { border-color: var(--accent); }
+.p-qa-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 .p-qa-send {
     background: var(--accent); color: white; border: none;
-    padding: 0 20px; border-radius: 12px; font-weight: 700;
-    font-size: 13px; cursor: pointer; transition: background 0.15s;
+    width: 44px; height: 44px; border-radius: 14px; font-weight: 700;
+    font-size: 18px; cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.p-qa-send:hover { background: #2563eb; }
+.p-qa-send:hover { background: #2563eb; transform: scale(1.05); }
+.p-qa-send:active { transform: scale(0.95); }
 
 /* Signature */
-.p-sig-pad { text-align: center; }
+.p-sig-canvas-wrap {
+    position: relative; background: #fff; border: 2px dashed var(--border2);
+    border-radius: 14px; overflow: hidden; touch-action: none;
+}
+.p-sig-canvas-wrap.active { border-color: var(--accent); border-style: solid; }
 .p-sig-canvas {
-    width: 100%; height: 120px; background: white; border-radius: 10px;
-    cursor: crosshair; touch-action: none; display: block;
+    width: 100%; height: 160px; display: block;
+    cursor: crosshair; touch-action: none;
+}
+.p-sig-placeholder {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    pointer-events: none; text-align: center; color: var(--text3);
+    font-size: 13px; transition: opacity 0.2s;
+}
+.p-sig-placeholder .icon { font-size: 28px; margin-bottom: 4px; display: block; }
+.p-sig-canvas-wrap.active .p-sig-placeholder,
+.p-sig-canvas-wrap.has-data .p-sig-placeholder { opacity: 0; }
+.p-sig-line {
+    position: absolute; bottom: 40px; left: 20px; right: 20px;
+    height: 1px; background: rgba(0,0,0,0.1); pointer-events: none;
 }
 .p-sig-typed {
-    width: 100%; background: var(--card2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px; color: var(--text); text-align: center;
-    font-size: 28px; font-family: 'Brush Script MT', 'Segoe Script', cursive;
-    outline: none;
+    width: 100%; background: #fff; border: 2px solid var(--border2);
+    border-radius: 14px; padding: 20px; color: var(--text); text-align: center;
+    font-size: 32px; font-family: 'Dancing Script', cursive;
+    outline: none; transition: border-color 0.15s;
 }
+.p-sig-typed:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.p-sig-typed::placeholder { color: #ccc; font-size: 20px; }
 .p-sig-tabs {
-    display: flex; gap: 4px; margin-bottom: 12px;
-    background: var(--card2); border-radius: 10px; padding: 4px;
+    display: flex; gap: 0; margin-bottom: 14px;
+    background: var(--card2); border-radius: 12px; padding: 4px;
+    border: 1px solid var(--border);
 }
 .p-sig-tab {
-    flex: 1; padding: 8px; border: none; border-radius: 8px; cursor: pointer;
-    font-size: 12px; font-weight: 600; font-family: inherit;
-    background: transparent; color: var(--text3); transition: all 0.15s;
+    flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer;
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    background: transparent; color: var(--text3); transition: all 0.2s;
 }
-.p-sig-tab.active { background: var(--accent); color: white; }
+.p-sig-tab.active { background: var(--accent); color: white; box-shadow: var(--shadow-sm); }
 
 /* Action buttons */
 .p-actions {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(9,9,11,0.95); backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
-    padding: 12px 20px; z-index: 200;
+    padding: 12px 16px; z-index: 200;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
 }
 .p-actions-inner {
-    max-width: 780px; margin: 0 auto;
-    display: flex; gap: 10px; align-items: center;
+    max-width: 680px; margin: 0 auto;
+    display: flex; gap: 8px; align-items: center;
 }
 .p-btn {
-    padding: 12px 24px; border: none; border-radius: 12px;
-    font-size: 14px; font-weight: 700; cursor: pointer;
+    padding: 14px 20px; border: none; border-radius: 14px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
     font-family: inherit; transition: all 0.15s; display: flex;
-    align-items: center; gap: 8px; justify-content: center;
+    align-items: center; gap: 6px; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
 }
+.p-btn:active { transform: scale(0.97); }
 .p-btn-accept {
     flex: 1; background: var(--green); color: white;
-    box-shadow: 0 4px 16px rgba(34,197,94,0.3);
+    box-shadow: 0 4px 16px rgba(5,150,105,0.25);
 }
-.p-btn-accept:hover { background: #16a34a; transform: translateY(-1px); }
+.p-btn-accept:hover { background: #047857; }
 .p-btn-decline {
-    background: rgba(239,68,68,0.1); color: var(--red);
-    border: 1px solid rgba(239,68,68,0.2);
+    background: #fef2f2; color: var(--red);
+    border: 1px solid rgba(220,38,38,0.15);
 }
-.p-btn-decline:hover { background: rgba(239,68,68,0.2); }
+.p-btn-decline:hover { background: #fee2e2; }
 .p-btn-pdf {
-    background: var(--card); color: var(--text2);
+    background: var(--card2); color: var(--text2);
     border: 1px solid var(--border);
 }
-.p-btn-pdf:hover { background: var(--card2); }
-.p-btn-disabled { opacity: 0.4; pointer-events: none; }
+.p-btn-pdf:hover { background: #e5e7eb; }
 
 /* Signed / locked state */
 .portal-signed-banner {
-    background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05));
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: var(--radius); padding: 20px; text-align: center;
-    margin-bottom: 16px;
+    background: var(--green-light);
+    border: 1px solid rgba(5,150,105,0.15);
+    border-radius: var(--radius); padding: 24px; text-align: center;
+    margin-bottom: 12px; box-shadow: var(--shadow-sm);
 }
-.portal-signed-banner h3 { color: var(--green); font-size: 16px; margin-bottom: 4px; }
-.portal-signed-banner p { color: var(--text3); font-size: 13px; }
+.portal-signed-banner .icon { font-size: 40px; margin-bottom: 8px; display: block; }
+.portal-signed-banner h3 { color: var(--green); font-size: 18px; margin-bottom: 6px; font-weight: 700; }
+.portal-signed-banner p { color: var(--text3); font-size: 14px; line-height: 1.5; }
 
 /* View tracker */
 .p-views {
-    font-size: 11px; color: var(--text3); text-align: center;
-    padding: 8px; border-top: 1px solid var(--border); margin-top: 20px;
+    font-size: 12px; color: var(--text3); text-align: center;
+    padding: 16px 0; margin-top: 8px;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-    .p-info-grid { grid-template-columns: 1fr; }
-    .p-totals { grid-template-columns: 1fr; }
-    .p-table { font-size: 12px; }
+/* Responsive — mobile first */
+@media (max-width: 480px) {
+    .portal-banner-inner { padding: 12px 16px; }
+    .portal-brand h1 { font-size: 13px; }
+    .portal-brand p { font-size: 10px; }
+    .portal-brand-icon { width: 36px; height: 36px; font-size: 15px; }
+    .portal-status-pill { font-size: 9px; padding: 4px 10px; }
+    .portal-hero { padding: 24px 16px 0; }
+    .portal-hero h2 { font-size: 22px; }
+    .portal-hero p { font-size: 13px; }
+    .p-card { padding: 16px; border-radius: 14px; }
+    .p-info-grid { grid-template-columns: 1fr; gap: 8px; }
+    .p-info-box { padding: 12px; }
+    .p-info-value { font-size: 13px; }
+    .p-totals { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .p-total-value { font-size: 18px !important; }
+    .p-total-box { padding: 14px 8px; }
+    .p-line-item { padding: 12px; }
+    .p-line-desc { font-size: 13px; }
+    .p-line-amount { font-size: 14px; }
+    .p-line-detail { padding-left: 34px; font-size: 11px; }
+    .p-scope-list li { font-size: 13px; gap: 10px; }
+    .p-scope-check { width: 22px; height: 22px; }
+    .p-sig-canvas { height: 140px; }
+    .p-actions { padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
     .p-actions-inner { flex-wrap: wrap; }
-    .p-btn { flex: 1 1 100%; }
-    .p-btn-accept { order: -1; }
+    .p-btn { font-size: 14px; padding: 12px 16px; }
+    .p-btn-accept { flex: 1 1 100%; order: -1; }
+    .p-btn-decline, .p-btn-pdf { flex: 1; }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .p-info-grid { grid-template-columns: 1fr 1fr; }
+    .p-totals { grid-template-columns: 1fr 1fr; }
 }
 
 /* Print */
 @media print {
     .portal-banner, .p-actions, .p-qa-input-row, #qaSection { display: none !important; }
     body { background: white; color: #1a1a1a; }
-    .p-card { border: 1px solid #ddd; break-inside: avoid; }
+    .p-card { border: 1px solid #ddd; break-inside: avoid; box-shadow: none; }
     .p-total-grand { background: #f0f7ff; }
+    .portal-hero { padding-top: 0; }
 }
 </style>
 </head>
@@ -409,197 +530,233 @@ function renderPortal() {
     var brandKey = invoice.brand || invoice.brandSelect || 'wsi';
     var isATP = brandKey === 'atp';
     var brandName = isATP ? 'Watts ATP Contractor' : (invoice.companyInfo && invoice.companyInfo.companyName) || 'Watts Safety Installs';
-    var accentColor = isATP ? '#00C4B4' : '#dc2626';
-    var headerBg = isATP ? 'linear-gradient(135deg,#0A1D37,#162a52)' : 'linear-gradient(135deg,#1a1a1a,#2d2d2d)';
+    var accentColor = isATP ? '#00C4B4' : '#059669';
+    var accentBg = isATP ? 'rgba(0,196,180,0.08)' : 'rgba(5,150,105,0.08)';
+    var headerBg = isATP ? '#0A1D37' : '#1a1a1a';
+    var headerText = '#ffffff';
     var license = (invoice.companyInfo && invoice.companyInfo.licenseNum) || '#54690-25';
     var phone = (invoice.companyInfo && invoice.companyInfo.phone) || '(405) 410-6402';
     var email = (invoice.companyInfo && invoice.companyInfo.email) || 'Justin.Watts@WattsATPContractor.com';
     var isSigned = invoice._portalData && invoice._portalData.signedAt;
     var isDeclined = invoice._portalData && invoice._portalData.declinedAt;
+    var clientFirst = (invoice.clientName || 'there').split(' ')[0];
 
     // Page title
     document.title = 'Estimate for ' + (invoice.clientName || 'Client') + ' — ' + brandName;
 
-    // Status
+    // Status pill
     var statusHTML = '';
     if (isSigned) {
-        statusHTML = '<div class="portal-status-pill" style="background:rgba(34,197,94,0.15);color:#22c55e">✓ ACCEPTED & SIGNED</div>';
+        statusHTML = '<div class="portal-status-pill" style="background:rgba(5,150,105,0.12);color:#059669">✓ Signed</div>';
     } else if (isDeclined) {
-        statusHTML = '<div class="portal-status-pill" style="background:rgba(239,68,68,0.15);color:#ef4444">DECLINED</div>';
+        statusHTML = '<div class="portal-status-pill" style="background:rgba(220,38,38,0.1);color:#dc2626">Declined</div>';
     } else {
-        statusHTML = '<div class="portal-status-pill" style="background:rgba(251,191,36,0.15);color:#fbbf24">AWAITING REVIEW</div>';
+        statusHTML = '<div class="portal-status-pill" style="background:rgba(59,130,246,0.1);color:#3b82f6">● Review</div>';
     }
 
-    // Build HTML
     var h = '';
 
     // ── BANNER ──
     h += '<div class="portal-banner" style="background:' + headerBg + '">';
     h += '<div class="portal-banner-inner">';
     h += '<div class="portal-brand">';
-    h += '<div class="portal-brand-icon" style="background:' + accentColor + ';color:white">' + brandName.charAt(0) + '</div>';
-    h += '<div><h1 style="color:white">' + esc(brandName) + '</h1>';
-    h += '<p>Nebraska Licensed Contractor — ' + esc(license) + '</p></div></div>';
+    h += '<div class="portal-brand-icon" style="background:' + accentColor + ';color:white">W</div>';
+    h += '<div><h1 style="color:' + headerText + '">' + esc(brandName) + '</h1>';
+    h += '<p style="color:rgba(255,255,255,0.6)">Nebraska Licensed Contractor ' + esc(license) + '</p></div></div>';
     h += statusHTML;
     h += '</div></div>';
+
+    // ── WELCOME HERO ──
+    if (!isSigned && !isDeclined) {
+        h += '<div class="portal-hero">';
+        h += '<h2>Hi ' + esc(clientFirst) + ', your estimate is ready</h2>';
+        h += '<p>Review the details below. You can accept with a digital signature, ask questions, or download a PDF copy.</p>';
+        h += '</div>';
+    }
 
     // ── BODY ──
     h += '<div class="portal-body">';
 
-    // Signed banner
+    // Signed / Declined banner
     if (isSigned) {
         h += '<div class="portal-signed-banner">';
-        h += '<h3>✅ This estimate has been accepted and signed</h3>';
-        h += '<p>Signed by ' + esc(invoice._portalData.signerName || 'Client') + ' on ' + new Date(invoice._portalData.signedAt).toLocaleString() + '</p>';
+        h += '<span class="icon">✅</span>';
+        h += '<h3>Estimate Accepted & Signed</h3>';
+        h += '<p>Signed by ' + esc(invoice._portalData.signerName || 'Client') + ' on ' + new Date(invoice._portalData.signedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) + '</p>';
         h += '</div>';
     }
     if (isDeclined) {
-        h += '<div class="portal-signed-banner" style="border-color:rgba(239,68,68,0.2);background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.05))">';
-        h += '<h3 style="color:var(--red)">This estimate was declined</h3>';
-        h += '<p>If you\'d like to discuss changes, use the message section below or call ' + esc(phone) + '</p>';
+        h += '<div class="portal-signed-banner" style="border-color:rgba(220,38,38,0.15);background:#fef2f2">';
+        h += '<span class="icon">❌</span>';
+        h += '<h3 style="color:var(--red)">Estimate Declined</h3>';
+        h += '<p>Changed your mind? Use the message section below or call <a href="tel:' + phone.replace(/[^\d+]/g,'') + '" style="color:var(--accent);text-decoration:none;font-weight:600">' + esc(phone) + '</a></p>';
         h += '</div>';
     }
 
-    // ── CLIENT & PROJECT INFO ──
-    h += '<div class="p-card">';
-    h += '<div class="p-card-title">📋 Estimate Details</div>';
-    h += '<div class="p-info-grid">';
-    h += infoBox('Prepared For', invoice.clientName || 'Client');
-    h += infoBox('Estimate Date', formatDate(invoice.estimateDate));
-    h += infoBox('Project Location', buildLocation());
-    h += infoBox('Invoice #', invoice.id || invoiceId);
-    h += infoBox('Valid Until', invoice.expiresDate ? formatDate(invoice.expiresDate) : '30 days');
-    h += infoBox('Contact', phone);
-    h += '</div></div>';
-
-    // ── TOTALS ──
+    // ── TOTALS (featured at top) ──
     var laborTotal = invoice.laborTotal || 0;
     var materialsTotal = invoice.materialsTotal || 0;
     var grandTotal = invoice.amount || (laborTotal + materialsTotal);
 
     h += '<div class="p-card">';
-    h += '<div class="p-card-title">💰 Project Total</div>';
+    h += '<div class="p-card-title"><span>💰</span> Project Total</div>';
     h += '<div class="p-totals">';
     h += totalBox('Labor', '$' + n(laborTotal), 'color:var(--accent)');
-    h += totalBox('Materials', '$' + n(materialsTotal), 'color:var(--green)');
+    h += totalBox('Materials', '$' + n(materialsTotal), 'color:var(--text2)');
     h += '<div class="p-total-box p-total-grand"><div class="p-total-label">Grand Total</div><div class="p-total-value">$' + n(grandTotal) + '</div></div>';
     h += '</div></div>';
 
+    // ── CLIENT & PROJECT INFO ──
+    h += '<div class="p-card">';
+    h += '<div class="p-card-title"><span>📋</span> Estimate Details</div>';
+    h += '<div class="p-info-grid">';
+    h += infoBox('Prepared For', invoice.clientName || 'Client');
+    h += infoBox('Invoice #', invoice.id || invoiceId);
+    h += infoBox('Estimate Date', formatDate(invoice.estimateDate));
+    h += infoBox('Valid Until', invoice.expiresDate ? formatDate(invoice.expiresDate) : '30 days');
+    h += infoBox('Project Location', buildLocation());
+    h += infoBox('Contact', phone);
+    h += '</div></div>';
+
     // ── SCOPE OF WORK ──
-    var scope = invoice.jobDetails ? invoice.jobDetails.scopeItems : (invoice.scopeItems || []);
+    var scope = invoice.scope || (invoice.jobDetails ? invoice.jobDetails.scopeItems : null) || invoice.scopeItems || [];
+    if (typeof scope === 'string') scope = scope.split('\n').filter(Boolean);
     if (scope && scope.length > 0) {
         h += '<div class="p-card">';
-        h += '<div class="p-card-title">🔨 Scope of Work</div>';
+        h += '<div class="p-card-title"><span>🔨</span> Scope of Work</div>';
         h += '<ul class="p-scope-list">';
         scope.forEach(function(item) {
-            h += '<li><span class="p-scope-check" style="background:' + accentColor + '20;color:' + accentColor + '">✓</span>' + esc(item) + '</li>';
+            var text = typeof item === 'string' ? item : (item.text || item.desc || JSON.stringify(item));
+            h += '<li><span class="p-scope-check" style="background:' + accentBg + ';color:' + accentColor + '">✓</span><span>' + esc(text) + '</span></li>';
         });
         h += '</ul></div>';
     }
 
-    // ── LABOR BREAKDOWN ──
-    var laborItems = invoice.jobDetails ? invoice.jobDetails.laborItems : (invoice.laborItems || []);
+    // ── LABOR BREAKDOWN (card-based, mobile-friendly) ──
+    var laborItems = invoice.laborItems || (invoice.jobDetails ? invoice.jobDetails.laborItems : null) || [];
     if (laborItems && laborItems.length > 0) {
         h += '<div class="p-card">';
-        h += '<div class="p-card-title">👷 Labor Breakdown</div>';
-        h += '<table class="p-table"><thead><tr><th>#</th><th>Description</th><th>Basis</th><th>Rate</th><th>Total</th></tr></thead><tbody>';
+        h += '<div class="p-card-title"><span>👷</span> Labor</div>';
+        h += '<div class="p-line-items">';
         var lSub = 0;
         laborItems.forEach(function(item, i) {
             var qty = item.qty || 1;
             var price = item.price || 0;
             var total = qty * price;
             lSub += total;
-            h += '<tr><td style="color:' + accentColor + ';font-weight:700">' + (i+1) + '</td>';
-            h += '<td><strong>' + esc(item.desc) + '</strong></td>';
-            h += '<td style="color:var(--text3)">' + esc(item.basis || '') + '</td>';
-            h += '<td>$' + n(price) + '</td>';
-            h += '<td class="p-row-total">$' + n(total) + '</td></tr>';
+            h += '<div class="p-line-item">';
+            h += '<span class="p-line-num" style="background:' + accentBg + ';color:' + accentColor + '">' + (i+1) + '</span>';
+            h += '<span class="p-line-desc">' + esc(item.desc || 'Labor item') + '</span>';
+            h += '<span class="p-line-amount">$' + n(total) + '</span>';
+            if (item.basis || qty > 1) {
+                h += '<div class="p-line-detail">';
+                if (item.basis) h += esc(item.basis);
+                if (qty > 1) h += ' × $' + n(price);
+                h += '</div>';
+            }
+            h += '</div>';
         });
-        h += '<tr class="p-subtotal"><td></td><td colspan="3"><strong>Labor Subtotal</strong></td><td class="p-row-total">$' + n(lSub) + '</td></tr>';
-        h += '</tbody></table></div>';
+        h += '<div class="p-line-subtotal"><span>Labor Subtotal</span><span>$' + n(lSub) + '</span></div>';
+        h += '</div></div>';
     }
 
     // ── MATERIALS BREAKDOWN ──
-    var matItems = invoice.jobDetails ? invoice.jobDetails.matItems : (invoice.matItems || []);
+    var matItems = invoice.materialItems || (invoice.jobDetails ? invoice.jobDetails.matItems : null) || invoice.matItems || [];
     if (matItems && matItems.length > 0) {
         h += '<div class="p-card">';
-        h += '<div class="p-card-title">📦 Materials Breakdown</div>';
-        h += '<table class="p-table"><thead><tr><th>#</th><th>Material</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>';
+        h += '<div class="p-card-title"><span>📦</span> Materials</div>';
+        h += '<div class="p-line-items">';
         var mSub = 0;
         matItems.forEach(function(item, i) {
             var qty = item.qtyNum || parseFloat(item.qty) || 1;
             var price = item.price || 0;
             var total = qty * price;
             mSub += total;
-            h += '<tr><td style="color:' + accentColor + ';font-weight:700">' + (i+1) + '</td>';
-            h += '<td><strong>' + esc(item.desc) + '</strong></td>';
-            h += '<td>' + esc(item.qty || qty + '') + '</td>';
-            h += '<td>$' + n(price) + '</td>';
-            h += '<td class="p-row-total">$' + n(total) + '</td></tr>';
+            h += '<div class="p-line-item">';
+            h += '<span class="p-line-num" style="background:' + accentBg + ';color:' + accentColor + '">' + (i+1) + '</span>';
+            h += '<span class="p-line-desc">' + esc(item.desc || 'Material') + '</span>';
+            h += '<span class="p-line-amount">$' + n(total) + '</span>';
+            var detailParts = [];
+            if (item.qty || qty > 1) detailParts.push('Qty: ' + (item.qty || qty));
+            if (price > 0) detailParts.push('@ $' + n(price) + '/ea');
+            if (detailParts.length) {
+                h += '<div class="p-line-detail">' + esc(detailParts.join(' ')) + '</div>';
+            }
+            h += '</div>';
         });
-        h += '<tr class="p-subtotal"><td></td><td colspan="3"><strong>Materials Subtotal</strong></td><td class="p-row-total">$' + n(mSub) + '</td></tr>';
-        h += '</tbody></table></div>';
+        h += '<div class="p-line-subtotal"><span>Materials Subtotal</span><span>$' + n(mSub) + '</span></div>';
+        h += '</div></div>';
     }
 
     // ── NOTES ──
-    var notes = invoice.jobDetails ? invoice.jobDetails.noteItems : (invoice.noteItems || []);
+    var notes = invoice.notes || (invoice.jobDetails ? invoice.jobDetails.noteItems : null) || invoice.noteItems || [];
+    if (typeof notes === 'string') notes = notes.split('\n').filter(Boolean);
     if (notes && notes.length > 0) {
         h += '<div class="p-card">';
-        h += '<div class="p-card-title">📝 Notes & Conditions</div>';
+        h += '<div class="p-card-title"><span>📝</span> Notes & Conditions</div>';
         notes.forEach(function(note) {
-            h += '<div class="p-note" style="--dot:' + accentColor + '"><span style="width:6px;height:6px;border-radius:50%;background:' + accentColor + ';flex-shrink:0;margin-top:6px"></span>' + esc(note) + '</div>';
+            var text = typeof note === 'string' ? note : (note.text || note.desc || JSON.stringify(note));
+            h += '<div class="p-note"><span class="p-note-dot" style="background:' + accentColor + '"></span><span>' + esc(text) + '</span></div>';
         });
         h += '</div>';
     }
 
     // ── DISCLAIMER ──
-    var disclaimer = invoice.jobDetails ? invoice.jobDetails.disclaimer : invoice.disclaimer;
+    var disclaimer = invoice.disclaimer || (invoice.jobDetails ? invoice.jobDetails.disclaimer : null);
     if (disclaimer) {
-        h += '<div class="p-card" style="border-color:rgba(251,191,36,0.2);background:rgba(251,191,36,0.03)">';
-        h += '<div class="p-card-title" style="color:var(--amber)">⚠️ Unforeseen Conditions</div>';
-        h += '<p style="font-size:13px;color:var(--text2);line-height:1.7">' + esc(disclaimer) + '</p>';
+        h += '<div class="p-card" style="border-color:rgba(217,119,6,0.15);background:rgba(217,119,6,0.03)">';
+        h += '<div class="p-card-title" style="color:var(--amber)"><span>⚠️</span> Unforeseen Conditions</div>';
+        h += '<p style="font-size:14px;color:var(--text2);line-height:1.7">' + esc(disclaimer) + '</p>';
+        h += '</div>';
+    }
+
+    // ── SIGNATURE (if not yet signed) ──
+    if (!isSigned && !isDeclined) {
+        h += '<div class="p-card" id="sigSection" style="display:none">';
+        h += '<div class="p-card-title" style="color:var(--green)"><span>✍️</span> Accept & Sign</div>';
+        h += '<p style="font-size:13px;color:var(--text3);margin-bottom:16px;line-height:1.5">By signing below, you agree to the scope of work and pricing outlined in this estimate.</p>';
+        h += '<div style="margin-bottom:16px">';
+        h += '<label style="font-size:12px;color:var(--text2);font-weight:600;display:block;margin-bottom:6px">Full Legal Name</label>';
+        h += '<input type="text" id="sigName" placeholder="Enter your full name" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color 0.15s" onfocus="this.style.borderColor=\'var(--accent)\'" onblur="this.style.borderColor=\'var(--border)\'" />';
+        h += '</div>';
+        h += '<label style="font-size:12px;color:var(--text2);font-weight:600;display:block;margin-bottom:6px">Signature</label>';
+        h += '<div class="p-sig-tabs">';
+        h += '<button class="p-sig-tab active" id="sigTabDraw" onclick="switchSigTab(\'draw\')">✏️ Draw</button>';
+        h += '<button class="p-sig-tab" id="sigTabType" onclick="switchSigTab(\'type\')">⌨️ Type</button>';
+        h += '</div>';
+        h += '<div id="sigDrawArea">';
+        h += '<div class="p-sig-canvas-wrap" id="sigCanvasWrap">';
+        h += '<canvas id="sigCanvas" class="p-sig-canvas"></canvas>';
+        h += '<div class="p-sig-line"></div>';
+        h += '<div class="p-sig-placeholder"><span class="icon">✏️</span>Sign here with your finger or mouse</div>';
+        h += '</div>';
+        h += '<button onclick="clearSig()" style="margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;padding:4px 0">Clear signature</button>';
+        h += '</div>';
+        h += '<div id="sigTypeArea" style="display:none"><input type="text" id="sigTyped" class="p-sig-typed" placeholder="Type your full name" /></div>';
+        h += '<button class="p-btn p-btn-accept" style="width:100%;margin-top:20px;padding:16px;font-size:16px;border-radius:14px" onclick="portalSign()">✅ Accept & Sign Estimate</button>';
         h += '</div>';
     }
 
     // ── Q&A THREAD ──
     h += '<div class="p-card" id="qaSection">';
-    h += '<div class="p-card-title">💬 Questions & Comments</div>';
+    h += '<div class="p-card-title"><span>💬</span> Questions & Comments</div>';
     h += '<div class="p-qa-thread" id="qaThread">';
-    h += '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">Have a question about this estimate? Send a message below and the contractor will be notified.</div>';
+    h += '<div style="text-align:center;color:var(--text3);font-size:13px;padding:16px 0;line-height:1.5">Have a question about this estimate?<br>Send a message and the contractor will be notified.</div>';
     h += '</div>';
     h += '<div class="p-qa-input-row">';
-    h += '<textarea class="p-qa-input" id="qaInput" rows="1" placeholder="Ask a question about this estimate..."></textarea>';
-    h += '<button class="p-qa-send" id="qaSend" onclick="portalSendMessage()">Send</button>';
+    h += '<textarea class="p-qa-input" id="qaInput" rows="1" placeholder="Ask a question..."></textarea>';
+    h += '<button class="p-qa-send" onclick="portalSendMessage()">➤</button>';
     h += '</div></div>';
-
-    // ── SIGNATURE (if not yet signed) ──
-    if (!isSigned && !isDeclined) {
-        h += '<div class="p-card" id="sigSection" style="display:none">';
-        h += '<div class="p-card-title" style="color:var(--green)">✍️ Accept & Sign</div>';
-        h += '<div style="margin-bottom:16px">';
-        h += '<label class="p-info-label">Full Legal Name</label>';
-        h += '<input type="text" id="sigName" placeholder="Enter your full name" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-top:4px" />';
-        h += '</div>';
-        h += '<div class="p-sig-tabs">';
-        h += '<button class="p-sig-tab active" onclick="switchSigTab(\'draw\',this)">✏️ Draw</button>';
-        h += '<button class="p-sig-tab" onclick="switchSigTab(\'type\',this)">⌨️ Type</button>';
-        h += '</div>';
-        h += '<div id="sigDrawArea"><canvas id="sigCanvas" class="p-sig-canvas"></canvas>';
-        h += '<button onclick="clearSig()" style="margin-top:6px;background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;font-family:inherit">Clear signature</button></div>';
-        h += '<div id="sigTypeArea" style="display:none"><input type="text" id="sigTyped" class="p-sig-typed" placeholder="Type your name" /></div>';
-        h += '<button class="p-btn p-btn-accept" style="width:100%;margin-top:16px" onclick="portalSign()">✅ Accept & Sign This Estimate</button>';
-        h += '</div>';
-    }
 
     // View count
     var vc = (invoice._portalData && invoice._portalData.viewCount) || 0;
-    h += '<div class="p-views">This estimate has been viewed ' + (vc + 1) + ' time' + (vc > 0 ? 's' : '') + '</div>';
+    h += '<div class="p-views">Viewed ' + (vc + 1) + ' time' + (vc > 0 ? 's' : '') + '</div>';
 
     // Footer
-    h += '<div style="text-align:center;padding:20px 0;font-size:11px;color:var(--text3)">';
-    h += esc(brandName) + ' — Nebraska Licensed Contractor ' + esc(license);
-    h += '<br>' + esc(phone) + ' | ' + esc(email);
-    h += '<br><span style="opacity:0.4">Powered by BidGen Pro</span>';
+    h += '<div style="text-align:center;padding:12px 0 20px;font-size:12px;color:var(--text3);line-height:1.8">';
+    h += '<strong>' + esc(brandName) + '</strong>';
+    h += '<br>Nebraska Licensed Contractor ' + esc(license);
+    h += '<br><a href="tel:' + phone.replace(/[^\d+]/g,'') + '" style="color:var(--accent);text-decoration:none">' + esc(phone) + '</a> · <a href="mailto:' + esc(email) + '" style="color:var(--accent);text-decoration:none">' + esc(email) + '</a>';
     h += '</div>';
 
     h += '</div>'; // end portal-body
@@ -607,7 +764,7 @@ function renderPortal() {
     // ── BOTTOM ACTION BAR ──
     if (!isSigned && !isDeclined) {
         h += '<div class="p-actions"><div class="p-actions-inner">';
-        h += '<button class="p-btn p-btn-pdf" onclick="window.print()">📄 PDF</button>';
+        h += '<button class="p-btn p-btn-pdf" onclick="window.print()">📄</button>';
         h += '<button class="p-btn p-btn-decline" onclick="portalDecline()">Decline</button>';
         h += '<button class="p-btn p-btn-accept" onclick="showSignSection()">✅ Accept Estimate</button>';
         h += '</div></div>';
@@ -620,9 +777,9 @@ function renderPortal() {
 
     document.getElementById('portalRoot').innerHTML = h;
 
-    // Init signature canvas
+    // Init signature canvas after DOM is ready
     if (!isSigned && !isDeclined) {
-        setTimeout(initSigCanvas, 200);
+        setTimeout(initSigCanvas, 300);
     }
 }
 
@@ -630,84 +787,169 @@ function renderPortal() {
 // SIGNATURE PAD
 // ================================================================
 var sigDrawing = false, sigHasData = false;
+var _sigCtx = null;
+
 function initSigCanvas() {
     var c = document.getElementById('sigCanvas');
-    if (!c) return;
-    var ctx = c.getContext('2d');
+    if (!c) { console.warn('Signature canvas not found'); return; }
+    var wrap = document.getElementById('sigCanvasWrap');
+
+    // Set canvas resolution based on actual display size
     var rect = c.getBoundingClientRect();
-    c.width = rect.width * 2;
-    c.height = rect.height * 2;
-    ctx.scale(2, 2);
-    ctx.strokeStyle = '#1a1a1a';
+    var dpr = window.devicePixelRatio || 1;
+    c.width = rect.width * dpr;
+    c.height = rect.height * dpr;
+
+    var ctx = c.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = '#1a202c';
     ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    _sigCtx = ctx;
 
     function pos(e) {
         var r = c.getBoundingClientRect();
-        var t = e.touches ? e.touches[0] : e;
-        return { x: t.clientX - r.left, y: t.clientY - r.top };
+        var touch = e.touches ? e.touches[0] : e;
+        return {
+            x: (touch.clientX - r.left),
+            y: (touch.clientY - r.top)
+        };
     }
-    c.addEventListener('mousedown', function(e) { sigDrawing=true; ctx.beginPath(); var p=pos(e); ctx.moveTo(p.x,p.y); });
-    c.addEventListener('mousemove', function(e) { if(!sigDrawing)return; var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); sigHasData=true; });
-    c.addEventListener('mouseup', function() { sigDrawing=false; });
-    c.addEventListener('mouseleave', function() { sigDrawing=false; });
-    c.addEventListener('touchstart', function(e) { e.preventDefault(); sigDrawing=true; ctx.beginPath(); var p=pos(e); ctx.moveTo(p.x,p.y); }, {passive:false});
-    c.addEventListener('touchmove', function(e) { e.preventDefault(); if(!sigDrawing)return; var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); sigHasData=true; }, {passive:false});
-    c.addEventListener('touchend', function(e) { e.preventDefault(); sigDrawing=false; }, {passive:false});
+
+    function startDraw(e) {
+        sigDrawing = true;
+        ctx.beginPath();
+        var p = pos(e);
+        ctx.moveTo(p.x, p.y);
+        if (wrap) wrap.classList.add('active');
+    }
+
+    function moveDraw(e) {
+        if (!sigDrawing) return;
+        var p = pos(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        sigHasData = true;
+        if (wrap) wrap.classList.add('has-data');
+    }
+
+    function endDraw() {
+        sigDrawing = false;
+        if (wrap) wrap.classList.remove('active');
+    }
+
+    // Mouse events
+    c.addEventListener('mousedown', startDraw);
+    c.addEventListener('mousemove', moveDraw);
+    c.addEventListener('mouseup', endDraw);
+    c.addEventListener('mouseleave', endDraw);
+
+    // Touch events — critical for mobile
+    c.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        startDraw(e);
+    }, { passive: false });
+    c.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        moveDraw(e);
+    }, { passive: false });
+    c.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        endDraw();
+    }, { passive: false });
+    c.addEventListener('touchcancel', function(e) {
+        e.preventDefault();
+        endDraw();
+    }, { passive: false });
+
+    console.log('Signature canvas initialized:', rect.width + 'x' + rect.height, 'dpr:' + dpr);
 }
 
 window.clearSig = function() {
     var c = document.getElementById('sigCanvas');
-    if (c) { var ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); sigHasData=false; }
+    if (!c) return;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+    sigHasData = false;
+    var wrap = document.getElementById('sigCanvasWrap');
+    if (wrap) wrap.classList.remove('has-data');
 };
 
-window.switchSigTab = function(tab, btn) {
-    document.querySelectorAll('.p-sig-tab').forEach(function(t){t.classList.remove('active');});
-    btn.classList.add('active');
-    document.getElementById('sigDrawArea').style.display = tab === 'draw' ? 'block' : 'none';
-    document.getElementById('sigTypeArea').style.display = tab === 'type' ? 'block' : 'none';
+window.switchSigTab = function(tab) {
+    var drawTab = document.getElementById('sigTabDraw');
+    var typeTab = document.getElementById('sigTabType');
+    var drawArea = document.getElementById('sigDrawArea');
+    var typeArea = document.getElementById('sigTypeArea');
+    if (drawTab) drawTab.classList.toggle('active', tab === 'draw');
+    if (typeTab) typeTab.classList.toggle('active', tab === 'type');
+    if (drawArea) drawArea.style.display = tab === 'draw' ? 'block' : 'none';
+    if (typeArea) typeArea.style.display = tab === 'type' ? 'block' : 'none';
+    // Re-init canvas when switching back to draw (fixes sizing)
+    if (tab === 'draw') setTimeout(initSigCanvas, 100);
 };
 
 window.showSignSection = function() {
     var sec = document.getElementById('sigSection');
-    if (sec) { sec.style.display = 'block'; sec.scrollIntoView({behavior:'smooth'}); }
+    if (sec) {
+        sec.style.display = 'block';
+        sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Init canvas after section becomes visible
+        setTimeout(initSigCanvas, 350);
+    }
 };
 
 // ================================================================
 // SIGN / ACCEPT
 // ================================================================
 window.portalSign = function() {
-    var name = (document.getElementById('sigName').value || '').trim();
-    if (!name) { alert('Please enter your full name.'); document.getElementById('sigName').focus(); return; }
+    var nameEl = document.getElementById('sigName');
+    if (!nameEl) { alert('Signature form not found. Please refresh and try again.'); return; }
+    var name = (nameEl.value || '').trim();
+    if (!name) { alert('Please enter your full name.'); nameEl.focus(); return; }
 
+    // Determine which signature mode is active
     var sigData = '';
     var sigType = 'draw';
-    var typedInput = document.getElementById('sigTyped');
     var drawArea = document.getElementById('sigDrawArea');
+    var typeArea = document.getElementById('sigTypeArea');
+    var isDrawMode = drawArea && drawArea.style.display !== 'none';
+    var isTypeMode = typeArea && typeArea.style.display !== 'none';
 
-    if (drawArea && drawArea.style.display !== 'none') {
-        var c = document.getElementById('sigCanvas');
-        if (!sigHasData) { alert('Please draw your signature on the pad.'); return; }
-        sigData = c.toDataURL('image/png');
-    } else {
+    if (isTypeMode && !isDrawMode) {
+        // Type mode
         sigType = 'type';
-        sigData = typedInput ? typedInput.value.trim() : '';
-        if (!sigData) { alert('Please type your signature.'); return; }
+        var typedInput = document.getElementById('sigTyped');
+        sigData = typedInput ? (typedInput.value || '').trim() : '';
+        if (!sigData) { alert('Please type your signature.'); if (typedInput) typedInput.focus(); return; }
+    } else {
+        // Draw mode (default)
+        var c = document.getElementById('sigCanvas');
+        if (!sigHasData || !c) { alert('Please draw your signature on the pad.'); return; }
+        sigData = c.toDataURL('image/png');
     }
 
-    // Save to Firebase
+    // Disable button to prevent double-submit
+    var submitBtn = document.querySelector('#sigSection .p-btn-accept');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+        submitBtn.style.opacity = '0.6';
+    }
+
     var signPayload = {
         signerName: name,
         signatureData: sigData,
         signatureType: sigType,
         signedAt: new Date().toISOString(),
-        userAgent: navigator.userAgent.substring(0,120)
+        userAgent: navigator.userAgent.substring(0, 120)
     };
 
     portalRef.update(signPayload).then(function() {
         // Also update the invoice status to permanent
-        var statuses = ['temporary','permanent','lost'];
+        var statuses = ['temporary', 'permanent', 'lost'];
         statuses.forEach(function(s) {
             db.ref('invoices/' + ownerPin + '/' + s + '/' + invoiceId).once('value').then(function(snap) {
                 if (snap.val()) {
@@ -718,7 +960,6 @@ window.portalSign = function() {
                     inv.contractLink.signerName = name;
                     inv.contractLink.signatureData = sigData;
                     inv.contractLink.signatureType = sigType;
-                    // Move to permanent if temporary
                     if (s === 'temporary') {
                         inv.status = 'permanent';
                         inv.awardedDate = signPayload.signedAt;
@@ -731,14 +972,19 @@ window.portalSign = function() {
             });
         });
 
-        // Reload page to show signed state
+        // Re-render with signed state
         invoice._portalData = invoice._portalData || {};
         invoice._portalData.signedAt = signPayload.signedAt;
         invoice._portalData.signerName = name;
         renderPortal();
-        window.scrollTo({top:0,behavior:'smooth'});
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }).catch(function(err) {
         alert('Error saving signature: ' + err.message);
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✅ Accept & Sign Estimate';
+            submitBtn.style.opacity = '1';
+        }
     });
 };
 

@@ -574,7 +574,7 @@ function initBidGenPro() {
         } catch(e) {}
 
         // Test proxy
-        fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev/', { method: 'HEAD', mode: 'cors' })
+        fetch('https://watts-ai-proxy.wattssafetyinstalls.workers.dev/', { method: 'GET', mode: 'cors' })
             .then(function() { results.proxy = true; renderHealthBadge(results); })
             .catch(function() { renderHealthBadge(results); });
 

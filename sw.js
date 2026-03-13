@@ -3,7 +3,7 @@
  * Caches key assets for instant repeat visits and offline fallback.
  * Created: 2026-02-22
  */
-var CACHE_NAME = 'watts-v1';
+var CACHE_NAME = 'watts-v2';
 var PRECACHE = [
   '/',
   '/services.html',

@@ -6,6 +6,8 @@
 (function() {
 'use strict';
 
+console.log('[Client Portal] Script loaded — waiting for BidGen login...');
+
 var PORTAL_BASE = '';  // auto-detected below
 var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
 
@@ -28,7 +30,10 @@ function waitForBidGen(fn) {
             clearInterval(iv);
             fn();
         }
-        if (attempts > 60) clearInterval(iv); // Give up after 30s
+        if (attempts > 60) {
+            clearInterval(iv);
+            console.warn('[Client Portal] Timed out waiting for BidGen. hashPIN:', typeof window.hashPIN, '| invoiceData:', typeof window.invoiceData, '| userPIN:', !!window.userPIN);
+        }
     }, 500);
 }
 

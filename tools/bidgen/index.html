@@ -2594,11 +2594,13 @@ function docJS() {
 }
 function toolbar(title, invoiceId, shareData) {
     var sd = shareData || window._pendingShareData || null;
-    var tb = '<div class="toolbar no-print"><span class="tbt">'+title+(invoiceId?' <small style="opacity:0.6;font-weight:400;font-size:10px">#'+E(invoiceId)+'</small>':'')+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="exportPDF()">📄 PDF</button><button class="tbe" onclick="copySummary()">📋 Copy</button><button class="tbe" onclick="window.print()">🖨️ Print</button>';
-    if (sd && sd.smsUri) {
-        tb += '<a href="'+E(sd.smsUri)+'" class="tbe" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;text-decoration:none;text-align:center;display:inline-block;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600">📱 Text to Client</a>';
-        tb += '<a href="'+E(sd.mailtoUri)+'" class="tbe" style="background:#8e44ad;color:white;text-decoration:none;text-align:center;display:inline-block;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600">📩 Email Client</a>';
-        tb += '<button class="tbe" style="background:rgba(5,150,105,0.15);color:#059669;font-size:10px" onclick="navigator.clipboard.writeText(\''+sd.portalUrl+'\').then(function(){alert(\'Portal link copied!\');})">🔗 Copy Link</button>';
+    var tb = '<div class="toolbar no-print"><span class="tbt">'+title+(invoiceId?' <small style="opacity:0.6;font-weight:400;font-size:10px">#'+esc(invoiceId)+'</small>':'')+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="exportPDF()">📄 PDF</button><button class="tbe" onclick="copySummary()">📋 Copy</button><button class="tbe" onclick="window.print()">🖨️ Print</button>';
+    if (sd && sd.smsBody) {
+        // Bake the SMS body and portal URL into the doc HTML as JS variables
+        tb += '<scr'+'ipt>var _smsBody='+JSON.stringify(sd.smsBody)+';var _portalUrl='+JSON.stringify(sd.portalUrl)+';var _mailHref='+JSON.stringify(sd.mailtoUri)+';</scr'+'ipt>';
+        tb += '<button class="tbe" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none" onclick="navigator.clipboard.writeText(_smsBody).then(function(){alert(\'✅ Text message copied! Paste into your messaging app.\')})">📱 Copy Text Msg</button>';
+        tb += '<a href="'+esc(sd.mailtoUri)+'" class="tbe" style="background:#8e44ad;color:white;text-decoration:none;text-align:center;display:inline-block">📩 Email Client</a>';
+        tb += '<button class="tbe" style="background:rgba(5,150,105,0.15);color:#059669;font-size:10px" onclick="navigator.clipboard.writeText(_portalUrl).then(function(){alert(\'✅ Portal link copied!\')})">🔗 Copy Link</button>';
     } else {
         tb += '<button class="tbe" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none" onclick="portalShare()">📱 Text / Share</button>';
         tb += '<button class="tbe" style="background:#8e44ad;color:white" onclick="sendContract()">📩 Email Contract</button>';
@@ -2623,7 +2625,7 @@ function showSendBar(invoiceId) {
     var existing = document.getElementById('sendBar');
     if (existing) existing.remove();
 
-    // Build direct share links from invoice data
+    // Build share data from invoice
     var inv = null;
     ['temporary','permanent'].forEach(function(s) { if (invoiceData[s] && invoiceData[s][invoiceId]) inv = invoiceData[s][invoiceId]; });
     var sd = inv ? buildShareData(inv) : null;
@@ -2633,12 +2635,24 @@ function showSendBar(invoiceId) {
     bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(9,9,11,0.95);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,0.08);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:"Inter",sans-serif;';
     var html = '<span style="color:#a1a1aa;font-size:12px;font-weight:500;margin-right:auto">📄 <strong style="color:#e4e4e7">' + invoiceId + '</strong> generated</span>';
     if (sd) {
-        html += '<a href="' + sd.smsUri + '" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block">📱 Text to Client</a>';
-        html += '<a href="' + sd.mailtoUri + '" style="background:#8e44ad;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block">📩 Email Client</a>';
+        html += '<button id="sendBarText" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">📱 Copy Text Msg</button>';
+        html += '<button id="sendBarLink" style="background:rgba(5,150,105,0.15);color:#059669;border:1px solid rgba(5,150,105,0.2);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">🔗 Copy Link</button>';
+    } else {
+        html += '<button id="sendBarPortal" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">📱 Text / Share</button>';
     }
     html += '<button id="sendBarClose" style="background:rgba(255,255,255,0.06);color:#71717a;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer">&times;</button>';
     bar.innerHTML = html;
     document.body.appendChild(bar);
+    if (sd) {
+        document.getElementById('sendBarText').onclick = function() {
+            navigator.clipboard.writeText(sd.smsBody).then(function() { showNotification('✅ Text message copied! Paste into your messaging app.', 'success'); });
+        };
+        document.getElementById('sendBarLink').onclick = function() {
+            navigator.clipboard.writeText(sd.portalUrl).then(function() { showNotification('✅ Portal link copied!', 'success'); });
+        };
+    } else if (document.getElementById('sendBarPortal')) {
+        document.getElementById('sendBarPortal').onclick = function() { if (typeof publishToPortal === 'function') { publishToPortal(invoiceId); } };
+    }
     document.getElementById('sendBarClose').onclick = function() { bar.remove(); };
     setTimeout(function() { if (bar.parentNode) bar.remove(); }, 300000);
 }
@@ -6651,13 +6665,9 @@ function buildShareData(invoice) {
             + 'Best regards,\nJustin Watts\n' + brand + '\nNebraska Licensed Contractor #54690-25\n(405) 410-6402';
     }
 
-    // Build cross-platform SMS URI (iOS uses ; separator, Android uses ?)
-    var ua = navigator.userAgent.toLowerCase();
-    var sep = (ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1) ? ';' : '?';
-    var smsUri = 'sms:' + sep + 'body=' + encodeURIComponent(smsBody);
     var mailtoUri = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody);
 
-    return { portalUrl: portalUrl, smsUri: smsUri, mailtoUri: mailtoUri };
+    return { portalUrl: portalUrl, smsBody: smsBody, mailtoUri: mailtoUri };
 }
 
 // Auto-publish invoice to portal Firebase path (fire-and-forget)
@@ -6778,6 +6788,6 @@ generateChangeOrder = function() {
 <script src="field-calc.js" defer></script>
 <script src="widget-dock.js" defer></script>
 <script src="bidgen-pro.js?v=7" defer></script>
-<script src="client-portal.js?v=8" defer></script>
+<script src="client-portal.js?v=9" defer></script>
 </body>
 </html>

@@ -555,20 +555,42 @@ function trackView() {
 // ================================================================
 function renderCOBreakdown(origAmt, coAmt, revisedAmt) {
     var el = document.getElementById('coBreakdown');
-    if (!el) return;
+    if (!el) { console.warn('[Portal] coBreakdown div not found'); return; }
     el.innerHTML = '<div style="margin-top:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">'
         + '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text2)"><span>Original Contract</span><span>$' + n(origAmt) + '</span></div>'
         + '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#e67e22"><span>This Change Order</span><span>+ $' + n(coAmt) + '</span></div>'
         + '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--green);padding-top:8px;border-top:1px solid var(--border)"><span>Revised Project Total</span><span>$' + n(revisedAmt) + '</span></div>'
         + '</div>';
+    console.log('[Portal] CO breakdown rendered: orig=$' + n(origAmt) + ' co=$' + n(coAmt) + ' revised=$' + n(revisedAmt));
 }
 
-function findOriginalContract(clientName, skipId) {
+// Strategy 1: Look up a specific invoice by its ID (most reliable)
+function findOriginalById(origId) {
+    if (!origId) return Promise.resolve(0);
+    var buckets = ['permanent', 'temporary'];
+    return new Promise(function(resolve) {
+        var done = 0;
+        var found = false;
+        buckets.forEach(function(bucket) {
+            db.ref('invoices/' + ownerPin + '/' + bucket + '/' + origId).once('value').then(function(snap) {
+                done++;
+                if (!found && snap.val()) {
+                    found = true;
+                    resolve(snap.val().amount || 0);
+                } else if (done >= buckets.length && !found) {
+                    resolve(0);
+                }
+            }).catch(function() { done++; if (done >= buckets.length && !found) resolve(0); });
+        });
+    });
+}
+
+// Strategy 2: Search all invoices by client name
+function findOriginalByName(clientName, skipId) {
     if (!clientName) return Promise.resolve(0);
     var cn = clientName.toLowerCase();
     var buckets = ['permanent', 'temporary'];
     var bestAmt = 0, bestDate = '';
-
     return new Promise(function(resolve) {
         var done = 0;
         buckets.forEach(function(bucket) {
@@ -587,6 +609,38 @@ function findOriginalContract(clientName, skipId) {
                 if (done >= buckets.length) resolve(bestAmt);
             }).catch(function() { done++; if (done >= buckets.length) resolve(bestAmt); });
         });
+    });
+}
+
+// Strategy 3: Also check portal/ path for published original
+function findOriginalInPortal(origId) {
+    if (!origId) return Promise.resolve(0);
+    return db.ref('portal/' + ownerPin + '/' + origId + '/invoice/amount').once('value').then(function(snap) {
+        return snap.val() || 0;
+    }).catch(function() { return 0; });
+}
+
+// Master orchestrator: tries every strategy in order
+function findOriginalAmount(inv) {
+    var origId = inv.originalInvoiceId || '';
+    var clientName = inv.clientName || '';
+    var skipId = inv.id || invoiceId;
+
+    console.log('[Portal] Finding original contract: origId=' + origId + ' client=' + clientName);
+
+    // Try ID-based lookup first (from invoices/ path)
+    return findOriginalById(origId).then(function(amt) {
+        if (amt > 0) { console.log('[Portal] Found by ID in invoices: $' + amt); return amt; }
+        // Try portal/ path for the original
+        return findOriginalInPortal(origId);
+    }).then(function(amt) {
+        if (amt > 0) { console.log('[Portal] Found by ID in portal: $' + amt); return amt; }
+        // Fall back to name matching
+        return findOriginalByName(clientName, skipId);
+    }).then(function(amt) {
+        if (amt > 0) { console.log('[Portal] Found by name: $' + amt); }
+        else { console.warn('[Portal] Could not find original contract amount'); }
+        return amt;
     });
 }
 
@@ -794,6 +848,14 @@ function renderPortal() {
     // ── MATERIALS BREAKDOWN ──
     var matItems = invoice.materialItems || (invoice.jobDetails ? invoice.jobDetails.matItems : null) || invoice.matItems || [];
     var mkPct = (invoice.materialsMarkup || 0) / 100;
+    // If markup field is missing but materialsTotal differs from raw sum, infer markup
+    if (mkPct === 0 && matItems.length > 0 && materialsTotal > 0) {
+        var rawSum = 0;
+        matItems.forEach(function(it) { rawSum += (it.qtyNum || parseFloat(it.qty) || 1) * (it.price || 0); });
+        if (rawSum > 0 && materialsTotal > rawSum * 1.001) {
+            mkPct = (materialsTotal / rawSum) - 1;
+        }
+    }
     if (matItems && matItems.length > 0) {
         h += '<div class="p-card">';
         h += '<div class="p-card-title"><span>📦</span> ' + (isChangeOrder ? 'Materials & Consumables' : 'Materials') + '</div>';
@@ -931,8 +993,17 @@ function renderPortal() {
         if (origAmount > 0) {
             renderCOBreakdown(origAmount, grandTotal, revisedTotal);
         } else {
-            findOriginalContract(invoice.clientName, invoiceId).then(function(foundAmt) {
-                if (foundAmt > 0) renderCOBreakdown(foundAmt, grandTotal, foundAmt + grandTotal);
+            // Use master orchestrator: tries ID lookup, portal lookup, name match
+            findOriginalAmount(invoice).then(function(foundAmt) {
+                if (foundAmt > 0) {
+                    renderCOBreakdown(foundAmt, grandTotal, foundAmt + grandTotal);
+                } else {
+                    // Still render the CO total prominently even without original
+                    var el = document.getElementById('coBreakdown');
+                    if (el) el.innerHTML = '<div style="margin-top:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">'
+                        + '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:#e67e22;"><span>Change Order Total</span><span>$' + n(grandTotal) + '</span></div>'
+                        + '</div>';
+                }
             });
         }
     }

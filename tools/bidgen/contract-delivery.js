@@ -272,90 +272,16 @@
     };
 
     // ================================================================
-    // TEXT CONTRACT LINK — Creates encrypted link + opens native SMS app
+    // TEXT CONTRACT LINK — Redirects through Client Portal system
+    // Publishes full invoice data to portal and opens share modal
+    // with SMS/Email/WhatsApp options containing full breakdown.
     // ================================================================
     window.textContractLink = async function(invoiceId) {
-        var invoice = null;
-        for (var status in invoiceData) {
-            if (invoiceData[status][invoiceId]) {
-                invoice = invoiceData[status][invoiceId];
-                break;
-            }
+        if (typeof publishToPortal === 'function') {
+            publishToPortal(invoiceId);
+        } else {
+            showNotification('Portal system is still loading. Try again in a moment.', 'error');
         }
-        if (!invoice) {
-            showNotification('Invoice not found: ' + invoiceId, 'error');
-            return;
-        }
-
-        // Show inline modal for phone number
-        showInputModal('📱 Text Contract Link to Client', [
-            { label: 'Client Phone Number (10 digits)', type: 'tel', value: invoice.clientPhone || '', placeholder: '4055551234' }
-        ], async function(values) {
-            var phone = (values[0] || '').replace(/\D/g, '');
-
-            if (phone.length < 10) {
-                showNotification('Enter a valid 10-digit phone number', 'error');
-                return;
-            }
-
-            // Store phone on invoice
-            invoice.clientPhone = phone;
-
-            showNotification('⏳ Creating secure contract link...', 'info');
-
-        try {
-            // Step 1: Create encrypted contract link (if not already created)
-            var contractUrl = '';
-            if (invoice.contractLink && invoice.contractLink.url) {
-                contractUrl = invoice.contractLink.url;
-            } else {
-                var res = await fetch(PROXY + '/contract/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        invoiceId: invoiceId,
-                        contractData: invoice,
-                        clientEmail: invoice.clientEmail || '',
-                        clientName: invoice.clientName,
-                        ownerPin: hashPIN(userPIN)
-                    })
-                });
-                var data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Failed to create contract link');
-
-                invoice.contractLink = {
-                    token: data.token,
-                    signature: data.signature,
-                    url: data.url,
-                    sentAt: new Date().toISOString(),
-                    status: 'sent'
-                };
-                contractUrl = data.url;
-                saveInvoiceToFirebase(invoice);
-            }
-
-            // Step 2: Build SMS message and open native messaging app
-            var companyName = invoice.companyInfo ? invoice.companyInfo.companyName || 'Watts Safety Installs' : 'Watts Safety Installs';
-            var msg = companyName + ': ' + invoice.clientName + ', your estimate #' + invoiceId + ' ($' + (invoice.amount || 0).toFixed(2) + ') is ready to review & sign: ' + contractUrl + ' — Justin Watts (405) 410-6402';
-
-            // Copy link to clipboard
-            try { await navigator.clipboard.writeText(contractUrl); } catch(e) {}
-
-            // Open native SMS app with pre-filled message
-            var smsUri = 'sms:' + phone + '?body=' + encodeURIComponent(msg);
-            window.open(smsUri, '_blank');
-
-            showNotification('✅ Contract link created! SMS app opened — send the text. Link also copied to clipboard.', 'success');
-
-            // Show the modal with the link for backup
-            var body = 'Your estimate #' + invoiceId + ' is ready to review and sign:\n\n' + contractUrl + '\n\n— Justin Watts, ' + companyName;
-            showContractModal(invoice, contractUrl, phone + ' (text ready)', body);
-
-        } catch (err) {
-            showNotification('❌ Error: ' + err.message, 'error');
-            console.error('Text contract failed:', err);
-        }
-        }); // end showInputModal callback
     };
 
     // ================================================================

@@ -2592,7 +2592,20 @@ function docJS() {
     js += 'setTimeout(function(){initSig("sigContractor","sigDateContractor");initSig("sigClient","sigDateClient");generateQR();document.querySelectorAll(".auth-opt").forEach(function(opt){opt.addEventListener("click",function(){document.querySelectorAll(".auth-opt").forEach(function(o){o.classList.remove("selected");o.querySelector(".auth-cb").classList.remove("checked");o.querySelector(".auth-cb").textContent="";});this.classList.add("selected");var cb=this.querySelector(".auth-cb");cb.classList.add("checked");cb.textContent="\\u2713";});});},200);';
     return '<'+'script>' + js + '</'+'script>';
 }
-function toolbar(title, invoiceId) { return '<div class="toolbar no-print"><span class="tbt">'+title+(invoiceId?' <small style="opacity:0.6;font-weight:400;font-size:10px">#'+E(invoiceId)+'</small>':'')+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="exportPDF()">📄 PDF</button><button class="tbe" onclick="copySummary()">📋 Copy</button><button class="tbe" onclick="window.print()">🖨️ Print</button><button class="tbe" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none" onclick="portalShare()">📱 Text / Share</button><button class="tbe" style="background:#8e44ad;color:white" onclick="sendContract()">📩 Email Contract</button></div>'; }
+function toolbar(title, invoiceId, shareData) {
+    var sd = shareData || window._pendingShareData || null;
+    var tb = '<div class="toolbar no-print"><span class="tbt">'+title+(invoiceId?' <small style="opacity:0.6;font-weight:400;font-size:10px">#'+E(invoiceId)+'</small>':'')+'</span><span class="tbs" id="editStatus">Document locked</span><button class="tbe" id="editBtn" onclick="toggleEdit()">Edit Values</button><button class="tbp" onclick="exportPDF()">📄 PDF</button><button class="tbe" onclick="copySummary()">📋 Copy</button><button class="tbe" onclick="window.print()">🖨️ Print</button>';
+    if (sd && sd.smsUri) {
+        tb += '<a href="'+E(sd.smsUri)+'" class="tbe" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;text-decoration:none;text-align:center;display:inline-block;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600">📱 Text to Client</a>';
+        tb += '<a href="'+E(sd.mailtoUri)+'" class="tbe" style="background:#8e44ad;color:white;text-decoration:none;text-align:center;display:inline-block;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600">📩 Email Client</a>';
+        tb += '<button class="tbe" style="background:rgba(5,150,105,0.15);color:#059669;font-size:10px" onclick="navigator.clipboard.writeText(\''+sd.portalUrl+'\').then(function(){alert(\'Portal link copied!\');})">🔗 Copy Link</button>';
+    } else {
+        tb += '<button class="tbe" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none" onclick="portalShare()">📱 Text / Share</button>';
+        tb += '<button class="tbe" style="background:#8e44ad;color:white" onclick="sendContract()">📩 Email Contract</button>';
+    }
+    tb += '</div>';
+    return tb;
+}
 function sigHTML() { return '<div class="sig-section"><h3>Signatures</h3><div class="sig-grid"><div class="sig-pad"><label>Contractor Signature</label><canvas id="sigContractor" class="sig-canvas"></canvas><div class="sig-date" id="sigDateContractor"></div><button class="sig-clear no-print" onclick="clear_sigContractor()">Clear</button></div><div class="sig-pad"><label>Client / Property Manager Signature</label><canvas id="sigClient" class="sig-canvas"></canvas><div class="sig-date" id="sigDateClient"></div><button class="sig-clear no-print" onclick="clear_sigClient()">Clear</button></div></div></div>'; }
 function openDoc(html, invoiceId) {
     var w = window.open('','_blank');
@@ -2609,18 +2622,24 @@ function openDoc(html, invoiceId) {
 function showSendBar(invoiceId) {
     var existing = document.getElementById('sendBar');
     if (existing) existing.remove();
+
+    // Build direct share links from invoice data
+    var inv = null;
+    ['temporary','permanent'].forEach(function(s) { if (invoiceData[s] && invoiceData[s][invoiceId]) inv = invoiceData[s][invoiceId]; });
+    var sd = inv ? buildShareData(inv) : null;
+
     var bar = document.createElement('div');
     bar.id = 'sendBar';
     bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(9,9,11,0.95);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,0.08);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:"Inter",sans-serif;';
-    bar.innerHTML = '<span style="color:#a1a1aa;font-size:12px;font-weight:500;margin-right:auto">📄 <strong style="color:#e4e4e7">' + invoiceId + '</strong> generated</span>'
-        + '<button id="sendBarPortal" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">📱 Text / Share with Client</button>'
-        + '<button id="sendBarEmail" style="background:#8e44ad;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">📩 Email Contract</button>'
-        + '<button id="sendBarClose" style="background:rgba(255,255,255,0.06);color:#71717a;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer">&times;</button>';
+    var html = '<span style="color:#a1a1aa;font-size:12px;font-weight:500;margin-right:auto">📄 <strong style="color:#e4e4e7">' + invoiceId + '</strong> generated</span>';
+    if (sd) {
+        html += '<a href="' + sd.smsUri + '" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block">📱 Text to Client</a>';
+        html += '<a href="' + sd.mailtoUri + '" style="background:#8e44ad;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block">📩 Email Client</a>';
+    }
+    html += '<button id="sendBarClose" style="background:rgba(255,255,255,0.06);color:#71717a;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer">&times;</button>';
+    bar.innerHTML = html;
     document.body.appendChild(bar);
-    document.getElementById('sendBarPortal').onclick = function() { if (typeof publishToPortal === 'function') { publishToPortal(invoiceId); } else { showNotification('Portal system loading, try again in a moment', 'error'); } };
-    document.getElementById('sendBarEmail').onclick = function() { sendContractToClient(invoiceId); };
     document.getElementById('sendBarClose').onclick = function() { bar.remove(); };
-    // Auto-dismiss after 5 minutes
     setTimeout(function() { if (bar.parentNode) bar.remove(); }, 300000);
 }
 function reopenDoc(invoiceId) {
@@ -6575,24 +6594,153 @@ function showNotification(message, type) {
 
 // Hook into existing generate functions to auto-save invoices
 let _lastInvoiceId = null;
+
+// ================================================================
+// BUILD SHARE DATA — constructs portal URL + sms: / mailto: URIs
+// so the generated document can share with ONE TAP, no callbacks.
+// ================================================================
+window._pendingShareData = null; // toolbar() reads this
+
+function buildShareData(invoice) {
+    if (!userPIN) return null;
+    var hp = hashPIN(userPIN);
+    var loc = window.location;
+    var base = (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1')
+        ? loc.protocol + '//' + loc.host + '/tools/bidgen/portal.html'
+        : loc.protocol + '//' + loc.hostname + '/tools/bidgen/portal.html';
+    var portalUrl = base + '?id=' + encodeURIComponent(invoice.id) + '&pin=' + encodeURIComponent(hp);
+
+    var brand = gv('companyName') || 'Watts Safety Installs';
+    var client = invoice.clientName || 'Client';
+    var total = (invoice.amount || 0).toFixed(2);
+    var labAmt = (invoice.laborTotal || 0).toFixed(2);
+    var matAmt = (invoice.materialsTotal || 0).toFixed(2);
+    var isCO = invoice.type === 'change_order';
+    var origAmt = invoice.originalAmount || 0;
+
+    var smsBody, emailSubject, emailBody;
+    if (isCO) {
+        var revisedAmt = origAmt > 0 ? (origAmt + (invoice.amount || 0)).toFixed(2) : '';
+        smsBody = brand + ': Hi ' + client + ', change order #' + invoice.id + ' for your project. '
+            + 'Additional: $' + total + ' (Labor $' + labAmt + ' / Materials $' + matAmt + ').'
+            + (revisedAmt ? ' Original contract: $' + origAmt.toFixed(2) + ' -> Revised total: $' + revisedAmt + '.' : '')
+            + ' Review & approve: ' + portalUrl;
+        emailSubject = 'Change Order from ' + brand + ' — #' + invoice.id;
+        emailBody = 'Hi ' + client + ',\n\nA change order has been issued for your project:\n\n'
+            + portalUrl + '\n\n'
+            + 'CO #: ' + invoice.id + '\n'
+            + 'Labor: $' + labAmt + '\n'
+            + 'Materials & Consumables: $' + matAmt + '\n'
+            + 'Change Order Total: $' + total + '\n'
+            + (origAmt > 0 ? '\nOriginal Contract: $' + origAmt.toFixed(2) + '\nThis Change Order: +$' + total + '\nRevised Project Total: $' + revisedAmt + '\n' : '')
+            + '\nMaterials & consumables ($' + matAmt + ') are required up front before work begins. Labor balances are due upon completion.\n\n'
+            + 'Review the full scope and approve with a digital signature at the link above.\n\n'
+            + 'Best regards,\nJustin Watts\n' + brand + '\nNebraska Licensed Contractor #54690-25\n(405) 410-6402';
+    } else {
+        smsBody = brand + ': Hi ' + client + ', estimate #' + invoice.id + ' ($' + total + ') is ready. '
+            + 'Labor $' + labAmt + ' / Materials $' + matAmt + '. '
+            + 'Review & sign: ' + portalUrl;
+        emailSubject = 'Your Estimate from ' + brand + ' — #' + invoice.id;
+        emailBody = 'Hi ' + client + ',\n\nYour estimate is ready to review, approve, and sign online:\n\n'
+            + portalUrl + '\n\n'
+            + 'Invoice: ' + invoice.id + '\n'
+            + 'Labor: $' + labAmt + '\n'
+            + 'Materials: $' + matAmt + '\n'
+            + 'Total: $' + total + '\n\n'
+            + 'Review the full scope and accept with a digital signature — all from your phone or computer.\n\n'
+            + 'Best regards,\nJustin Watts\n' + brand + '\nNebraska Licensed Contractor #54690-25\n(405) 410-6402';
+    }
+
+    // Build cross-platform SMS URI (iOS uses ; separator, Android uses ?)
+    var ua = navigator.userAgent.toLowerCase();
+    var sep = (ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1) ? ';' : '?';
+    var smsUri = 'sms:' + sep + 'body=' + encodeURIComponent(smsBody);
+    var mailtoUri = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody);
+
+    return { portalUrl: portalUrl, smsUri: smsUri, mailtoUri: mailtoUri };
+}
+
+// Auto-publish invoice to portal Firebase path (fire-and-forget)
+function autoPublishToPortal(invoice) {
+    if (!db || !userPIN) return;
+    var hp = hashPIN(userPIN);
+    var isCO = invoice.type === 'change_order';
+    var origAmt = invoice.originalAmount || 0;
+    var mkPct = invoice.materialsMarkup || 0;
+    var portalData = {
+        invoice: {
+            id: invoice.id,
+            clientName: invoice.clientName,
+            estimateDate: invoice.estimateDate,
+            expiresDate: invoice.expiresDate,
+            amount: invoice.amount,
+            laborTotal: invoice.laborTotal,
+            materialsTotal: invoice.materialsTotal,
+            status: invoice.status,
+            documentType: isCO ? 'change_order' : (invoice.type || 'quote'),
+            brand: gv('brandSelect') || 'wsi',
+            originalInvoiceId: isCO ? (invoice.originalInvoiceId || '') : '',
+            originalAmount: isCO ? origAmt : 0,
+            revisedTotal: isCO ? (origAmt + (invoice.amount || 0)) : 0,
+            materialsMarkup: mkPct,
+            jobDetails: {
+                complexName: (invoice.jobDetails || {}).complexName || '',
+                unitNum: (invoice.jobDetails || {}).unitNum || '',
+                jobCity: (invoice.jobDetails || {}).jobCity || '',
+                sqft: (invoice.jobDetails || {}).sqft || 0,
+                areaDesc: (invoice.jobDetails || {}).areaDesc || '',
+                tradeType: (invoice.jobDetails || {}).tradeType || '',
+                laborItems: invoice.laborItems || [],
+                matItems: invoice.materialItems || [],
+                scopeItems: invoice.scope || [],
+                noteItems: invoice.notes || [],
+                disclaimer: invoice.disclaimer || ''
+            },
+            companyInfo: invoice.companyInfo || {
+                companyName: gv('companyName') || 'Watts Safety Installs',
+                licenseNum: gv('licenseNum') || '#54690-25',
+                phone: gv('phone') || '(405) 410-6402',
+                email: gv('email') || 'Justin.Watts@WattsATPContractor.com'
+            }
+        },
+        publishedAt: new Date().toISOString(),
+        publishedBy: 'contractor',
+        viewCount: 0
+    };
+    db.ref('portal/' + hp + '/' + invoice.id).set(portalData).catch(function(e) {
+        console.warn('[Portal] auto-publish failed:', e);
+    });
+}
+
 const originalGenerateLabor = generateLabor;
 generateLabor = function() {
     _lastInvoiceId = autoSaveInvoice('labor');
+    var inv = invoiceData.temporary[_lastInvoiceId];
+    if (inv) {
+        autoPublishToPortal(inv);
+        window._pendingShareData = buildShareData(inv);
+    }
     originalGenerateLabor();
+    window._pendingShareData = null;
 };
 
 const originalGenerateMaterials = generateMaterials;
 generateMaterials = function() {
     _lastInvoiceId = autoSaveInvoice('materials');
+    var inv = invoiceData.temporary[_lastInvoiceId];
+    if (inv) {
+        autoPublishToPortal(inv);
+        window._pendingShareData = buildShareData(inv);
+    }
     originalGenerateMaterials();
+    window._pendingShareData = null;
 };
 
 const originalGenerateChangeOrder = generateChangeOrder;
 generateChangeOrder = function() {
     _lastInvoiceId = autoSaveInvoice('change_order');
 
-    // Link this CO to the most recent invoice for this client so the portal
-    // can show Original Contract + CO = Revised Total
+    // Link CO to original contract for this client
     var savedCO = invoiceData.temporary[_lastInvoiceId];
     if (savedCO) {
         var clientName = (savedCO.clientName || '').toLowerCase();
@@ -6600,8 +6748,8 @@ generateChangeOrder = function() {
         ['permanent','temporary'].forEach(function(bucket) {
             Object.keys(invoiceData[bucket] || {}).forEach(function(id) {
                 var inv = invoiceData[bucket][id];
-                if (id === _lastInvoiceId) return; // skip self
-                if (inv.type === 'change_order') return; // skip other COs
+                if (id === _lastInvoiceId) return;
+                if (inv.type === 'change_order') return;
                 if ((inv.clientName || '').toLowerCase() === clientName) {
                     var d = inv.createdDate || inv.estimateDate || '';
                     if (d > bestDate) { bestDate = d; bestMatch = inv; }
@@ -6613,9 +6761,12 @@ generateChangeOrder = function() {
             savedCO.originalAmount = bestMatch.amount || 0;
             saveInvoiceToFirebase(savedCO);
         }
+        autoPublishToPortal(savedCO);
+        window._pendingShareData = buildShareData(savedCO);
     }
 
     originalGenerateChangeOrder();
+    window._pendingShareData = null;
 };
 
 

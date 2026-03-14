@@ -59,7 +59,7 @@ function initPortalSystem() {
     // ================================================================
     // 1. PUBLISH INVOICE TO PORTAL
     // ================================================================
-    window.publishToPortal = function(invoiceId) {
+    window.publishToPortal = async function(invoiceId) {
         var invoice = findInvoiceGlobal(invoiceId);
         if (!invoice) {
             showNotification('Invoice not found: ' + invoiceId, 'error');
@@ -70,14 +70,46 @@ function initPortalSystem() {
         var docType = invoice.type || invoice.documentType || 'quote';
         var isChangeOrder = docType === 'change_order' || (invoice.id && invoice.id.indexOf('CO-') === 0);
         var originalAmount = 0;
-        if (isChangeOrder && invoice.originalInvoiceId) {
-            var origInv = findInvoiceGlobal(invoice.originalInvoiceId);
-            if (origInv) originalAmount = origInv.amount || 0;
+
+        if (isChangeOrder) {
+            // 1. Try in-memory lookup via originalInvoiceId
+            if (invoice.originalInvoiceId) {
+                var origInv = findInvoiceGlobal(invoice.originalInvoiceId);
+                if (origInv) originalAmount = origInv.amount || 0;
+            }
+            // 2. Try stored originalAmount on the invoice itself
+            if (!originalAmount && invoice.originalAmount) {
+                originalAmount = invoice.originalAmount;
+            }
+            // 3. Firebase fallback — search all invoices for the same client
+            if (!originalAmount) {
+                try {
+                    var clientName = (invoice.clientName || '').toLowerCase();
+                    var buckets = ['permanent', 'temporary'];
+                    for (var b = 0; b < buckets.length; b++) {
+                        var snap = await db.ref('invoices/' + hashedPIN + '/' + buckets[b]).once('value');
+                        var all = snap.val() || {};
+                        var bestAmt = 0, bestDate = '';
+                        Object.keys(all).forEach(function(id) {
+                            if (id === invoiceId) return;
+                            var inv = all[id];
+                            if (inv.type === 'change_order' || inv.documentType === 'change_order') return;
+                            if ((inv.clientName || '').toLowerCase() === clientName) {
+                                var d = inv.createdDate || inv.estimateDate || '';
+                                if (d > bestDate) { bestDate = d; bestAmt = inv.amount || 0; }
+                            }
+                        });
+                        if (bestAmt > 0) { originalAmount = bestAmt; break; }
+                    }
+                } catch(e) { console.warn('[Portal] Firebase original invoice lookup failed:', e); }
+            }
+            // 4. Store it back on the invoice so future lookups don't need Firebase
+            if (originalAmount && !invoice.originalAmount) {
+                invoice.originalAmount = originalAmount;
+                saveInvoiceToFirebase(invoice);
+            }
         }
-        // Also try to read from the invoice itself (AI-generated COs store this)
-        if (isChangeOrder && !originalAmount && invoice.originalAmount) {
-            originalAmount = invoice.originalAmount;
-        }
+
         var materialsMarkup = invoice.materialsMarkup || (invoice.jobDetails || {}).materialsMarkup || 0;
 
         // Build portal-safe data (strip any sensitive internal fields)
@@ -135,7 +167,9 @@ function initPortalSystem() {
             };
             saveInvoiceToFirebase(invoice);
 
-            // Show share modal
+            // Show share modal with originalAmount on invoice for SMS text
+            invoice.originalAmount = originalAmount;
+            invoice.revisedTotal = originalAmount + (invoice.amount || 0);
             showPortalShareModal(invoice, portalUrl);
 
             showNotification('🌐 Portal link created! Share with your client.', 'success');

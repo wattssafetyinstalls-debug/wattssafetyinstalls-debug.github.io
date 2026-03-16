@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Watts ATP Contractor Blog</title>
+    <link>https://wattsatpcontractor.com</link>
+    <description>Home improvement tips, accessibility guides, and contractor insights from Watts ATP Contractor in Norfolk, NE.</description>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 16 Mar 2026 16:10:24 GMT</lastBuildDate>
+    <atom:link href="https://wattsatpcontractor.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <managingEditor>Justin.Watts@WattsATPContractor.com (Justin Watts)</managingEditor>
+    <webMaster>Justin.Watts@WattsATPContractor.com (Justin Watts)</webMaster>
+    <item>
+      <title>Making Your Nebraska Home Accessible: A Contractor's Guide to ADA Bathroom Modifications</title>
+      <link>https://wattsatpcontractor.com/blog/making-your-nebraska-home-accessible-a-contractor-s-guide-to</link>
+      <description>Making Your Nebraska Home Accessible: A Contractor's Guide to ADA Bathroom Modifications</description>
+      <pubDate>Mon, 16 Mar 2026 16:00:00 GMT</pubDate>
+      <guid isPermaLink="true">https://wattsatpcontractor.com/blog/making-your-nebraska-home-accessible-a-contractor-s-guide-to</guid>
+    </item>
+  </channel>
+</rss>

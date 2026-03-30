@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Invoice Builder — BidGen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<style>
+:root {
+    --bg: #080e1a;
+    --card: #0f172a;
+    --card2: #1e293b;
+    --border: rgba(255,255,255,0.06);
+    --border2: rgba(255,255,255,0.1);
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --radius: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+/* ── LOGIN ── */
+#loginScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+.login-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:40px; max-width:380px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+.login-card h1 { font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:-0.5px; }
+.login-card p { font-size:13px; color:var(--text3); margin-bottom:24px; }
+.login-card input { width:100%; background:var(--card2); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; color:var(--text); font-size:16px; font-family:inherit; text-align:center; letter-spacing:4px; outline:none; margin-bottom:12px; }
+.login-card input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.15); }
+.login-card button { width:100%; background:linear-gradient(135deg,var(--accent),var(--purple)); color:white; border:none; padding:14px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.login-card .err { color:var(--red); font-size:12px; margin-top:8px; min-height:18px; }
+
+/* ── APP SHELL ── */
+#appShell { display:none; }
+.app-header { background:var(--card); border-bottom:1px solid var(--border); padding:14px 20px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:100; }
+.app-header h1 { font-size:16px; font-weight:800; letter-spacing:-0.3px; flex:1; }
+.app-header .back-link { color:var(--accent); text-decoration:none; font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px; }
+.app-header .back-link:hover { text-decoration:underline; }
+
+/* ── LAYOUT ── */
+.app-body { max-width:1200px; margin:0 auto; padding:20px; display:grid; grid-template-columns:1fr 380px; gap:20px; }
+@media(max-width:900px) { .app-body { grid-template-columns:1fr; } }
+
+/* ── CARDS ── */
+.ib-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:16px; }
+.ib-card-title { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.ib-card-title span { font-size:16px; }
+
+/* ── FORM ── */
+.ib-field { margin-bottom:14px; }
+.ib-field label { display:block; font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.ib-field input, .ib-field select, .ib-field textarea { width:100%; background:var(--card2); border:1px solid var(--border2); border-radius:10px; padding:12px 14px; color:var(--text); font-size:14px; font-family:inherit; outline:none; transition:border-color 0.15s; }
+.ib-field input:focus, .ib-field select:focus, .ib-field textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
+.ib-field textarea { resize:vertical; min-height:80px; }
+.ib-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:500px) { .ib-row { grid-template-columns:1fr; } }
+
+/* ── IMPORT PANEL ── */
+.import-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px; }
+.import-btn { background:var(--card2); border:1px solid var(--border2); border-radius:12px; padding:16px 12px; text-align:center; cursor:pointer; transition:all 0.15s; }
+.import-btn:hover { border-color:var(--accent); background:rgba(59,130,246,0.05); }
+.import-btn .icon { font-size:24px; margin-bottom:6px; display:block; }
+.import-btn .lbl { font-size:11px; font-weight:600; color:var(--text2); }
+
+/* ── LIBRARY MODAL ── */
+.lib-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
+.lib-overlay.open { display:flex; }
+.lib-modal { background:var(--card); border:1px solid var(--border); border-radius:20px; max-width:640px; width:100%; max-height:80vh; overflow:hidden; display:flex; flex-direction:column; }
+.lib-header { padding:20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+.lib-header h2 { font-size:16px; font-weight:700; flex:1; }
+.lib-header input { flex:1; background:var(--card2); border:1px solid var(--border2); border-radius:10px; padding:10px 14px; color:var(--text); font-size:13px; font-family:inherit; outline:none; }
+.lib-header button { background:none; border:none; color:var(--text3); font-size:22px; cursor:pointer; padding:4px; }
+.lib-list { overflow-y:auto; padding:12px; flex:1; }
+.lib-item { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:8px; cursor:pointer; transition:all 0.15s; }
+.lib-item:hover { border-color:var(--accent); }
+.lib-item .lib-id { font-size:12px; font-weight:700; color:var(--accent); }
+.lib-item .lib-client { font-size:14px; font-weight:600; margin:4px 0; }
+.lib-item .lib-meta { font-size:11px; color:var(--text3); display:flex; gap:12px; }
+.lib-empty { text-align:center; color:var(--text3); padding:40px; font-size:13px; }
+
+/* ── DOCUMENT CHAIN ── */
+.chain-item { display:flex; align-items:center; gap:12px; padding:12px; background:var(--card2); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; }
+.chain-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.chain-info { flex:1; }
+.chain-info .chain-type { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.chain-info .chain-id { font-size:13px; font-weight:600; }
+.chain-info .chain-amt { font-size:12px; color:var(--text3); }
+.chain-remove { background:none; border:none; color:var(--text3); font-size:14px; cursor:pointer; }
+
+/* ── TOGGLE ── */
+.ib-toggle { display:flex; align-items:center; gap:12px; padding:14px; background:var(--card2); border:1px solid var(--border); border-radius:12px; cursor:pointer; margin-bottom:14px; user-select:none; }
+.ib-toggle:hover { border-color:var(--accent); }
+.ib-toggle .switch { width:42px; height:24px; background:var(--border2); border-radius:12px; position:relative; transition:background 0.2s; flex-shrink:0; }
+.ib-toggle .switch::after { content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; background:white; border-radius:50%; transition:transform 0.2s; }
+.ib-toggle.active .switch { background:var(--green); }
+.ib-toggle.active .switch::after { transform:translateX(18px); }
+.ib-toggle .toggle-text { flex:1; }
+.ib-toggle .toggle-text strong { font-size:13px; display:block; }
+.ib-toggle .toggle-text span { font-size:11px; color:var(--text3); }
+
+/* ── PAYMENT SUMMARY ── */
+.pay-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.pay-row:last-child { border-bottom:none; }
+.pay-row.paid { color:var(--green); }
+.pay-row.paid .pay-val::before { content:'✓ '; }
+.pay-row.due { font-size:18px; font-weight:800; color:var(--accent); padding-top:14px; border-top:2px solid var(--accent); }
+
+/* ── GENERATE BTN ── */
+.gen-btn { width:100%; background:linear-gradient(135deg,var(--green),#059669); color:white; border:none; padding:18px; border-radius:14px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; letter-spacing:-0.3px; transition:all 0.15s; box-shadow:0 4px 20px rgba(34,197,94,0.25); }
+.gen-btn:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(34,197,94,0.35); }
+.gen-btn:active { transform:scale(0.98); }
+.gen-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+/* ── AI MENTOR PANEL ── */
+.ai-panel { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; position:sticky; top:70px; max-height:calc(100vh - 90px); display:flex; flex-direction:column; }
+.ai-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.ai-header .ai-icon { width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,var(--purple),var(--accent)); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.ai-header h3 { font-size:13px; font-weight:700; flex:1; }
+.ai-header .ai-badge { font-size:9px; background:rgba(139,92,246,0.15); color:var(--purple); padding:3px 8px; border-radius:8px; font-weight:700; }
+.ai-actions { padding:10px 14px; border-bottom:1px solid var(--border); display:flex; gap:6px; flex-wrap:wrap; }
+.ai-act { background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:5px 10px; font-size:10px; font-weight:600; color:var(--text2); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.ai-act:hover { border-color:var(--accent); color:var(--accent); }
+.ai-msgs { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; min-height:300px; }
+.ai-msg { max-width:95%; padding:10px 14px; border-radius:14px; font-size:13px; line-height:1.6; }
+.ai-msg.user { align-self:flex-end; background:var(--accent); color:white; border-bottom-right-radius:4px; }
+.ai-msg.bot { align-self:flex-start; background:var(--card2); border:1px solid var(--border); color:var(--text); border-bottom-left-radius:4px; }
+.ai-msg.bot strong { color:var(--amber); }
+.ai-msg.bot code { background:rgba(0,0,0,0.3); padding:1px 5px; border-radius:4px; font-size:12px; }
+.ai-input-row { padding:12px; border-top:1px solid var(--border); display:flex; gap:8px; }
+.ai-input-row textarea { flex:1; background:var(--card2); border:1px solid var(--border2); border-radius:10px; padding:10px 14px; color:var(--text); font-size:13px; font-family:inherit; resize:none; height:44px; max-height:120px; outline:none; }
+.ai-input-row textarea:focus { border-color:var(--accent); }
+.ai-input-row button { background:linear-gradient(135deg,var(--purple),var(--accent)); color:white; border:none; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; }
+
+/* ── RESULT MODAL ── */
+.result-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; display:none; align-items:center; justify-content:center; padding:20px; }
+.result-overlay.open { display:flex; }
+.result-modal { background:var(--card); border:1px solid rgba(34,197,94,0.3); border-radius:20px; max-width:520px; width:100%; padding:32px; text-align:center; }
+.result-modal .icon { font-size:48px; margin-bottom:12px; }
+.result-modal h2 { font-size:20px; font-weight:800; margin-bottom:8px; }
+.result-modal p { font-size:13px; color:var(--text3); margin-bottom:20px; line-height:1.6; }
+.result-modal .link-box { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:16px; display:flex; gap:8px; }
+.result-modal .link-box input { flex:1; background:var(--bg); border:1px solid var(--border2); border-radius:8px; padding:10px; color:var(--accent); font-size:11px; font-family:monospace; outline:none; }
+.result-modal .link-box button { background:var(--accent); color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; white-space:nowrap; }
+.result-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.result-actions button { padding:14px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; border:none; display:flex; align-items:center; justify-content:center; gap:6px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div style="font-size:36px;margin-bottom:12px">🧾</div>
+        <h1>Final Invoice Builder</h1>
+        <p>Enter your BidGen PIN to access your invoice library and generate final invoices for accounting departments.</p>
+        <input id="pinInput" type="password" placeholder="Enter PIN" maxlength="10" inputmode="numeric">
+        <button onclick="attemptLogin()">Access Invoice Builder</button>
+        <div class="err" id="loginError"></div>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="appShell">
+    <header class="app-header">
+        <a href="index.html" class="back-link">← BidGen</a>
+        <h1>🧾 Final Invoice Builder</h1>
+        <span id="userBadge" style="font-size:11px;color:var(--text3)"></span>
+    </header>
+
+    <div class="app-body">
+        <!-- LEFT: FORM -->
+        <div class="form-col">
+
+            <!-- IMPORT SOURCE -->
+            <div class="ib-card">
+                <div class="ib-card-title"><span>📥</span> Import Contract Data</div>
+                <div class="import-grid">
+                    <div class="import-btn" onclick="openLibrary()">
+                        <span class="icon">🗂️</span>
+                        <span class="lbl">Firebase Library</span>
+                    </div>
+                    <div class="import-btn" onclick="document.getElementById('fileUpload').click()">
+                        <span class="icon">📄</span>
+                        <span class="lbl">Upload PDF/File</span>
+                    </div>
+                    <div class="import-btn" onclick="aiQuickAction('help_create')">
+                        <span class="icon">🤖</span>
+                        <span class="lbl">AI Help Me Build</span>
+                    </div>
+                </div>
+                <input type="file" id="fileUpload" accept=".pdf,image/*,.csv,.json,.txt" style="display:none" onchange="handleFileUpload(this)">
+                <div id="importStatus" style="font-size:12px;color:var(--text3);min-height:20px"></div>
+            </div>
+
+            <!-- DOCUMENT CHAIN -->
+            <div class="ib-card" id="chainCard" style="display:none">
+                <div class="ib-card-title"><span>🔗</span> Document Chain</div>
+                <div id="chainList"></div>
+                <button onclick="openLibrary('addToChain')" style="background:var(--card2);border:1px dashed var(--border2);border-radius:10px;padding:10px;width:100%;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px">+ Add Related Document</button>
+            </div>
+
+            <!-- CLIENT & PROJECT INFO -->
+            <div class="ib-card">
+                <div class="ib-card-title"><span>👤</span> Client & Project</div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Client / Company Name</label><input id="ibClientName" placeholder="e.g. RWI PM - Olivia"></div>
+                    <div class="ib-field"><label>Billing Contact</label><input id="ibBillingContact" placeholder="e.g. Accounts Payable - Sarah"></div>
+                </div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Client Email</label><input id="ibClientEmail" type="email" placeholder="ap@company.com"></div>
+                    <div class="ib-field"><label>Client Phone</label><input id="ibClientPhone" placeholder="(555) 555-5555"></div>
+                </div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Project Location</label><input id="ibProjectLocation" placeholder="e.g. NorthPark Apartments, #4, Norfolk"></div>
+                    <div class="ib-field"><label>PO Number (if applicable)</label><input id="ibPONumber" placeholder="PO-12345"></div>
+                </div>
+                <div class="ib-field"><label>Billing Address</label><textarea id="ibBillingAddress" rows="2" placeholder="Corporate billing address for the invoice"></textarea></div>
+            </div>
+
+            <!-- INVOICE DETAILS -->
+            <div class="ib-card">
+                <div class="ib-card-title"><span>📋</span> Invoice Details</div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Invoice Number</label><input id="ibInvoiceNum" placeholder="Auto-generated" readonly style="opacity:0.7"></div>
+                    <div class="ib-field"><label>Invoice Date</label><input id="ibInvoiceDate" type="date"></div>
+                </div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Payment Terms</label>
+                        <select id="ibPaymentTerms">
+                            <option value="due_on_receipt">Due on Receipt</option>
+                            <option value="net_15">Net 15</option>
+                            <option value="net_30" selected>Net 30</option>
+                            <option value="net_45">Net 45</option>
+                            <option value="net_60">Net 60</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="ib-field"><label>Due Date</label><input id="ibDueDate" type="date"></div>
+                </div>
+                <div class="ib-field"><label>Project Description / Scope Summary</label><textarea id="ibScopeSummary" placeholder="Brief summary of work performed..."></textarea></div>
+            </div>
+
+            <!-- PAYMENT BREAKDOWN -->
+            <div class="ib-card">
+                <div class="ib-card-title"><span>💰</span> Payment Breakdown</div>
+
+                <div class="ib-toggle" id="toggleConsumables" onclick="toggleConsumablesPaid()">
+                    <div class="switch"></div>
+                    <div class="toggle-text">
+                        <strong>Materials / Consumables Already Paid</strong>
+                        <span>Toggle ON if the client has already paid for materials up front per the original contract terms.</span>
+                    </div>
+                </div>
+
+                <div class="ib-row">
+                    <div class="ib-field"><label>Original Contract Amount</label><input id="ibOriginalAmount" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                    <div class="ib-field"><label>Change Orders Total</label><input id="ibChangeOrdersTotal" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                </div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Labor Total</label><input id="ibLaborTotal" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                    <div class="ib-field"><label>Materials / Consumables Total</label><input id="ibMaterialsTotal" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                </div>
+                <div class="ib-row">
+                    <div class="ib-field"><label>Previous Payments Received</label><input id="ibPreviousPayments" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                    <div class="ib-field"><label>Adjustments (+/-)</label><input id="ibAdjustments" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                </div>
+
+                <div style="margin-top:16px;padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px" id="paymentSummary">
+                    <div class="pay-row"><span>Original Contract</span><span class="pay-val" id="sumOriginal">$0.00</span></div>
+                    <div class="pay-row"><span>Change Orders</span><span class="pay-val" id="sumCOs">$0.00</span></div>
+                    <div class="pay-row" style="font-weight:600;border-bottom:2px solid var(--border)"><span>Revised Contract Total</span><span class="pay-val" id="sumRevised">$0.00</span></div>
+                    <div class="pay-row paid" id="sumConsumablesRow" style="display:none"><span>Materials/Consumables Paid</span><span class="pay-val" id="sumConsumables">-$0.00</span></div>
+                    <div class="pay-row paid" id="sumPrevPayRow" style="display:none"><span>Previous Payments</span><span class="pay-val" id="sumPrevPay">-$0.00</span></div>
+                    <div class="pay-row" id="sumAdjRow" style="display:none"><span>Adjustments</span><span class="pay-val" id="sumAdj">$0.00</span></div>
+                    <div class="pay-row due"><span>AMOUNT DUE</span><span class="pay-val" id="sumDue">$0.00</span></div>
+                </div>
+            </div>
+
+            <!-- NOTES -->
+            <div class="ib-card">
+                <div class="ib-card-title"><span>📝</span> Notes & Payment Instructions</div>
+                <div class="ib-field"><label>Notes to Accounting</label><textarea id="ibNotes" rows="3" placeholder="e.g. Please reference PO# on check. Work completed and passed final inspection."></textarea></div>
+                <div class="ib-field"><label>Payment Instructions</label><textarea id="ibPaymentInstructions" rows="3" placeholder="e.g. Mail check to: Watts Safety Installs, 123 Main St, Norfolk NE 68701&#10;Or pay via Zelle to: Justin.Watts@WattsATPContractor.com"></textarea></div>
+            </div>
+
+            <!-- GENERATE -->
+            <button class="gen-btn" onclick="generateFinalInvoice()" id="genBtn">
+                🧾 Generate & Publish Final Invoice
+            </button>
+            <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">Creates a shareable portal link for the client's accounting department</p>
+        </div>
+
+        <!-- RIGHT: AI MENTOR -->
+        <div class="ai-col">
+            <div class="ai-panel">
+                <div class="ai-header">
+                    <div class="ai-icon">🤖</div>
+                    <h3>AI Invoice Mentor</h3>
+                    <span class="ai-badge">Gemini 2.5 Pro</span>
+                </div>
+                <div class="ai-actions">
+                    <button class="ai-act" onclick="aiQuickAction('review')">✅ Review Invoice</button>
+                    <button class="ai-act" onclick="aiQuickAction('terms')">📋 Suggest Terms</button>
+                    <button class="ai-act" onclick="aiQuickAction('email')">✉️ Draft Email</button>
+                    <button class="ai-act" onclick="aiQuickAction('followup')">📞 Follow-up Tips</button>
+                </div>
+                <div class="ai-msgs" id="aiMsgs">
+                    <div class="ai-msg bot">
+                        <strong>Hey Justin.</strong> I'm your invoice mentor. I can help you:<br><br>
+                        • Build a final invoice from your contract data<br>
+                        • Review amounts and flag discrepancies<br>
+                        • Draft a professional email to accounting<br>
+                        • Suggest payment terms for corporate clients<br><br>
+                        Import a contract above or ask me anything.
+                    </div>
+                </div>
+                <div class="ai-input-row">
+                    <textarea id="aiInput" placeholder="Ask about invoicing..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSend()}"></textarea>
+                    <button onclick="aiSend()">Send 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LIBRARY MODAL -->
+<div class="lib-overlay" id="libOverlay" onclick="if(event.target===this)closeLibrary()">
+    <div class="lib-modal">
+        <div class="lib-header">
+            <h2>📂 Invoice Library</h2>
+            <input id="libSearch" placeholder="Search by client, ID, or amount..." oninput="filterLibrary()">
+            <button onclick="closeLibrary()">&times;</button>
+        </div>
+        <div class="lib-list" id="libList">
+            <div class="lib-empty">Loading invoices...</div>
+        </div>
+    </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="result-overlay" id="resultOverlay" onclick="if(event.target===this)closeResult()">
+    <div class="result-modal">
+        <div class="icon">✅</div>
+        <h2>Final Invoice Published!</h2>
+        <p>Your invoice is live. Share this link with the client's accounting department.</p>
+        <div class="link-box">
+            <input id="resultUrl" readonly>
+            <button onclick="copyResultUrl()">📋 Copy</button>
+        </div>
+        <div class="result-actions">
+            <button onclick="copyInvoiceText()" style="background:linear-gradient(135deg,var(--accent),var(--purple));color:white">📱 Copy Text Msg</button>
+            <button onclick="emailInvoice()" style="background:var(--purple);color:white">📩 Email Invoice</button>
+        </div>
+        <button onclick="window.open(document.getElementById('resultUrl').value,'_blank')" style="width:100%;background:var(--card2);color:var(--text2);border:1px solid var(--border);padding:12px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px">🔗 Preview Portal Page</button>
+        <button onclick="closeResult()" style="width:100%;background:none;border:none;color:var(--text3);padding:12px;font-size:13px;cursor:pointer;font-family:inherit;margin-top:4px">Done</button>
+    </div>
+</div>
+
+<script>
+(function() {
+'use strict';
+
+// ================================================================
+// FIREBASE
+// ================================================================
+var firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var userPIN = '';
+var hashedPIN = '';
+var invoiceData = { temporary: {}, permanent: {}, lost: {} };
+var documentChain = []; // linked docs
+var _libMode = 'import'; // 'import' or 'addToChain'
+var _consumablesPaid = false;
+var _generatedInvoiceId = '';
+
+// ================================================================
+// PIN HASH
+// ================================================================
+function hashPIN(pin) {
+    var h = 0;
+    for (var i = 0; i < pin.length; i++) {
+        h = ((h << 5) - h) + pin.charCodeAt(i);
+        h |= 0;
+    }
+    return 'u' + Math.abs(h).toString(36);
+}
+
+// ================================================================
+// LOGIN
+// ================================================================
+document.getElementById('pinInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') attemptLogin();
+});
+
+window.attemptLogin = function() {
+    var pin = document.getElementById('pinInput').value.trim();
+    if (pin.length < 4) {
+        document.getElementById('loginError').textContent = 'PIN must be at least 4 digits.';
+        return;
+    }
+    userPIN = pin;
+    hashedPIN = hashPIN(pin);
+
+    db.ref('users/' + hashedPIN + '/created').once('value').then(function(snap) {
+        if (snap.exists()) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appShell').style.display = 'block';
+            document.getElementById('userBadge').textContent = 'PIN: ' + hashedPIN;
+            loadInvoiceLibrary();
+            initForm();
+        } else {
+            document.getElementById('loginError').textContent = 'PIN not found. Use your BidGen PIN.';
+        }
+    }).catch(function(err) {
+        document.getElementById('loginError').textContent = 'Connection error: ' + err.message;
+    });
+};
+
+// ================================================================
+// LOAD INVOICE LIBRARY
+// ================================================================
+function loadInvoiceLibrary() {
+    ['temporary', 'permanent', 'lost'].forEach(function(status) {
+        db.ref('invoices/' + hashedPIN + '/' + status).once('value').then(function(snap) {
+            var data = snap.val() || {};
+            Object.keys(data).forEach(function(id) {
+                data[id].id = id;
+                data[id]._status = status;
+                invoiceData[status][id] = data[id];
+            });
+        });
+    });
+}
+
+function findInvoice(id) {
+    var statuses = ['permanent', 'temporary', 'lost'];
+    for (var i = 0; i < statuses.length; i++) {
+        if (invoiceData[statuses[i]][id]) return invoiceData[statuses[i]][id];
+    }
+    return null;
+}
+
+function getAllInvoices() {
+    var all = [];
+    ['permanent', 'temporary'].forEach(function(s) {
+        Object.keys(invoiceData[s]).forEach(function(id) {
+            all.push(invoiceData[s][id]);
+        });
+    });
+    return all.sort(function(a, b) {
+        return (b.createdDate || '') > (a.createdDate || '') ? 1 : -1;
+    });
+}
+
+// ================================================================
+// INIT FORM
+// ================================================================
+function initForm() {
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('ibInvoiceDate').value = today;
+
+    // Generate invoice ID
+    var counter = 1;
+    var all = getAllInvoices();
+    all.forEach(function(inv) {
+        var m = (inv.id || '').match(/(\d+)$/);
+        if (m) { var n = parseInt(m[1]); if (n >= counter) counter = n + 1; }
+    });
+    var invId = 'WSI-INV-' + new Date().getFullYear() + '-' + String(counter).padStart(4, '0');
+    document.getElementById('ibInvoiceNum').value = invId;
+
+    // Auto-calc due date from terms
+    document.getElementById('ibPaymentTerms').addEventListener('change', updateDueDate);
+    updateDueDate();
+}
+
+function updateDueDate() {
+    var terms = document.getElementById('ibPaymentTerms').value;
+    var base = new Date(document.getElementById('ibInvoiceDate').value || new Date());
+    var days = { due_on_receipt: 0, net_15: 15, net_30: 30, net_45: 45, net_60: 60 };
+    if (days[terms] !== undefined) {
+        base.setDate(base.getDate() + days[terms]);
+        document.getElementById('ibDueDate').value = base.toISOString().split('T')[0];
+    }
+}
+
+// ================================================================
+// LIBRARY MODAL
+// ================================================================
+window.openLibrary = function(mode) {
+    _libMode = mode || 'import';
+    document.getElementById('libOverlay').classList.add('open');
+    renderLibrary();
+};
+window.closeLibrary = function() {
+    document.getElementById('libOverlay').classList.remove('open');
+};
+
+function renderLibrary() {
+    var all = getAllInvoices();
+    var container = document.getElementById('libList');
+    if (all.length === 0) {
+        container.innerHTML = '<div class="lib-empty">No invoices found in your library. Generate some from BidGen first.</div>';
+        return;
+    }
+    var html = '';
+    all.forEach(function(inv) {
+        var type = inv.type || inv.documentType || 'quote';
+        var typeLabel = type === 'change_order' ? 'Change Order' : type === 'labor' ? 'Labor Estimate' : type === 'materials' ? 'Materials' : 'Estimate';
+        var amt = (inv.amount || 0).toFixed(2);
+        var date = inv.estimateDate || inv.createdDate || '';
+        if (date.indexOf('T') > 0) date = date.split('T')[0];
+        html += '<div class="lib-item" onclick="selectLibraryItem(\'' + inv.id + '\')">';
+        html += '<div class="lib-id">' + inv.id + ' <span style="color:var(--text3);font-weight:400">' + typeLabel + '</span></div>';
+        html += '<div class="lib-client">' + esc(inv.clientName || 'Unknown') + '</div>';
+        html += '<div class="lib-meta"><span>$' + amt + '</span><span>' + date + '</span><span style="color:' + (inv._status === 'permanent' ? 'var(--green)' : 'var(--amber)') + '">' + inv._status + '</span></div>';
+        html += '</div>';
+    });
+    container.innerHTML = html;
+}
+
+window.filterLibrary = function() {
+    var q = document.getElementById('libSearch').value.toLowerCase();
+    var items = document.querySelectorAll('.lib-item');
+    items.forEach(function(el) {
+        el.style.display = el.textContent.toLowerCase().indexOf(q) >= 0 ? '' : 'none';
+    });
+};
+
+window.selectLibraryItem = function(id) {
+    var inv = findInvoice(id);
+    if (!inv) return;
+
+    if (_libMode === 'addToChain') {
+        addToChain(inv);
+        closeLibrary();
+        return;
+    }
+
+    // Import as primary contract
+    importInvoice(inv);
+    closeLibrary();
+};
+
+// ================================================================
+// IMPORT INVOICE DATA
+// ================================================================
+function importInvoice(inv) {
+    var name = inv.clientName || '';
+    var loc = '';
+    if (inv.jobDetails) {
+        loc = [inv.jobDetails.complexName, inv.jobDetails.unitNum, inv.jobDetails.jobCity].filter(Boolean).join(', ');
+    }
+    document.getElementById('ibClientName').value = name;
+    document.getElementById('ibProjectLocation').value = loc;
+    document.getElementById('ibOriginalAmount').value = (inv.amount || 0).toFixed(2);
+    document.getElementById('ibLaborTotal').value = (inv.laborTotal || 0).toFixed(2);
+    document.getElementById('ibMaterialsTotal').value = (inv.materialsTotal || 0).toFixed(2);
+
+    // Build scope summary from scope items
+    var scope = inv.scope || (inv.jobDetails ? inv.jobDetails.scopeItems : null) || [];
+    if (Array.isArray(scope)) {
+        var lines = scope.map(function(s) { return typeof s === 'string' ? s : (s.text || s.desc || ''); }).filter(Boolean);
+        document.getElementById('ibScopeSummary').value = lines.join('\n');
+    }
+
+    // Add to document chain
+    addToChain(inv);
+
+    // Look for related COs
+    var clientLower = name.toLowerCase();
+    var coTotal = 0;
+    getAllInvoices().forEach(function(other) {
+        if (other.id === inv.id) return;
+        if ((other.type === 'change_order' || other.documentType === 'change_order') &&
+            (other.clientName || '').toLowerCase() === clientLower) {
+            coTotal += other.amount || 0;
+            addToChain(other);
+        }
+    });
+    if (coTotal > 0) {
+        document.getElementById('ibChangeOrdersTotal').value = coTotal.toFixed(2);
+    }
+
+    recalculate();
+    document.getElementById('importStatus').innerHTML = '<span style="color:var(--green)">✅ Imported ' + inv.id + ' — ' + name + '</span>';
+}
+
+function addToChain(inv) {
+    // Don't add duplicates
+    for (var i = 0; i < documentChain.length; i++) {
+        if (documentChain[i].id === inv.id) return;
+    }
+    var type = inv.type || inv.documentType || 'quote';
+    documentChain.push({
+        id: inv.id,
+        type: type,
+        clientName: inv.clientName,
+        amount: inv.amount || 0,
+        date: inv.estimateDate || inv.createdDate || ''
+    });
+    renderChain();
+}
+
+function renderChain() {
+    var card = document.getElementById('chainCard');
+    var list = document.getElementById('chainList');
+    if (documentChain.length === 0) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+
+    var html = '';
+    documentChain.forEach(function(doc, i) {
+        var color = doc.type === 'change_order' ? 'var(--amber)' : 'var(--green)';
+        var label = doc.type === 'change_order' ? 'Change Order' : 'Original Contract';
+        var dateStr = doc.date; if (dateStr && dateStr.indexOf('T') > 0) dateStr = dateStr.split('T')[0];
+        html += '<div class="chain-item">';
+        html += '<div class="chain-dot" style="background:' + color + '"></div>';
+        html += '<div class="chain-info"><div class="chain-type" style="color:' + color + '">' + label + '</div>';
+        html += '<div class="chain-id">' + doc.id + '</div>';
+        html += '<div class="chain-amt">$' + (doc.amount || 0).toFixed(2) + (dateStr ? ' · ' + dateStr : '') + '</div></div>';
+        html += '<button class="chain-remove" onclick="removeChainItem(' + i + ')">&times;</button>';
+        html += '</div>';
+    });
+    list.innerHTML = html;
+}
+
+window.removeChainItem = function(i) {
+    documentChain.splice(i, 1);
+    renderChain();
+};
+
+// ================================================================
+// FILE UPLOAD
+// ================================================================
+window.handleFileUpload = function(input) {
+    if (!input.files || !input.files[0]) return;
+    var file = input.files[0];
+    document.getElementById('importStatus').innerHTML = '<span style="color:var(--amber)">📄 File loaded: ' + esc(file.name) + ' — Use AI mentor to analyze it</span>';
+
+    // If it's a JSON file, try to parse it
+    if (file.name.endsWith('.json')) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var data = JSON.parse(e.target.result);
+                if (data.clientName) importInvoice(data);
+            } catch(err) {
+                addAIMsg('bot', 'I received the JSON file but couldn\'t parse it as an invoice. Paste the data in chat and I\'ll help extract the info.');
+            }
+        };
+        reader.readAsText(file);
+        return;
+    }
+
+    // For images/PDFs, prompt AI
+    addAIMsg('bot', '📄 I see you uploaded **' + file.name + '**. I can\'t directly read PDFs in this builder, but here\'s what you can do:\n\n1. Go to **BidGen → Document Scanner** to OCR-extract the data\n2. Or describe the contract details to me and I\'ll help you fill in the form\n3. Or paste the key numbers (client, amounts, dates) and I\'ll structure it');
+};
+
+// ================================================================
+// CONSUMABLES TOGGLE
+// ================================================================
+window.toggleConsumablesPaid = function() {
+    _consumablesPaid = !_consumablesPaid;
+    document.getElementById('toggleConsumables').classList.toggle('active', _consumablesPaid);
+    recalculate();
+};
+
+// ================================================================
+// RECALCULATE
+// ================================================================
+window.recalculate = function() {
+    var orig = parseFloat(document.getElementById('ibOriginalAmount').value) || 0;
+    var cos = parseFloat(document.getElementById('ibChangeOrdersTotal').value) || 0;
+    var labor = parseFloat(document.getElementById('ibLaborTotal').value) || 0;
+    var mats = parseFloat(document.getElementById('ibMaterialsTotal').value) || 0;
+    var prevPay = parseFloat(document.getElementById('ibPreviousPayments').value) || 0;
+    var adj = parseFloat(document.getElementById('ibAdjustments').value) || 0;
+
+    var revised = orig + cos;
+    var consumablesPaid = _consumablesPaid ? mats : 0;
+    var amountDue = revised - consumablesPaid - prevPay + adj;
+
+    document.getElementById('sumOriginal').textContent = '$' + orig.toFixed(2);
+    document.getElementById('sumCOs').textContent = cos > 0 ? '+ $' + cos.toFixed(2) : '$0.00';
+    document.getElementById('sumRevised').textContent = '$' + revised.toFixed(2);
+    document.getElementById('sumConsumables').textContent = '-$' + consumablesPaid.toFixed(2);
+    document.getElementById('sumConsumablesRow').style.display = _consumablesPaid ? '' : 'none';
+    document.getElementById('sumPrevPay').textContent = '-$' + prevPay.toFixed(2);
+    document.getElementById('sumPrevPayRow').style.display = prevPay > 0 ? '' : 'none';
+    document.getElementById('sumAdj').textContent = (adj >= 0 ? '+' : '') + '$' + adj.toFixed(2);
+    document.getElementById('sumAdjRow').style.display = adj !== 0 ? '' : 'none';
+    document.getElementById('sumDue').textContent = '$' + amountDue.toFixed(2);
+};
+
+// ================================================================
+// GENERATE FINAL INVOICE
+// ================================================================
+window.generateFinalInvoice = function() {
+    var client = document.getElementById('ibClientName').value.trim();
+    if (!client) { alert('Please enter a client name.'); return; }
+    var amountDue = parseFloat(document.getElementById('sumDue').textContent.replace(/[^0-9.\-]/g, '')) || 0;
+    if (amountDue <= 0) { if (!confirm('Amount due is $0 or negative. Continue anyway?')) return; }
+
+    var btn = document.getElementById('genBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Publishing...';
+
+    var invoiceId = document.getElementById('ibInvoiceNum').value;
+    _generatedInvoiceId = invoiceId;
+
+    var orig = parseFloat(document.getElementById('ibOriginalAmount').value) || 0;
+    var cos = parseFloat(document.getElementById('ibChangeOrdersTotal').value) || 0;
+    var labor = parseFloat(document.getElementById('ibLaborTotal').value) || 0;
+    var mats = parseFloat(document.getElementById('ibMaterialsTotal').value) || 0;
+    var prevPay = parseFloat(document.getElementById('ibPreviousPayments').value) || 0;
+    var adj = parseFloat(document.getElementById('ibAdjustments').value) || 0;
+    var revised = orig + cos;
+    var consumablesPaid = _consumablesPaid ? mats : 0;
+
+    var portalData = {
+        invoice: {
+            id: invoiceId,
+            documentType: 'final_invoice',
+            clientName: client,
+            billingContact: document.getElementById('ibBillingContact').value.trim(),
+            clientEmail: document.getElementById('ibClientEmail').value.trim(),
+            clientPhone: document.getElementById('ibClientPhone').value.trim(),
+            projectLocation: document.getElementById('ibProjectLocation').value.trim(),
+            poNumber: document.getElementById('ibPONumber').value.trim(),
+            billingAddress: document.getElementById('ibBillingAddress').value.trim(),
+            invoiceDate: document.getElementById('ibInvoiceDate').value,
+            dueDate: document.getElementById('ibDueDate').value,
+            paymentTerms: document.getElementById('ibPaymentTerms').value,
+            scopeSummary: document.getElementById('ibScopeSummary').value.trim(),
+            originalAmount: orig,
+            changeOrdersTotal: cos,
+            revisedTotal: revised,
+            laborTotal: labor,
+            materialsTotal: mats,
+            consumablesPaid: _consumablesPaid,
+            consumablesPaidAmount: consumablesPaid,
+            previousPayments: prevPay,
+            adjustments: adj,
+            amountDue: amountDue,
+            notes: document.getElementById('ibNotes').value.trim(),
+            paymentInstructions: document.getElementById('ibPaymentInstructions').value.trim(),
+            documentChain: documentChain,
+            companyInfo: {
+                companyName: 'Watts Safety Installs',
+                licenseNum: '#54690-25',
+                phone: '(405) 410-6402',
+                email: 'Justin.Watts@WattsATPContractor.com'
+            }
+        },
+        publishedAt: new Date().toISOString(),
+        publishedBy: 'contractor',
+        viewCount: 0
+    };
+
+    // Also save to invoices path
+    var invoiceSave = Object.assign({}, portalData.invoice, {
+        type: 'final_invoice',
+        status: 'permanent',
+        amount: amountDue,
+        createdDate: new Date().toISOString()
+    });
+
+    // Write to both paths
+    var portalPath = 'portal/' + hashedPIN + '/' + invoiceId;
+    var invoicePath = 'invoices/' + hashedPIN + '/permanent/' + invoiceId;
+
+    Promise.all([
+        db.ref(portalPath).set(portalData),
+        db.ref(invoicePath).set(invoiceSave)
+    ]).then(function() {
+        btn.disabled = false;
+        btn.textContent = '🧾 Generate & Publish Final Invoice';
+
+        var loc = window.location;
+        var base = (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1')
+            ? loc.protocol + '//' + loc.host + '/tools/bidgen/final-invoice.html'
+            : loc.protocol + '//' + loc.hostname + '/tools/bidgen/final-invoice.html';
+        var portalUrl = base + '?id=' + encodeURIComponent(invoiceId) + '&pin=' + encodeURIComponent(hashedPIN);
+
+        document.getElementById('resultUrl').value = portalUrl;
+        document.getElementById('resultOverlay').classList.add('open');
+
+        // Store share data globally for copy/email
+        window._lastShareData = {
+            url: portalUrl,
+            client: client,
+            amount: amountDue,
+            invoiceId: invoiceId
+        };
+    }).catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = '🧾 Generate & Publish Final Invoice';
+        alert('Publish failed: ' + err.message);
+    });
+};
+
+// ================================================================
+// RESULT ACTIONS
+// ================================================================
+window.copyResultUrl = function() {
+    var input = document.getElementById('resultUrl');
+    navigator.clipboard.writeText(input.value).then(function() {
+        input.style.borderColor = 'var(--green)';
+        setTimeout(function() { input.style.borderColor = ''; }, 2000);
+    });
+};
+
+window.closeResult = function() {
+    document.getElementById('resultOverlay').classList.remove('open');
+};
+
+window.copyInvoiceText = function() {
+    var d = window._lastShareData;
+    if (!d) return;
+    var msg = 'Watts Safety Installs — Final Invoice\n\n'
+        + 'Hi, final invoice #' + d.invoiceId + ' for ' + d.client + ' is ready.\n'
+        + 'Amount Due: $' + d.amount.toFixed(2) + '\n\n'
+        + 'View & download: ' + d.url + '\n\n'
+        + '— Justin Watts, (405) 410-6402';
+    navigator.clipboard.writeText(msg).then(function() {
+        alert('✅ Text message copied! Paste into your messaging app.');
+    });
+};
+
+window.emailInvoice = function() {
+    var d = window._lastShareData;
+    if (!d) return;
+    var subject = encodeURIComponent('Final Invoice from Watts Safety Installs — #' + d.invoiceId);
+    var body = encodeURIComponent('Hi,\n\nPlease find the final invoice for ' + d.client + '.\n\n'
+        + 'Invoice #: ' + d.invoiceId + '\n'
+        + 'Amount Due: $' + d.amount.toFixed(2) + '\n\n'
+        + 'View the full invoice, payment breakdown, and document history online:\n' + d.url + '\n\n'
+        + 'If you have any questions, please don\'t hesitate to reach out.\n\n'
+        + 'Best regards,\nJustin Watts\nWatts Safety Installs\nNebraska Licensed Contractor #54690-25\n(405) 410-6402\nJustin.Watts@WattsATPContractor.com');
+    window.open('mailto:?subject=' + subject + '&body=' + body);
+};
+
+// ================================================================
+// AI MENTOR
+// ================================================================
+var AI_PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
+var _aiHistory = [];
+var _aiBusy = false;
+
+function addAIMsg(role, text) {
+    var msgs = document.getElementById('aiMsgs');
+    var div = document.createElement('div');
+    div.className = 'ai-msg ' + (role === 'user' ? 'user' : 'bot');
+    // Simple markdown: bold, line breaks
+    var html = esc(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    div.innerHTML = html;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+window.aiSend = function() {
+    if (_aiBusy) return;
+    var input = document.getElementById('aiInput');
+    var text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addAIMsg('user', text);
+    callAI(text);
+};
+
+window.aiQuickAction = function(action) {
+    var prompts = {
+        review: 'Review my current final invoice setup. Here\'s the data:\n' + getFormContext() + '\nCheck for any issues, missing items, or discrepancies.',
+        terms: 'I\'m invoicing a corporate client with an accounting department. Suggest the best payment terms and any tips for getting paid faster. My current setup:\n' + getFormContext(),
+        email: 'Draft a professional email to send with this final invoice to a corporate accounting department. Here\'s the invoice data:\n' + getFormContext(),
+        followup: 'Give me a follow-up strategy for this invoice — when to check in, how to escalate, and what to say. Invoice data:\n' + getFormContext(),
+        help_create: 'Help me create a final invoice. I\'ll describe the project and you help me fill in all the fields. Ask me what you need to know — client name, project details, amounts, what\'s been paid, etc.'
+    };
+    var text = prompts[action] || 'Help me with invoicing.';
+    addAIMsg('user', action === 'help_create' ? '🤖 Help me build a final invoice' : text.split('\n')[0]);
+    callAI(text);
+};
+
+function getFormContext() {
+    return [
+        'Client: ' + (document.getElementById('ibClientName').value || 'Not set'),
+        'Invoice #: ' + (document.getElementById('ibInvoiceNum').value || 'Not set'),
+        'Project: ' + (document.getElementById('ibProjectLocation').value || 'Not set'),
+        'Original Contract: $' + (document.getElementById('ibOriginalAmount').value || '0'),
+        'Change Orders: $' + (document.getElementById('ibChangeOrdersTotal').value || '0'),
+        'Labor: $' + (document.getElementById('ibLaborTotal').value || '0'),
+        'Materials: $' + (document.getElementById('ibMaterialsTotal').value || '0'),
+        'Consumables Paid: ' + (_consumablesPaid ? 'Yes' : 'No'),
+        'Previous Payments: $' + (document.getElementById('ibPreviousPayments').value || '0'),
+        'Payment Terms: ' + (document.getElementById('ibPaymentTerms').value || 'net_30'),
+        'Amount Due: ' + (document.getElementById('sumDue').textContent || '$0'),
+        'Document Chain: ' + documentChain.map(function(d) { return d.id + ' (' + d.type + ', $' + d.amount.toFixed(2) + ')'; }).join(', ')
+    ].join('\n');
+}
+
+function callAI(userMsg) {
+    _aiBusy = true;
+    var typingDiv = document.createElement('div');
+    typingDiv.className = 'ai-msg bot';
+    typingDiv.id = 'aiTyping';
+    typingDiv.innerHTML = '<span style="opacity:0.5">Thinking...</span>';
+    document.getElementById('aiMsgs').appendChild(typingDiv);
+    document.getElementById('aiMsgs').scrollTop = 999999;
+
+    var sysPrompt = 'You are the BidGen AI Invoice Mentor for Justin Watts — a Nebraska licensed contractor (#54690-25). '
+        + 'You help him create professional final invoices for corporate clients with accounting departments. '
+        + 'You know construction invoicing, payment terms (Net 30/60/90), lien waivers, payment applications, AIA forms, retainage. '
+        + 'Be direct, professional, and actionable. Use bold for key numbers. Keep responses concise but thorough.';
+
+    _aiHistory.push({ role: 'user', parts: [{ text: userMsg }] });
+    if (_aiHistory.length > 20) _aiHistory = _aiHistory.slice(-20);
+
+    var contents = [];
+    contents.push({ role: 'user', parts: [{ text: sysPrompt + '\n\nAcknowledge ready.' }] });
+    contents.push({ role: 'model', parts: [{ text: 'Ready. I\'m your invoice mentor. I can review amounts, draft emails, suggest terms, and help you build bulletproof final invoices for corporate accounting departments.' }] });
+    _aiHistory.forEach(function(m) { contents.push(m); });
+
+    fetch(AI_PROXY + '?model=gemini-2.5-pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: contents,
+            generationConfig: { temperature: 0.7, maxOutputTokens: 8192, topP: 0.95 }
+        })
+    }).then(function(r) {
+        if (!r.ok) throw new Error('API error ' + r.status);
+        return r.json();
+    }).then(function(data) {
+        var el = document.getElementById('aiTyping');
+        if (el) el.remove();
+        var text = '';
+        if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+            data.candidates[0].content.parts.forEach(function(p) {
+                if (p.thought) return;
+                if (p.text) text += p.text;
+            });
+        }
+        if (!text) text = 'No response. Try again.';
+        _aiHistory.push({ role: 'model', parts: [{ text: text }] });
+        addAIMsg('bot', text);
+    }).catch(function(err) {
+        var el = document.getElementById('aiTyping');
+        if (el) el.remove();
+        addAIMsg('bot', 'Connection error: ' + err.message + '. Try again.');
+    }).finally(function() {
+        _aiBusy = false;
+    });
+}
+
+// ================================================================
+// HELPERS
+// ================================================================
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+})();
+</script>
+</body>
+</html>

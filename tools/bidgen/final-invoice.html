@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Invoice — Watts Safety Installs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<style>
+:root {
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --card2: #f8fafc;
+    --border: #e2e8f0;
+    --border2: #cbd5e1;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --accent: #1e40af;
+    --accent2: #3b82f6;
+    --green: #059669;
+    --green-bg: #ecfdf5;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --purple: #7c3aed;
+    --radius: 12px;
+}
+
+@media(prefers-color-scheme:dark) {
+    :root {
+        --bg: #080e1a;
+        --card: #0f172a;
+        --card2: #1e293b;
+        --border: rgba(255,255,255,0.08);
+        --border2: rgba(255,255,255,0.12);
+        --text: #e2e8f0;
+        --text2: #94a3b8;
+        --text3: #64748b;
+        --accent: #60a5fa;
+        --accent2: #3b82f6;
+        --green: #34d399;
+        --green-bg: rgba(5,150,105,0.1);
+        --amber: #fbbf24;
+        --amber-bg: rgba(217,119,6,0.1);
+        --red: #f87171;
+        --red-bg: rgba(220,38,38,0.1);
+        --purple: #a78bfa;
+    }
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+/* ── LOADING / ERROR ── */
+#loadingScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; flex-direction:column; gap:16px; }
+#loadingScreen .spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--accent2); border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+#loadingScreen p { color:var(--text3); font-size:14px; }
+#errorScreen { display:none; min-height:100vh; align-items:center; justify-content:center; flex-direction:column; gap:12px; text-align:center; padding:40px; }
+#errorScreen .icon { font-size:48px; }
+#errorScreen h2 { font-size:20px; font-weight:700; }
+#errorScreen p { color:var(--text3); font-size:14px; max-width:400px; }
+
+/* ── CONTAINER ── */
+#invoiceContainer { display:none; max-width:800px; margin:0 auto; padding:20px; }
+
+/* ── HEADER BANNER ── */
+.fi-banner { background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e40af 100%); color:white; border-radius:16px; padding:32px; margin-bottom:20px; position:relative; overflow:hidden; }
+.fi-banner::before { content:''; position:absolute; top:-50%; right:-10%; width:300px; height:300px; background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%); border-radius:50%; }
+.fi-logo { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.fi-logo img { height:40px; border-radius:8px; }
+.fi-logo .co-name { font-size:18px; font-weight:800; letter-spacing:-0.5px; }
+.fi-logo .co-sub { font-size:11px; color:rgba(255,255,255,0.6); }
+.fi-title { font-size:24px; font-weight:900; letter-spacing:-0.5px; margin-bottom:4px; }
+.fi-subtitle { font-size:13px; color:rgba(255,255,255,0.65); }
+.fi-badge { position:absolute; top:24px; right:24px; background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:8px 16px; text-align:center; }
+.fi-badge .label { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); }
+.fi-badge .val { font-size:18px; font-weight:800; margin-top:2px; }
+
+/* ── CARDS ── */
+.fi-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:16px; }
+.fi-card-title { font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.fi-card-title span { font-size:14px; }
+
+/* ── INFO GRID ── */
+.fi-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:600px) { .fi-grid { grid-template-columns:1fr; } }
+.fi-grid-item { min-width:0; }
+.fi-grid-item .fi-label { font-size:10px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.fi-grid-item .fi-value { font-size:14px; font-weight:600; }
+
+/* ── AMOUNT DUE HERO ── */
+.fi-due-hero { background:linear-gradient(135deg,var(--accent2),var(--purple)); color:white; border-radius:var(--radius); padding:32px; text-align:center; margin-bottom:16px; position:relative; overflow:hidden; }
+.fi-due-hero::before { content:''; position:absolute; top:-40%; right:-20%; width:200px; height:200px; background:rgba(255,255,255,0.06); border-radius:50%; }
+.fi-due-hero .due-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; opacity:0.8; margin-bottom:8px; }
+.fi-due-hero .due-amount { font-size:42px; font-weight:900; letter-spacing:-1px; }
+.fi-due-hero .due-terms { font-size:13px; margin-top:8px; opacity:0.7; }
+.fi-due-hero .due-date { font-size:14px; margin-top:4px; font-weight:600; }
+
+/* ── PAYMENT BREAKDOWN ── */
+.fi-pay-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.fi-pay-row:last-child { border-bottom:none; }
+.fi-pay-row .pay-label { color:var(--text2); }
+.fi-pay-row .pay-value { font-weight:600; }
+.fi-pay-row.paid .pay-value { color:var(--green); }
+.fi-pay-row.paid .pay-value::before { content:'✓ '; }
+.fi-pay-row.subtotal { font-weight:700; border-bottom:2px solid var(--border); padding-bottom:14px; margin-bottom:4px; }
+.fi-pay-row.total { font-size:18px; font-weight:800; color:var(--accent); padding-top:14px; border-top:2px solid var(--accent); border-bottom:none; }
+
+/* ── DOCUMENT CHAIN ── */
+.fi-chain { position:relative; padding-left:24px; }
+.fi-chain::before { content:''; position:absolute; left:7px; top:12px; bottom:12px; width:2px; background:var(--border2); }
+.fi-chain-item { position:relative; padding:12px 16px; background:var(--card2); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; cursor:pointer; transition:all 0.15s; text-decoration:none; color:inherit; display:block; }
+.fi-chain-item:hover { border-color:var(--accent2); transform:translateX(2px); }
+.fi-chain-item::before { content:''; position:absolute; left:-21px; top:18px; width:12px; height:12px; border-radius:50%; border:2px solid var(--card); z-index:1; }
+.fi-chain-item.original::before { background:var(--green); }
+.fi-chain-item.change-order::before { background:var(--amber); }
+.fi-chain-item.final::before { background:var(--accent2); }
+.fi-chain-type { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.fi-chain-type.original { color:var(--green); }
+.fi-chain-type.change-order { color:var(--amber); }
+.fi-chain-type.final { color:var(--accent2); }
+.fi-chain-id { font-size:13px; font-weight:600; margin:2px 0; }
+.fi-chain-meta { font-size:11px; color:var(--text3); }
+
+/* ── SCOPE LIST ── */
+.fi-scope-item { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.fi-scope-item:last-child { border-bottom:none; }
+.fi-scope-item .check { color:var(--green); font-size:14px; flex-shrink:0; margin-top:1px; }
+
+/* ── COMPANY INFO FOOTER ── */
+.fi-footer { text-align:center; padding:32px 20px; color:var(--text3); font-size:12px; line-height:1.8; }
+.fi-footer .co-name { font-weight:700; color:var(--text2); font-size:14px; }
+
+/* ── ACTIONS ── */
+.fi-actions { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.fi-actions button { padding:12px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; border:none; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
+.fi-actions .btn-print { background:var(--accent2); color:white; }
+.fi-actions .btn-print:hover { opacity:0.9; }
+.fi-actions .btn-download { background:var(--card); color:var(--text); border:1px solid var(--border); }
+.fi-actions .btn-download:hover { border-color:var(--accent2); }
+
+/* ── PRINT ── */
+@media print {
+    body { background:white; }
+    .fi-actions { display:none; }
+    #invoiceContainer { max-width:100%; padding:0; }
+    .fi-card, .fi-due-hero, .fi-banner { break-inside:avoid; box-shadow:none; }
+    .fi-banner { background:#1e40af !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .fi-due-hero { background:#3b82f6 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+
+/* ── STATUS BANNER ── */
+.fi-status-bar { padding:10px 16px; border-radius:10px; margin-bottom:16px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; }
+.fi-status-bar.pending { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber); }
+.fi-status-bar.paid { background:var(--green-bg); color:var(--green); border:1px solid var(--green); }
+.fi-status-bar.overdue { background:var(--red-bg); color:var(--red); border:1px solid var(--red); }
+
+/* ── NOTES ── */
+.fi-note { background:var(--card2); border-left:3px solid var(--accent2); border-radius:0 8px 8px 0; padding:14px 16px; margin-bottom:10px; font-size:13px; line-height:1.6; color:var(--text2); white-space:pre-wrap; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+    <div class="spinner"></div>
+    <p>Loading invoice...</p>
+</div>
+
+<!-- ERROR -->
+<div id="errorScreen">
+    <div class="icon">📄</div>
+    <h2>Invoice Not Found</h2>
+    <p id="errorMsg">This invoice link may be expired or invalid. Please contact the contractor for an updated link.</p>
+</div>
+
+<!-- INVOICE -->
+<div id="invoiceContainer"></div>
+
+<script>
+(function() {
+'use strict';
+
+// ================================================================
+// FIREBASE
+// ================================================================
+var firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+// ================================================================
+// PARSE URL
+// ================================================================
+var params = new URLSearchParams(window.location.search);
+var invoiceId = params.get('id') || '';
+var ownerPin = params.get('pin') || '';
+
+if (!invoiceId || !ownerPin) {
+    showError('Missing invoice ID or PIN. Please use the full link provided by the contractor.');
+}
+
+// ================================================================
+// HELPERS
+// ================================================================
+function n(v) { return (parseFloat(v) || 0).toFixed(2); }
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function formatDate(d) {
+    if (!d) return '—';
+    var parts = d.split('-');
+    if (parts.length === 3) {
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return months[parseInt(parts[1]) - 1] + ' ' + parseInt(parts[2]) + ', ' + parts[0];
+    }
+    return d;
+}
+
+function getPaymentTermsLabel(t) {
+    var map = { due_on_receipt: 'Due on Receipt', net_15: 'Net 15', net_30: 'Net 30', net_45: 'Net 45', net_60: 'Net 60' };
+    return map[t] || t || 'Net 30';
+}
+
+function showError(msg) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'flex';
+    document.getElementById('errorMsg').textContent = msg;
+}
+
+function getInvoiceStatus(inv) {
+    if (inv.paidAt || inv.status === 'paid') return 'paid';
+    var due = inv.dueDate;
+    if (due) {
+        var today = new Date().toISOString().split('T')[0];
+        if (today > due) return 'overdue';
+    }
+    return 'pending';
+}
+
+// ================================================================
+// LOAD DATA
+// ================================================================
+function loadInvoice() {
+    // Try portal path first
+    db.ref('portal/' + ownerPin + '/' + invoiceId).once('value').then(function(snap) {
+        var data = snap.val();
+        if (data && data.invoice) {
+            render(data.invoice, data);
+            trackView(data);
+            return;
+        }
+        // Fallback: invoices path
+        return db.ref('invoices/' + ownerPin + '/permanent/' + invoiceId).once('value');
+    }).then(function(snap) {
+        if (!snap) return;
+        var inv = snap.val();
+        if (inv) {
+            render(inv, { invoice: inv });
+            return;
+        }
+        // Try temporary
+        return db.ref('invoices/' + ownerPin + '/temporary/' + invoiceId).once('value');
+    }).then(function(snap) {
+        if (!snap) return;
+        var inv = snap.val();
+        if (inv) {
+            render(inv, { invoice: inv });
+        } else {
+            showError('Invoice #' + invoiceId + ' was not found. It may have been moved or deleted.');
+        }
+    }).catch(function(err) {
+        console.error('[FinalInvoice] Load error:', err);
+        showError('Unable to load invoice. ' + err.message);
+    });
+}
+
+// ================================================================
+// TRACK VIEW
+// ================================================================
+function trackView(portalData) {
+    try {
+        var viewRef = db.ref('portal/' + ownerPin + '/' + invoiceId);
+        viewRef.update({
+            viewCount: (portalData.viewCount || 0) + 1,
+            lastViewedAt: new Date().toISOString()
+        });
+    } catch(e) { /* ignore */ }
+}
+
+// ================================================================
+// RENDER
+// ================================================================
+function render(inv, portalData) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('invoiceContainer').style.display = 'block';
+    document.title = 'Final Invoice #' + inv.id + ' — ' + (inv.companyInfo ? inv.companyInfo.companyName : 'Watts Safety Installs');
+
+    var co = inv.companyInfo || {};
+    var coName = co.companyName || 'Watts Safety Installs';
+    var coLicense = co.licenseNum || '#54690-25';
+    var coPhone = co.phone || '(405) 410-6402';
+    var coEmail = co.email || 'Justin.Watts@WattsATPContractor.com';
+
+    var status = getInvoiceStatus(inv);
+    var statusLabels = { pending: '⏳ Payment Pending', paid: '✅ Paid', overdue: '⚠️ Past Due' };
+
+    var orig = parseFloat(inv.originalAmount) || 0;
+    var cos = parseFloat(inv.changeOrdersTotal) || 0;
+    var revised = parseFloat(inv.revisedTotal) || (orig + cos);
+    var labor = parseFloat(inv.laborTotal) || 0;
+    var mats = parseFloat(inv.materialsTotal) || 0;
+    var consumablesPaid = inv.consumablesPaid ? (parseFloat(inv.consumablesPaidAmount) || mats) : 0;
+    var prevPay = parseFloat(inv.previousPayments) || 0;
+    var adj = parseFloat(inv.adjustments) || 0;
+    var amountDue = parseFloat(inv.amountDue) || (revised - consumablesPaid - prevPay + adj);
+
+    var chain = inv.documentChain || [];
+    var portalBase = window.location.protocol + '//' + window.location.host + '/tools/bidgen/portal.html';
+
+    var html = '';
+
+    // ── STATUS BAR ──
+    html += '<div class="fi-status-bar ' + status + '">' + statusLabels[status] + '</div>';
+
+    // ── ACTIONS ──
+    html += '<div class="fi-actions">';
+    html += '<button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>';
+    html += '<button class="btn-download" onclick="window.print()">📄 Download</button>';
+    html += '</div>';
+
+    // ── HEADER BANNER ──
+    html += '<div class="fi-banner">';
+    html += '<div class="fi-logo"><div><div class="co-name">' + esc(coName) + '</div><div class="co-sub">Licensed Contractor ' + esc(coLicense) + '</div></div></div>';
+    html += '<div class="fi-title">FINAL INVOICE</div>';
+    html += '<div class="fi-subtitle">#' + esc(inv.id) + '</div>';
+    html += '<div class="fi-badge"><div class="label">Amount Due</div><div class="val">$' + n(amountDue) + '</div></div>';
+    html += '</div>';
+
+    // ── AMOUNT DUE HERO ──
+    html += '<div class="fi-due-hero">';
+    html += '<div class="due-label">Total Amount Due</div>';
+    html += '<div class="due-amount">$' + n(amountDue) + '</div>';
+    html += '<div class="due-terms">' + getPaymentTermsLabel(inv.paymentTerms) + '</div>';
+    if (inv.dueDate) html += '<div class="due-date">Due by ' + formatDate(inv.dueDate) + '</div>';
+    html += '</div>';
+
+    // ── INVOICE & CLIENT INFO ──
+    html += '<div class="fi-card">';
+    html += '<div class="fi-card-title"><span>📋</span> Invoice Details</div>';
+    html += '<div class="fi-grid">';
+    html += gridItem('Invoice Number', inv.id);
+    html += gridItem('Invoice Date', formatDate(inv.invoiceDate));
+    html += gridItem('Payment Terms', getPaymentTermsLabel(inv.paymentTerms));
+    html += gridItem('Due Date', formatDate(inv.dueDate));
+    if (inv.poNumber) html += gridItem('PO Number', inv.poNumber);
+    html += gridItem('Contractor', coName);
+    html += gridItem('Phone', coPhone);
+    html += gridItem('Email', coEmail);
+    html += '</div></div>';
+
+    html += '<div class="fi-card">';
+    html += '<div class="fi-card-title"><span>👤</span> Bill To</div>';
+    html += '<div class="fi-grid">';
+    html += gridItem('Client / Company', inv.clientName);
+    if (inv.billingContact) html += gridItem('Billing Contact', inv.billingContact);
+    if (inv.clientEmail) html += gridItem('Email', inv.clientEmail);
+    if (inv.clientPhone) html += gridItem('Phone', inv.clientPhone);
+    if (inv.projectLocation) html += gridItem('Project Location', inv.projectLocation);
+    if (inv.billingAddress) html += gridItem('Billing Address', inv.billingAddress);
+    html += '</div></div>';
+
+    // ── PAYMENT BREAKDOWN ──
+    html += '<div class="fi-card">';
+    html += '<div class="fi-card-title"><span>💰</span> Payment Breakdown</div>';
+
+    html += '<div class="fi-pay-row"><span class="pay-label">Original Contract</span><span class="pay-value">$' + n(orig) + '</span></div>';
+    if (cos > 0) html += '<div class="fi-pay-row"><span class="pay-label">Change Orders</span><span class="pay-value" style="color:var(--amber)">+ $' + n(cos) + '</span></div>';
+    html += '<div class="fi-pay-row subtotal"><span class="pay-label">Revised Contract Total</span><span class="pay-value">$' + n(revised) + '</span></div>';
+
+    if (labor > 0 || mats > 0) {
+        html += '<div style="padding:8px 0;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600">Cost Breakdown</div>';
+        if (labor > 0) html += '<div class="fi-pay-row"><span class="pay-label" style="padding-left:12px">Labor</span><span class="pay-value" style="color:var(--text2)">$' + n(labor) + '</span></div>';
+        if (mats > 0) html += '<div class="fi-pay-row"><span class="pay-label" style="padding-left:12px">Materials / Consumables</span><span class="pay-value" style="color:var(--text2)">$' + n(mats) + '</span></div>';
+    }
+
+    if (consumablesPaid > 0) {
+        html += '<div class="fi-pay-row paid"><span class="pay-label">Materials/Consumables Paid</span><span class="pay-value">-$' + n(consumablesPaid) + '</span></div>';
+    }
+    if (prevPay > 0) {
+        html += '<div class="fi-pay-row paid"><span class="pay-label">Previous Payments Received</span><span class="pay-value">-$' + n(prevPay) + '</span></div>';
+    }
+    if (adj !== 0) {
+        html += '<div class="fi-pay-row"><span class="pay-label">Adjustments</span><span class="pay-value">' + (adj >= 0 ? '+' : '') + '$' + n(adj) + '</span></div>';
+    }
+
+    html += '<div class="fi-pay-row total"><span class="pay-label">AMOUNT DUE</span><span class="pay-value">$' + n(amountDue) + '</span></div>';
+    html += '</div>';
+
+    // ── SCOPE SUMMARY ──
+    if (inv.scopeSummary) {
+        html += '<div class="fi-card">';
+        html += '<div class="fi-card-title"><span>📝</span> Scope of Work Summary</div>';
+        var scopeLines = inv.scopeSummary.split('\n').filter(function(l) { return l.trim(); });
+        scopeLines.forEach(function(line) {
+            html += '<div class="fi-scope-item"><span class="check">✓</span><span>' + esc(line) + '</span></div>';
+        });
+        html += '</div>';
+    }
+
+    // ── DOCUMENT CHAIN ──
+    if (chain.length > 0) {
+        html += '<div class="fi-card">';
+        html += '<div class="fi-card-title"><span>🔗</span> Document History</div>';
+        html += '<p style="font-size:12px;color:var(--text3);margin-bottom:14px">Complete chain of contracts and change orders for this project. Click to view the original documents.</p>';
+        html += '<div class="fi-chain">';
+        chain.forEach(function(doc) {
+            var isCO = doc.type === 'change_order';
+            var typeClass = isCO ? 'change-order' : 'original';
+            var typeLabel = isCO ? 'Change Order' : 'Original Contract';
+            var link = portalBase + '?id=' + encodeURIComponent(doc.id) + '&pin=' + encodeURIComponent(ownerPin);
+            var dateStr = doc.date || '';
+            if (dateStr && dateStr.indexOf('T') > 0) dateStr = dateStr.split('T')[0];
+            html += '<a class="fi-chain-item ' + typeClass + '" href="' + esc(link) + '" target="_blank">';
+            html += '<div class="fi-chain-type ' + typeClass + '">' + typeLabel + '</div>';
+            html += '<div class="fi-chain-id">' + esc(doc.id) + '</div>';
+            html += '<div class="fi-chain-meta">$' + n(doc.amount) + (dateStr ? ' · ' + formatDate(dateStr) : '') + ' · Click to view →</div>';
+            html += '</a>';
+        });
+        // Add this final invoice to the chain
+        html += '<a class="fi-chain-item final" style="cursor:default;opacity:0.7">';
+        html += '<div class="fi-chain-type final">Final Invoice (This Document)</div>';
+        html += '<div class="fi-chain-id">' + esc(inv.id) + '</div>';
+        html += '<div class="fi-chain-meta">$' + n(amountDue) + ' · ' + formatDate(inv.invoiceDate) + '</div>';
+        html += '</a>';
+        html += '</div></div>';
+    }
+
+    // ── NOTES ──
+    if (inv.notes) {
+        html += '<div class="fi-card">';
+        html += '<div class="fi-card-title"><span>💬</span> Notes</div>';
+        html += '<div class="fi-note">' + esc(inv.notes) + '</div>';
+        html += '</div>';
+    }
+
+    // ── PAYMENT INSTRUCTIONS ──
+    if (inv.paymentInstructions) {
+        html += '<div class="fi-card" style="border-color:var(--accent2);border-width:2px">';
+        html += '<div class="fi-card-title"><span>🏦</span> Payment Instructions</div>';
+        html += '<div class="fi-note" style="border-left-color:var(--accent2)">' + esc(inv.paymentInstructions) + '</div>';
+        html += '</div>';
+    }
+
+    // ── FOOTER ──
+    html += '<div class="fi-footer">';
+    html += '<div class="co-name">' + esc(coName) + '</div>';
+    html += 'Nebraska Licensed Contractor ' + esc(coLicense) + '<br>';
+    html += esc(coPhone) + ' · ' + esc(coEmail) + '<br><br>';
+    html += '<span style="font-size:10px;color:var(--text3)">This invoice was generated by BidGen Pro. Invoice #' + esc(inv.id) + '</span>';
+    html += '</div>';
+
+    document.getElementById('invoiceContainer').innerHTML = html;
+}
+
+function gridItem(label, value) {
+    return '<div class="fi-grid-item"><div class="fi-label">' + esc(label) + '</div><div class="fi-value">' + esc(value || '—') + '</div></div>';
+}
+
+// ================================================================
+// BOOT
+// ================================================================
+if (invoiceId && ownerPin) {
+    loadInvoice();
+}
+
+})();
+</script>
+</body>
+</html>

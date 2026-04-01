@@ -6631,7 +6631,8 @@ function buildShareData(invoice) {
     var labAmt = (invoice.laborTotal || 0).toFixed(2);
     var matAmt = (invoice.materialsTotal || 0).toFixed(2);
     var isCO = invoice.type === 'change_order';
-    var origAmt = invoice.originalAmount || 0;
+    // Self-match guard: only use originalAmount if it differs from the CO amount
+    var origAmt = (invoice.originalAmount && invoice.originalAmount !== invoice.amount) ? invoice.originalAmount : 0;
 
     var smsBody, emailSubject, emailBody;
     if (isCO) {
@@ -6676,7 +6677,8 @@ function autoPublishToPortal(invoice) {
     if (!db || !userPIN) return;
     var hp = hashPIN(userPIN);
     var isCO = invoice.type === 'change_order';
-    var origAmt = invoice.originalAmount || 0;
+    // Self-match guard: only use originalAmount if it differs from the CO amount
+    var origAmt = (invoice.originalAmount && invoice.originalAmount !== invoice.amount) ? invoice.originalAmount : 0;
     var mkPct = invoice.materialsMarkup || 0;
     var portalData = {
         invoice: {
@@ -6751,27 +6753,24 @@ const originalGenerateChangeOrder = generateChangeOrder;
 generateChangeOrder = function() {
     _lastInvoiceId = autoSaveInvoice('change_order');
 
-    // Link CO to original contract for this client
+    // Link CO to original contract — only via explicit originalInvoiceId if set
     var savedCO = invoiceData.temporary[_lastInvoiceId];
     if (savedCO) {
-        var clientName = (savedCO.clientName || '').toLowerCase();
-        var bestMatch = null, bestDate = '';
-        ['permanent','temporary'].forEach(function(bucket) {
-            Object.keys(invoiceData[bucket] || {}).forEach(function(id) {
-                var inv = invoiceData[bucket][id];
-                if (id === _lastInvoiceId) return;
-                if (inv.type === 'change_order') return;
-                if ((inv.clientName || '').toLowerCase() === clientName) {
-                    var d = inv.createdDate || inv.estimateDate || '';
-                    if (d > bestDate) { bestDate = d; bestMatch = inv; }
+        // Only link if an explicit originalInvoiceId was already set on the CO
+        if (savedCO.originalInvoiceId) {
+            var origInv = null;
+            ['permanent','temporary'].forEach(function(bucket) {
+                if (invoiceData[bucket] && invoiceData[bucket][savedCO.originalInvoiceId]) {
+                    origInv = invoiceData[bucket][savedCO.originalInvoiceId];
                 }
             });
-        });
-        if (bestMatch) {
-            savedCO.originalInvoiceId = bestMatch.id;
-            savedCO.originalAmount = bestMatch.amount || 0;
-            saveInvoiceToFirebase(savedCO);
+            if (origInv && origInv.amount !== savedCO.amount) {
+                savedCO.originalAmount = origInv.amount || 0;
+                saveInvoiceToFirebase(savedCO);
+            }
         }
+        // NOTE: Removed aggressive client-name matching that was fabricating
+        // original amounts. COs should only link to originals via explicit IDs.
         autoPublishToPortal(savedCO);
         window._pendingShareData = buildShareData(savedCO);
     }

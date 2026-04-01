@@ -644,27 +644,29 @@ function findOriginalInPortal(origId) {
     }).catch(function() { return 0; });
 }
 
-// Master orchestrator: tries every strategy in order
+// Master orchestrator: tries explicit ID lookups only — no guessing by name
 function findOriginalAmount(inv) {
     var origId = inv.originalInvoiceId || '';
-    var clientName = inv.clientName || '';
-    var skipId = inv.id || invoiceId;
+    var coAmount = inv.amount || 0;
 
-    console.log('[Portal] Finding original contract: origId=' + origId + ' client=' + clientName);
+    console.log('[Portal] Finding original contract: origId=' + origId);
+
+    if (!origId) {
+        console.log('[Portal] No originalInvoiceId — skipping lookup (no guessing)');
+        return Promise.resolve(0);
+    }
 
     // Try ID-based lookup first (from invoices/ path)
     return findOriginalById(origId).then(function(amt) {
-        if (amt > 0) { console.log('[Portal] Found by ID in invoices: $' + amt); return amt; }
+        if (amt > 0 && amt !== coAmount) { console.log('[Portal] Found by ID in invoices: $' + amt); return amt; }
         // Try portal/ path for the original
         return findOriginalInPortal(origId);
     }).then(function(amt) {
-        if (amt > 0) { console.log('[Portal] Found by ID in portal: $' + amt); return amt; }
-        // Fall back to name matching
-        return findOriginalByName(clientName, skipId);
-    }).then(function(amt) {
-        if (amt > 0) { console.log('[Portal] Found by name: $' + amt); }
-        else { console.warn('[Portal] Could not find original contract amount'); }
-        return amt;
+        // Self-match guard: if found amount equals CO amount, it's a duplicate — skip
+        if (amt > 0 && amt !== coAmount) { console.log('[Portal] Found by ID in portal: $' + amt); return amt; }
+        if (amt > 0 && amt === coAmount) { console.log('[Portal] Found amount matches CO amount — self-match, skipping'); return 0; }
+        console.log('[Portal] Could not find original contract by ID');
+        return 0;
     });
 }
 
@@ -792,8 +794,9 @@ function renderPortal() {
     var materialsTotal = invoice.materialsTotal || 0;
     var grandTotal = invoice.amount || (laborTotal + materialsTotal);
     var isChangeOrder = (invoice.documentType === 'change_order') || (invoice.type === 'change_order');
-    var origAmount = invoice.originalAmount || 0;
-    var revisedTotal = invoice.revisedTotal || (origAmount + grandTotal);
+    // Self-match guard: only use originalAmount if it differs from the CO amount
+    var origAmount = (invoice.originalAmount && invoice.originalAmount !== grandTotal) ? invoice.originalAmount : 0;
+    var revisedTotal = origAmount > 0 ? (origAmount + grandTotal) : grandTotal;
 
     h += '<div class="p-card">';
     if (isChangeOrder) {

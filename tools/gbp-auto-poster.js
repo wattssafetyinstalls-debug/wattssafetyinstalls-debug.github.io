@@ -199,7 +199,7 @@ async function getAccessToken() {
 
 // ── FIND GBP ACCOUNT ID (with retry for rate limits) ──
 async function getAccountId(accessToken) {
-  var maxRetries = 5;
+  var maxRetries = 3;
   for (var attempt = 1; attempt <= maxRetries; attempt++) {
     var res = await httpsRequest({
       hostname: 'mybusinessaccountmanagement.googleapis.com',
@@ -207,8 +207,19 @@ async function getAccountId(accessToken) {
       headers: { 'Authorization': 'Bearer ' + accessToken }
     });
     console.log('  Account API status: ' + res.status + ' (attempt ' + attempt + '/' + maxRetries + ')');
+
+    // API not enabled — give clear instructions
+    if (res.status === 403) {
+      var json403 = JSON.parse(res.data);
+      console.error('\n  ⛔ API NOT ENABLED. You must enable these APIs in Google Cloud Console:');
+      console.error('     1. My Business Account Management API');
+      console.error('     2. My Business Business Information API');
+      console.error('     Visit: https://console.cloud.google.com/apis/library?project=' + (json403.error && json403.error.message ? json403.error.message.match(/project (\d+)/)?.[1] || '' : ''));
+      throw new Error('GBP APIs not enabled. Enable them in Google Cloud Console. See log above.');
+    }
+
     if (res.status === 429 && attempt < maxRetries) {
-      var wait = attempt * 15; // 15s, 30s, 45s, 60s
+      var wait = attempt * 20;
       console.log('  ⏳ Rate limited — waiting ' + wait + 's before retry...');
       await new Promise(function(r) { setTimeout(r, wait * 1000); });
       continue;
@@ -223,58 +234,46 @@ async function getAccountId(accessToken) {
       console.error('  Account Error: ' + json.error.message);
       console.error('  Account Error Status: ' + json.error.status);
     }
-    if (res.status !== 429) break; // non-retryable error
+    if (res.status !== 429) break;
   }
-  throw new Error('No GBP accounts found after ' + maxRetries + ' attempts');
+  throw new Error('No GBP accounts found after ' + maxRetries + ' attempts. Set GBP_ACCOUNT_ID in GitHub Secrets to skip this lookup.');
 }
 
 // ── POST TO GBP ──
+// Tries multiple API endpoint formats — Google has changed these over time
 async function postToGBP(accessToken, accountName, postBody) {
   var body = JSON.stringify(postBody);
-  var apiPath = '/v4/' + accountName + '/locations/' + LOCATION_ID + '/localPosts';
-  console.log('  API path: ' + apiPath);
-
-  var res = await httpsRequest({
-    hostname: 'mybusiness.googleapis.com', path: apiPath, method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + accessToken,
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body)
-    }
-  }, body);
-
-  if (res.status >= 200 && res.status < 300) {
-    return res.data;
-  }
-  throw new Error('GBP API ' + res.status + ': ' + res.data.substring(0, 500));
-}
-
-// ── POST TO GBP (direct — no account lookup needed) ──
-async function postToGBPDirect(accessToken, postBody) {
-  var body = JSON.stringify(postBody);
-  // Try multiple path formats that GBP API accepts
-  var paths = [
-    '/v4/accounts/-/locations/' + LOCATION_ID + '/localPosts',
-    '/v4/locations/' + LOCATION_ID + '/localPosts'
+  // Try multiple hostname + path combos (Google deprecated v4, migrated to v1)
+  var attempts = [
+    { host: 'mybusiness.googleapis.com', path: '/v1/' + accountName + '/locations/' + LOCATION_ID + '/localPosts' },
+    { host: 'mybusiness.googleapis.com', path: '/v4/' + accountName + '/locations/' + LOCATION_ID + '/localPosts' },
+    { host: 'mybusiness.googleapis.com', path: '/v1/accounts/-/locations/' + LOCATION_ID + '/localPosts' },
+    { host: 'mybusiness.googleapis.com', path: '/v4/accounts/-/locations/' + LOCATION_ID + '/localPosts' },
   ];
   var lastErr = '';
-  for (var i = 0; i < paths.length; i++) {
-    console.log('  Trying path: ' + paths[i]);
+  for (var i = 0; i < attempts.length; i++) {
+    var a = attempts[i];
+    console.log('  Trying: ' + a.host + a.path);
     var res = await httpsRequest({
-      hostname: 'mybusiness.googleapis.com', path: paths[i], method: 'POST',
+      hostname: a.host, path: a.path, method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + accessToken,
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(body)
       }
     }, body);
+    console.log('  → Status: ' + res.status);
     if (res.status >= 200 && res.status < 300) {
+      console.log('  ✅ Success with: ' + a.host + a.path);
       return res.data;
     }
-    lastErr = 'GBP API ' + res.status + ': ' + res.data.substring(0, 500);
-    console.log('  → ' + res.status + ' — trying next path...');
+    lastErr = 'GBP API ' + res.status + ' (' + a.host + a.path + '): ' + res.data.substring(0, 300);
+    // If 404, try next path; if auth error, stop
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('Auth error — check OAuth credentials. ' + lastErr);
+    }
   }
-  throw new Error(lastErr);
+  throw new Error('All GBP API endpoints failed. Google may have changed their API. Last error: ' + lastErr);
 }
 
 // ── BUILD POST BODY ──

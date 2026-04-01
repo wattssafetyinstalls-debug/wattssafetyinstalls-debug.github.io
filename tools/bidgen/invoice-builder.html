@@ -570,11 +570,29 @@ function importInvoice(inv) {
     if (inv.jobDetails) {
         loc = [inv.jobDetails.complexName, inv.jobDetails.unitNum, inv.jobDetails.jobCity].filter(Boolean).join(', ');
     }
+    var isCO = (inv.type === 'change_order') || (inv.documentType === 'change_order') || (inv.id && inv.id.indexOf('CO-') === 0);
+
     document.getElementById('ibClientName').value = name;
     document.getElementById('ibProjectLocation').value = loc;
-    document.getElementById('ibOriginalAmount').value = (inv.amount || 0).toFixed(2);
     document.getElementById('ibLaborTotal').value = (inv.laborTotal || 0).toFixed(2);
     document.getElementById('ibMaterialsTotal').value = (inv.materialsTotal || 0).toFixed(2);
+
+    // For change orders: the imported amount is the CO amount, NOT the original contract.
+    // Only set Original Contract Amount if the invoice explicitly has a different originalAmount.
+    if (isCO) {
+        // CO's own amount goes into Change Orders Total
+        document.getElementById('ibChangeOrdersTotal').value = (inv.amount || 0).toFixed(2);
+        // Only set original if it was explicitly stored AND differs from the CO amount
+        var explicitOrig = inv.originalAmount || 0;
+        if (explicitOrig > 0 && explicitOrig !== inv.amount) {
+            document.getElementById('ibOriginalAmount').value = explicitOrig.toFixed(2);
+        } else {
+            document.getElementById('ibOriginalAmount').value = '';
+        }
+    } else {
+        // Regular invoice: amount IS the original contract
+        document.getElementById('ibOriginalAmount').value = (inv.amount || 0).toFixed(2);
+    }
 
     // Build scope summary from scope items
     var scope = inv.scope || (inv.jobDetails ? inv.jobDetails.scopeItems : null) || [];
@@ -586,19 +604,35 @@ function importInvoice(inv) {
     // Add to document chain
     addToChain(inv);
 
-    // Look for related COs
-    var clientLower = name.toLowerCase();
-    var coTotal = 0;
-    getAllInvoices().forEach(function(other) {
-        if (other.id === inv.id) return;
-        if ((other.type === 'change_order' || other.documentType === 'change_order') &&
-            (other.clientName || '').toLowerCase() === clientLower) {
-            coTotal += other.amount || 0;
-            addToChain(other);
+    // Look for related COs (only if importing a non-CO — find its COs)
+    if (!isCO) {
+        var clientLower = name.toLowerCase();
+        var coTotal = 0;
+        getAllInvoices().forEach(function(other) {
+            if (other.id === inv.id) return;
+            if ((other.type === 'change_order' || other.documentType === 'change_order') &&
+                (other.clientName || '').toLowerCase() === clientLower) {
+                coTotal += other.amount || 0;
+                addToChain(other);
+            }
+        });
+        if (coTotal > 0) {
+            document.getElementById('ibChangeOrdersTotal').value = coTotal.toFixed(2);
         }
-    });
-    if (coTotal > 0) {
-        document.getElementById('ibChangeOrdersTotal').value = coTotal.toFixed(2);
+    } else {
+        // If importing a CO, try to find the original contract to chain
+        var clientLower = name.toLowerCase();
+        getAllInvoices().forEach(function(other) {
+            if (other.id === inv.id) return;
+            if ((other.type !== 'change_order') && (other.documentType !== 'change_order') &&
+                (other.clientName || '').toLowerCase() === clientLower) {
+                addToChain(other);
+                // Only set original amount if we haven't set it yet
+                if (!document.getElementById('ibOriginalAmount').value) {
+                    document.getElementById('ibOriginalAmount').value = (other.amount || 0).toFixed(2);
+                }
+            }
+        });
     }
 
     recalculate();

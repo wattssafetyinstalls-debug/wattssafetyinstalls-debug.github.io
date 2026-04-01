@@ -72,42 +72,20 @@ function initPortalSystem() {
         var originalAmount = 0;
 
         if (isChangeOrder) {
-            // 1. Try in-memory lookup via originalInvoiceId
+            // 1. Try in-memory lookup via explicit originalInvoiceId (most reliable)
             if (invoice.originalInvoiceId) {
                 var origInv = findInvoiceGlobal(invoice.originalInvoiceId);
-                if (origInv) originalAmount = origInv.amount || 0;
+                if (origInv && origInv.amount !== invoice.amount) {
+                    originalAmount = origInv.amount || 0;
+                }
             }
-            // 2. Try stored originalAmount on the invoice itself
-            if (!originalAmount && invoice.originalAmount) {
+            // 2. Try stored originalAmount — but ONLY if it differs from the CO amount (self-match guard)
+            if (!originalAmount && invoice.originalAmount && invoice.originalAmount !== invoice.amount) {
                 originalAmount = invoice.originalAmount;
             }
-            // 3. Firebase fallback — search all invoices for the same client
-            if (!originalAmount) {
-                try {
-                    var clientName = (invoice.clientName || '').toLowerCase();
-                    var buckets = ['permanent', 'temporary'];
-                    for (var b = 0; b < buckets.length; b++) {
-                        var snap = await db.ref('invoices/' + hashedPIN + '/' + buckets[b]).once('value');
-                        var all = snap.val() || {};
-                        var bestAmt = 0, bestDate = '';
-                        Object.keys(all).forEach(function(id) {
-                            if (id === invoiceId) return;
-                            var inv = all[id];
-                            if (inv.type === 'change_order' || inv.documentType === 'change_order') return;
-                            if ((inv.clientName || '').toLowerCase() === clientName) {
-                                var d = inv.createdDate || inv.estimateDate || '';
-                                if (d > bestDate) { bestDate = d; bestAmt = inv.amount || 0; }
-                            }
-                        });
-                        if (bestAmt > 0) { originalAmount = bestAmt; break; }
-                    }
-                } catch(e) { console.warn('[Portal] Firebase original invoice lookup failed:', e); }
-            }
-            // 4. Store it back on the invoice so future lookups don't need Firebase
-            if (originalAmount && !invoice.originalAmount) {
-                invoice.originalAmount = originalAmount;
-                saveInvoiceToFirebase(invoice);
-            }
+            // NOTE: Removed aggressive Firebase name-matching fallback.
+            // It was fabricating original amounts by matching wrong invoices or self-matching.
+            // Original contract amount should only come from explicit links, never guesses.
         }
 
         var materialsMarkup = invoice.materialsMarkup || (invoice.jobDetails || {}).materialsMarkup || 0;

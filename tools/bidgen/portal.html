@@ -50,6 +50,7 @@ body {
     animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes revPulse { 0% { opacity:0; transform:translateY(-8px); } 100% { opacity:1; transform:translateY(0); } }
 
 /* Error state */
 .portal-error {
@@ -482,21 +483,44 @@ if (!invoiceId || !ownerPin) {
 var invoice = null;
 var portalRef = db.ref('portal/' + ownerPin + '/' + invoiceId);
 var messagesRef = portalRef.child('messages');
+var _initialLoad = true;
+var _lastDataHash = '';
+var _revisionCount = 0;
 
-portalRef.once('value').then(function(snap) {
+// ── OPTIMIZATION: Real-time sync — auto-updates when contractor changes pricing ──
+portalRef.on('value', function(snap) {
     var data = snap.val();
     if (!data || !data.invoice) {
-        // Try loading from invoices path as fallback
-        return loadFromInvoicesPath();
+        if (_initialLoad) { _initialLoad = false; loadFromInvoicesPath(); }
+        return;
     }
+    // Detect if data actually changed (skip spurious updates)
+    var newHash = JSON.stringify(data.invoice.amount) + '|' + JSON.stringify(data.invoice.laborTotal) + '|' + JSON.stringify(data.invoice.materialsTotal) + '|' + (data.publishedAt || '');
+    if (!_initialLoad && newHash === _lastDataHash) return;
+
+    var wasUpdate = !_initialLoad;
+    _lastDataHash = newHash;
     invoice = data.invoice;
     invoice._portalData = data;
+
+    if (wasUpdate) {
+        _revisionCount++;
+        invoice._revised = true;
+        invoice._revisedAt = data.publishedAt || new Date().toISOString();
+        invoice._revisionCount = _revisionCount;
+        console.log('[Portal] Live update detected — re-rendering with new pricing');
+    }
+
     renderPortal();
-    trackView();
-    listenForMessages();
-}).catch(function(err) {
+
+    if (_initialLoad) {
+        _initialLoad = false;
+        trackView();
+        listenForMessages();
+    }
+}, function(err) {
     console.error('Portal load error:', err);
-    loadFromInvoicesPath();
+    if (_initialLoad) { _initialLoad = false; loadFromInvoicesPath(); }
 });
 
 function loadFromInvoicesPath() {
@@ -708,6 +732,17 @@ function renderPortal() {
             h += '<h2>Hi ' + esc(clientFirst) + ', your estimate is ready</h2>';
             h += '<p>Review the details below. You can accept with a digital signature, ask questions, or download a PDF copy.</p>';
         }
+        h += '</div>';
+    }
+
+    // ── OPTIMIZATION #2: Revision banner — shows when contractor updates pricing live ──
+    if (invoice._revised) {
+        var revDate = invoice._revisedAt ? new Date(invoice._revisedAt) : new Date();
+        var revStr = revDate.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        h += '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:14px 18px;margin:0 16px 16px;display:flex;align-items:center;gap:12px;animation:revPulse 0.6s ease-out">';
+        h += '<div style="width:36px;height:36px;border-radius:10px;background:rgba(59,130,246,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🔄</div>';
+        h += '<div><div style="font-size:14px;font-weight:700;color:var(--accent)">Estimate Updated</div>';
+        h += '<div style="font-size:12px;color:var(--text3)">Your contractor revised this estimate on ' + revStr + '. The pricing below reflects the latest changes.</div></div>';
         h += '</div>';
     }
 

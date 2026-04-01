@@ -252,36 +252,54 @@ function getInvoiceStatus(inv) {
 // ================================================================
 // LOAD DATA
 // ================================================================
+var _fiInitialLoad = true;
+var _fiLastHash = '';
+var _fiRevised = false;
+var _fiRevisedAt = '';
+
 function loadInvoice() {
-    // Try portal path first
-    db.ref('portal/' + ownerPin + '/' + invoiceId).once('value').then(function(snap) {
+    // OPTIMIZATION: Real-time sync — auto-updates when contractor changes pricing
+    db.ref('portal/' + ownerPin + '/' + invoiceId).on('value', function(snap) {
         var data = snap.val();
-        if (data && data.invoice) {
-            render(data.invoice, data);
+        if (!data || !data.invoice) {
+            if (_fiInitialLoad) { _fiInitialLoad = false; loadFromInvoicesPath(); }
+            return;
+        }
+        var newHash = JSON.stringify(data.invoice.amountDue) + '|' + JSON.stringify(data.invoice.laborTotal) + '|' + (data.publishedAt || '');
+        if (!_fiInitialLoad && newHash === _fiLastHash) return;
+
+        var wasUpdate = !_fiInitialLoad;
+        _fiLastHash = newHash;
+
+        if (wasUpdate) {
+            _fiRevised = true;
+            _fiRevisedAt = data.publishedAt || new Date().toISOString();
+            console.log('[FinalInvoice] Live update detected — re-rendering');
+        }
+
+        render(data.invoice, data);
+
+        if (_fiInitialLoad) {
+            _fiInitialLoad = false;
             trackView(data);
-            return;
         }
-        // Fallback: invoices path
-        return db.ref('invoices/' + ownerPin + '/permanent/' + invoiceId).once('value');
-    }).then(function(snap) {
-        if (!snap) return;
+    }, function(err) {
+        console.error('[FinalInvoice] Load error:', err);
+        if (_fiInitialLoad) { _fiInitialLoad = false; loadFromInvoicesPath(); }
+    });
+}
+
+function loadFromInvoicesPath() {
+    db.ref('invoices/' + ownerPin + '/permanent/' + invoiceId).once('value').then(function(snap) {
         var inv = snap.val();
-        if (inv) {
-            render(inv, { invoice: inv });
-            return;
-        }
-        // Try temporary
+        if (inv) { render(inv, { invoice: inv }); return; }
         return db.ref('invoices/' + ownerPin + '/temporary/' + invoiceId).once('value');
     }).then(function(snap) {
         if (!snap) return;
         var inv = snap.val();
-        if (inv) {
-            render(inv, { invoice: inv });
-        } else {
-            showError('Invoice #' + invoiceId + ' was not found. It may have been moved or deleted.');
-        }
+        if (inv) { render(inv, { invoice: inv }); }
+        else { showError('Invoice #' + invoiceId + ' was not found. It may have been moved or deleted.'); }
     }).catch(function(err) {
-        console.error('[FinalInvoice] Load error:', err);
         showError('Unable to load invoice. ' + err.message);
     });
 }
@@ -333,6 +351,17 @@ function render(inv, portalData) {
 
     // ── STATUS BAR ──
     html += '<div class="fi-status-bar ' + status + '">' + statusLabels[status] + '</div>';
+
+    // ── REVISION BANNER (Optimization #2) ──
+    if (_fiRevised) {
+        var revDate = _fiRevisedAt ? new Date(_fiRevisedAt) : new Date();
+        var revStr = revDate.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        html += '<div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px">';
+        html += '<div style="font-size:24px">🔄</div>';
+        html += '<div><div style="font-size:14px;font-weight:700;color:var(--accent2)">Invoice Updated</div>';
+        html += '<div style="font-size:12px;color:var(--text3)">This invoice was revised on ' + revStr + '. Amounts below reflect the latest changes.</div></div>';
+        html += '</div>';
+    }
 
     // ── ACTIONS ──
     html += '<div class="fi-actions">';
@@ -463,12 +492,20 @@ function render(inv, portalData) {
         html += '</div>';
     }
 
+    // ── RELATED LINKS ──
+    html += '<div class="fi-card" style="text-align:center">';
+    html += '<div class="fi-card-title" style="justify-content:center"><span>🔗</span> Quick Links</div>';
+    html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">';
+    html += '<a href="tel:' + (coPhone || '').replace(/[^\d+]/g,'') + '" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent2);color:white;padding:10px 18px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600">📞 Call Contractor</a>';
+    html += '<a href="mailto:' + esc(coEmail) + '" style="display:inline-flex;align-items:center;gap:6px;background:var(--card2);color:var(--text);padding:10px 18px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600;border:1px solid var(--border)">✉️ Email</a>';
+    html += '</div></div>';
+
     // ── FOOTER ──
     html += '<div class="fi-footer">';
     html += '<div class="co-name">' + esc(coName) + '</div>';
     html += 'Nebraska Licensed Contractor ' + esc(coLicense) + '<br>';
     html += esc(coPhone) + ' · ' + esc(coEmail) + '<br><br>';
-    html += '<span style="font-size:10px;color:var(--text3)">This invoice was generated by BidGen Pro. Invoice #' + esc(inv.id) + '</span>';
+    html += '<span style="font-size:10px;color:var(--text3)">This invoice was generated by <a href="/tools/bidgen/" style="color:var(--accent2);text-decoration:none">BidGen Pro</a>. Invoice #' + esc(inv.id) + '</span>';
     html += '</div>';
 
     document.getElementById('invoiceContainer').innerHTML = html;

@@ -9,17 +9,17 @@
 console.log('[Client Portal] Script loaded — waiting for BidGen login...');
 
 var PORTAL_BASE = '';  // auto-detected below
+var FINAL_INVOICE_BASE = '';  // for final invoice portal links
 var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
 
 // Detect portal base URL from current location
 (function() {
     var loc = window.location;
-    if (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1') {
-        PORTAL_BASE = loc.protocol + '//' + loc.host + '/tools/bidgen/portal.html';
-    } else {
-        // GitHub Pages
-        PORTAL_BASE = loc.protocol + '//' + loc.hostname + '/tools/bidgen/portal.html';
-    }
+    var base = (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1')
+        ? loc.protocol + '//' + loc.host + '/tools/bidgen/'
+        : loc.protocol + '//' + loc.hostname + '/tools/bidgen/';
+    PORTAL_BASE = base + 'portal.html';
+    FINAL_INVOICE_BASE = base + 'final-invoice.html';
 })();
 
 function waitForBidGen(fn) {
@@ -182,8 +182,9 @@ function initPortalSystem() {
         });
     };
 
-    function buildPortalUrl(invoiceId) {
-        return PORTAL_BASE + '?id=' + encodeURIComponent(invoiceId) + '&pin=' + encodeURIComponent(hashedPIN);
+    function buildPortalUrl(invoiceId, isFinalInvoice) {
+        var base = isFinalInvoice ? FINAL_INVOICE_BASE : PORTAL_BASE;
+        return base + '?id=' + encodeURIComponent(invoiceId) + '&pin=' + encodeURIComponent(hashedPIN);
     }
 
     // ================================================================
@@ -677,7 +678,8 @@ function initPortalSystem() {
                 var d = item.data;
                 var inv = item.invoice;
                 var vc = d.viewCount || 0;
-                var url = buildPortalUrl(item.id);
+                var isFI = inv.documentType === 'final_invoice' || inv.type === 'final_invoice';
+                var url = buildPortalUrl(item.id, isFI);
 
                 // Status badge
                 var badge = '';
@@ -691,8 +693,9 @@ function initPortalSystem() {
                 // Top row: client name, amount, status badge
                 h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">';
                 h += '<div style="display:flex;align-items:center;gap:10px;min-width:0">';
+                if (isFI) h += '<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:0.3px">FINAL INVOICE</span>';
                 h += '<div style="font-size:15px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(inv.clientName || 'Client') + '</div>';
-                h += '<div style="font-size:13px;font-weight:800;color:#3b82f6">$' + (parseFloat(inv.amount) || 0).toFixed(2) + '</div>';
+                h += '<div style="font-size:13px;font-weight:800;color:#3b82f6">$' + (parseFloat(isFI ? inv.amountDue : inv.amount) || 0).toFixed(2) + '</div>';
                 h += '</div>';
                 h += badge;
                 h += '</div>';

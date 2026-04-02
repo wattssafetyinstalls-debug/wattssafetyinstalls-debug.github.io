@@ -580,11 +580,20 @@ function trackView() {
 function renderCOBreakdown(origAmt, coAmt, revisedAmt) {
     var el = document.getElementById('coBreakdown');
     if (!el) { console.warn('[Portal] coBreakdown div not found'); return; }
-    el.innerHTML = '<div style="margin-top:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">'
-        + '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text2)"><span>Original Contract</span><span>$' + n(origAmt) + '</span></div>'
-        + '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#e67e22"><span>This Change Order</span><span>+ $' + n(coAmt) + '</span></div>'
-        + '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--green);padding-top:8px;border-top:1px solid var(--border)"><span>Revised Project Total</span><span>$' + n(revisedAmt) + '</span></div>'
-        + '</div>';
+    var html = '<div style="margin-top:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">';
+    // Only show Original Contract row if we have a real, different original amount
+    if (origAmt > 0 && origAmt !== coAmt) {
+        html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text2)"><span>Original Contract</span><span>$' + n(origAmt) + '</span></div>';
+    }
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#e67e22"><span>This Change Order</span><span>+ $' + n(coAmt) + '</span></div>';
+    // Only show revised total if there's a real original to compare against
+    if (origAmt > 0 && origAmt !== coAmt) {
+        html += '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--green);padding-top:8px;border-top:1px solid var(--border)"><span>Revised Project Total</span><span>$' + n(revisedAmt) + '</span></div>';
+    } else {
+        html += '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--green);padding-top:8px;border-top:1px solid var(--border)"><span>Change Order Total</span><span>$' + n(coAmt) + '</span></div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
     console.log('[Portal] CO breakdown rendered: orig=$' + n(origAmt) + ' co=$' + n(coAmt) + ' revised=$' + n(revisedAmt));
 }
 
@@ -1028,20 +1037,13 @@ function renderPortal() {
 
     // Fill CO breakdown after DOM is in place
     if (isChangeOrder) {
-        if (origAmount > 0) {
+        if (origAmount > 0 && origAmount !== grandTotal) {
             renderCOBreakdown(origAmount, grandTotal, revisedTotal);
         } else {
-            // Use master orchestrator: tries ID lookup, portal lookup, name match
+            // Use master orchestrator: tries explicit ID lookup only
             findOriginalAmount(invoice).then(function(foundAmt) {
-                if (foundAmt > 0) {
-                    renderCOBreakdown(foundAmt, grandTotal, foundAmt + grandTotal);
-                } else {
-                    // Still render the CO total prominently even without original
-                    var el = document.getElementById('coBreakdown');
-                    if (el) el.innerHTML = '<div style="margin-top:14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">'
-                        + '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:#e67e22;"><span>Change Order Total</span><span>$' + n(grandTotal) + '</span></div>'
-                        + '</div>';
-                }
+                // renderCOBreakdown handles the case when foundAmt is 0 or self-match
+                renderCOBreakdown(foundAmt, grandTotal, foundAmt > 0 ? (foundAmt + grandTotal) : grandTotal);
             });
         }
     }

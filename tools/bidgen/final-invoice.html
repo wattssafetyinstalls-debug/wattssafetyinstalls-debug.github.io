@@ -334,9 +334,11 @@ function render(inv, portalData) {
     var status = getInvoiceStatus(inv);
     var statusLabels = { pending: '⏳ Payment Pending', paid: '✅ Paid', overdue: '⚠️ Past Due' };
 
-    var orig = parseFloat(inv.originalAmount) || 0;
+    var _rawOrig = parseFloat(inv.originalAmount) || 0;
+    // Self-match guard: only use originalAmount if it differs from the invoice amount
+    var orig = (_rawOrig > 0 && _rawOrig !== (parseFloat(inv.amount) || 0)) ? _rawOrig : 0;
     var cos = parseFloat(inv.changeOrdersTotal) || 0;
-    var revised = parseFloat(inv.revisedTotal) || (orig + cos);
+    var revised = parseFloat(inv.revisedTotal) || (orig > 0 ? (orig + cos) : (parseFloat(inv.amount) || 0));
     var labor = parseFloat(inv.laborTotal) || 0;
     var mats = parseFloat(inv.materialsTotal) || 0;
     var consumablesPaid = inv.consumablesPaid ? (parseFloat(inv.consumablesPaidAmount) || mats) : 0;
@@ -414,9 +416,14 @@ function render(inv, portalData) {
     html += '<div class="fi-card">';
     html += '<div class="fi-card-title"><span>💰</span> Payment Breakdown</div>';
 
-    html += '<div class="fi-pay-row"><span class="pay-label">Original Contract</span><span class="pay-value">$' + n(orig) + '</span></div>';
-    if (cos > 0) html += '<div class="fi-pay-row"><span class="pay-label">Change Orders</span><span class="pay-value" style="color:var(--amber)">+ $' + n(cos) + '</span></div>';
-    html += '<div class="fi-pay-row subtotal"><span class="pay-label">Revised Contract Total</span><span class="pay-value">$' + n(revised) + '</span></div>';
+    // Only show Original Contract / Change Orders / Revised Total breakdown if there's a real original
+    if (orig > 0) {
+        html += '<div class="fi-pay-row"><span class="pay-label">Original Contract</span><span class="pay-value">$' + n(orig) + '</span></div>';
+        if (cos > 0) html += '<div class="fi-pay-row"><span class="pay-label">Change Orders</span><span class="pay-value" style="color:var(--amber)">+ $' + n(cos) + '</span></div>';
+        html += '<div class="fi-pay-row subtotal"><span class="pay-label">Revised Contract Total</span><span class="pay-value">$' + n(revised) + '</span></div>';
+    } else {
+        html += '<div class="fi-pay-row subtotal"><span class="pay-label">Contract Total</span><span class="pay-value">$' + n(revised) + '</span></div>';
+    }
 
     if (labor > 0 || mats > 0) {
         html += '<div style="padding:8px 0;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600">Cost Breakdown</div>';

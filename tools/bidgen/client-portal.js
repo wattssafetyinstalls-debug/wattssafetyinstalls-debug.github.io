@@ -179,7 +179,8 @@ function initPortalSystem() {
         var isCO = docType === 'change_order' || (invoice.id && invoice.id.indexOf('CO-') === 0);
         var laborAmt = (invoice.laborTotal || 0).toFixed(2);
         var matAmt = (invoice.materialsTotal || 0).toFixed(2);
-        var origAmt = invoice.originalAmount || 0;
+        // Self-match guard: only use originalAmount if it differs from the CO amount
+        var origAmt = (invoice.originalAmount && invoice.originalAmount !== invoice.amount) ? invoice.originalAmount : 0;
         var revisedAmt = origAmt > 0 ? (origAmt + (invoice.amount || 0)).toFixed(2) : '';
 
         var smsBody, emailSubject, emailBody;

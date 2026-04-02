@@ -2769,7 +2769,10 @@ function generateChangeOrder() {
     var sq = gn('sqft'), mk = gn('materialsMarkup')/100;
     var litems = getLaborItems(), labTot = 0; litems.forEach(function(i){ labTot += i.qty * i.price; });
     var mitems = getMatItems(), matSub = 0; mitems.forEach(function(i){ matSub += i.qtyNum * i.price; });
-    var matTot = matSub + (matSub * mk), orig = labTot + matTot;
+    var matTot = matSub + (matSub * mk);
+    // Original contract amount: only use if explicitly linked to a different invoice
+    var _coInv = (_lastInvoiceId && invoiceData.temporary && invoiceData.temporary[_lastInvoiceId]) ? invoiceData.temporary[_lastInvoiceId] : null;
+    var orig = (_coInv && _coInv.originalAmount && _coInv.originalAmount !== (labTot + matTot)) ? _coInv.originalAmount : 0;
     var disc = gv('disclaimer');
     var brand = getBrand();
     var invId = _lastInvoiceId || '';
@@ -2778,7 +2781,11 @@ function generateChangeOrder() {
     h += '<div class="header">'+co(brand)+'<div class="badge">CHANGE ORDER<br><small>SCOPE AMENDMENT</small></div></div>';
     h += '<div class="info-grid-3"><div class="info-box hl"><label>Change Order #</label><div class="value" data-invoice-id>'+E(invId || 'CO-001')+'</div></div><div class="info-box"><label>Date Issued</label><div class="value">'+E(fd(new Date().toISOString().split('T')[0]))+'</div></div><div class="info-box"><label>Response Required By</label><div class="value">'+E('3 Business Days')+'</div></div></div>';
     h += '<div class="info-grid"><div class="info-box"><label>Prepared For</label><div class="value">'+E(gv('clientName')||'[Client]')+'</div></div><div class="info-box"><label>Project Location</label><div class="value">'+E(loc())+'</div></div></div>';
-    h += '<div class="ref"><h4>Reference &mdash; Original Estimate</h4><p><strong>Original Date:</strong> '+fd(gv('estimateDate'))+'</p><p><strong>Original Amount:</strong> Labor $'+f(labTot)+' + Materials $'+f(matTot)+' = <strong>$'+f(orig)+'</strong></p><p><strong>Clause:</strong> '+E(disc || 'Unforeseen Conditions')+'</p></div>';
+    h += '<div class="ref"><h4>Reference &mdash; Original Estimate</h4><p><strong>Original Date:</strong> '+fd(gv('estimateDate'))+'</p>';
+    if (orig > 0) {
+        h += '<p><strong>Original Amount:</strong> <strong>$'+f(orig)+'</strong></p>';
+    }
+    h += '<p><strong>Clause:</strong> '+E(disc || 'Unforeseen Conditions')+'</p></div>';
     h += '<h3 class="stitle">Section 1 &mdash; Scope of Change</h3>';
     // Pull scope items from the form
     var scopeList = getScope();
@@ -2850,7 +2857,11 @@ function generateChangeOrder() {
     h += '<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#2ecc71;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1)"><span>CHANGE ORDER TOTAL</span><span data-total>$'+f(coSubtotal)+'</span></div>';
     h += '</div>';
     h += '<h3 class="stitle">Section 3 &mdash; Project Impact</h3>';
-    h += '<div class="impact"><div class="impact-box"><label>Original Contract</label><div class="val grn">$'+f(orig)+'</div></div><div class="impact-box"><label>This Change Order</label><div class="val" style="color:#e67e22;font-weight:800">$'+f(coSubtotal)+'</div></div><div class="impact-box"><label>Revised Total</label><div class="val" style="color:#2ecc71;font-weight:800">$'+f(orig + coSubtotal)+'</div></div></div>';
+    if (orig > 0) {
+        h += '<div class="impact"><div class="impact-box"><label>Original Contract</label><div class="val grn">$'+f(orig)+'</div></div><div class="impact-box"><label>This Change Order</label><div class="val" style="color:#e67e22;font-weight:800">$'+f(coSubtotal)+'</div></div><div class="impact-box"><label>Revised Total</label><div class="val" style="color:#2ecc71;font-weight:800">$'+f(orig + coSubtotal)+'</div></div></div>';
+    } else {
+        h += '<div class="impact"><div class="impact-box"><label>This Change Order</label><div class="val" style="color:#e67e22;font-weight:800">$'+f(coSubtotal)+'</div></div></div>';
+    }
     h += '<div class="info-grid"><div class="info-box"><label>Schedule Impact</label><div class="value">'+E('Additional ___ day(s)')+'</div></div><div class="info-box"><label>Revised Completion</label><div class="value">'+E('______')+'</div></div></div>';
     h += '<div class="legal"><h4>Terms &amp; Conditions</h4><p>1. This Change Order amends the original estimate upon execution by both parties.</p><p>2. Work shall not commence until written authorization is received.</p><p>3. <strong>Materials &amp; consumables (Section 2B) are required up front upon due notice and must be paid in full before materials are ordered or work begins.</strong></p><p>4. Labor balances (Section 2A) are due upon completion of the additional scope. Work may proceed as balances are handled accordingly.</p><p>5. Additional compensation reflects actual cost plus applicable overhead.</p><p>6. If declined, Contractor restores area to safe condition. Not responsible for unaddressed damage.</p><p>7. Consistent with Nebraska Revised Statute &sect;73-1117.</p></div>';
     h += '<div class="auth"><h3>Client Authorization</h3>';

@@ -400,7 +400,7 @@
       '#cai-msgs::-webkit-scrollbar-thumb{background:#1a2540;border-radius:3px}' +
 
       /* User msg */
-      '.cai-msg.user{background:linear-gradient(135deg,#5b21b6,#7c3aed);color:#fff;align-self:flex-end;max-width:82%;padding:11px 15px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}' +
+      '.cai-msg.user{background:linear-gradient(135deg,#5b21b6,#7c3aed);color:#fff;align-self:flex-end;max-width:82%;padding:11px 15px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.6;word-wrap:break-word}' +
 
       /* Bot msg */
       '.cai-msg.bot{background:#0c1726;color:#c8d4e0;align-self:flex-start;max-width:96%;padding:18px 22px;border-radius:16px 16px 16px 4px;font-size:13.5px;line-height:1.8;word-wrap:break-word;border:1px solid #1a2540}' +
@@ -444,11 +444,14 @@
       '#cai-attach{background:#0d1929;border:1px solid #1a2540;color:#6b7a8d;width:44px;height:44px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0}' +
       '#cai-attach:hover{border-color:#8b5cf6;color:#a78bfa}' +
       '#cai-attach.has-doc{border-color:#6d28d9;color:#a78bfa;background:#130d26}' +
-      '#cai-doc-preview{padding:6px 14px 0;background:#050a14;display:none;align-items:center;gap:8px;flex-shrink:0}' +
-      '#cai-doc-preview img{height:48px;width:auto;border-radius:6px;border:1px solid #2d1b69;object-fit:cover}' +
-      '#cai-doc-preview .doc-name{font-size:11px;color:#a78bfa;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
-      '#cai-doc-preview .doc-clear{background:none;border:none;color:#4a5568;cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px}' +
-      '#cai-doc-preview .doc-clear:hover{color:#e74c3c}' +
+      '#cai-doc-preview{padding:6px 14px 0;background:#050a14;display:none;gap:6px;flex-shrink:0;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin;scrollbar-color:#1a2540 transparent}' +
+      '#cai-doc-preview::-webkit-scrollbar{height:4px}' +
+      '#cai-doc-preview::-webkit-scrollbar-thumb{background:#1a2540;border-radius:2px}' +
+      '.cai-doc-chip{position:relative;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default}' +
+      '.cai-doc-chip img{height:52px;width:52px;border-radius:6px;border:1px solid #2d1b69;object-fit:cover}' +
+      '.cai-doc-chip .chip-name{font-size:9px;color:#a78bfa;max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}' +
+      '.cai-doc-chip .chip-rm{position:absolute;top:-4px;right:-4px;background:#1a0533;border:1px solid #2d1b69;color:#6b7a8d;width:16px;height:16px;border-radius:50%;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center;line-height:1}' +
+      '.cai-doc-chip .chip-rm:hover{background:#7f1d1d;color:#fca5a5;border-color:#991b1b}' +
 
       /* Mobile */
       '@media(max-width:600px){#cai-panel{right:6px;left:6px;width:auto;bottom:88px;height:75vh}#cai-panel.expanded{top:0;left:0;right:0;bottom:0;border-radius:0}}';
@@ -489,15 +492,11 @@
       '</div>' +
       '<div id="cai-acts">' + actBtns + '</div>' +
       '<div id="cai-msgs"></div>' +
-      '<div id="cai-doc-preview">' +
-        '<img id="cai-doc-thumb" src="" alt="doc">' +
-        '<span class="doc-name" id="cai-doc-name"></span>' +
-        '<button class="doc-clear" id="cai-doc-clear" title="Remove document">✕</button>' +
-      '</div>' +
+      '<div id="cai-doc-preview"></div>' +
       '<div id="cai-irow">' +
-        '<button id="cai-attach" title="Attach document (PDF or image)">📎</button>' +
-        '<input type="file" id="cai-file-in" accept="image/*,.pdf" style="display:none">' +
-        '<textarea id="cai-in" placeholder="Ask me anything — or attach a contract/document to review..." rows="1"></textarea>' +
+        '<button id="cai-attach" title="Attach documents (PDF or image, multiple OK)">📎</button>' +
+        '<input type="file" id="cai-file-in" accept="image/*,.pdf" multiple style="display:none">' +
+        '<textarea id="cai-in" placeholder="Ask me anything — or attach contracts/documents to review..." rows="1"></textarea>' +
         '<button id="cai-send">➤</button>' +
       '</div>';
     document.body.appendChild(panel);
@@ -507,10 +506,11 @@
       document.getElementById('cai-file-in').click();
     });
     document.getElementById('cai-file-in').addEventListener('change', function(e) {
-      if (e.target.files && e.target.files[0]) attachDocument(e.target.files[0]);
+      if (e.target.files && e.target.files.length) {
+        Array.from(e.target.files).forEach(attachDocument);
+      }
       e.target.value = '';
     });
-    document.getElementById('cai-doc-clear').addEventListener('click', clearAttachment);
     document.getElementById('cai-expand').addEventListener('click', function() {
       _expanded = !_expanded;
       document.getElementById('cai-panel').classList.toggle('expanded', _expanded);
@@ -525,8 +525,8 @@
     document.getElementById('cai-send').addEventListener('click', function() {
       var inp = document.getElementById('cai-in');
       var text = inp.value.trim();
-      var defaultMsg = _attachedDoc ? 'Please read this document and summarize what it is, flag any risks or weak clauses, and tell me how I should handle it.' : '';
-      if (text || _attachedDoc) { sendMessage(text || defaultMsg); inp.value = ''; autoSize(inp); }
+      var defaultMsg = _attachedDocs.length > 0 ? 'Please read these ' + (_attachedDocs.length > 1 ? _attachedDocs.length + ' documents' : 'document') + ' and summarize what each is, flag any risks or weak clauses, and tell me how I should handle them.' : '';
+      if (text || _attachedDocs.length > 0) { sendMessage(text || defaultMsg); inp.value = ''; autoSize(inp); }
     });
     document.getElementById('cai-in').addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('cai-send').click(); }
@@ -549,10 +549,12 @@
     panel.addEventListener('dragleave', function() { panel.style.outline = ''; });
     panel.addEventListener('drop', function(e) {
       e.preventDefault(); panel.style.outline = '';
-      var f = e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f && (f.type.startsWith('image/') || f.type === 'application/pdf')) {
+      var files = e.dataTransfer.files;
+      if (files && files.length) {
         if (!_open) togglePanel();
-        attachDocument(f);
+        Array.from(files).forEach(function(f) {
+          if (f.type.startsWith('image/') || f.type === 'application/pdf') attachDocument(f);
+        });
       }
     });
 
@@ -560,18 +562,44 @@
   }
 
   /* ================================================================
-     DOCUMENT ATTACH
+     DOCUMENT ATTACH — supports multiple files
      ================================================================ */
-  var _attachedDoc = null; // { dataUrl, mime, name }
+  var _attachedDocs = []; // [{ dataUrl, mime, name, pages? }]
+
+  function renderDocStrip() {
+    var preview = document.getElementById('cai-doc-preview');
+    var attachBtn = document.getElementById('cai-attach');
+    preview.innerHTML = '';
+    if (_attachedDocs.length === 0) {
+      preview.style.display = 'none';
+      attachBtn.classList.remove('has-doc');
+      return;
+    }
+    preview.style.display = 'flex';
+    attachBtn.classList.add('has-doc');
+    _attachedDocs.forEach(function(doc, idx) {
+      var chip = document.createElement('div');
+      chip.className = 'cai-doc-chip';
+      var img = document.createElement('img');
+      img.src = doc.dataUrl;
+      img.alt = doc.name;
+      var rm = document.createElement('button');
+      rm.className = 'chip-rm';
+      rm.title = 'Remove';
+      rm.textContent = '✕';
+      rm.onclick = function() { _attachedDocs.splice(idx, 1); renderDocStrip(); };
+      var label = document.createElement('div');
+      label.className = 'chip-name';
+      label.textContent = doc.name;
+      chip.appendChild(img);
+      chip.appendChild(rm);
+      chip.appendChild(label);
+      preview.appendChild(chip);
+    });
+  }
 
   function attachDocument(file) {
-    var preview = document.getElementById('cai-doc-preview');
-    var thumb = document.getElementById('cai-doc-thumb');
-    var nameEl = document.getElementById('cai-doc-name');
-    var attachBtn = document.getElementById('cai-attach');
-
     if (file.type === 'application/pdf') {
-      // Render first page of PDF to canvas via pdf.js
       var reader = new FileReader();
       reader.onload = function(e) {
         var buf = e.target.result;
@@ -595,11 +623,8 @@
               canvas.height = vp.height;
               page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise.then(function() {
                 var dataUrl = canvas.toDataURL('image/png');
-                _attachedDoc = { dataUrl: dataUrl, mime: 'image/png', name: file.name, pages: pdf.numPages };
-                thumb.src = dataUrl;
-                nameEl.textContent = file.name + (pdf.numPages > 1 ? ' (' + pdf.numPages + ' pages — sending p.1)' : '');
-                preview.style.display = 'flex';
-                attachBtn.classList.add('has-doc');
+                _attachedDocs.push({ dataUrl: dataUrl, mime: 'image/png', name: file.name, pages: pdf.numPages });
+                renderDocStrip();
               });
             });
           });
@@ -607,24 +632,18 @@
       };
       reader.readAsArrayBuffer(file);
     } else {
-      // Image file
       var reader2 = new FileReader();
       reader2.onload = function(e) {
-        _attachedDoc = { dataUrl: e.target.result, mime: file.type || 'image/jpeg', name: file.name };
-        thumb.src = e.target.result;
-        nameEl.textContent = file.name;
-        preview.style.display = 'flex';
-        attachBtn.classList.add('has-doc');
+        _attachedDocs.push({ dataUrl: e.target.result, mime: file.type || 'image/jpeg', name: file.name });
+        renderDocStrip();
       };
       reader2.readAsDataURL(file);
     }
   }
 
-  function clearAttachment() {
-    _attachedDoc = null;
-    document.getElementById('cai-doc-preview').style.display = 'none';
-    document.getElementById('cai-doc-thumb').src = '';
-    document.getElementById('cai-attach').classList.remove('has-doc');
+  function clearAllAttachments() {
+    _attachedDocs = [];
+    renderDocStrip();
   }
 
   /* ================================================================
@@ -641,19 +660,27 @@
     if (_open) document.getElementById('cai-in').focus();
   }
 
-  function addUserMsg(text, doc) {
+  function addUserMsg(text, docs) {
     var msgs = document.getElementById('cai-msgs');
     var div = document.createElement('div');
     div.className = 'cai-msg user';
-    if (doc) {
-      var img = document.createElement('img');
-      img.src = doc.dataUrl;
-      img.style.cssText = 'display:block;max-width:180px;max-height:120px;border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.15)';
-      div.appendChild(img);
-      var label = document.createElement('div');
-      label.style.cssText = 'font-size:10px;opacity:0.7;margin-bottom:4px';
-      label.textContent = '📎 ' + doc.name;
-      div.appendChild(label);
+    if (docs && docs.length > 0) {
+      var strip = document.createElement('div');
+      strip.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px';
+      docs.forEach(function(doc) {
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px';
+        var img = document.createElement('img');
+        img.src = doc.dataUrl;
+        img.style.cssText = 'height:56px;width:56px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);object-fit:cover';
+        var lbl = document.createElement('div');
+        lbl.style.cssText = 'font-size:9px;opacity:0.65;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center';
+        lbl.textContent = doc.name;
+        wrap.appendChild(img);
+        wrap.appendChild(lbl);
+        strip.appendChild(wrap);
+      });
+      div.appendChild(strip);
     }
     var t = document.createElement('span');
     t.textContent = text;
@@ -767,12 +794,12 @@
     document.getElementById('cai-send').disabled = true;
     if (!_open) togglePanel();
 
-    // Show user bubble — include doc thumbnail if attached
-    var docSnap = _attachedDoc ? _attachedDoc : null;
+    // Snapshot attached docs before clearing
+    var docsSnap = _attachedDocs.slice();
     if (isAction && actionLabel) {
-      addUserMsg(actionLabel, null);
+      addUserMsg(actionLabel, []);
     } else {
-      addUserMsg(text, docSnap);
+      addUserMsg(text, docsSnap);
     }
     showTyping();
 
@@ -791,14 +818,13 @@
       }
     }
 
-    // Build parts array — text first, then image if attached
+    // Build parts array — text first, then all attached images
     var parts = [{ text: fullMsg }];
-    if (docSnap) {
-      var b64 = docSnap.dataUrl.replace(/^data:[^;]+;base64,/, '');
-      parts.push({ inline_data: { mime_type: docSnap.mime, data: b64 } });
-      // Clear attachment after sending so it doesn't re-send on next message
-      clearAttachment();
-    }
+    docsSnap.forEach(function(doc) {
+      var b64 = doc.dataUrl.replace(/^data:[^;]+;base64,/, '');
+      parts.push({ inline_data: { mime_type: doc.mime, data: b64 } });
+    });
+    if (docsSnap.length > 0) clearAllAttachments();
 
     _hist.push({ role: 'user', parts: parts });
     if (_hist.length > 40) _hist = _hist.slice(0, 2).concat(_hist.slice(-38));

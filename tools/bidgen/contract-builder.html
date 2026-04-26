@@ -811,7 +811,7 @@ var _termsDragSrc = null;
 
 function _termsUID() { return 'ts_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
 
-function addTermsSection(titleVal, subsArr) {
+function addTermsSection(titleVal, subsArr, _skipRender) {
   var secId = _termsUID();
   var sec = { id: secId, title: titleVal || '', subs: [] };
   _termsSections.push(sec);
@@ -824,10 +824,12 @@ function addTermsSection(titleVal, subsArr) {
     var subId = _termsUID();
     sec.subs.push({ id: subId, text: '' });
   }
-  _renderTermsList();
-  // Focus the new section title
-  var el = document.getElementById('tshdr_' + secId);
-  if (el) { el.focus(); el.select(); }
+  if (!_skipRender) {
+    _renderTermsList();
+    var el = document.getElementById('tshdr_' + secId);
+    if (el) { el.focus(); el.select(); }
+  }
+  return secId;
 }
 
 function addTermsSub(secId) {
@@ -853,10 +855,7 @@ function removeTermsSub(secId, subId) {
   _renderTermsList();
 }
 
-function _renderTermsList() {
-  var list = document.getElementById('termsList');
-  if (!list) return;
-  // Flush current values back to the data model before re-rendering
+function _flushTermsFromDOM() {
   _termsSections.forEach(function(sec) {
     var hdr = document.getElementById('tshdr_' + sec.id);
     if (hdr) sec.title = hdr.value;
@@ -865,6 +864,14 @@ function _renderTermsList() {
       if (el) sub.text = el.value;
     });
   });
+}
+
+function _renderTermsList() {
+  var list = document.getElementById('termsList');
+  if (!list) return;
+
+  // Flush DOM → data BEFORE wiping DOM (only reads, never writes mid-loop)
+  _flushTermsFromDOM();
 
   list.innerHTML = '';
   _termsSections.forEach(function(sec, si) {
@@ -874,39 +881,75 @@ function _renderTermsList() {
     div.id = 'termsec_' + sec.id;
     div.draggable = true;
 
-    var subsHtml = sec.subs.map(function(sub, subi) {
-      var subLabel = (si + 1) + '.' + (subi + 1);
-      return '<div class="terms-sub-item" id="termssub_' + sub.id + '">' +
-        '<span class="terms-sub-num">' + subLabel + '</span>' +
-        '<textarea id="tssub_' + sub.id + '" placeholder="Sub-item text..." rows="1">' + _esc(sub.text) + '</textarea>' +
-        '<button class="ts-btn del" onclick="removeTermsSub(\'' + sec.id + '\',\'' + sub.id + '\')" title="Remove">✕</button>' +
-      '</div>';
-    }).join('');
+    // Build section header
+    var hdrDiv = document.createElement('div');
+    hdrDiv.className = 'terms-section-hdr';
+    hdrDiv.id = 'tshdr_wrap_' + sec.id;
+    var numSpan = document.createElement('span');
+    numSpan.className = 'terms-section-num';
+    numSpan.textContent = secNum;
+    var titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.id = 'tshdr_' + sec.id;
+    titleInput.placeholder = 'Section title (e.g. Termination, Payment, Warranty...)';
+    titleInput.value = sec.title;
+    var addSubBtn = document.createElement('button');
+    addSubBtn.className = 'ts-btn';
+    addSubBtn.title = 'Add sub-item';
+    addSubBtn.textContent = '+';
+    addSubBtn.onclick = (function(sid) { return function() { addTermsSub(sid); }; })(sec.id);
+    var delSecBtn = document.createElement('button');
+    delSecBtn.className = 'ts-btn del';
+    delSecBtn.title = 'Delete section';
+    delSecBtn.textContent = '✕';
+    delSecBtn.onclick = (function(sid) { return function() { removeTermsSection(sid); }; })(sec.id);
+    hdrDiv.appendChild(numSpan);
+    hdrDiv.appendChild(titleInput);
+    hdrDiv.appendChild(addSubBtn);
+    hdrDiv.appendChild(delSecBtn);
+    div.appendChild(hdrDiv);
 
-    div.innerHTML =
-      '<div class="terms-section-hdr" id="tshdr_wrap_' + sec.id + '">' +
-        '<span class="terms-section-num">' + secNum + '</span>' +
-        '<input id="tshdr_' + sec.id + '" type="text" placeholder="Section title (e.g. Termination, Payment, Warranty...)" value="' + _esc(sec.title) + '">' +
-        '<button class="ts-btn" onclick="addTermsSub(\'' + sec.id + '\')" title="Add sub-item">＋</button>' +
-        '<button class="ts-btn del" onclick="removeTermsSection(\'' + sec.id + '\')" title="Delete section">✕</button>' +
-      '</div>' +
-      '<div class="terms-sub-list" id="tssubs_' + sec.id + '">' + subsHtml + '</div>' +
-      '<button class="terms-add-sub" onclick="addTermsSub(\'' + sec.id + '\')">+ Add sub-item</button>';
-
-    list.appendChild(div);
-
-    // Auto-grow textareas
-    div.querySelectorAll('textarea').forEach(function(ta) {
+    // Build sub-items
+    var subList = document.createElement('div');
+    subList.className = 'terms-sub-list';
+    subList.id = 'tssubs_' + sec.id;
+    sec.subs.forEach(function(sub, subi) {
+      var subDiv = document.createElement('div');
+      subDiv.className = 'terms-sub-item';
+      subDiv.id = 'termssub_' + sub.id;
+      var numEl = document.createElement('span');
+      numEl.className = 'terms-sub-num';
+      numEl.textContent = (si+1) + '.' + (subi+1);
+      var ta = document.createElement('textarea');
+      ta.id = 'tssub_' + sub.id;
+      ta.placeholder = 'Sub-item text...';
+      ta.rows = 1;
+      ta.value = sub.text;  // .value avoids HTML-escaping issues
       ta.addEventListener('input', function() {
         this.style.height = 'auto';
         this.style.height = this.scrollHeight + 'px';
       });
-      // init height
-      setTimeout(function() {
-        ta.style.height = 'auto';
-        ta.style.height = ta.scrollHeight + 'px';
-      }, 0);
+      setTimeout(function(t) { return function() { t.style.height='auto'; t.style.height=t.scrollHeight+'px'; }; }(ta), 0);
+      var delBtn = document.createElement('button');
+      delBtn.className = 'ts-btn del';
+      delBtn.title = 'Remove';
+      delBtn.textContent = '✕';
+      delBtn.onclick = (function(sid,subid) { return function() { removeTermsSub(sid,subid); }; })(sec.id, sub.id);
+      subDiv.appendChild(numEl);
+      subDiv.appendChild(ta);
+      subDiv.appendChild(delBtn);
+      subList.appendChild(subDiv);
     });
+    div.appendChild(subList);
+
+    // Add sub-item footer button
+    var addSubFooter = document.createElement('button');
+    addSubFooter.className = 'terms-add-sub';
+    addSubFooter.textContent = '+ Add sub-item';
+    addSubFooter.onclick = (function(sid) { return function() { addTermsSub(sid); }; })(sec.id);
+    div.appendChild(addSubFooter);
+
+    list.appendChild(div);
 
     // Drag events for reordering sections
     div.addEventListener('dragstart', function(e) {
@@ -942,15 +985,7 @@ function _renderTermsList() {
 function _esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function getTermsSections() {
-  // Flush live DOM values before reading
-  _termsSections.forEach(function(sec) {
-    var hdr = document.getElementById('tshdr_' + sec.id);
-    if (hdr) sec.title = hdr.value;
-    sec.subs.forEach(function(sub) {
-      var el = document.getElementById('tssub_' + sub.id);
-      if (el) sub.text = el.value;
-    });
-  });
+  _flushTermsFromDOM();
   return _termsSections.filter(function(s) { return s.title || s.subs.some(function(sub) { return sub.text; }); });
 }
 
@@ -1495,15 +1530,13 @@ function applyAIJson(j) {
     j.scopeItems.forEach(function(s) { addScope(s); });
   }
 
-  // Terms & Clauses — restore from AI JSON
+  // Terms & Clauses — batch-load all sections then render once
   _termsSections = [];
-  _renderTermsList();
   var termsData = j.termsSections || (j.amendments && j.amendments.length ? j.amendments.map(function(a) {
     return { title: a.title || 'Clause', subs: (a.body || '').split('\n').filter(Boolean).map(function(t) { return { text: t }; }) };
-  }) : null);
-  if (termsData && termsData.length) {
-    termsData.forEach(function(s) { addTermsSection(s.title, s.subs || []); });
-  }
+  }) : []);
+  termsData.forEach(function(s) { addTermsSection(s.title, s.subs || [], true); });
+  _renderTermsList();
 
   // Full AI-drafted contract body — stored and used directly by generateContract
   _contractBody = (j.contractBody && j.contractBody.length > 100) ? j.contractBody : null;
@@ -2057,11 +2090,11 @@ function loadContractFromLibrary(contractId) {
 
     // Restore terms & clauses
     _termsSections = [];
-    _renderTermsList();
     var restoreTerms = fs.termsSections || (fs.amendments||[]).map(function(a) {
       return { title: a.title||'Clause', subs: (a.body||'').split('\n').filter(Boolean).map(function(t){return {text:t};}) };
     });
-    restoreTerms.forEach(function(s) { addTermsSection(s.title, s.subs||[]); });
+    restoreTerms.forEach(function(s) { addTermsSection(s.title, s.subs||[], true); });
+    _renderTermsList();
 
     // Generate the contract
     generateContract();

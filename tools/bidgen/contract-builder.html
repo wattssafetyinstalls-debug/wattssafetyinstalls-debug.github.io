@@ -124,14 +124,27 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .add-scope-btn { background: none; border: 1px dashed var(--border2); color: var(--text3); padding: 7px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; width: 100%; transition: all 0.2s; }
 .add-scope-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── AMENDMENT LIST ── */
-.amendment-list { display: flex; flex-direction: column; gap: 8px; }
-.amendment-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
-.amendment-item-hdr { display: flex; align-items: center; justify-content: space-between; }
-.amendment-item .ai-label { font-size: 11px; font-weight: 700; color: var(--orange); }
-.amendment-item textarea { background: transparent; border: none; outline: none; color: var(--text); font-size: 12px; font-family: inherit; resize: vertical; min-height: 50px; padding: 0; }
-.amendment-item button { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; }
-.amendment-item button:hover { color: var(--red); }
+/* ── TERMS / CLAUSES EDITOR ── */
+.terms-list { display: flex; flex-direction: column; gap: 6px; }
+.terms-section { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.terms-section-hdr { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: rgba(99,102,241,0.06); border-bottom: 1px solid var(--border); cursor: grab; }
+.terms-section-hdr:active { cursor: grabbing; }
+.terms-section-num { font-size: 11px; font-weight: 800; color: var(--accent); min-width: 22px; flex-shrink: 0; }
+.terms-section-hdr input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 12px; font-weight: 700; }
+.terms-section-hdr .ts-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 13px; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
+.terms-section-hdr .ts-btn:hover { color: var(--accent); }
+.terms-section-hdr .ts-btn.del:hover { color: var(--red); }
+.terms-sub-list { display: flex; flex-direction: column; gap: 0; }
+.terms-sub-item { display: flex; align-items: flex-start; gap: 6px; padding: 5px 10px 5px 28px; border-top: 1px solid rgba(255,255,255,0.04); }
+.terms-sub-item:first-child { border-top: none; }
+.terms-sub-num { font-size: 11px; font-weight: 700; color: var(--text3); min-width: 34px; flex-shrink: 0; padding-top: 6px; }
+.terms-sub-item textarea { flex: 1; background: transparent; border: none; outline: none; color: var(--text2); font-size: 12px; font-family: inherit; resize: none; min-height: 28px; padding: 4px 0; line-height: 1.5; overflow: hidden; }
+.terms-sub-item .ts-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 12px; padding: 2px 3px; border-radius: 4px; flex-shrink: 0; margin-top: 3px; }
+.terms-sub-item .ts-btn:hover { color: var(--red); }
+.terms-add-sub { width: 100%; background: none; border: none; border-top: 1px dashed rgba(255,255,255,0.06); color: var(--text3); font-size: 11px; padding: 5px 10px 5px 28px; text-align: left; cursor: pointer; font-family: inherit; }
+.terms-add-sub:hover { color: var(--accent); }
+.terms-section.dragging { opacity: 0.4; }
+.terms-section.drag-over { border-color: var(--accent); }
 
 /* ── ACTION BUTTONS ── */
 .cb-actions { display: flex; flex-direction: column; gap: 8px; }
@@ -439,10 +452,10 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
             </div>
           </div>
           <div class="cb-card">
-            <div class="cb-card-title"><span>📎</span> Amendments <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Optional</span></div>
+            <div class="cb-card-title"><span>⚖️</span> Terms &amp; Clauses <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Drag to reorder · click + to add sub-items</span></div>
             <div class="cb-card-body">
-              <div class="amendment-list" id="amendmentList"></div>
-              <button class="add-scope-btn" onclick="addAmendment()">+ Add Amendment / Addendum</button>
+              <div class="terms-list" id="termsList"></div>
+              <button class="add-scope-btn" onclick="addTermsSection()">+ Add Section (e.g. "4. Termination")</button>
             </div>
           </div>
           <div style="display:flex;gap:8px">
@@ -791,38 +804,164 @@ function getScopeItems() {
 }
 
 // ================================================================
-// AMENDMENTS
+// TERMS & CLAUSES ENGINE
 // ================================================================
-var _amendments = [];
+var _termsSections = []; // [{id, title, subs:[{id,text}]}]
+var _termsDragSrc = null;
 
+function _termsUID() { return 'ts_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+function addTermsSection(titleVal, subsArr) {
+  var secId = _termsUID();
+  var sec = { id: secId, title: titleVal || '', subs: [] };
+  _termsSections.push(sec);
+  if (subsArr && subsArr.length) {
+    subsArr.forEach(function(s) {
+      var subId = _termsUID();
+      sec.subs.push({ id: subId, text: typeof s === 'string' ? s : (s.text || '') });
+    });
+  } else {
+    var subId = _termsUID();
+    sec.subs.push({ id: subId, text: '' });
+  }
+  _renderTermsList();
+  // Focus the new section title
+  var el = document.getElementById('tshdr_' + secId);
+  if (el) { el.focus(); el.select(); }
+}
+
+function addTermsSub(secId) {
+  var sec = _termsSections.find(function(s) { return s.id === secId; });
+  if (!sec) return;
+  var subId = _termsUID();
+  sec.subs.push({ id: subId, text: '' });
+  _renderTermsList();
+  var el = document.getElementById('tssub_' + subId);
+  if (el) el.focus();
+}
+
+function removeTermsSection(secId) {
+  _termsSections = _termsSections.filter(function(s) { return s.id !== secId; });
+  _renderTermsList();
+}
+
+function removeTermsSub(secId, subId) {
+  var sec = _termsSections.find(function(s) { return s.id === secId; });
+  if (!sec) return;
+  if (sec.subs.length <= 1) { removeTermsSection(secId); return; }
+  sec.subs = sec.subs.filter(function(s) { return s.id !== subId; });
+  _renderTermsList();
+}
+
+function _renderTermsList() {
+  var list = document.getElementById('termsList');
+  if (!list) return;
+  // Flush current values back to the data model before re-rendering
+  _termsSections.forEach(function(sec) {
+    var hdr = document.getElementById('tshdr_' + sec.id);
+    if (hdr) sec.title = hdr.value;
+    sec.subs.forEach(function(sub) {
+      var el = document.getElementById('tssub_' + sub.id);
+      if (el) sub.text = el.value;
+    });
+  });
+
+  list.innerHTML = '';
+  _termsSections.forEach(function(sec, si) {
+    var secNum = (si + 1) + '.';
+    var div = document.createElement('div');
+    div.className = 'terms-section';
+    div.id = 'termsec_' + sec.id;
+    div.draggable = true;
+
+    var subsHtml = sec.subs.map(function(sub, subi) {
+      var subLabel = (si + 1) + '.' + (subi + 1);
+      return '<div class="terms-sub-item" id="termssub_' + sub.id + '">' +
+        '<span class="terms-sub-num">' + subLabel + '</span>' +
+        '<textarea id="tssub_' + sub.id + '" placeholder="Sub-item text..." rows="1">' + _esc(sub.text) + '</textarea>' +
+        '<button class="ts-btn del" onclick="removeTermsSub(\'' + sec.id + '\',\'' + sub.id + '\')" title="Remove">✕</button>' +
+      '</div>';
+    }).join('');
+
+    div.innerHTML =
+      '<div class="terms-section-hdr" id="tshdr_wrap_' + sec.id + '">' +
+        '<span class="terms-section-num">' + secNum + '</span>' +
+        '<input id="tshdr_' + sec.id + '" type="text" placeholder="Section title (e.g. Termination, Payment, Warranty...)" value="' + _esc(sec.title) + '">' +
+        '<button class="ts-btn" onclick="addTermsSub(\'' + sec.id + '\')" title="Add sub-item">＋</button>' +
+        '<button class="ts-btn del" onclick="removeTermsSection(\'' + sec.id + '\')" title="Delete section">✕</button>' +
+      '</div>' +
+      '<div class="terms-sub-list" id="tssubs_' + sec.id + '">' + subsHtml + '</div>' +
+      '<button class="terms-add-sub" onclick="addTermsSub(\'' + sec.id + '\')">+ Add sub-item</button>';
+
+    list.appendChild(div);
+
+    // Auto-grow textareas
+    div.querySelectorAll('textarea').forEach(function(ta) {
+      ta.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+      // init height
+      setTimeout(function() {
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
+      }, 0);
+    });
+
+    // Drag events for reordering sections
+    div.addEventListener('dragstart', function(e) {
+      _termsDragSrc = sec.id;
+      div.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    div.addEventListener('dragend', function() {
+      div.classList.remove('dragging');
+      list.querySelectorAll('.terms-section').forEach(function(d) { d.classList.remove('drag-over'); });
+    });
+    div.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      if (_termsDragSrc !== sec.id) div.classList.add('drag-over');
+    });
+    div.addEventListener('dragleave', function() { div.classList.remove('drag-over'); });
+    div.addEventListener('drop', function(e) {
+      e.preventDefault();
+      div.classList.remove('drag-over');
+      if (_termsDragSrc && _termsDragSrc !== sec.id) {
+        var srcIdx = _termsSections.findIndex(function(s) { return s.id === _termsDragSrc; });
+        var dstIdx = _termsSections.findIndex(function(s) { return s.id === sec.id; });
+        if (srcIdx > -1 && dstIdx > -1) {
+          var moved = _termsSections.splice(srcIdx, 1)[0];
+          _termsSections.splice(dstIdx, 0, moved);
+          _renderTermsList();
+        }
+      }
+    });
+  });
+}
+
+function _esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function getTermsSections() {
+  // Flush live DOM values before reading
+  _termsSections.forEach(function(sec) {
+    var hdr = document.getElementById('tshdr_' + sec.id);
+    if (hdr) sec.title = hdr.value;
+    sec.subs.forEach(function(sub) {
+      var el = document.getElementById('tssub_' + sub.id);
+      if (el) sub.text = el.value;
+    });
+  });
+  return _termsSections.filter(function(s) { return s.title || s.subs.some(function(sub) { return sub.text; }); });
+}
+
+// ── Backwards-compat shims so old amendment calls still work ──
 function addAmendment(title, body) {
-  var id = 'amend_' + Date.now();
-  _amendments.push(id);
-  var list = document.getElementById('amendmentList');
-  var div = document.createElement('div');
-  div.className = 'amendment-item';
-  div.id = 'am_' + id;
-  div.innerHTML =
-    '<div class="amendment-item-hdr">' +
-      '<input id="' + id + '_title" type="text" placeholder="Amendment title (e.g. Addendum A — Price Adjustment)" value="' + (title||'') + '" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-weight:700;">' +
-      '<button onclick="removeAmendment(\'' + id + '\')">✕</button>' +
-    '</div>' +
-    '<textarea id="' + id + '_body" placeholder="Amendment text...">' + (body||'') + '</textarea>';
-  list.appendChild(div);
+  addTermsSection(title || 'Amendment', body ? [body] : ['']);
 }
-
-function removeAmendment(id) {
-  var el = document.getElementById('am_' + id);
-  if (el) el.remove();
-  _amendments = _amendments.filter(function(i) { return i !== id; });
-}
-
 function getAmendments() {
-  return _amendments.map(function(id) {
-    var t = document.getElementById(id + '_title');
-    var b = document.getElementById(id + '_body');
-    return { title: t ? t.value.trim() : '', body: b ? b.value.trim() : '' };
-  }).filter(function(a) { return a.title || a.body; });
+  return getTermsSections().map(function(s) {
+    return { title: s.title, body: s.subs.map(function(sub) { return sub.text; }).join('\n') };
+  });
 }
 
 // ================================================================
@@ -1046,17 +1185,25 @@ function generateContract() {
         .replace(/\n{2,}/g, '</p><p>')
         .replace(/\n/g, '<br>')
       + '</div>';
-    // Amendments on top of AI body
-    if (amendments.length > 0) {
+    // Terms & Clauses on top of AI body
+    var termSecs = getTermsSections();
+    if (termSecs.length > 0) {
       html += '<div class="doc-section">';
-      html += '<div class="doc-section-title"><span>\uD83D\uDCCE</span> Amendments & Addendums<span class="amend-badge">\uD83D\uDD16 ' + amendments.length + ' Amendment' + (amendments.length > 1 ? 's' : '') + '</span></div>';
-      amendments.forEach(function(a, i) {
-        html += '<div class="doc-amendment">';
-        html += '<div class="amend-hdr">Amendment ' + (i + 1) + (a.title ? ' \u2014 ' + esc(a.title) : '') + '</div>';
-        html += '<div class="amend-body">' + esc(a.body || 'No body text.') + '</div>';
+      html += '<div class="doc-section-title"><span>⚖️</span> Terms &amp; Conditions</div>';
+      html += '<div class="doc-terms">';
+      termSecs.forEach(function(sec, si) {
+        html += '<div class="term-item"><strong>' + (si+1) + '. ' + esc(sec.title) + '</strong>';
+        if (sec.subs && sec.subs.length) {
+          html += '<ol style="margin:4px 0 0 16px;padding:0;list-style:none">';
+          sec.subs.forEach(function(sub, subi) {
+            if (sub.text) html += '<li style="padding:2px 0;font-size:12px;color:var(--text2)">' +
+              '<span style="font-weight:700;color:var(--text3);margin-right:6px">' + (si+1) + '.' + (subi+1) + '</span>' + esc(sub.text) + '</li>';
+          });
+          html += '</ol>';
+        }
         html += '</div>';
       });
-      html += '</div>';
+      html += '</div></div>';
     }
     html += '<div class="doc-footer">Watts Safety Installs \u00B7 Nebraska Licensed Contractor #54690-25 \u00B7 (405) 410-6402 \u00B7 Justin.Watts@WattsATPContractor.com<br>This document was generated by BidGen Pro Contract Builder. Not a substitute for licensed legal counsel.</div>';
     html += '<div id="docPrintBtn" style="text-align:center;margin-top:18px;padding-top:16px">';
@@ -1148,17 +1295,25 @@ function generateContract() {
   if (customTerms) html += '<div class="term-item"><strong>Additional Terms:</strong> ' + esc(customTerms) + '</div>';
   html += '</div></div>';
 
-  // Amendments
-  if (amendments.length > 0) {
+  // Terms & Clauses (replaces old Amendments section)
+  var termSecs2 = getTermsSections();
+  if (termSecs2.length > 0) {
     html += '<div class="doc-section">';
-    html += '<div class="doc-section-title"><span>📎</span> Amendments & Addendums<span class="amend-badge">🔖 ' + amendments.length + ' Amendment' + (amendments.length > 1 ? 's' : '') + '</span></div>';
-    amendments.forEach(function(a, i) {
-      html += '<div class="doc-amendment">';
-      html += '<div class="amend-hdr">Amendment ' + (i + 1) + (a.title ? ' — ' + esc(a.title) : '') + '</div>';
-      html += '<div class="amend-body">' + esc(a.body || 'No body text.') + '</div>';
+    html += '<div class="doc-section-title"><span>⚖️</span> Terms &amp; Conditions</div>';
+    html += '<div class="doc-terms">';
+    termSecs2.forEach(function(sec, si) {
+      html += '<div class="term-item"><strong>' + (si+1) + '. ' + esc(sec.title) + '</strong>';
+      if (sec.subs && sec.subs.length) {
+        html += '<ol style="margin:4px 0 0 16px;padding:0;list-style:none">';
+        sec.subs.forEach(function(sub, subi) {
+          if (sub.text) html += '<li style="padding:2px 0;font-size:12px;color:var(--text2)">' +
+            '<span style="font-weight:700;color:var(--text3);margin-right:6px">' + (si+1) + '.' + (subi+1) + '</span>' + esc(sub.text) + '</li>';
+        });
+        html += '</ol>';
+      }
       html += '</div>';
     });
-    html += '</div>';
+    html += '</div></div>';
   }
 
   // Signature block
@@ -1340,11 +1495,14 @@ function applyAIJson(j) {
     j.scopeItems.forEach(function(s) { addScope(s); });
   }
 
-  // Amendments
-  document.getElementById('amendmentList').innerHTML = '';
-  _amendments = [];
-  if (j.amendments && j.amendments.length > 0) {
-    j.amendments.forEach(function(a) { addAmendment(a.title, a.body); });
+  // Terms & Clauses — restore from AI JSON
+  _termsSections = [];
+  _renderTermsList();
+  var termsData = j.termsSections || (j.amendments && j.amendments.length ? j.amendments.map(function(a) {
+    return { title: a.title || 'Clause', subs: (a.body || '').split('\n').filter(Boolean).map(function(t) { return { text: t }; }) };
+  }) : null);
+  if (termsData && termsData.length) {
+    termsData.forEach(function(s) { addTermsSection(s.title, s.subs || []); });
   }
 
   // Full AI-drafted contract body — stored and used directly by generateContract
@@ -1371,7 +1529,7 @@ function clearForm() {
     var el = document.getElementById(id); if (el) el.value = '';
   });
   document.getElementById('scopeList').innerHTML = ''; _scopeItems = [];
-  document.getElementById('amendmentList').innerHTML = ''; _amendments = [];
+  _termsSections = []; _renderTermsList();
   document.getElementById('pricingFields').innerHTML = '';
   document.getElementById('docOut').innerHTML = '';
   _contractBody = null;
@@ -1433,7 +1591,7 @@ function captureFormState() {
     if (el) snap[id] = el.value || '';
   });
   snap.scopeItems = typeof getScopeItems === 'function' ? getScopeItems() : _scopeItems.slice();
-  snap.amendments = typeof getAmendments === 'function' ? getAmendments() : _amendments.slice();
+  snap.termsSections = typeof getTermsSections === 'function' ? getTermsSections() : [];
   return snap;
 }
 
@@ -1858,7 +2016,10 @@ function loadContractFromLibrary(contractId) {
         priceMonthly: c.priceMonthly || '', priceVisits: c.priceVisits || '',
         pricePerVisit: c.pricePerVisit || '', priceSeasonTotal: c.priceSeasonTotal || '',
         priceSeasonMonths: c.priceSeasonMonths || '',
-        scopeItems: c.scopeItems || [], amendments: c.amendments || []
+        scopeItems: c.scopeItems || [],
+        termsSections: c.termsSections || (c.amendments || []).map(function(a) {
+          return { title: a.title || 'Clause', subs: (a.body||'').split('\n').filter(Boolean).map(function(t){return {text:t};}) };
+        })
       };
     }
 
@@ -1894,10 +2055,13 @@ function loadContractFromLibrary(contractId) {
     _scopeItems = [];
     (fs.scopeItems || []).forEach(function(s) { addScope(s); });
 
-    // Restore amendments
-    document.getElementById('amendmentList').innerHTML = '';
-    _amendments = [];
-    (fs.amendments || []).forEach(function(a) { addAmendment(a.title, a.body); });
+    // Restore terms & clauses
+    _termsSections = [];
+    _renderTermsList();
+    var restoreTerms = fs.termsSections || (fs.amendments||[]).map(function(a) {
+      return { title: a.title||'Clause', subs: (a.body||'').split('\n').filter(Boolean).map(function(t){return {text:t};}) };
+    });
+    restoreTerms.forEach(function(s) { addTermsSection(s.title, s.subs||[]); });
 
     // Generate the contract
     generateContract();

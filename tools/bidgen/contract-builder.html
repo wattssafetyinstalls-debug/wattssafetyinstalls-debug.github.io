@@ -142,7 +142,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .btn-danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
 /* ── RIGHT: DOCUMENT PREVIEW COL ── */
-.preview-col { overflow-y: auto; background: var(--bg2); display: flex; flex-direction: column; }
+.preview-col { background: var(--bg2); display: flex; flex-direction: column; overflow: hidden; }
 .preview-col::-webkit-scrollbar { width: 6px; }
 .preview-col::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
@@ -155,7 +155,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .tbtn.purple { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.2); color: #a78bfa; }
 .tbtn.purple:hover { background: rgba(139,92,246,0.2); }
 
-.preview-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 14px; padding: 40px; text-align: center; }
+.preview-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 14px; padding: 40px; text-align: center; min-height: 300px; }
 .preview-empty .big-icon { font-size: 60px; opacity: 0.3; }
 .preview-empty h3 { font-size: 18px; font-weight: 700; color: var(--text2); }
 .preview-empty p { font-size: 13px; color: var(--text3); max-width: 320px; line-height: 1.6; }
@@ -557,8 +557,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <a id="portalStatusLink" href="#" target="_blank" style="color:#059669;font-family:monospace;font-size:11px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:400px;display:inline-block"></a>
         <button onclick="copyPortalLink()" style="background:none;border:1px solid rgba(5,150,105,0.3);color:#059669;padding:2px 8px;border-radius:5px;font-size:10px;cursor:pointer;white-space:nowrap">Copy</button>
       </div>
-      <div id="docOut">
-        <div class="preview-empty" id="emptyState">
+      <div class="preview-empty" id="emptyState">
           <div class="big-icon">📜</div>
           <h3>Your contract will appear here</h3>
           <p>Fill in the form and click Generate — or hit a quick start below to let AI draft it for you in seconds.</p>
@@ -571,7 +570,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
             <button class="qbtn" onclick="quickStart('Business proposal for commercial cleaning services')">💼 Commercial Proposal</button>
           </div>
         </div>
-      </div>
+      <div id="docOut" style="flex:1;overflow-y:auto;padding:0;"></div>
     </div>
   </div>
 </div>
@@ -1109,7 +1108,8 @@ function generateContract() {
 
   html += '</div>'; // doc-wrapper
 
-  document.getElementById('emptyState').style.display = 'none';
+  var emptyEl = document.getElementById('emptyState');
+  if (emptyEl) emptyEl.style.display = 'none';
   document.getElementById('docOut').innerHTML = html;
 
   _currentDoc = {
@@ -1301,7 +1301,8 @@ function clearForm() {
   document.getElementById('amendmentList').innerHTML = ''; _amendments = [];
   document.getElementById('pricingFields').innerHTML = '';
   document.getElementById('docOut').innerHTML = '';
-  document.getElementById('emptyState').style.display = '';
+  var emptyEl = document.getElementById('emptyState');
+  if (emptyEl) emptyEl.style.display = '';
   autoContractNum();
 }
 

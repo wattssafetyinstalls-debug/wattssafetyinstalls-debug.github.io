@@ -570,13 +570,17 @@
       if (jsonData && typeof applyAIJson === 'function') {
         var loadBtn = document.createElement('button');
         loadBtn.style.cssText = 'background:linear-gradient(135deg,#6d28d9,#8b5cf6);border:none;color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700';
-        loadBtn.textContent = '📥 Load into Form';
+        loadBtn.textContent = '📥 Load & Regenerate';
         loadBtn.onclick = function() {
           applyAIJson(jsonData);
-          generateContract();
-          loadBtn.textContent = '✅ Loaded!';
-          loadBtn.disabled = true;
+          if (typeof generateContract === 'function') generateContract();
+          loadBtn.textContent = '✅ Applied!';
           loadBtn.style.background = '#27ae60';
+          // Re-enable after 2s so user can reload if they keep refining
+          setTimeout(function() {
+            loadBtn.textContent = '📥 Load & Regenerate';
+            loadBtn.style.background = 'linear-gradient(135deg,#6d28d9,#8b5cf6)';
+          }, 2000);
         };
         acts.appendChild(loadBtn);
       }
@@ -655,6 +659,15 @@
     if (!isAction) {
       var ctx = getContractContext();
       if (ctx) fullMsg = text + '\n\n[Current Contract Form Data]\n' + ctx;
+    }
+
+    // If a contract has already been generated, append its plain-text so AI can revise it
+    var docWrapper = document.querySelector('#docOut .doc-wrapper');
+    if (docWrapper) {
+      var docText = docWrapper.innerText || '';
+      if (docText && docText.length > 100) {
+        fullMsg += '\n\n[Currently Generated Contract — Plain Text]\n' + docText.substring(0, 6000);
+      }
     }
 
     _hist.push({ role: 'user', parts: [{ text: fullMsg }] });

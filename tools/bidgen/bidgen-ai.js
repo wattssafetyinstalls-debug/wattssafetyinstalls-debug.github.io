@@ -207,7 +207,8 @@
           if (c.content.parts[j].text) texts.push(c.content.parts[j].text);
         }
       }
-      return texts.join('\n\n') || 'Model returned empty. Try rephrasing.';
+      // NOTE: never add googleSearch tools here — grounding strips code blocks from responses
+      return texts.join('\n') || 'Model returned empty. Try rephrasing.';
     }).catch(function(err) {
       clearTimeout(timer);
       // Don't retry on abort (timeout) or if we've exhausted retries

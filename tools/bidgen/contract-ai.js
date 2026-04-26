@@ -196,7 +196,8 @@
       var texts = [];
       c.content.parts.forEach(function(p) { if (!p.thought && p.text) texts.push(p.text); });
       if (!texts.length) c.content.parts.forEach(function(p) { if (p.text) texts.push(p.text); });
-      return texts.join('\n\n') || 'Model returned empty. Try rephrasing.';
+      // NOTE: never add googleSearch tools here — grounding strips code blocks from responses
+      return texts.join('\n') || 'Model returned empty. Try rephrasing.';
     }).catch(function(err) {
       clearTimeout(timer);
       if (err.name === 'AbortError' || attempt >= MAX_RETRIES) throw err;
@@ -704,11 +705,20 @@
       var acts = document.createElement('div');
       acts.style.cssText = 'margin-top:10px;padding-top:8px;border-top:1px solid #1a2540;display:flex;gap:6px;flex-wrap:wrap';
 
-      // Load into form — parse contract-json block
-      var jsonMatch = text.match(/```(?:contract-json|json)\s*\n([\s\S]*?)```/);
+      // Load into form — parse contract-json block (prefer contract-json tag over generic json)
       var jsonData = null;
-      if (jsonMatch) {
-        try { jsonData = JSON.parse(jsonMatch[1].trim()); } catch(e) {}
+      var strictMatch = text.match(/```contract-json\s*\n([\s\S]*?)```/);
+      if (strictMatch) {
+        try { jsonData = JSON.parse(strictMatch[1].trim()); } catch(e) {}
+      }
+      if (!jsonData) {
+        // Fallback: last ```json block in response (not an example, the real data)
+        var allJsonBlocks = [];
+        var jre = /```json\s*\n([\s\S]*?)```/g;
+        var jm;
+        while ((jm = jre.exec(text)) !== null) allJsonBlocks.push(jm[1]);
+        var lastBlock = allJsonBlocks[allJsonBlocks.length - 1];
+        if (lastBlock) try { jsonData = JSON.parse(lastBlock.trim()); } catch(e) {}
       }
       if (jsonData && typeof applyAIJson === 'function') {
         var loadBtn = document.createElement('button');

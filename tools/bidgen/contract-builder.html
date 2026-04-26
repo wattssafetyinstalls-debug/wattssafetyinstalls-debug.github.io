@@ -451,13 +451,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
               <button class="add-scope-btn" onclick="addScope()">+ Add Service Item</button>
             </div>
           </div>
-          <div class="cb-card">
-            <div class="cb-card-title"><span>⚖️</span> Terms &amp; Clauses <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Drag to reorder · click + to add sub-items</span></div>
-            <div class="cb-card-body">
-              <div class="terms-list" id="termsList"></div>
-              <button class="add-scope-btn" onclick="addTermsSection()">+ Add Section (e.g. "4. Termination")</button>
-            </div>
-          </div>
           <div style="display:flex;gap:8px">
             <button class="step-next" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)" onclick="switchTabByIndex(1)">← Back</button>
             <button class="step-next" style="flex:1" onclick="switchTabByIndex(3)">Next: Pricing →</button>
@@ -517,8 +510,16 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 
         <!-- ── TAB 5: TERMS + GENERATE ── -->
         <div class="tab-pane" id="tab-terms">
+          <!-- Hierarchical Terms & Clauses (numbered 1, 1.1, 1.2 …) -->
           <div class="cb-card">
-            <div class="cb-card-title"><span>⚖️</span> Terms & Conditions</div>
+            <div class="cb-card-title"><span>⚖️</span> Itemized Terms &amp; Clauses <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Drag sections to reorder · auto-numbered 1, 1.1, 1.2…</span></div>
+            <div class="cb-card-body">
+              <div class="terms-list" id="termsList"></div>
+              <button class="add-scope-btn" onclick="addTermsSection()">+ Add Section (e.g. "Termination", "Warranty")</button>
+            </div>
+          </div>
+          <div class="cb-card">
+            <div class="cb-card-title"><span>📜</span> Quick Defaults</div>
             <div class="cb-card-body">
               <div class="cb-field">
                 <label>Cancellation Policy</label>
@@ -1516,11 +1517,15 @@ function applyAIJson(j) {
   // Re-render pricing fields for the chosen type
   onPricingTypeChange();
 
-  // Pricing values
-  ['priceTotal','priceDeposit','priceHourly','priceHoursWeek','priceMinHours',
-   'priceMileage','priceMonthly','priceVisits','pricePerVisit','priceVisitsMonth',
-   'priceSeasonTotal','priceSeasonMonths'].forEach(function(k) {
-    if (j[k]) sv(k, j[k]);
+  // Pricing values — ALL fields the dynamic pricing renderer creates
+  ['priceTotal','priceDeposit',
+   'priceHourly','priceHoursWeek','priceMinHours','priceMileage',
+   'priceMonthly','priceVisits',
+   'pricePerVisit','priceVisitsMonth',
+   'ms1desc','ms1amt','ms1date','ms2desc','ms2amt','ms2date','ms3desc','ms3amt','ms3date',
+   'priceSeasonTotal','priceSeasonMonths','priceSeasonBilling','priceMonthlyEq'
+  ].forEach(function(k) {
+    if (j[k] !== undefined && j[k] !== null && j[k] !== '') sv(k, j[k]);
   });
 
   // Scope
@@ -1538,11 +1543,18 @@ function applyAIJson(j) {
   termsData.forEach(function(s) { addTermsSection(s.title, s.subs || [], true); });
   _renderTermsList();
 
-  // Full AI-drafted contract body — stored and used directly by generateContract
-  _contractBody = (j.contractBody && j.contractBody.length > 100) ? j.contractBody : null;
+  // contractBody is OPTIONAL prose. Prefer structured termsSections when present — the
+  // form-based render is the polished source of truth, the blob would just duplicate clauses.
+  if (termsData.length > 0) {
+    _contractBody = null;  // structured data wins
+  } else {
+    _contractBody = (j.contractBody && j.contractBody.length > 100) ? j.contractBody : null;
+  }
 
-  // Navigate to Terms tab so user sees Generate buttons immediately after load
+  // Navigate to the Terms tab — the clauses card and Generate buttons live here
   switchTabByIndex(4);
+  // Also auto-generate so the contract appears immediately
+  setTimeout(function() { if (typeof generateContract === 'function') generateContract(); }, 50);
 }
 
 // ================================================================

@@ -1244,13 +1244,14 @@ function applyAIJson(j) {
   }
 
   sv('clientName', j.clientName); sv('clientContact', j.clientContact);
-  sv('clientTitle', j.clientTitle); sv('clientAddress', j.clientAddress);
-  sv('projectName', j.projectName); sv('jobCity', j.jobCity);
-  sv('startDate', j.startDate); sv('endDate', j.endDate);
-  sv('renewalTerms', j.renewalTerms); sv('pricingType', j.pricingType);
-  sv('paymentTerms', j.paymentTerms); sv('lateFee', j.lateFee);
-  sv('cancellationPolicy', j.cancellationPolicy); sv('materialsPolicy', j.materialsPolicy);
-  sv('customTerms', j.customTerms);
+  sv('clientTitle', j.clientTitle); sv('clientEmail', j.clientEmail);
+  sv('clientPhone', j.clientPhone); sv('clientAddress', j.clientAddress);
+  sv('contractNum', j.contractNum); sv('projectName', j.projectName);
+  sv('jobCity', j.jobCity); sv('startDate', j.startDate);
+  sv('endDate', j.endDate); sv('renewalTerms', j.renewalTerms);
+  sv('pricingType', j.pricingType); sv('paymentTerms', j.paymentTerms);
+  sv('lateFee', j.lateFee); sv('cancellationPolicy', j.cancellationPolicy);
+  sv('materialsPolicy', j.materialsPolicy); sv('customTerms', j.customTerms);
 
   // Re-render pricing fields for the chosen type
   onPricingTypeChange();
@@ -1275,6 +1276,9 @@ function applyAIJson(j) {
   if (j.amendments && j.amendments.length > 0) {
     j.amendments.forEach(function(a) { addAmendment(a.title, a.body); });
   }
+
+  // Navigate to Terms tab so user sees Generate buttons immediately after load
+  switchTabByIndex(4);
 }
 
 // ================================================================

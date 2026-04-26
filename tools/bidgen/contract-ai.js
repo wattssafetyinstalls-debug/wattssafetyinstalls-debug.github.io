@@ -128,7 +128,7 @@
     'When you want to auto-fill the contract form, include a ```contract-json block at the END of your response.',
     'This JSON will be parsed and loaded into the Contract Builder form.',
     '```',
-    '{"contractType":"service","clientName":"...","clientContact":"...","clientTitle":"...","clientAddress":"...","projectName":"...","jobCity":"Norfolk, NE","startDate":"YYYY-MM-DD","endDate":"YYYY-MM-DD","renewalTerms":"month-to-month","pricingType":"hourly","priceHourly":65,"priceMinHours":2,"scopeItems":["...","..."],"paymentTerms":"net30","lateFee":"1.5pct","cancellationPolicy":"30day","materialsPolicy":"contractor","customTerms":"...","amendments":[]}',
+    '{"contractType":"service","clientName":"...","clientContact":"...","clientTitle":"...","clientEmail":"...","clientPhone":"...","clientAddress":"...","contractNum":"WSI-CTR-001","projectName":"...","jobCity":"Norfolk, NE","startDate":"YYYY-MM-DD","endDate":"YYYY-MM-DD","renewalTerms":"month-to-month","pricingType":"hourly","priceHourly":65,"priceMinHours":2,"priceTotal":0,"priceDeposit":0,"priceMonthly":0,"priceVisits":0,"priceSeasonTotal":0,"priceSeasonMonths":7,"scopeItems":["...","..."],"paymentTerms":"net30","lateFee":"1.5pct","cancellationPolicy":"30day","materialsPolicy":"contractor","customTerms":"...","amendments":[]}',
     '```',
     '',
     '## AMENDMENT DRAFTING',

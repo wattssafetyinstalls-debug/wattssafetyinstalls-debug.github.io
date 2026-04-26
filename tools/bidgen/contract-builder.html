@@ -1423,8 +1423,10 @@ function captureFormState() {
   var fields = ['clientName','clientContact','clientTitle','clientEmail','clientPhone','clientAddress',
     'projectName','jobCity','contractNum','startDate','endDate','renewalTerms','pricingType',
     'paymentTerms','lateFee','cancellationPolicy','materialsPolicy','customTerms',
-    'priceTotal','priceDeposit','priceHourly','priceMinHours','priceMonthly',
-    'priceVisits','pricePerVisit','priceSeasonTotal','priceSeasonMonths'];
+    'priceTotal','priceDeposit','priceHourly','priceHoursWeek','priceMinHours','priceMileage',
+    'priceMonthly','priceVisits','pricePerVisit','priceVisitsMonth',
+    'priceSeasonTotal','priceSeasonMonths','priceSeasonBilling','priceMonthlyEq',
+    'ms1desc','ms1amt','ms1date','ms2desc','ms2amt','ms2date','ms3desc','ms3amt','ms3date'];
   var snap = { contractType: _contractType };
   fields.forEach(function(id) {
     var el = document.getElementById(id);
@@ -1874,13 +1876,17 @@ function loadContractFromLibrary(contractId) {
       if (el && fs[id] !== undefined) el.value = fs[id];
     });
 
-    // Restore pricing type then pricing fields
+    // Restore pricing type — this rebuilds the dynamic pricing fields DOM
     var ptEl = document.getElementById('pricingType');
     if (ptEl && fs.pricingType) { ptEl.value = fs.pricingType; onPricingTypeChange && onPricingTypeChange(); }
-    ['priceTotal','priceDeposit','priceHourly','priceMinHours','priceMonthly',
-     'priceVisits','pricePerVisit','priceSeasonTotal','priceSeasonMonths'].forEach(function(id) {
+    // Now restore ALL pricing values into the freshly created fields
+    ['priceTotal','priceDeposit','priceHourly','priceHoursWeek','priceMinHours','priceMileage',
+     'priceMonthly','priceVisits','pricePerVisit','priceVisitsMonth',
+     'priceSeasonTotal','priceSeasonMonths','priceSeasonBilling','priceMonthlyEq',
+     'ms1desc','ms1amt','ms1date','ms2desc','ms2amt','ms2date','ms3desc','ms3amt','ms3date'
+    ].forEach(function(id) {
       var el = document.getElementById(id);
-      if (el && fs[id] !== undefined) el.value = fs[id];
+      if (el && fs[id] !== undefined && fs[id] !== '') el.value = fs[id];
     });
 
     // Restore scope items

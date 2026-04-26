@@ -461,6 +461,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
           <div class="cb-actions">
             <button class="btn-primary" onclick="generateContract()">⚡ Generate Contract</button>
             <button class="btn-secondary" onclick="aiDraftContract()">🤖 AI Draft for Me</button>
+            <button class="btn-secondary" style="background:rgba(109,40,217,0.12);border-color:rgba(109,40,217,0.3);color:#a78bfa" onclick="publishContract()">🌐 Publish & Send to Client</button>
             <button class="btn-secondary" onclick="clearForm()">🗑️ Clear All</button>
           </div>
           <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">AI uses Gemini 2.5 Flash · Legally informed, not legal advice</div>
@@ -476,8 +477,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <button class="tbtn" onclick="window.print()">🖨️ Print / PDF</button>
         <button class="tbtn green" onclick="copyContractText()">📋 Copy Text</button>
         <button class="tbtn purple" onclick="emailContract()">✉️ Email</button>
+        <button class="tbtn" style="background:rgba(109,40,217,0.15);border-color:rgba(109,40,217,0.35);color:#a78bfa;font-weight:800" onclick="publishContract()">🌐 Publish &amp; Share Link</button>
         <button class="tbtn" onclick="saveToFirebase()">💾 Save</button>
         <button class="tbtn" onclick="loadSaved()">📂 Load Saved</button>
+      </div>
+      <div id="portalStatusBar" style="display:none;padding:8px 16px;background:rgba(5,150,105,0.1);border-bottom:1px solid rgba(5,150,105,0.2);font-size:12px;color:#059669;display:none;align-items:center;gap:8px;flex-shrink:0">
+        <span>✅ Published:</span>
+        <a id="portalStatusLink" href="#" target="_blank" style="color:#059669;font-family:monospace;font-size:11px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:400px;display:inline-block"></a>
+        <button onclick="copyPortalLink()" style="background:none;border:1px solid rgba(5,150,105,0.3);color:#059669;padding:2px 8px;border-radius:5px;font-size:10px;cursor:pointer;white-space:nowrap">Copy</button>
       </div>
       <div id="docOut">
         <div class="preview-empty" id="emptyState">
@@ -1222,6 +1229,230 @@ function loadSaved() {
       showStatus('✅ Contract info loaded. Note: full HTML not stored — regenerate from form.');
     }
   }).catch(function(e) { showStatus('❌ Load failed: ' + e.message); });
+}
+
+// ================================================================
+// PORTAL PUBLISH — save contract to Firebase, generate shareable URL
+// ================================================================
+var _lastPortalUrl = '';
+
+function buildPortalUrl(contractId) {
+  var base = window.location.protocol + '//' + window.location.hostname +
+    (window.location.port ? ':' + window.location.port : '') + '/tools/bidgen/contract-portal.html';
+  return base + '?id=' + encodeURIComponent(contractId) + '&pin=' + encodeURIComponent(hashedPIN);
+}
+
+function collectPricingRows() {
+  var pt = gv('pricingType');
+  if (pt === 'fixed') {
+    var total = (parseFloat(gv('priceTotal'))||0);
+    var dep = (parseFloat(gv('priceDeposit'))||0);
+    var bal = total - dep;
+    var rows = [['Description','Amount'],['Contract Price (Lump Sum)','$' + total.toFixed(2)]];
+    if (dep > 0) { rows.push(['Deposit (due at signing)','$' + dep.toFixed(2)]); rows.push(['Balance Due on Completion','$' + bal.toFixed(2)]); }
+    rows.push(['TOTAL CONTRACT VALUE','$' + total.toFixed(2)]);
+    return rows;
+  } else if (pt === 'hourly') {
+    return [['Rate','Details'],['Hourly Rate','$' + (parseFloat(gv('priceHourly'))||0).toFixed(2) + ' per hour'],
+      gv('priceHoursWeek') ? ['Est. Hours/Week', gv('priceHoursWeek') + ' hours'] : null,
+      gv('priceMinHours') ? ['Min Hours/Visit', gv('priceMinHours') + ' hour minimum per visit'] : null
+    ].filter(Boolean);
+  } else if (pt === 'monthly') {
+    return [['Item','Amount'],['Monthly Retainer','$' + (parseFloat(gv('priceMonthly'))||0).toFixed(2)],
+      gv('priceVisits') ? ['Services/Month', gv('priceVisits') + ' visits'] : null,
+      ['MONTHLY TOTAL','$' + (parseFloat(gv('priceMonthly'))||0).toFixed(2)]
+    ].filter(Boolean);
+  } else if (pt === 'per_visit') {
+    var pv = parseFloat(gv('pricePerVisit'))||0;
+    var vm = parseFloat(gv('priceVisitsMonth'))||0;
+    return [['Item','Amount'],['Per-Visit Rate','$' + pv.toFixed(2)],
+      vm > 0 ? ['Est. Monthly Total','$' + (pv * vm).toFixed(2)] : null
+    ].filter(Boolean);
+  } else if (pt === 'seasonal_flat') {
+    return [['Item','Amount'],['Season Total (Flat Rate)','$' + (parseFloat(gv('priceSeasonTotal'))||0).toFixed(2)],
+      ['Duration', (gv('priceSeasonMonths')||'?') + ' months'],
+      ['Monthly Equivalent','$' + (gv('priceMonthlyEq')||'0.00')],
+      ['SEASON TOTAL','$' + (parseFloat(gv('priceSeasonTotal'))||0).toFixed(2)]
+    ];
+  } else if (pt === 'milestone') {
+    var rows2 = [['Milestone','Description','Due Date','Amount']];
+    ['ms1','ms2','ms3'].forEach(function(m,i) {
+      if (gv(m+'amt') && parseFloat(gv(m+'amt')) > 0)
+        rows2.push(['Milestone ' + (i+1), gv(m+'desc')||'', gv(m+'date')||'', '$' + (parseFloat(gv(m+'amt'))||0).toFixed(2)]);
+    });
+    var tot = ['ms1','ms2','ms3'].reduce(function(s,m){return s+(parseFloat(gv(m+'amt'))||0);},0);
+    rows2.push(['PROJECT TOTAL','','','$' + tot.toFixed(2)]);
+    return rows2;
+  }
+  return [];
+}
+
+function collectTermsArray() {
+  var terms = [];
+  var payText = {net30:'Net 30 — invoices due within 30 days.',net15:'Net 15 — invoices due within 15 days.',net7:'Net 7 — invoices due within 7 days.',due_receipt:'Due upon receipt.',
+    '50_50':'50% deposit at signing, 50% on completion.',monthly_invoice:'Invoiced monthly, due within 30 days.',custom:'See additional terms.'};
+  var lateText = {'1.5pct':'1.5% per month on overdue balances.','2pct':'2% per month on overdue balances.',flat25:'$25 flat fee per late invoice.',flat50:'$50 flat fee per late invoice.',none:''};
+  var cancelText = {'30day':'Either party may terminate with 30 days written notice.','14day':'14 days written notice required.','7day':'7 days written notice required.','60day':'60 days written notice required.',none:''};
+  var matText = {contractor:'Contractor supplies all materials (included in price).',client:'Client supplies all materials.',split:'Contractor provides labor; client purchases materials.',markup:'Contractor purchases materials at cost + markup.',na:''};
+  if (payText[gv('paymentTerms')]) terms.push({label:'Payment', value: payText[gv('paymentTerms')]});
+  if (lateText[gv('lateFee')]) terms.push({label:'Late Fee', value: lateText[gv('lateFee')]});
+  if (matText[gv('materialsPolicy')]) terms.push({label:'Materials', value: matText[gv('materialsPolicy')]});
+  if (cancelText[gv('cancellationPolicy')]) terms.push({label:'Termination', value: cancelText[gv('cancellationPolicy')]});
+  terms.push({label:'Governing Law', value:'State of Nebraska. Disputes resolved in Madison County, NE.'});
+  terms.push({label:'Warranty', value:'All labor warranted free from defects for 1 year from completion date.'});
+  terms.push({label:'Independent Contractor', value:'Contractor is an independent contractor, not an employee of Client.'});
+  if (gv('renewalTerms')) {
+    var renewText = {'month-to-month':'Continues month-to-month after term until terminated.','auto-annual':'Auto-renews annually (30-day notice to cancel).','auto-90':'Auto-renews annually (90-day notice to cancel).','negotiated':'Renewal by mutual written agreement.'};
+    if (renewText[gv('renewalTerms')]) terms.push({label:'Renewal', value: renewText[gv('renewalTerms')]});
+  }
+  if (gv('customTerms')) terms.push({label:'Additional Terms', value: gv('customTerms')});
+  return terms;
+}
+
+function publishContract() {
+  if (!_currentDoc) {
+    // Auto-generate if nothing exists yet
+    generateContract();
+    if (!_currentDoc) { showStatus('⚠️ Generate a contract first.'); return; }
+  }
+  if (!db) { showStatus('⚠️ Firebase unavailable — cannot publish.'); return; }
+
+  var contractId = _currentDoc.num || ('CTR-' + Date.now());
+  showStatus('🔄 Publishing to portal…');
+
+  // Build the structured payload for the portal viewer
+  var portalPayload = {
+    contract: {
+      type: _contractType,
+      num: contractId,
+      date: _currentDoc.date,
+      clientName: gv('clientName') || 'Client',
+      clientContact: gv('clientContact'),
+      clientTitle: gv('clientTitle'),
+      clientEmail: gv('clientEmail'),
+      clientPhone: gv('clientPhone'),
+      clientAddress: gv('clientAddress'),
+      projectName: gv('projectName'),
+      jobCity: gv('jobCity'),
+      startDate: gv('startDate'),
+      endDate: gv('endDate'),
+      scopeItems: getScopeItems(),
+      pricingHtml: true,
+      pricingRows: collectPricingRows(),
+      terms: collectTermsArray(),
+      amendments: getAmendments()
+    },
+    publishedAt: new Date().toISOString(),
+    publishedBy: 'contractor',
+    viewCount: 0,
+    status: 'pending'
+  };
+
+  db.ref('contracts/' + hashedPIN + '/' + contractId).set(portalPayload).then(function() {
+    var url = buildPortalUrl(contractId);
+    _lastPortalUrl = url;
+
+    // Show persistent status bar
+    var bar = document.getElementById('portalStatusBar');
+    bar.style.display = 'flex';
+    var lnk = document.getElementById('portalStatusLink');
+    lnk.href = url;
+    lnk.textContent = url;
+
+    showStatus('✅ Published — share link ready!');
+    showShareModal(contractId, url);
+  }).catch(function(err) {
+    showStatus('❌ Publish failed: ' + err.message);
+  });
+}
+
+function copyPortalLink() {
+  if (!_lastPortalUrl) return;
+  navigator.clipboard.writeText(_lastPortalUrl).then(function() {
+    showStatus('✅ Link copied!');
+  });
+}
+
+// ================================================================
+// CONTRACT SHARE MODAL
+// ================================================================
+function showShareModal(contractId, portalUrl) {
+  var existing = document.getElementById('contractShareModal');
+  if (existing) existing.remove();
+
+  var clientName = gv('clientName') || 'Client';
+  var clientEmail = gv('clientEmail') || '';
+  var clientPhone = gv('clientPhone') || '';
+  var contractType = (TYPE_LABELS[_contractType] || 'Contract').toLowerCase().replace(' agreement','').replace(' contract','');
+  var total = _currentDoc ? (_currentDoc.pricingText || '') : '';
+
+  var smsBody = 'Watts Safety Installs: Hi ' + clientName + ', your ' + contractType + ' contract (' + contractId + ')' +
+    (total ? ' — ' + total : '') + ' is ready to review and sign online: ' + portalUrl +
+    ' — Justin Watts (405) 410-6402';
+
+  var emailSubject = encodeURIComponent('Your Contract from Watts Safety Installs — ' + contractId);
+  var emailBody = encodeURIComponent(
+    'Hi ' + clientName + ',\n\n' +
+    'Your ' + contractType + ' contract is ready to review and sign online:\n\n' +
+    portalUrl + '\n\n' +
+    'Contract: ' + contractId + '\n' +
+    (total ? 'Value: ' + total + '\n' : '') +
+    '\nYou can review the full scope, ask questions, and sign with a digital signature — all from your phone or computer.\n\n' +
+    'If you have any questions, just reply to this email or call me.\n\n' +
+    'Best regards,\nJustin Watts\nWatts Safety Installs\nNebraska Licensed Contractor #54690-25\n(405) 410-6402'
+  );
+
+  var modal = document.createElement('div');
+  modal.id = 'contractShareModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML =
+    '<div style="background:#0f172a;border:1px solid rgba(139,92,246,0.3);border-radius:20px;max-width:540px;width:100%;padding:28px;box-shadow:0 25px 60px rgba(0,0,0,0.6)">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:18px">🌐</div>' +
+          '<div><div style="font-size:16px;font-weight:700;color:#fff">Contract Portal Link</div>' +
+          '<div style="font-size:11px;color:#64748b">Client can view, message, and sign online</div></div>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'contractShareModal\').remove()" style="background:none;border:none;color:#64748b;font-size:24px;cursor:pointer">&times;</button>' +
+      '</div>' +
+
+      // URL box
+      '<div style="background:#1e293b;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:16px">' +
+        '<div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Portal URL</div>' +
+        '<div style="display:flex;gap:8px">' +
+          '<input type="text" id="ctrUrlInput" value="' + portalUrl.replace(/"/g,'&quot;') + '" readonly style="flex:1;background:#0f172a;border:1px solid rgba(255,255,255,0.1);color:#a78bfa;padding:10px 12px;border-radius:8px;font-size:11px;font-family:monospace;outline:none">' +
+          '<button onclick="document.getElementById(\'ctrUrlInput\').select();navigator.clipboard.writeText(document.getElementById(\'ctrUrlInput\').value).then(function(){var b=event.target;b.textContent=\'✅ Copied\';setTimeout(function(){b.textContent=\'Copy\';},2000)})" style="background:linear-gradient(135deg,#6d28d9,#8b5cf6);border:none;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Copy</button>' +
+        '</div>' +
+      '</div>' +
+
+      // Share buttons
+      '<div style="margin-bottom:16px">' +
+        '<div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Send To Client</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
+          // Email
+          '<a href="mailto:' + clientEmail + '?subject=' + emailSubject + '&body=' + emailBody + '" style="background:#1e293b;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 10px;text-align:center;text-decoration:none;color:#94a3b8;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;display:block">' +
+            '<div style="font-size:22px;margin-bottom:5px">✉️</div>Email' +
+          '</a>' +
+          // SMS
+          '<a href="sms:' + clientPhone + '?body=' + encodeURIComponent(smsBody) + '" style="background:#1e293b;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 10px;text-align:center;text-decoration:none;color:#94a3b8;font-size:12px;font-weight:600;cursor:pointer;display:block">' +
+            '<div style="font-size:22px;margin-bottom:5px">💬</div>Text (SMS)' +
+          '</a>' +
+          // Open portal
+          '<a href="' + portalUrl + '" target="_blank" style="background:#1e293b;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 10px;text-align:center;text-decoration:none;color:#94a3b8;font-size:12px;font-weight:600;cursor:pointer;display:block">' +
+            '<div style="font-size:22px;margin-bottom:5px">👁</div>Preview' +
+          '</a>' +
+        '</div>' +
+      '</div>' +
+
+      // Info
+      '<div style="background:rgba(109,40,217,0.08);border:1px solid rgba(109,40,217,0.15);border-radius:10px;padding:12px;font-size:12px;color:#94a3b8;line-height:1.7">' +
+        '📌 <strong style="color:#a78bfa">What the client sees:</strong> Full contract, scope, pricing, terms, amendments. They can message you questions directly and sign with a digital signature.<br>' +
+        '🔔 You\'ll see their signature + messages reflected in Firebase in real time.' +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
 }
 
 // ── INIT ──

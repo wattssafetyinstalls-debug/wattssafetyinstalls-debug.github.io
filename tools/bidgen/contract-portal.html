@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Contract — Review & Sign</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<style>
+:root{
+  --bg:#f8fafc;--card:#fff;--card2:#f1f5f9;--border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.11);
+  --text:#1a202c;--text2:#4a5568;--text3:#718096;
+  --accent:#6d28d9;--accent2:#8b5cf6;--green:#059669;--green-bg:#ecfdf5;
+  --amber:#d97706;--red:#dc2626;--radius:16px;
+  --shadow:0 4px 12px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.06);
+  --shadow-lg:0 10px 40px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+
+/* Loading */
+.cp-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Error */
+.cp-error{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px;text-align:center;padding:24px}
+.cp-error h2{font-size:20px;color:var(--red)}
+.cp-error p{color:var(--text2);font-size:14px;max-width:380px}
+
+/* Banner */
+.cp-banner{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-align:center;padding:10px 20px;font-size:13px;font-weight:600;letter-spacing:0.2px}
+.cp-banner a{color:rgba(255,255,255,0.8);text-decoration:none}
+
+/* Header */
+.cp-header{background:#fff;border-bottom:1px solid var(--border);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:50}
+.cp-logo{display:flex;align-items:center;gap:10px}
+.cp-logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px}
+.cp-logo-text{font-size:15px;font-weight:800;color:var(--text)}
+.cp-logo-sub{font-size:11px;color:var(--text3)}
+.cp-status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700}
+.status-pending{background:rgba(217,119,6,0.1);color:var(--amber);border:1px solid rgba(217,119,6,0.2)}
+.status-signed{background:var(--green-bg);color:var(--green);border:1px solid rgba(5,150,105,0.2)}
+.status-viewed{background:rgba(109,40,217,0.08);color:var(--accent);border:1px solid rgba(109,40,217,0.15)}
+
+/* Main content */
+.cp-main{max-width:780px;margin:0 auto;padding:28px 20px 80px}
+
+/* Contract info card */
+.cp-info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px;box-shadow:var(--shadow-lg)}
+.cp-info-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:18px;padding-bottom:18px;border-bottom:2px solid;border-image:linear-gradient(90deg,var(--accent),var(--accent2)) 1}
+.cp-contract-title{font-size:22px;font-weight:900;letter-spacing:-0.5px}
+.cp-contract-num{font-size:12px;color:var(--text3);margin-top:3px}
+.cp-parties{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.cp-party{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.cp-party-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px}
+.cp-party-name{font-size:15px;font-weight:700;margin-bottom:3px}
+.cp-party-detail{font-size:12px;color:var(--text2);line-height:1.7}
+
+/* Sections */
+.cp-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cp-section-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text2);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.cp-section-icon{font-size:16px}
+
+.cp-scope-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.cp-scope-list li{display:flex;gap:10px;font-size:14px;color:var(--text);line-height:1.6}
+.cp-scope-list li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;margin-top:2px}
+
+.cp-price-table{width:100%;border-collapse:collapse;font-size:13px}
+.cp-price-table th{background:var(--card2);color:var(--text2);text-align:left;padding:9px 12px;border:1px solid var(--border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.cp-price-table td{padding:9px 12px;border:1px solid var(--border);color:var(--text)}
+.cp-price-table tr:nth-child(even) td{background:var(--card2)}
+.cp-price-total td{background:var(--card2);font-weight:800;font-size:15px}
+.cp-price-total td:last-child{color:var(--accent)}
+
+.cp-terms-list{display:flex;flex-direction:column;gap:10px}
+.cp-term{font-size:13px;color:var(--text2);line-height:1.75;padding:10px 14px;background:rgba(109,40,217,0.04);border:1px solid rgba(109,40,217,0.08);border-radius:8px}
+.cp-term strong{color:var(--text);display:block;margin-bottom:2px;font-size:12px;text-transform:uppercase;letter-spacing:0.3px}
+
+.cp-amendment{background:rgba(217,119,6,0.05);border:1px solid rgba(217,119,6,0.15);border-radius:10px;padding:14px;margin-bottom:10px}
+.cp-amend-hdr{font-size:11px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.cp-amend-body{font-size:13px;color:var(--text2);line-height:1.75;white-space:pre-wrap}
+
+/* Q&A / Messages */
+.cp-msg-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;min-height:30px}
+.cp-msg{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.6}
+.cp-msg.from-client{background:rgba(109,40,217,0.08);border:1px solid rgba(109,40,217,0.12);color:var(--text)}
+.cp-msg.from-contractor{background:var(--green-bg);border:1px solid rgba(5,150,105,0.15);color:var(--text)}
+.cp-msg .msg-meta{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.cp-msg-input{display:flex;gap:8px}
+.cp-msg-input textarea{flex:1;background:#fff;border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:70px}
+.cp-msg-input textarea:focus{border-color:var(--accent)}
+.cp-msg-input button{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;align-self:flex-end;white-space:nowrap}
+
+/* Signature block */
+.cp-sign-section{background:linear-gradient(135deg,rgba(109,40,217,0.05),rgba(139,92,246,0.03));border:2px solid rgba(109,40,217,0.15);border-radius:var(--radius);padding:24px;text-align:center}
+.cp-sign-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
+.cp-sign-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+.sig-canvas-wrap{position:relative;border:2px dashed rgba(109,40,217,0.3);border-radius:12px;background:#fff;margin:0 auto 14px;max-width:500px;overflow:hidden}
+canvas#sigCanvas{display:block;width:100%;touch-action:none;cursor:crosshair}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:var(--border2);pointer-events:none;font-style:italic;user-select:none}
+.sig-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.sig-clear{background:none;border:1px solid var(--border2);color:var(--text3);padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+.sig-submit{background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;padding:14px 36px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(5,150,105,0.25);transition:all 0.2s}
+.sig-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(5,150,105,0.3)}
+.sig-submit:disabled{opacity:0.5;cursor:default;transform:none}
+.cp-agree-check{display:flex;align-items:flex-start;gap:10px;text-align:left;font-size:12px;color:var(--text2);max-width:500px;margin:0 auto 14px;line-height:1.6}
+.cp-agree-check input{margin-top:3px;flex-shrink:0;accent-color:var(--accent);width:15px;height:15px}
+
+/* Signed confirmation */
+.cp-signed-confirm{background:var(--green-bg);border:2px solid rgba(5,150,105,0.25);border-radius:var(--radius);padding:24px;text-align:center}
+.cp-signed-confirm h3{color:var(--green);font-size:20px;font-weight:800;margin-bottom:6px}
+.cp-signed-confirm p{color:var(--text2);font-size:13px}
+.cp-signed-confirm .sig-preview{border:1px solid rgba(5,150,105,0.2);border-radius:8px;max-width:300px;margin:14px auto 0;background:#fff;display:block}
+
+/* Footer */
+.cp-footer{text-align:center;padding:20px;font-size:11px;color:var(--text3);line-height:1.8}
+
+@media(max-width:580px){
+  .cp-parties{grid-template-columns:1fr}
+  .cp-main{padding:16px 14px 60px}
+  .cp-info-card,.cp-section{padding:16px}
+  .cp-contract-title{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<div class="cp-loading" id="loadingState">
+  <div class="spinner"></div>
+  <div style="color:var(--text2);font-size:14px">Loading your contract…</div>
+</div>
+
+<div class="cp-error" id="errorState" style="display:none">
+  <div style="font-size:48px">📜</div>
+  <h2>Contract Not Found</h2>
+  <p id="errorMsg">This link may have expired or the contract ID is incorrect. Contact Watts Safety Installs directly.</p>
+  <div style="font-size:13px;color:var(--text3);margin-top:8px">(405) 410-6402 · Justin.Watts@WattsATPContractor.com</div>
+</div>
+
+<div id="contractApp" style="display:none">
+  <div class="cp-banner">
+    📜 You've received a contract from <strong>Watts Safety Installs</strong> — review, message, and sign below.
+  </div>
+
+  <div class="cp-header">
+    <div class="cp-logo">
+      <div class="cp-logo-icon">⚖️</div>
+      <div>
+        <div class="cp-logo-text">Watts Safety Installs</div>
+        <div class="cp-logo-sub">Nebraska Licensed Contractor #54690-25</div>
+      </div>
+    </div>
+    <div id="statusBadge" class="cp-status-badge status-pending">⏳ Awaiting Signature</div>
+  </div>
+
+  <div class="cp-main" id="contractBody">
+    <!-- Rendered by JS -->
+  </div>
+
+  <div class="cp-footer">
+    Watts Safety Installs · Nebraska Licensed Contractor #54690-25 · (405) 410-6402 · Justin.Watts@WattsATPContractor.com<br>
+    This contract was generated by BidGen Pro Contract Builder. Not a substitute for licensed legal counsel.
+  </div>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+  authDomain: "wsi---bid-generator.firebaseapp.com",
+  databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+  projectId: "wsi---bid-generator",
+  appId: "1:613129301141:web:92405028eca5aae354bf9c"
+});
+var db = firebase.database();
+
+// Parse URL params
+var params = new URLSearchParams(window.location.search);
+var contractId = params.get('id');
+var hashedPIN  = params.get('pin');
+
+if (!contractId || !hashedPIN) {
+  showError('Missing contract ID or authorization token in URL.');
+} else {
+  loadContract();
+}
+
+function showError(msg) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'flex';
+  if (msg) document.getElementById('errorMsg').textContent = msg;
+}
+
+// ================================================================
+// LOAD CONTRACT FROM FIREBASE
+// ================================================================
+function loadContract() {
+  var ref = db.ref('contracts/' + hashedPIN + '/' + contractId);
+  ref.once('value').then(function(snap) {
+    var data = snap.val();
+    if (!data) { showError('Contract not found. It may have been unpublished or the link is incorrect.'); return; }
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('contractApp').style.display = 'block';
+
+    // Track view
+    ref.update({
+      viewCount: (data.viewCount || 0) + 1,
+      lastViewedAt: new Date().toISOString(),
+      viewedByClient: true
+    });
+
+    // Update status badge
+    if (data.signedAt) {
+      var badge = document.getElementById('statusBadge');
+      badge.textContent = '✅ Signed';
+      badge.className = 'cp-status-badge status-signed';
+    } else if (data.viewCount > 0) {
+      var badge2 = document.getElementById('statusBadge');
+      badge2.textContent = '👁 Viewed';
+      badge2.className = 'cp-status-badge status-viewed';
+    }
+
+    renderContract(data, ref);
+    listenMessages(ref, data);
+    renderSignBlock(data, ref);
+  }).catch(function(err) {
+    showError('Error loading contract: ' + err.message);
+  });
+}
+
+// ================================================================
+// RENDER CONTRACT BODY
+// ================================================================
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+var TYPE_LABELS = {
+  service:'SERVICE AGREEMENT', hourly:'TIME & MATERIALS AGREEMENT', seasonal:'SEASONAL SERVICE CONTRACT',
+  proposal:'BUSINESS PROPOSAL', maintenance:'PROPERTY MAINTENANCE AGREEMENT',
+  subcontractor:'SUBCONTRACTOR AGREEMENT', nda:'NON-DISCLOSURE AGREEMENT', custom:'CONTRACT AGREEMENT'
+};
+var TYPE_COLORS = {
+  service:'#3b82f6', hourly:'#f59e0b', seasonal:'#22c55e', proposal:'#8b5cf6',
+  maintenance:'#14b8a6', subcontractor:'#e67e22', nda:'#ef4444', custom:'#6366f1'
+};
+
+function renderContract(data, ref) {
+  var c = data.contract || data;
+  var color = TYPE_COLORS[c.type] || '#6d28d9';
+  var title = TYPE_LABELS[c.type] || 'CONTRACT AGREEMENT';
+
+  var html = '';
+
+  // ── Info card (header + parties) ──
+  html += '<div class="cp-info-card">';
+  html += '<div class="cp-info-top">';
+  html += '<div><div class="cp-contract-title" style="color:' + color + '">' + title + '</div>';
+  html += '<div class="cp-contract-num">' + esc(c.num || contractId) + ' &nbsp;·&nbsp; ' + esc(c.date || '') + '</div>';
+  if (c.startDate || c.endDate) html += '<div class="cp-contract-num">Term: ' + esc(c.startDate || '—') + ' – ' + esc(c.endDate || '—') + '</div>';
+  html += '</div>';
+  if (data.signedAt) {
+    html += '<div style="background:var(--green-bg);border:1px solid rgba(5,150,105,0.2);border-radius:10px;padding:8px 14px;text-align:right">';
+    html += '<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase">✅ Signed</div>';
+    html += '<div style="font-size:11px;color:var(--text3)">' + new Date(data.signedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // Parties
+  html += '<div class="cp-parties">';
+  html += '<div class="cp-party"><div class="cp-party-label" style="color:' + color + '">Contractor</div>';
+  html += '<div class="cp-party-name">Justin Watts</div>';
+  html += '<div class="cp-party-detail">Watts Safety Installs<br>NE Lic. #54690-25<br>(405) 410-6402<br>Justin.Watts@WattsATPContractor.com</div></div>';
+  html += '<div class="cp-party"><div class="cp-party-label" style="color:' + color + '">Client</div>';
+  html += '<div class="cp-party-name">' + esc(c.clientName || 'Client') + '</div>';
+  var clientDetail = [c.clientContact, c.clientTitle, c.clientEmail, c.clientPhone, c.clientAddress].filter(Boolean).map(esc).join('<br>');
+  if (clientDetail) html += '<div class="cp-party-detail">' + clientDetail + '</div>';
+  html += '</div></div>';
+
+  if (c.projectName) html += '<div style="font-size:13px;color:var(--text2);margin-top:4px">📍 ' + esc(c.projectName) + (c.jobCity ? ' — ' + esc(c.jobCity) : '') + '</div>';
+
+  html += '</div>'; // end info card
+
+  // ── Scope ──
+  if (c.scopeItems && c.scopeItems.length > 0) {
+    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">🔧</span> Scope of Services</div>';
+    html += '<ul class="cp-scope-list">' + c.scopeItems.map(function(s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
+    html += '</div>';
+  }
+
+  // ── Pricing ──
+  if (c.pricingHtml) {
+    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">💰</span> Pricing & Compensation</div>';
+    // Rebuild pricing table safely
+    html += buildPricingDisplay(c);
+    html += '</div>';
+  }
+
+  // ── Terms ──
+  if (c.terms && c.terms.length > 0) {
+    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">⚖️</span> Terms & Conditions</div>';
+    html += '<div class="cp-terms-list">';
+    c.terms.forEach(function(t) {
+      html += '<div class="cp-term"><strong>' + esc(t.label) + '</strong>' + esc(t.value) + '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── Amendments ──
+  if (c.amendments && c.amendments.length > 0) {
+    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">📎</span> Amendments</div>';
+    c.amendments.forEach(function(a, i) {
+      html += '<div class="cp-amendment"><div class="cp-amend-hdr">Amendment ' + (i+1) + (a.title ? ' — ' + esc(a.title) : '') + '</div>';
+      html += '<div class="cp-amend-body">' + esc(a.body || '') + '</div></div>';
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('contractBody').innerHTML = html;
+}
+
+function buildPricingDisplay(c) {
+  var rows = c.pricingRows || [];
+  if (!rows.length) return '<div style="font-size:13px;color:var(--text2)">See pricing details in the agreement text below.</div>';
+  var html = '<table class="cp-price-table"><thead><tr>' +
+    rows[0].map(function(h) { return '<th>' + esc(h) + '</th>'; }).join('') +
+    '</tr></thead><tbody>';
+  for (var i = 1; i < rows.length; i++) {
+    var isTotal = rows[i][0] && rows[i][0].toUpperCase().indexOf('TOTAL') !== -1;
+    html += '<tr' + (isTotal ? ' class="cp-price-total"' : '') + '>';
+    html += rows[i].map(function(cell) { return '<td>' + esc(cell) + '</td>'; }).join('');
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  return html;
+}
+
+// ================================================================
+// MESSAGES / Q&A
+// ================================================================
+function listenMessages(ref, data) {
+  var section = document.createElement('div');
+  section.className = 'cp-section';
+  section.id = 'msgSection';
+  section.innerHTML = '<div class="cp-section-title"><span class="cp-section-icon">💬</span> Questions & Messages</div>' +
+    '<div class="cp-msg-list" id="msgList"><div style="font-size:12px;color:var(--text3);padding:6px 0">No messages yet. Ask a question below.</div></div>' +
+    '<div class="cp-msg-input">' +
+      '<textarea id="msgInput" placeholder="Type a question or comment…"></textarea>' +
+      '<button onclick="sendMessage()">Send</button>' +
+    '</div>';
+  document.getElementById('contractBody').appendChild(section);
+
+  // Live listener
+  ref.child('messages').on('value', function(snap) {
+    var msgs = snap.val();
+    var list = document.getElementById('msgList');
+    if (!list) return;
+    if (!msgs) {
+      list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:6px 0">No messages yet.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    Object.values(msgs).sort(function(a,b) { return (a.ts||0) - (b.ts||0); }).forEach(function(m) {
+      var div = document.createElement('div');
+      div.className = 'cp-msg ' + (m.from === 'contractor' ? 'from-contractor' : 'from-client');
+      div.innerHTML = '<div class="msg-meta">' + esc(m.from === 'contractor' ? '👷 Justin Watts' : '👤 Client') + ' · ' +
+        new Date(m.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) + '</div>' +
+        esc(m.text);
+      list.appendChild(div);
+    });
+    list.scrollTop = list.scrollHeight;
+  });
+}
+
+window.sendMessage = function() {
+  var inp = document.getElementById('msgInput');
+  var text = (inp ? inp.value.trim() : '');
+  if (!text) return;
+  var ref = db.ref('contracts/' + hashedPIN + '/' + contractId);
+  var msgRef = ref.child('messages').push();
+  msgRef.set({ from: 'client', text: text, ts: Date.now() }).then(function() {
+    inp.value = '';
+    // Update contractor notification flag
+    ref.update({ hasClientMessage: true, lastClientMessage: text.substring(0,120) });
+  });
+};
+
+// ================================================================
+// SIGNATURE BLOCK
+// ================================================================
+function renderSignBlock(data, ref) {
+  var section = document.createElement('div');
+  section.id = 'signSection';
+  section.style.marginBottom = '20px';
+  section.style.padding = '0 0';
+
+  if (data.signedAt) {
+    section.innerHTML = '<div class="cp-signed-confirm">' +
+      '<h3>✅ This Contract Has Been Signed</h3>' +
+      '<p>Signed on ' + new Date(data.signedAt).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + '</p>' +
+      (data.signatureImg ? '<img src="' + data.signatureImg + '" class="sig-preview" alt="Signature">' : '') +
+      '<p style="margin-top:10px;font-size:12px;color:var(--text3)">A copy has been recorded. Contact Justin Watts at (405) 410-6402 with any questions.</p>' +
+      '</div>';
+    document.getElementById('contractBody').appendChild(section);
+    return;
+  }
+
+  section.innerHTML = '<div class="cp-sign-section">' +
+    '<div class="cp-sign-title">✍️ Sign This Contract</div>' +
+    '<div class="cp-sign-sub">By signing below, you agree to all terms and conditions listed in this contract.</div>' +
+
+    '<div class="sig-canvas-wrap" id="sigWrap"><canvas id="sigCanvas" height="180"></canvas>' +
+    '<div class="sig-hint" id="sigHint">Sign here with your finger or mouse</div></div>' +
+
+    '<div class="sig-actions">' +
+      '<button class="sig-clear" onclick="clearSig()">✕ Clear</button>' +
+    '</div>' +
+
+    '<label class="cp-agree-check">' +
+      '<input type="checkbox" id="agreeCheck"> ' +
+      'I confirm I have read and agree to all terms in this contract. I understand this constitutes a legal electronic signature.' +
+    '</label>' +
+
+    '<button class="sig-submit" id="sigSubmit" onclick="submitSignature()">✅ Sign &amp; Submit Contract</button>' +
+    '<div style="font-size:11px;color:var(--text3);margin-top:10px">Your signature is legally binding under the Electronic Signatures in Global and National Commerce (E-Sign) Act.</div>' +
+    '</div>';
+
+  document.getElementById('contractBody').appendChild(section);
+  initCanvas();
+}
+
+// ── Canvas signature ──
+var _signing = false;
+var _hasSig = false;
+
+function initCanvas() {
+  var canvas = document.getElementById('sigCanvas');
+  if (!canvas) return;
+  var wrap = document.getElementById('sigWrap');
+  canvas.width = wrap.offsetWidth || 500;
+
+  var ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#1a202c';
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  function pos(e) {
+    var r = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / r.width;
+    var scaleY = canvas.height / r.height;
+    var src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
+  }
+
+  function start(e) { e.preventDefault(); _signing = true; var p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); document.getElementById('sigHint').style.display = 'none'; }
+  function draw(e) { e.preventDefault(); if (!_signing) return; _hasSig = true; var p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
+  function end() { _signing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', end);
+}
+
+window.clearSig = function() {
+  var canvas = document.getElementById('sigCanvas');
+  if (!canvas) return;
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  _hasSig = false;
+  document.getElementById('sigHint').style.display = '';
+};
+
+window.submitSignature = function() {
+  if (!_hasSig) { alert('Please sign in the box above before submitting.'); return; }
+  if (!document.getElementById('agreeCheck').checked) { alert('Please check the agreement box to confirm you have read the terms.'); return; }
+
+  var canvas = document.getElementById('sigCanvas');
+  var sigImg = canvas.toDataURL('image/png');
+  var btn = document.getElementById('sigSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  var ref = db.ref('contracts/' + hashedPIN + '/' + contractId);
+  ref.update({
+    signedAt: new Date().toISOString(),
+    signatureImg: sigImg,
+    signedByClient: true,
+    status: 'signed'
+  }).then(function() {
+    // Replace sign block with confirmation
+    var section = document.getElementById('signSection');
+    section.innerHTML = '<div class="cp-signed-confirm">' +
+      '<h3>✅ Contract Signed!</h3>' +
+      '<p>Thank you. Your signature has been recorded on ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + '.</p>' +
+      '<img src="' + sigImg + '" class="sig-preview" alt="Your signature">' +
+      '<p style="margin-top:10px;font-size:12px;color:var(--text3)">Justin Watts will be notified. Questions? Call (405) 410-6402.</p>' +
+      '</div>';
+    document.getElementById('statusBadge').textContent = '✅ Signed';
+    document.getElementById('statusBadge').className = 'cp-status-badge status-signed';
+  }).catch(function(err) {
+    alert('Error saving signature: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = '✅ Sign & Submit Contract';
+  });
+};
+</script>
+</body>
+</html>

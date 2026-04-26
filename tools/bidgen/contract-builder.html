@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contract Builder — Watts Safety Installs</title>
+<style>
+:root {
+  --bg:       #080e1a;
+  --bg2:      #0c1726;
+  --bg3:      #0d1929;
+  --card:     #0f1e33;
+  --card2:    #111d33;
+  --border:   #1a2540;
+  --border2:  #1e2e4a;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #4a5568;
+  --accent:   #3b82f6;
+  --accent2:  #8b5cf6;
+  --green:    #22c55e;
+  --orange:   #f59e0b;
+  --red:      #ef4444;
+  --teal:     #14b8a6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* ── HEADER ── */
+.app-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 18px; background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.back-link { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 600; }
+.back-link:hover { color: var(--accent); }
+.app-header h1 { font-size: 17px; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; flex: 1; }
+.hdr-badge { font-size: 10px; background: rgba(139,92,246,0.15); color: #a78bfa; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.25); font-weight: 700; white-space: nowrap; }
+
+/* ── LOGIN ── */
+#loginScreen { display: flex; align-items: center; justify-content: center; height: 100vh; }
+.login-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 40px; width: 360px; text-align: center; }
+.login-card h2 { font-size: 20px; margin-bottom: 8px; }
+.login-card p { color: var(--text2); font-size: 13px; margin-bottom: 20px; }
+.login-card input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 15px; outline: none; text-align: center; letter-spacing: 4px; margin-bottom: 12px; }
+.login-card input:focus { border-color: var(--accent); }
+.login-card button { width: 100%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; color: white; padding: 13px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+.err { color: var(--red); font-size: 12px; margin-top: 8px; min-height: 18px; }
+
+/* ── APP LAYOUT ── */
+#appShell { display: none; height: calc(100vh - 51px); }
+.app-body { display: grid; grid-template-columns: 380px 1fr; height: 100%; overflow: hidden; }
+
+/* ── LEFT: FORM COL ── */
+.form-col { overflow-y: auto; padding: 16px; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px; }
+.form-col::-webkit-scrollbar { width: 4px; }
+.form-col::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── CONTRACT TYPE SELECTOR ── */
+.type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.type-btn {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 10px; cursor: pointer; text-align: center; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.type-btn:hover { border-color: var(--accent); background: var(--card2); }
+.type-btn.active { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+.type-btn .ti { font-size: 22px; }
+.type-btn .tl { font-size: 11px; font-weight: 700; color: var(--text2); }
+.type-btn.active .tl { color: var(--accent); }
+
+/* ── CARDS ── */
+.cb-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.cb-card-title { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--card2); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+.cb-card-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* ── FORM ELEMENTS ── */
+.cb-field { display: flex; flex-direction: column; gap: 4px; }
+.cb-field label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; }
+.cb-field input, .cb-field textarea, .cb-field select {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 12px; color: var(--text); font-size: 13px; font-family: inherit; outline: none;
+}
+.cb-field input:focus, .cb-field textarea:focus, .cb-field select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,0.12); }
+.cb-field textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+.cb-field select option { background: var(--bg3); }
+.cb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cb-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* ── SCOPE LIST ── */
+.scope-list { display: flex; flex-direction: column; gap: 6px; }
+.scope-item { display: flex; gap: 6px; align-items: center; }
+.scope-item input { flex: 1; }
+.scope-item button { background: none; border: 1px solid var(--border); color: var(--text3); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 14px; flex-shrink: 0; transition: all 0.15s; }
+.scope-item button:hover { border-color: var(--red); color: var(--red); }
+.add-scope-btn { background: none; border: 1px dashed var(--border2); color: var(--text3); padding: 7px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; width: 100%; transition: all 0.2s; }
+.add-scope-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── AMENDMENT LIST ── */
+.amendment-list { display: flex; flex-direction: column; gap: 8px; }
+.amendment-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.amendment-item-hdr { display: flex; align-items: center; justify-content: space-between; }
+.amendment-item .ai-label { font-size: 11px; font-weight: 700; color: var(--orange); }
+.amendment-item textarea { background: transparent; border: none; outline: none; color: var(--text); font-size: 12px; font-family: inherit; resize: vertical; min-height: 50px; padding: 0; }
+.amendment-item button { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; }
+.amendment-item button:hover { color: var(--red); }
+
+/* ── ACTION BUTTONS ── */
+.cb-actions { display: flex; flex-direction: column; gap: 8px; }
+.btn-primary { background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; color: white; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-secondary { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+/* ── RIGHT: DOCUMENT PREVIEW COL ── */
+.preview-col { overflow-y: auto; background: var(--bg2); display: flex; flex-direction: column; }
+.preview-col::-webkit-scrollbar { width: 6px; }
+.preview-col::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.preview-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+.preview-toolbar .tool-label { font-size: 12px; font-weight: 700; color: var(--text3); margin-right: 4px; }
+.tbtn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tbtn:hover { border-color: var(--accent); color: var(--accent); }
+.tbtn.green { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.2); color: var(--green); }
+.tbtn.green:hover { background: rgba(34,197,94,0.2); }
+.tbtn.purple { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.2); color: #a78bfa; }
+.tbtn.purple:hover { background: rgba(139,92,246,0.2); }
+
+.preview-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 14px; padding: 40px; text-align: center; }
+.preview-empty .big-icon { font-size: 60px; opacity: 0.3; }
+.preview-empty h3 { font-size: 18px; font-weight: 700; color: var(--text2); }
+.preview-empty p { font-size: 13px; color: var(--text3); max-width: 320px; line-height: 1.6; }
+.preview-empty .quick-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.preview-empty .qbtn { background: var(--card); border: 1px solid var(--border); color: var(--text2); padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.preview-empty .qbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── DOCUMENT RENDER AREA ── */
+#docOut {
+  flex: 1; padding: 0;
+}
+.doc-wrapper {
+  max-width: 860px; margin: 0 auto; padding: 40px 48px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 3px solid; }
+.doc-company { }
+.doc-company .co-name { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.doc-company .co-sub { font-size: 12px; color: var(--text2); }
+.doc-company .co-contact { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.doc-title-block { text-align: right; }
+.doc-title-block .doc-type { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
+.doc-title-block .doc-num { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.doc-title-block .doc-date { font-size: 12px; color: var(--text3); }
+
+.doc-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+.doc-party { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.doc-party .party-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.doc-party .party-name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.doc-party .party-detail { font-size: 12px; color: var(--text2); line-height: 1.7; }
+
+.doc-section { margin-bottom: 24px; }
+.doc-section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.doc-section-title span { font-size: 16px; }
+.doc-body-text { font-size: 13px; color: var(--text); line-height: 1.9; white-space: pre-wrap; }
+.doc-scope-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.doc-scope-list li { display: flex; gap: 10px; font-size: 13px; color: var(--text); line-height: 1.5; }
+.doc-scope-list li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+.doc-pricing-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }
+.doc-pricing-table th { background: var(--card2); color: var(--text2); text-align: left; padding: 9px 12px; border: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.doc-pricing-table td { padding: 9px 12px; border: 1px solid var(--border); color: var(--text); }
+.doc-pricing-table tr:nth-child(even) td { background: var(--card); }
+.doc-pricing-table .total-row td { background: var(--card2); font-weight: 800; font-size: 14px; }
+.doc-pricing-table .total-row td:last-child { color: var(--accent); }
+
+.doc-totals-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.doc-total-line { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.doc-total-line.grand { font-size: 18px; font-weight: 900; padding-top: 10px; border-top: 2px solid var(--border); margin-top: 4px; }
+.doc-total-line.grand .val { color: var(--accent); }
+.doc-total-line .lbl { color: var(--text2); }
+.doc-total-line .val { font-weight: 700; }
+
+.doc-terms { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.15); border-radius: 10px; padding: 16px; }
+.doc-terms .term-item { font-size: 12px; color: var(--text2); line-height: 1.7; padding: 4px 0; border-bottom: 1px solid rgba(59,130,246,0.08); }
+.doc-terms .term-item:last-child { border-bottom: none; }
+.doc-terms .term-item strong { color: var(--text); }
+
+.doc-amendment { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.doc-amendment .amend-hdr { font-size: 11px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.doc-amendment .amend-body { font-size: 12px; color: var(--text2); line-height: 1.7; white-space: pre-wrap; }
+
+.doc-sig-block { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+.doc-sig { border-top: 2px solid var(--border); padding-top: 12px; }
+.doc-sig .sig-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+.doc-sig .sig-name { font-size: 13px; color: var(--text); margin-top: 4px; }
+.doc-sig .sig-line { margin-top: 36px; border-bottom: 1px solid var(--border); }
+.doc-sig .sig-date { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+.doc-footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text3); line-height: 1.8; }
+
+/* Amendment badge */
+.amend-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,158,11,0.15); color: var(--orange); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; margin-left: 8px; }
+
+/* ── STATUS ── */
+#genStatus { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); border-radius: 8px; font-size: 12px; color: var(--accent); font-weight: 600; }
+
+/* ── PRINT ── */
+@media print {
+  .app-header, .form-col, .preview-toolbar, #cai-toggle, #cai-panel { display: none !important; }
+  .app-body { display: block; }
+  .preview-col { overflow: visible; }
+  .doc-wrapper { padding: 20px; max-width: 100%; }
+  * { color: #000 !important; background: #fff !important; border-color: #ccc !important; }
+  .doc-title-block .doc-type, .doc-company .co-name { color: #000 !important; }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .app-body { grid-template-columns: 1fr; }
+  .form-col { border-right: none; border-bottom: 1px solid var(--border); max-height: 50vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div style="font-size:40px;margin-bottom:12px">📜</div>
+    <h2>Contract Builder</h2>
+    <p>Watts Safety Installs — Pocket Lawyer</p>
+    <input type="password" id="loginPin" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')attemptLogin()">
+    <button onclick="attemptLogin()">Enter</button>
+    <div class="err" id="loginError"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appShell">
+  <header class="app-header">
+    <a href="index.html" class="back-link">← BidGen</a>
+    <h1>📜 Contract Builder</h1>
+    <span class="hdr-badge">⚖️ Pocket Lawyer</span>
+    <span id="userBadge" style="font-size:11px;color:var(--text3);margin-left:auto"></span>
+  </header>
+
+  <div class="app-body">
+    <!-- LEFT: FORM -->
+    <div class="form-col">
+
+      <!-- CONTRACT TYPE -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>📋</span> Contract Type</div>
+        <div class="cb-card-body">
+          <div class="type-grid">
+            <div class="type-btn active" data-type="service" onclick="setType('service',this)">
+              <span class="ti">🔧</span><span class="tl">Service Agreement</span>
+            </div>
+            <div class="type-btn" data-type="hourly" onclick="setType('hourly',this)">
+              <span class="ti">⏱️</span><span class="tl">Hourly / T&M</span>
+            </div>
+            <div class="type-btn" data-type="seasonal" onclick="setType('seasonal',this)">
+              <span class="ti">🌿</span><span class="tl">Seasonal Contract</span>
+            </div>
+            <div class="type-btn" data-type="proposal" onclick="setType('proposal',this)">
+              <span class="ti">💼</span><span class="tl">Business Proposal</span>
+            </div>
+            <div class="type-btn" data-type="maintenance" onclick="setType('maintenance',this)">
+              <span class="ti">🏠</span><span class="tl">Maintenance Plan</span>
+            </div>
+            <div class="type-btn" data-type="subcontractor" onclick="setType('subcontractor',this)">
+              <span class="ti">👷</span><span class="tl">Subcontractor</span>
+            </div>
+            <div class="type-btn" data-type="nda" onclick="setType('nda',this)">
+              <span class="ti">🔒</span><span class="tl">NDA / Confidential</span>
+            </div>
+            <div class="type-btn" data-type="custom" onclick="setType('custom',this)">
+              <span class="ti">✏️</span><span class="tl">Custom</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARTIES -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>👥</span> Parties</div>
+        <div class="cb-card-body">
+          <div class="cb-field">
+            <label>Client / Company Name</label>
+            <input id="clientName" type="text" placeholder="ABC Property Management LLC">
+          </div>
+          <div class="cb-row">
+            <div class="cb-field">
+              <label>Client Contact</label>
+              <input id="clientContact" type="text" placeholder="John Smith">
+            </div>
+            <div class="cb-field">
+              <label>Client Title</label>
+              <input id="clientTitle" type="text" placeholder="Property Manager">
+            </div>
+          </div>
+          <div class="cb-row">
+            <div class="cb-field">
+              <label>Client Email</label>
+              <input id="clientEmail" type="email" placeholder="john@abc.com">
+            </div>
+            <div class="cb-field">
+              <label>Client Phone</label>
+              <input id="clientPhone" type="tel" placeholder="(402) 555-0100">
+            </div>
+          </div>
+          <div class="cb-field">
+            <label>Client Address</label>
+            <input id="clientAddress" type="text" placeholder="123 Main St, Norfolk, NE 68701">
+          </div>
+        </div>
+      </div>
+
+      <!-- JOB DETAILS -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>📍</span> Job / Project Details</div>
+        <div class="cb-card-body">
+          <div class="cb-field">
+            <label>Project / Property Name</label>
+            <input id="projectName" type="text" placeholder="Maple Creek Apartments">
+          </div>
+          <div class="cb-row">
+            <div class="cb-field">
+              <label>Job Location / City</label>
+              <input id="jobCity" type="text" placeholder="Norfolk, NE">
+            </div>
+            <div class="cb-field">
+              <label>Contract #</label>
+              <input id="contractNum" type="text" placeholder="WSI-CTR-001" id="contractNum">
+            </div>
+          </div>
+          <div class="cb-row">
+            <div class="cb-field">
+              <label>Start Date</label>
+              <input id="startDate" type="date">
+            </div>
+            <div class="cb-field">
+              <label>End Date / Expiry</label>
+              <input id="endDate" type="date">
+            </div>
+          </div>
+          <div class="cb-field" id="renewalField">
+            <label>Renewal Terms</label>
+            <select id="renewalTerms">
+              <option value="">No auto-renewal</option>
+              <option value="month-to-month">Month-to-month after term</option>
+              <option value="auto-annual">Auto-renews annually (30-day notice to cancel)</option>
+              <option value="auto-90">Auto-renews (90-day notice to cancel)</option>
+              <option value="negotiated">Renewal by mutual written agreement</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCOPE OF WORK -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>📝</span> Scope of Work / Services</div>
+        <div class="cb-card-body">
+          <div class="scope-list" id="scopeList"></div>
+          <button class="add-scope-btn" onclick="addScope()">+ Add Service Item</button>
+        </div>
+      </div>
+
+      <!-- PRICING -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>💰</span> Pricing</div>
+        <div class="cb-card-body">
+          <div class="cb-field">
+            <label>Pricing Structure</label>
+            <select id="pricingType" onchange="onPricingTypeChange()">
+              <option value="fixed">Fixed Price / Lump Sum</option>
+              <option value="hourly">Hourly Rate (T&M)</option>
+              <option value="monthly">Monthly Retainer</option>
+              <option value="per_visit">Per-Visit / Per-Service</option>
+              <option value="milestone">Milestone-Based</option>
+              <option value="seasonal_flat">Seasonal Flat Rate</option>
+            </select>
+          </div>
+          <div id="pricingFields" class="cb-card-body" style="padding:0;gap:10px">
+            <!-- Dynamic fields rendered by JS -->
+          </div>
+          <div class="cb-row">
+            <div class="cb-field">
+              <label>Payment Terms</label>
+              <select id="paymentTerms">
+                <option value="net30">Net 30</option>
+                <option value="net15">Net 15</option>
+                <option value="net7">Net 7</option>
+                <option value="due_receipt">Due Upon Receipt</option>
+                <option value="50_50">50% Upfront / 50% on Completion</option>
+                <option value="monthly_invoice">Monthly Invoice</option>
+                <option value="custom">Custom (see notes)</option>
+              </select>
+            </div>
+            <div class="cb-field">
+              <label>Late Fee</label>
+              <select id="lateFee">
+                <option value="1.5pct">1.5%/month after due date</option>
+                <option value="2pct">2%/month after due date</option>
+                <option value="flat25">$25 flat fee per late invoice</option>
+                <option value="flat50">$50 flat fee per late invoice</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPECIAL TERMS -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>⚖️</span> Special Terms & Conditions</div>
+        <div class="cb-card-body">
+          <div class="cb-field">
+            <label>Cancellation Policy</label>
+            <select id="cancellationPolicy">
+              <option value="30day">30-day written notice required</option>
+              <option value="14day">14-day written notice required</option>
+              <option value="7day">7-day written notice required</option>
+              <option value="60day">60-day written notice required</option>
+              <option value="none">No cancellation provision</option>
+            </select>
+          </div>
+          <div class="cb-field">
+            <label>Materials / Supplies</label>
+            <select id="materialsPolicy">
+              <option value="contractor">Contractor supplies all materials (included in price)</option>
+              <option value="client">Client supplies all materials</option>
+              <option value="split">Contractor supplies labor; client purchases materials</option>
+              <option value="markup">Contractor purchases materials at cost + markup</option>
+              <option value="na">Not applicable</option>
+            </select>
+          </div>
+          <div class="cb-field">
+            <label>Additional Notes / Custom Terms</label>
+            <textarea id="customTerms" placeholder="Any special conditions, exclusions, access requirements, key pickup policy, etc."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- AMENDMENTS -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>📎</span> Amendments / Addendums <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Optional</span></div>
+        <div class="cb-card-body">
+          <div class="amendment-list" id="amendmentList"></div>
+          <button class="add-scope-btn" onclick="addAmendment()">+ Add Amendment / Addendum</button>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="cb-card">
+        <div class="cb-card-title"><span>⚡</span> Generate</div>
+        <div class="cb-card-body">
+          <div id="genStatus" style="display:none"></div>
+          <div class="cb-actions">
+            <button class="btn-primary" onclick="generateContract()">⚡ Generate Contract</button>
+            <button class="btn-secondary" onclick="aiDraftContract()">🤖 AI Draft for Me</button>
+            <button class="btn-secondary" onclick="clearForm()">🗑️ Clear All</button>
+          </div>
+          <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">AI uses Gemini 2.5 Flash · Legally informed, not legal advice</div>
+        </div>
+      </div>
+
+    </div><!-- end form-col -->
+
+    <!-- RIGHT: DOCUMENT PREVIEW -->
+    <div class="preview-col">
+      <div class="preview-toolbar">
+        <span class="tool-label">Document:</span>
+        <button class="tbtn" onclick="window.print()">🖨️ Print / PDF</button>
+        <button class="tbtn green" onclick="copyContractText()">📋 Copy Text</button>
+        <button class="tbtn purple" onclick="emailContract()">✉️ Email</button>
+        <button class="tbtn" onclick="saveToFirebase()">💾 Save</button>
+        <button class="tbtn" onclick="loadSaved()">📂 Load Saved</button>
+      </div>
+      <div id="docOut">
+        <div class="preview-empty" id="emptyState">
+          <div class="big-icon">📜</div>
+          <h3>Your contract will appear here</h3>
+          <p>Fill in the form and click Generate — or hit a quick start below to let AI draft it for you in seconds.</p>
+          <div class="quick-btns">
+            <button class="qbtn" onclick="quickStart('Hourly groundskeeping / lawn care agreement, monthly billing')">⏱️ Hourly Groundskeeping</button>
+            <button class="qbtn" onclick="quickStart('Seasonal snow removal contract, Nov–Mar flat rate')">❄️ Snow Removal</button>
+            <button class="qbtn" onclick="quickStart('Property maintenance retainer, monthly service')">🏠 Maintenance Retainer</button>
+            <button class="qbtn" onclick="quickStart('Subcontractor agreement for trade work')">👷 Subcontractor</button>
+            <button class="qbtn" onclick="quickStart('Landscaping & groundskeeping seasonal contract, April–October')">🌿 Seasonal Landscaping</button>
+            <button class="qbtn" onclick="quickStart('Business proposal for commercial cleaning services')">💼 Commercial Proposal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE — config loaded from localStorage (set by BidGen login). No keys in source. -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+// ================================================================
+// BOOTSTRAP — reuse BidGen's Firebase + hashPIN
+// ================================================================
+var db = null;
+var userPIN = '';
+var hashedPIN = '';
+var _contractType = 'service';
+var _currentDoc = null;
+var _savedContracts = [];
+
+function hashPIN(pin) {
+  var h = 0;
+  for (var i = 0; i < pin.length; i++) {
+    h = ((h << 5) - h) + pin.charCodeAt(i);
+    h |= 0;
+  }
+  return 'u' + Math.abs(h).toString(36);
+}
+
+function attemptLogin() {
+  var pin = document.getElementById('loginPin').value.trim();
+  if (!pin) { document.getElementById('loginError').textContent = 'Enter your PIN.'; return; }
+
+  // Use same Firebase project as BidGen (index.html)
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+        authDomain: "wsi---bid-generator.firebaseapp.com",
+        databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+        projectId: "wsi---bid-generator",
+        appId: "1:613129301141:web:92405028eca5aae354bf9c"
+      });
+    }
+    db = firebase.database();
+  } catch(e) { db = null; }
+
+  hashedPIN = hashPIN(pin);
+  userPIN = pin;
+
+  // Verify PIN against Firebase if available, else accept
+  if (db) {
+    db.ref('users/' + hashedPIN + '/pin').once('value').then(function(snap) {
+      if (snap.val() !== null) {
+        launchApp(pin);
+      } else {
+        document.getElementById('loginError').textContent = 'PIN not recognized.';
+      }
+    }).catch(function() {
+      // Firebase not available — accept anyway (offline mode)
+      launchApp(pin);
+    });
+  } else {
+    launchApp(pin);
+  }
+}
+
+function launchApp(pin) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'block';
+  document.getElementById('userBadge').textContent = 'Justin Watts · WSI';
+  autoContractNum();
+}
+
+// ================================================================
+// CONTRACT TYPE
+// ================================================================
+function setType(type, el) {
+  _contractType = type;
+  document.querySelectorAll('.type-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  onPricingTypeChange();
+}
+
+// ================================================================
+// DYNAMIC PRICING FIELDS
+// ================================================================
+function onPricingTypeChange() {
+  var pt = document.getElementById('pricingType').value;
+  var container = document.getElementById('pricingFields');
+  container.innerHTML = '';
+
+  function field(label, id, type, placeholder, extra) {
+    return '<div class="cb-field"><label>' + label + '</label><input id="' + id + '" type="' + (type||'text') + '" placeholder="' + (placeholder||'') + '" ' + (extra||'') + '></div>';
+  }
+
+  if (pt === 'fixed') {
+    container.innerHTML = '<div class="cb-row">' + field('Contract Total ($)', 'priceTotal', 'number', '2500.00', 'step="0.01"') + field('Deposit Required ($)', 'priceDeposit', 'number', '0.00', 'step="0.01"') + '</div>';
+  } else if (pt === 'hourly') {
+    container.innerHTML = '<div class="cb-row">' + field('Hourly Rate ($)', 'priceHourly', 'number', '65.00', 'step="0.01"') + field('Est. Hours / Week', 'priceHoursWeek', 'number', '4') + '</div>' +
+      '<div class="cb-row">' + field('Min Hours / Visit', 'priceMinHours', 'number', '2') + field('Mileage Rate ($/mi)', 'priceMileage', 'number', '0.67', 'step="0.01"') + '</div>';
+  } else if (pt === 'monthly') {
+    container.innerHTML = '<div class="cb-row">' + field('Monthly Rate ($)', 'priceMonthly', 'number', '500.00', 'step="0.01"') + field('Services Per Month', 'priceVisits', 'number', '4') + '</div>';
+  } else if (pt === 'per_visit') {
+    container.innerHTML = '<div class="cb-row">' + field('Per-Visit Rate ($)', 'pricePerVisit', 'number', '150.00', 'step="0.01"') + field('Est. Visits / Month', 'priceVisitsMonth', 'number', '4') + '</div>';
+  } else if (pt === 'milestone') {
+    container.innerHTML =
+      field('Milestone 1 Description', 'ms1desc', 'text', 'Project kickoff / mobilization') +
+      '<div class="cb-row">' + field('Milestone 1 Amount ($)', 'ms1amt', 'number', '0.00', 'step="0.01"') + field('Milestone 1 Due Date', 'ms1date', 'date', '') + '</div>' +
+      field('Milestone 2 Description', 'ms2desc', 'text', 'Mid-project / substantial completion') +
+      '<div class="cb-row">' + field('Milestone 2 Amount ($)', 'ms2amt', 'number', '0.00', 'step="0.01"') + field('Milestone 2 Due Date', 'ms2date', 'date', '') + '</div>' +
+      field('Milestone 3 Description', 'ms3desc', 'text', 'Final completion / punch list') +
+      '<div class="cb-row">' + field('Milestone 3 Amount ($)', 'ms3amt', 'number', '0.00', 'step="0.01"') + field('Milestone 3 Due Date', 'ms3date', 'date', '') + '</div>';
+  } else if (pt === 'seasonal_flat') {
+    container.innerHTML = '<div class="cb-row">' + field('Season Total ($)', 'priceSeasonTotal', 'number', '0.00', 'step="0.01"') + field('Billing (splits)', 'priceSeasonBilling') + '</div>' +
+      '<div class="cb-row">' + field('Monthly Equivalent ($)', 'priceMonthlyEq', 'number', '0.00', 'step="0.01" readonly') + field('Season Duration (months)', 'priceSeasonMonths', 'number', '7') + '</div>';
+    // Auto-calc monthly
+    ['priceSeasonTotal','priceSeasonMonths'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function() {
+        var t = parseFloat(document.getElementById('priceSeasonTotal').value)||0;
+        var m = parseFloat(document.getElementById('priceSeasonMonths').value)||1;
+        var eq = document.getElementById('priceMonthlyEq');
+        if (eq) eq.value = (t/m).toFixed(2);
+      });
+    });
+  }
+}
+
+// ================================================================
+// SCOPE LIST
+// ================================================================
+var _scopeItems = [];
+
+function addScope(val) {
+  var id = 'scope_' + Date.now();
+  _scopeItems.push(id);
+  var list = document.getElementById('scopeList');
+  var div = document.createElement('div');
+  div.className = 'scope-item';
+  div.id = 'si_' + id;
+  div.innerHTML = '<input id="' + id + '" type="text" placeholder="Describe service item..." value="' + (val||'') + '">' +
+    '<button onclick="removeScope(\'' + id + '\')">✕</button>';
+  list.appendChild(div);
+  document.getElementById(id).focus();
+}
+
+function removeScope(id) {
+  var el = document.getElementById('si_' + id);
+  if (el) el.remove();
+  _scopeItems = _scopeItems.filter(function(i) { return i !== id; });
+}
+
+function getScopeItems() {
+  return _scopeItems.map(function(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }).filter(Boolean);
+}
+
+// ================================================================
+// AMENDMENTS
+// ================================================================
+var _amendments = [];
+
+function addAmendment(title, body) {
+  var id = 'amend_' + Date.now();
+  _amendments.push(id);
+  var list = document.getElementById('amendmentList');
+  var div = document.createElement('div');
+  div.className = 'amendment-item';
+  div.id = 'am_' + id;
+  div.innerHTML =
+    '<div class="amendment-item-hdr">' +
+      '<input id="' + id + '_title" type="text" placeholder="Amendment title (e.g. Addendum A — Price Adjustment)" value="' + (title||'') + '" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:12px;font-weight:700;">' +
+      '<button onclick="removeAmendment(\'' + id + '\')">✕</button>' +
+    '</div>' +
+    '<textarea id="' + id + '_body" placeholder="Amendment text...">' + (body||'') + '</textarea>';
+  list.appendChild(div);
+}
+
+function removeAmendment(id) {
+  var el = document.getElementById('am_' + id);
+  if (el) el.remove();
+  _amendments = _amendments.filter(function(i) { return i !== id; });
+}
+
+function getAmendments() {
+  return _amendments.map(function(id) {
+    var t = document.getElementById(id + '_title');
+    var b = document.getElementById(id + '_body');
+    return { title: t ? t.value.trim() : '', body: b ? b.value.trim() : '' };
+  }).filter(function(a) { return a.title || a.body; });
+}
+
+// ================================================================
+// AUTO CONTRACT NUMBER
+// ================================================================
+function autoContractNum() {
+  var n = parseInt(localStorage.getItem('watts_ctr_seq') || '0') + 1;
+  var num = 'WSI-CTR-' + String(n).padStart(3, '0');
+  var el = document.getElementById('contractNum');
+  if (el && !el.value) el.value = num;
+}
+
+// ================================================================
+// GENERATE CONTRACT — client-side fast render
+// ================================================================
+function gv(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function fmtDate(d) {
+  if (!d) return '___________';
+  var dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function fmtMoney(v) {
+  return '$' + (parseFloat(v)||0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+var TYPE_LABELS = {
+  service: 'SERVICE AGREEMENT',
+  hourly: 'TIME & MATERIALS AGREEMENT',
+  seasonal: 'SEASONAL SERVICE CONTRACT',
+  proposal: 'BUSINESS PROPOSAL',
+  maintenance: 'PROPERTY MAINTENANCE AGREEMENT',
+  subcontractor: 'SUBCONTRACTOR AGREEMENT',
+  nda: 'NON-DISCLOSURE AGREEMENT',
+  custom: 'CONTRACT AGREEMENT'
+};
+
+var TYPE_COLORS = {
+  service: '#3b82f6',
+  hourly: '#f59e0b',
+  seasonal: '#22c55e',
+  proposal: '#8b5cf6',
+  maintenance: '#14b8a6',
+  subcontractor: '#e67e22',
+  nda: '#ef4444',
+  custom: '#6366f1'
+};
+
+function generateContract() {
+  var scope = getScopeItems();
+  if (!scope.length) { addScope(); scope = ['[Describe services here]']; }
+
+  var contractNum = gv('contractNum') || 'WSI-CTR-001';
+  var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  var color = TYPE_COLORS[_contractType] || '#3b82f6';
+  var title = TYPE_LABELS[_contractType] || 'CONTRACT AGREEMENT';
+
+  var clientName   = gv('clientName') || 'Client Name';
+  var clientContact= gv('clientContact');
+  var clientTitle  = gv('clientTitle');
+  var clientEmail  = gv('clientEmail');
+  var clientPhone  = gv('clientPhone');
+  var clientAddr   = gv('clientAddress');
+  var projectName  = gv('projectName');
+  var jobCity      = gv('jobCity') || 'Norfolk, NE';
+  var startDate    = fmtDate(gv('startDate'));
+  var endDate      = fmtDate(gv('endDate'));
+  var renewal      = gv('renewalTerms');
+  var pt           = gv('pricingType');
+  var payTerms     = gv('paymentTerms');
+  var lateFee      = gv('lateFee');
+  var cancelPolicy = gv('cancellationPolicy');
+  var matPolicy    = gv('materialsPolicy');
+  var customTerms  = gv('customTerms');
+  var amendments   = getAmendments();
+
+  // Save seq
+  var n = parseInt(localStorage.getItem('watts_ctr_seq') || '0') + 1;
+  localStorage.setItem('watts_ctr_seq', String(n));
+
+  // ── Build pricing HTML ──
+  var pricingHtml = '';
+  var pricingText = '';
+
+  if (pt === 'fixed') {
+    var total = fmtMoney(gv('priceTotal'));
+    var dep = parseFloat(gv('priceDeposit'))||0;
+    var bal = (parseFloat(gv('priceTotal'))||0) - dep;
+    pricingHtml = '<table class="doc-pricing-table"><thead><tr><th>Description</th><th>Amount</th></tr></thead><tbody>' +
+      '<tr><td>Contract Price (Lump Sum)</td><td>' + total + '</td></tr>' +
+      (dep > 0 ? '<tr><td>Deposit Required (due at signing)</td><td>' + fmtMoney(dep) + '</td></tr>' +
+      '<tr><td>Balance Due on Completion</td><td>' + fmtMoney(bal) + '</td></tr>' : '') +
+      '</tbody><tfoot><tr class="total-row"><td><strong>TOTAL CONTRACT VALUE</strong></td><td><strong>' + total + '</strong></td></tr></tfoot></table>';
+    pricingText = 'Lump sum: ' + total;
+  } else if (pt === 'hourly') {
+    var rate = fmtMoney(gv('priceHourly'));
+    var hrs = gv('priceHoursWeek');
+    var minH = gv('priceMinHours');
+    var mil = gv('priceMileage');
+    pricingHtml = '<table class="doc-pricing-table"><thead><tr><th>Rate</th><th>Details</th></tr></thead><tbody>' +
+      '<tr><td>Hourly Rate</td><td>' + rate + ' per hour</td></tr>' +
+      (hrs ? '<tr><td>Estimated Hours / Week</td><td>' + hrs + ' hours</td></tr>' : '') +
+      (minH ? '<tr><td>Minimum Hours Per Visit</td><td>' + minH + ' hours minimum billed per visit</td></tr>' : '') +
+      (mil && parseFloat(mil) > 0 ? '<tr><td>Mileage (if applicable)</td><td>' + fmtMoney(mil) + ' per mile beyond Norfolk, NE</td></tr>' : '') +
+      '</tbody></table>';
+    pricingText = rate + '/hr';
+  } else if (pt === 'monthly') {
+    var mo = fmtMoney(gv('priceMonthly'));
+    var vis = gv('priceVisits');
+    pricingHtml = '<table class="doc-pricing-table"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>' +
+      '<tr><td>Monthly Retainer</td><td>' + mo + '</td></tr>' +
+      (vis ? '<tr><td>Services Included Per Month</td><td>' + vis + ' visits/service calls</td></tr>' : '') +
+      '</tbody><tfoot><tr class="total-row"><td><strong>MONTHLY TOTAL</strong></td><td><strong>' + mo + '</strong></td></tr></tfoot></table>';
+    pricingText = mo + '/month';
+  } else if (pt === 'per_visit') {
+    var pv = fmtMoney(gv('pricePerVisit'));
+    var vm = gv('priceVisitsMonth');
+    var estMo = fmtMoney((parseFloat(gv('pricePerVisit'))||0) * (parseFloat(vm)||0));
+    pricingHtml = '<table class="doc-pricing-table"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>' +
+      '<tr><td>Per-Visit Rate</td><td>' + pv + ' per visit</td></tr>' +
+      (vm ? '<tr><td>Estimated Visits Per Month</td><td>' + vm + ' visits</td></tr>' +
+      '<tr><td>Estimated Monthly Total</td><td>' + estMo + '</td></tr>' : '') +
+      '</tbody></table>';
+    pricingText = pv + '/visit';
+  } else if (pt === 'milestone') {
+    var rows = ['ms1','ms2','ms3'].filter(function(m) { return gv(m+'amt') && parseFloat(gv(m+'amt')) > 0; });
+    var totalMs = rows.reduce(function(s,m) { return s + (parseFloat(gv(m+'amt'))||0); }, 0);
+    pricingHtml = '<table class="doc-pricing-table"><thead><tr><th>Milestone</th><th>Description</th><th>Due Date</th><th>Amount</th></tr></thead><tbody>' +
+      rows.map(function(m,i) {
+        return '<tr><td><strong>Milestone ' + (i+1) + '</strong></td><td>' + (gv(m+'desc')||'') + '</td><td>' + fmtDate(gv(m+'date')) + '</td><td>' + fmtMoney(gv(m+'amt')) + '</td></tr>';
+      }).join('') +
+      '</tbody><tfoot><tr class="total-row"><td colspan="3"><strong>PROJECT TOTAL</strong></td><td><strong>' + fmtMoney(totalMs) + '</strong></td></tr></tfoot></table>';
+    pricingText = 'Milestone-based: ' + fmtMoney(totalMs) + ' total';
+  } else if (pt === 'seasonal_flat') {
+    var st = fmtMoney(gv('priceSeasonTotal'));
+    var sm = gv('priceSeasonMonths');
+    var meq = fmtMoney(gv('priceMonthlyEq'));
+    var billing = gv('priceSeasonBilling') || 'Equal monthly installments';
+    pricingHtml = '<table class="doc-pricing-table"><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>' +
+      '<tr><td>Season Total (Flat Rate)</td><td>' + st + '</td></tr>' +
+      '<tr><td>Contract Duration</td><td>' + (sm||'?') + ' months</td></tr>' +
+      '<tr><td>Monthly Equivalent</td><td>' + meq + '</td></tr>' +
+      '<tr><td>Billing Structure</td><td>' + billing + '</td></tr>' +
+      '</tbody><tfoot><tr class="total-row"><td><strong>SEASON TOTAL</strong></td><td><strong>' + st + '</strong></td></tr></tfoot></table>';
+    pricingText = 'Seasonal flat: ' + st;
+  }
+
+  // ── Payment terms text ──
+  var payText = {
+    net30: 'Net 30 — Invoices due within 30 days of invoice date.',
+    net15: 'Net 15 — Invoices due within 15 days of invoice date.',
+    net7:  'Net 7 — Invoices due within 7 days of invoice date.',
+    due_receipt: 'Due upon receipt — Payment due immediately upon receipt of invoice.',
+    '50_50': '50% deposit due at contract signing. Remaining 50% due upon completion.',
+    monthly_invoice: 'Invoiced monthly. Payment due within 30 days of invoice date.',
+    custom: 'See additional terms below.'
+  }[payTerms] || '';
+
+  var lateText = {
+    '1.5pct': 'A late payment fee of 1.5% per month (18% annually) will be applied to all overdue balances.',
+    '2pct':   'A late payment fee of 2% per month (24% annually) will be applied to all overdue balances.',
+    flat25:   'A flat $25 fee will be charged on each invoice unpaid beyond the due date.',
+    flat50:   'A flat $50 fee will be charged on each invoice unpaid beyond the due date.',
+    none:     ''
+  }[lateFee] || '';
+
+  var cancelText = {
+    '30day': 'Either party may terminate this Agreement with 30 days written notice.',
+    '14day': 'Either party may terminate this Agreement with 14 days written notice.',
+    '7day':  'Either party may terminate this Agreement with 7 days written notice.',
+    '60day': 'Either party may terminate this Agreement with 60 days written notice.',
+    none:    ''
+  }[cancelPolicy] || '';
+
+  var matText = {
+    contractor: 'Contractor shall supply all materials and consumables required to perform the described services. Material costs are included in the contract price.',
+    client:     'Client shall supply all materials necessary. Contractor provides labor only.',
+    split:      'Client shall purchase all materials. Contractor provides labor as described in the scope of work.',
+    markup:     'Contractor will purchase materials at cost and invoice Client at cost plus an agreed markup. Receipts available upon request.',
+    na:         ''
+  }[matPolicy] || '';
+
+  var renewalText = {
+    'month-to-month': 'Upon expiration of the initial term, this Agreement shall continue on a month-to-month basis until terminated by either party with written notice.',
+    'auto-annual': 'This Agreement automatically renews annually unless either party provides 30 days written notice of non-renewal prior to the renewal date.',
+    'auto-90': 'This Agreement automatically renews annually unless either party provides 90 days written notice of non-renewal prior to the renewal date.',
+    'negotiated': 'This Agreement may be renewed by mutual written agreement of both parties prior to expiration.',
+    '': ''
+  }[renewal] || '';
+
+  // ── Build HTML ──
+  var html = '<div class="doc-wrapper">';
+
+  // Header
+  html += '<div class="doc-header" style="border-color:' + color + '">';
+  html += '<div class="doc-company">';
+  html += '<div class="co-name">Watts Safety Installs</div>';
+  html += '<div class="co-sub">Nebraska Licensed Contractor #54690-25</div>';
+  html += '<div class="co-contact">(405) 410-6402 · Justin.Watts@WattsATPContractor.com<br>Norfolk, NE 68701</div>';
+  html += '</div>';
+  html += '<div class="doc-title-block">';
+  html += '<div class="doc-type" style="color:' + color + '">' + title + '</div>';
+  html += '<div class="doc-num">' + contractNum + '</div>';
+  html += '<div class="doc-date">Date: ' + today + '</div>';
+  if (startDate !== '___________' && endDate !== '___________') {
+    html += '<div class="doc-date">Term: ' + startDate + ' – ' + endDate + '</div>';
+  }
+  html += '</div></div>';
+
+  // Parties
+  html += '<div class="doc-parties">';
+  html += '<div class="doc-party"><div class="party-label" style="color:' + color + '">Contractor (Service Provider)</div>';
+  html += '<div class="party-name">Justin Watts</div>';
+  html += '<div class="party-detail">Watts Safety Installs<br>Nebraska Lic. #54690-25<br>(405) 410-6402<br>Justin.Watts@WattsATPContractor.com<br>Norfolk, NE 68701</div></div>';
+  html += '<div class="doc-party"><div class="party-label" style="color:' + color + '">Client</div>';
+  html += '<div class="party-name">' + esc(clientName) + '</div>';
+  html += '<div class="party-detail">' +
+    (clientContact ? esc(clientContact) + (clientTitle ? ', ' + esc(clientTitle) : '') + '<br>' : '') +
+    (clientEmail ? esc(clientEmail) + '<br>' : '') +
+    (clientPhone ? esc(clientPhone) + '<br>' : '') +
+    (clientAddr ? esc(clientAddr) : '') +
+    '</div></div></div>';
+
+  // Intro / Recitals
+  html += '<div class="doc-section">';
+  html += '<div class="doc-section-title"><span>📋</span> Agreement</div>';
+  html += '<div class="doc-body-text">This ' + title + ' ("Agreement") is entered into as of ' + today + ', by and between <strong>Justin Watts / Watts Safety Installs</strong> ("Contractor"), a Nebraska Licensed Contractor (Lic. #54690-25), and <strong>' + esc(clientName) + '</strong> ("Client")' + (projectName ? ' for services at <strong>' + esc(projectName) + '</strong>' : '') + (jobCity ? ', located in ' + esc(jobCity) : '') + '.\n\nBoth parties agree to the terms and conditions set forth in this Agreement.</div>';
+  html += '</div>';
+
+  // Scope
+  if (scope.length > 0) {
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><span>🔧</span> Scope of Services</div>';
+    html += '<ul class="doc-scope-list">' + scope.map(function(s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
+    html += '</div>';
+  }
+
+  // Pricing
+  if (pricingHtml) {
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><span>💰</span> Pricing & Compensation</div>';
+    html += pricingHtml;
+    html += '</div>';
+  }
+
+  // Payment terms
+  if (payText || lateText) {
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><span>📅</span> Payment Terms</div>';
+    html += '<div class="doc-terms">';
+    if (payText) html += '<div class="term-item"><strong>Payment:</strong> ' + payText + '</div>';
+    if (lateText) html += '<div class="term-item"><strong>Late Fees:</strong> ' + lateText + '</div>';
+    if (matText)  html += '<div class="term-item"><strong>Materials:</strong> ' + matText + '</div>';
+    html += '</div></div>';
+  }
+
+  // General terms
+  html += '<div class="doc-section">';
+  html += '<div class="doc-section-title"><span>⚖️</span> Terms & Conditions</div>';
+  html += '<div class="doc-terms">';
+  if (cancelText) html += '<div class="term-item"><strong>Termination:</strong> ' + cancelText + '</div>';
+  if (renewalText) html += '<div class="term-item"><strong>Renewal:</strong> ' + renewalText + '</div>';
+  html += '<div class="term-item"><strong>Governing Law:</strong> This Agreement shall be governed by the laws of the State of Nebraska. Any disputes shall be resolved in Madison County, Nebraska.</div>';
+  html += '<div class="term-item"><strong>Entire Agreement:</strong> This Agreement constitutes the entire understanding between the parties and supersedes all prior oral or written agreements relating to the same subject matter.</div>';
+  html += '<div class="term-item"><strong>Modification:</strong> Any modifications to this Agreement must be made in writing and signed by both parties.</div>';
+  html += '<div class="term-item"><strong>Independent Contractor:</strong> Contractor is an independent contractor and not an employee of Client. Contractor is responsible for all applicable taxes on compensation received.</div>';
+  html += '<div class="term-item"><strong>Warranty / Workmanship:</strong> Contractor warrants all labor to be free from defects in workmanship for a period of 1 year from the date of completion, subject to normal use and maintenance by Client.</div>';
+  if (customTerms) html += '<div class="term-item"><strong>Additional Terms:</strong> ' + esc(customTerms) + '</div>';
+  html += '</div></div>';
+
+  // Amendments
+  if (amendments.length > 0) {
+    html += '<div class="doc-section">';
+    html += '<div class="doc-section-title"><span>📎</span> Amendments & Addendums<span class="amend-badge">🔖 ' + amendments.length + ' Amendment' + (amendments.length > 1 ? 's' : '') + '</span></div>';
+    amendments.forEach(function(a, i) {
+      html += '<div class="doc-amendment">';
+      html += '<div class="amend-hdr">Amendment ' + (i + 1) + (a.title ? ' — ' + esc(a.title) : '') + '</div>';
+      html += '<div class="amend-body">' + esc(a.body || 'No body text.') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Signature block
+  html += '<div class="doc-section">';
+  html += '<div class="doc-section-title"><span>✍️</span> Authorization & Signatures</div>';
+  html += '<div class="doc-body-text" style="margin-bottom:16px">By signing below, both parties acknowledge that they have read, understood, and agree to all terms and conditions set forth in this Agreement.</div>';
+  html += '<div class="doc-sig-block">';
+  html += '<div class="doc-sig"><div class="sig-label" style="color:' + color + '">Contractor</div><div class="sig-name">Justin Watts — Watts Safety Installs</div><div class="sig-line"></div><div class="sig-date">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>';
+  html += '<div class="doc-sig"><div class="sig-label" style="color:' + color + '">Client</div><div class="sig-name">' + esc(clientName) + (clientContact ? ' — ' + esc(clientContact) : '') + '</div><div class="sig-line"></div><div class="sig-date">Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div></div>';
+  html += '</div></div>';
+
+  // Footer
+  html += '<div class="doc-footer">Watts Safety Installs · Nebraska Licensed Contractor #54690-25 · (405) 410-6402 · Justin.Watts@WattsATPContractor.com<br>This document was generated by BidGen Pro Contract Builder. Not a substitute for licensed legal counsel.</div>';
+
+  html += '</div>'; // doc-wrapper
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('docOut').innerHTML = html;
+
+  _currentDoc = {
+    type: _contractType, num: contractNum, client: clientName, date: today,
+    pricingText: pricingText, html: html
+  };
+
+  showStatus('✅ Contract generated — ' + contractNum);
+  return html;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ================================================================
+// QUICK START — AI fills the form based on a description
+// ================================================================
+function quickStart(desc) {
+  document.getElementById('emptyState').querySelector('p').textContent = 'Asking AI to draft "' + desc + '"...';
+  aiDraftContract(desc);
+}
+
+// ================================================================
+// AI DRAFT — calls Gemini Flash for speed
+// ================================================================
+function aiDraftContract(descOverride) {
+  var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
+  var scope = getScopeItems();
+  var desc = descOverride || [
+    'Contract type: ' + (TYPE_LABELS[_contractType] || _contractType),
+    'Client: ' + (gv('clientName') || 'not specified'),
+    'Project: ' + (gv('projectName') || 'not specified'),
+    'Location: ' + (gv('jobCity') || 'Norfolk, NE'),
+    'Pricing: ' + gv('pricingType') + (gv('priceTotal') ? ' / $' + gv('priceTotal') : '') + (gv('priceHourly') ? ' / $' + gv('priceHourly') + '/hr' : '') + (gv('priceMonthly') ? ' / $' + gv('priceMonthly') + '/mo' : ''),
+    scope.length > 0 ? 'Services: ' + scope.join('; ') : '',
+    gv('customTerms') ? 'Special terms: ' + gv('customTerms') : ''
+  ].filter(Boolean).join('\n');
+
+  showStatus('🤖 AI is drafting your contract...');
+
+  var sysParts = [
+    'You are the Contract Builder AI for Justin Watts / Watts Safety Installs, Nebraska Licensed Contractor #54690-25, based in Norfolk, NE.',
+    'Your job is to fill out a contract form as JSON so the system can auto-populate fields and generate a professional contract document.',
+    '',
+    'RULES:',
+    '1. NEVER hallucinate legal requirements, statutes, or case law. Keep terms practical and contractor-grade.',
+    '2. Suggest realistic Nebraska market pricing if pricing is missing.',
+    '3. Fill in all fields that make sense for the contract type described.',
+    '4. Keep scope items concise — one task per item.',
+    '5. Amendments should only be included if the description implies one is needed.',
+    '6. Return ONLY valid JSON — no markdown, no explanation, just the JSON object.',
+    '',
+    'Return JSON with this exact schema:',
+    '{',
+    '  "contractType": "service|hourly|seasonal|proposal|maintenance|subcontractor|nda|custom",',
+    '  "clientName": "...",',
+    '  "clientContact": "...",',
+    '  "clientTitle": "...",',
+    '  "clientAddress": "...",',
+    '  "projectName": "...",',
+    '  "jobCity": "...",',
+    '  "startDate": "YYYY-MM-DD",',
+    '  "endDate": "YYYY-MM-DD",',
+    '  "renewalTerms": "month-to-month|auto-annual|auto-90|negotiated|",',
+    '  "pricingType": "fixed|hourly|monthly|per_visit|milestone|seasonal_flat",',
+    '  "priceTotal": 0,',
+    '  "priceDeposit": 0,',
+    '  "priceHourly": 0,',
+    '  "priceHoursWeek": 0,',
+    '  "priceMinHours": 0,',
+    '  "priceMileage": 0,',
+    '  "priceMonthly": 0,',
+    '  "priceVisits": 0,',
+    '  "pricePerVisit": 0,',
+    '  "priceVisitsMonth": 0,',
+    '  "priceSeasonTotal": 0,',
+    '  "priceSeasonMonths": 0,',
+    '  "scopeItems": ["...", "..."],',
+    '  "paymentTerms": "net30|net15|net7|due_receipt|50_50|monthly_invoice|custom",',
+    '  "lateFee": "1.5pct|2pct|flat25|flat50|none",',
+    '  "cancellationPolicy": "30day|14day|7day|60day|none",',
+    '  "materialsPolicy": "contractor|client|split|markup|na",',
+    '  "customTerms": "...",',
+    '  "amendments": [{"title": "...", "body": "..."}]',
+    '}'
+  ].join('\n');
+
+  fetch(PROXY + '?model=gemini-2.5-flash', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [
+        { role: 'user', parts: [{ text: sysParts }] },
+        { role: 'model', parts: [{ text: 'Understood. I will return only valid JSON to fill the contract form. No hallucinations, no invented legal requirements. Ready.' }] },
+        { role: 'user', parts: [{ text: 'Draft a contract for: ' + desc }] }
+      ],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 8192, topP: 0.9 }
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var text = '';
+    try {
+      var c = data.candidates && data.candidates[0];
+      c.content.parts.forEach(function(p) { if (!p.thought && p.text) text += p.text; });
+    } catch(e) {}
+    // Strip markdown fences
+    text = text.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
+    var json = JSON.parse(text);
+    applyAIJson(json);
+    generateContract();
+    showStatus('✅ AI draft complete — review and adjust as needed');
+  })
+  .catch(function(err) {
+    showStatus('❌ AI error: ' + err.message + ' — fill form manually');
+  });
+}
+
+// ================================================================
+// APPLY AI JSON TO FORM
+// ================================================================
+function applyAIJson(j) {
+  function sv(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; }
+
+  // Type
+  if (j.contractType) {
+    _contractType = j.contractType;
+    document.querySelectorAll('.type-btn').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-type') === j.contractType);
+    });
+  }
+
+  sv('clientName', j.clientName); sv('clientContact', j.clientContact);
+  sv('clientTitle', j.clientTitle); sv('clientAddress', j.clientAddress);
+  sv('projectName', j.projectName); sv('jobCity', j.jobCity);
+  sv('startDate', j.startDate); sv('endDate', j.endDate);
+  sv('renewalTerms', j.renewalTerms); sv('pricingType', j.pricingType);
+  sv('paymentTerms', j.paymentTerms); sv('lateFee', j.lateFee);
+  sv('cancellationPolicy', j.cancellationPolicy); sv('materialsPolicy', j.materialsPolicy);
+  sv('customTerms', j.customTerms);
+
+  // Re-render pricing fields for the chosen type
+  onPricingTypeChange();
+
+  // Pricing values
+  ['priceTotal','priceDeposit','priceHourly','priceHoursWeek','priceMinHours',
+   'priceMileage','priceMonthly','priceVisits','pricePerVisit','priceVisitsMonth',
+   'priceSeasonTotal','priceSeasonMonths'].forEach(function(k) {
+    if (j[k]) sv(k, j[k]);
+  });
+
+  // Scope
+  document.getElementById('scopeList').innerHTML = '';
+  _scopeItems = [];
+  if (j.scopeItems && j.scopeItems.length > 0) {
+    j.scopeItems.forEach(function(s) { addScope(s); });
+  }
+
+  // Amendments
+  document.getElementById('amendmentList').innerHTML = '';
+  _amendments = [];
+  if (j.amendments && j.amendments.length > 0) {
+    j.amendments.forEach(function(a) { addAmendment(a.title, a.body); });
+  }
+}
+
+// ================================================================
+// UTILITIES
+// ================================================================
+function showStatus(msg) {
+  var el = document.getElementById('genStatus');
+  el.style.display = 'flex';
+  el.textContent = msg;
+  if (msg.startsWith('✅')) setTimeout(function() { el.style.display = 'none'; }, 4000);
+}
+
+function clearForm() {
+  if (!confirm('Clear all form data?')) return;
+  ['clientName','clientContact','clientTitle','clientEmail','clientPhone','clientAddress',
+   'projectName','jobCity','customTerms'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('scopeList').innerHTML = ''; _scopeItems = [];
+  document.getElementById('amendmentList').innerHTML = ''; _amendments = [];
+  document.getElementById('pricingFields').innerHTML = '';
+  document.getElementById('docOut').innerHTML = '';
+  document.getElementById('emptyState').style.display = '';
+  autoContractNum();
+}
+
+function copyContractText() {
+  if (!_currentDoc) { alert('Generate a contract first.'); return; }
+  var wrapper = document.querySelector('.doc-wrapper');
+  var text = wrapper ? wrapper.innerText : '';
+  navigator.clipboard.writeText(text).then(function() {
+    showStatus('✅ Contract text copied to clipboard');
+  });
+}
+
+function emailContract() {
+  if (!_currentDoc) { alert('Generate a contract first.'); return; }
+  var wrapper = document.querySelector('.doc-wrapper');
+  var text = wrapper ? wrapper.innerText : '';
+  var subj = 'Contract Agreement — ' + (_currentDoc.num || 'WSI') + ' — ' + (_currentDoc.client || 'Client');
+  window.open('mailto:' + (gv('clientEmail')||'') + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(text));
+}
+
+function saveToFirebase() {
+  if (!_currentDoc || !db) { showStatus('⚠️ Nothing to save or Firebase unavailable'); return; }
+  var ref = db.ref('contracts/' + hashedPIN + '/' + (_currentDoc.num || ('CTR-' + Date.now())));
+  ref.set({
+    type: _currentDoc.type, num: _currentDoc.num, client: _currentDoc.client,
+    date: _currentDoc.date, savedAt: new Date().toISOString(),
+    pricingText: _currentDoc.pricingText
+  }).then(function() {
+    showStatus('✅ Saved to Firebase: ' + _currentDoc.num);
+  }).catch(function(e) { showStatus('❌ Save failed: ' + e.message); });
+}
+
+function loadSaved() {
+  if (!db) { showStatus('⚠️ Firebase unavailable'); return; }
+  db.ref('contracts/' + hashedPIN).once('value').then(function(snap) {
+    var data = snap.val();
+    if (!data) { showStatus('No saved contracts found.'); return; }
+    var keys = Object.keys(data);
+    var list = keys.map(function(k) { var d = data[k]; return k + ' — ' + (d.client||'?') + ' — ' + (d.date||'?'); });
+    var choice = prompt('Saved contracts:\n\n' + list.map(function(l,i){return (i+1)+'. '+l;}).join('\n') + '\n\nEnter number to load:');
+    if (!choice) return;
+    var idx = parseInt(choice) - 1;
+    if (idx >= 0 && idx < keys.length) {
+      showStatus('✅ Contract info loaded. Note: full HTML not stored — regenerate from form.');
+    }
+  }).catch(function(e) { showStatus('❌ Load failed: ' + e.message); });
+}
+
+// ── INIT ──
+onPricingTypeChange();
+addScope();
+</script>
+
+<!-- CONTRACT AI MENTOR (loaded after page init) -->
+<script src="contract-ai.js" defer></script>
+
+</body>
+</html>

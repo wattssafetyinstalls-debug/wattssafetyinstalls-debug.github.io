@@ -910,6 +910,8 @@ Please give me 20-30 items commonly used in TRADE_TYPE work, with realistic curr
         <button class="btn" style="background:linear-gradient(135deg,#e67e22,#d35400);color:white" onclick="openScanner()">Scan Document</button>
         <a href="portal-dashboard.html" class="btn" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;text-decoration:none">🌐 Portal Dashboard</a>
         <a href="invoice-builder.html" class="btn" style="background:linear-gradient(135deg,#059669,#22c55e);color:white;text-decoration:none">🧾 Final Invoice Builder</a>
+        <a href="dedup-tool.html" class="btn" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;text-decoration:none">🧹 Dedup Tool</a>
+        <a href="contract-builder.html" class="btn" style="background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:white;text-decoration:none">📜 Contract Builder</a>
     </div>
     <div style="height:80px"></div>
 </div>
@@ -2267,7 +2269,7 @@ function addLaborRow(desc, basis, price, qty) {
     row.innerHTML = '<input type="text" placeholder="Description" value="'+esc(desc)+'">'
         + selHtml
         + '<input type="number" step="1" min="0" placeholder="Qty" value="'+(defaultQty||'')+'" class="labor-qty" oninput="liveCalc()">'
-        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="labor-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="this.closest(\'.li-row\').remove();liveCalc()">&times;</button></div>';
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="labor-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="removeAndSave(this,\'.li-row\')">&times;</button></div>';
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'labor');
 }
@@ -2302,7 +2304,7 @@ function addMatRow(desc, qty, price) {
     row.innerHTML = '<input type="text" placeholder="Material" value="'+esc(desc)+'">'
         + '<input type="number" step="1" min="0" placeholder="#" value="'+esc(pq.num)+'" class="mat-qty" oninput="liveCalc()">'
         + unitSel
-        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="mat-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="this.closest(\'.mi-row\').remove();liveCalc()">&times;</button></div>';
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="mat-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="removeAndSave(this,\'.mi-row\')">&times;</button></div>';
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'materials');
 }
@@ -2320,11 +2322,46 @@ function addDistMatRow(desc, qty, price) {
     row.innerHTML = '<input type="text" placeholder="Material" value="'+esc(desc)+'">'
         + '<input type="number" step="1" min="0" placeholder="#" value="'+esc(pq.num)+'" class="mat-qty" oninput="liveCalc()">'
         + unitSel
-        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="mat-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="this.closest(\'.di-row\').remove();liveCalc()">&times;</button></div>';
+        + '<div style="display:flex;gap:4px;align-items:center;"><input type="number" step="0.01" placeholder="$" value="'+(price||'')+'" class="mat-price" style="flex:1;" oninput="liveCalc()"><button class="remove-row" onclick="removeAndSave(this,\'.di-row\')">&times;</button></div>';
     c.appendChild(row);
     attachAutocomplete(row.querySelector('input'), 'materials');
 }
 function esc(s) { return String(s||'').replace(/"/g, '&quot;'); }
+
+// Helper: Remove row, recalculate, and save to Firebase
+function removeAndSave(btn, selector) {
+    btn.closest(selector).remove();
+    liveCalc();
+    // Auto-save if we have a current job selected
+    const jobName = document.getElementById('savedJobsSelect')?.value;
+    if (jobName && typeof jobsRef !== 'undefined') {
+        const jobData = {
+            clientName: gv('clientName'),
+            complexName: gv('complexName'),
+            unitNum: gv('unitNum'),
+            jobCity: gv('jobCity'),
+            sqft: gv('sqft'),
+            linft: gv('linft'),
+            areaDesc: gv('areaDesc'),
+            estimateDate: gv('estimateDate'),
+            tradeType: gv('tradeType'),
+            scopeTitle: gv('scopeTitle'),
+            materialsMarkup: gn('materialsMarkup'),
+            supplierNote: gv('supplierNote'),
+            disclaimer: gv('disclaimer'),
+            scopeItems: getScope(),
+            noteItems: getNotes(),
+            laborItems: getLaborItems(),
+            matItems: getMatItems(),
+            savedAt: Date.now()
+        };
+        jobsRef.child(jobName).set(jobData).then(() => {
+            flashSync();
+        }).catch(err => {
+            console.error('[BidGen] Failed to save after remove:', err);
+        });
+    }
+}
 
 // ========== GATHER DATA ==========
 function getLaborItems() {
@@ -2391,7 +2428,7 @@ function addScopeRow(text) {
     var row = document.createElement('div');
     row.className = 'scope-row';
     row.innerHTML = '<input type="text" placeholder="Scope item..." value="'+esc(text)+'">'
-        + '<button class="remove-row" onclick="this.closest(\'.scope-row\').remove()">&times;</button>';
+        + '<button class="remove-row" onclick="removeAndSave(this,\'.scope-row\')">&times;</button>';
     c.appendChild(row);
 }
 function addNoteRow(text) {
@@ -2399,7 +2436,7 @@ function addNoteRow(text) {
     var row = document.createElement('div');
     row.className = 'note-row';
     row.innerHTML = '<input type="text" placeholder="Note..." value="'+esc(text)+'">'
-        + '<button class="remove-row" onclick="this.closest(\'.note-row\').remove()">&times;</button>';
+        + '<button class="remove-row" onclick="removeAndSave(this,\'.note-row\')">&times;</button>';
     c.appendChild(row);
 }
 
@@ -5530,6 +5567,39 @@ function _aiSaveChangeOrder(originalInvoiceId, coText, coAmount, coDescription) 
         });
     }
 
+    // Dedup check: look for existing CO with same original + same amount
+    var existingCoId = null;
+    var clientLower = (original ? original.clientName : '').toLowerCase();
+    ['temporary', 'permanent'].forEach(function(bucket) {
+        if (existingCoId) return;
+        Object.keys(invoiceData[bucket] || {}).forEach(function(id) {
+            if (existingCoId) return;
+            var inv = invoiceData[bucket][id];
+            if ((inv.type === 'change_order' || inv.documentType === 'change_order') &&
+                inv.originalInvoiceId === originalInvoiceId &&
+                Math.round((inv.amount || 0) * 100) === Math.round((coAmount || 0) * 100) &&
+                (inv.clientName || '').toLowerCase() === clientLower) {
+                existingCoId = id;
+            }
+        });
+    });
+
+    if (existingCoId) {
+        // Update existing CO instead of creating a new one
+        var existingCO = invoiceData.temporary[existingCoId] || invoiceData.permanent[existingCoId];
+        if (existingCO) {
+            existingCO.notes = coText;
+            existingCO.changeOrderText = coText;
+            existingCO.scope = coDescription || existingCO.scope;
+            existingCO.createdDate = new Date().toISOString();
+            saveInvoiceToFirebase(existingCO);
+            invRenderList();
+            updateInvoiceStats();
+            showNotification('Updated existing Change Order ' + existingCoId + ' (duplicate prevented)', 'info');
+            return existingCoId;
+        }
+    }
+
     var coId = generateInvoiceId();
     saveInvoiceCounter();
 
@@ -6012,10 +6082,52 @@ function saveInvoiceCounter() {
     db.ref('invoiceCounter/' + hashedPIN).set(_invoiceCounter);
 }
 
+// Dedup fingerprint — generates a content hash for duplicate detection
+// NOTE: type is intentionally excluded so that auto-save ('temporary') and
+// Generate ('labor'/'materials'/'change_order') match the same content.
+function _dedupFingerprint(type, clientName, laborTotal, matTotal, litems, mitems, jobDetails) {
+    var parts = [
+        (clientName || '').toLowerCase().trim(),
+        Math.round((laborTotal + matTotal) * 100),
+        Math.round(laborTotal * 100),
+        Math.round(matTotal * 100),
+        (jobDetails.complexName || ''),
+        (jobDetails.unitNum || ''),
+        (jobDetails.jobCity || '')
+    ];
+    (litems || []).forEach(function(li) {
+        parts.push((li.desc || li.description || '').substring(0, 30) + ':' + (li.qty || 0) + 'x' + (li.price || 0));
+    });
+    (mitems || []).forEach(function(mi) {
+        parts.push((mi.name || mi.desc || '').substring(0, 30) + ':' + (mi.qtyNum || mi.qty || 0) + 'x' + (mi.price || 0));
+    });
+    return parts.join('|');
+}
+var _recentFingerprints = {};
+
+// Find existing invoice with same fingerprint (returns ID or null)
+function _findDuplicateInvoice(fp) {
+    for (var bucket in invoiceData) {
+        if (!invoiceData[bucket]) continue;
+        for (var id in invoiceData[bucket]) {
+            var inv = invoiceData[bucket][id];
+            var existingFp = _dedupFingerprint(
+                null,
+                inv.clientName,
+                inv.laborTotal || 0,
+                inv.materialsTotal || 0,
+                inv.laborItems || [],
+                inv.materialItems || [],
+                inv.jobDetails || {}
+            );
+            if (existingFp === fp) return id;
+        }
+    }
+    return null;
+}
+
 // Auto-save invoice when generating documents
 function autoSaveInvoice(type) {
-    const invoiceId = generateInvoiceId();
-    saveInvoiceCounter();
     const clientName = gv('clientName') || 'Unknown Client';
     const estimateDate = gv('estimateDate') || new Date().toISOString().split('T')[0];
     
@@ -6032,6 +6144,56 @@ function autoSaveInvoice(type) {
     const markup = gn('materialsMarkup') / 100;
     const matTotal = matSubtotal + (matSubtotal * markup);
     const grandTotal = laborTotal + matTotal;
+
+    // Dedup check: build fingerprint and look for existing match
+    const jobDets = {
+        complexName: gv('complexName'),
+        unitNum: gv('unitNum'),
+        jobCity: gv('jobCity'),
+        sqft: sq,
+        areaDesc: gv('areaDesc'),
+        tradeType: gv('tradeType')
+    };
+    const fp = _dedupFingerprint(type, clientName, laborTotal, matTotal, litems, mitems, jobDets);
+
+    // Check recent fingerprints (rapid-fire protection: same content within 30 seconds)
+    var now = Date.now();
+    if (_recentFingerprints[fp] && (now - _recentFingerprints[fp].time) < 30000) {
+        console.log('[Dedup] Skipping duplicate save — same content generated ' + Math.round((now - _recentFingerprints[fp].time) / 1000) + 's ago → reusing ' + _recentFingerprints[fp].id);
+        showNotification('Using existing invoice ' + _recentFingerprints[fp].id + ' (duplicate prevented)', 'info');
+        return _recentFingerprints[fp].id;
+    }
+
+    // Check in-memory library for existing identical invoice
+    var existingId = _findDuplicateInvoice(fp);
+    if (existingId) {
+        console.log('[Dedup] Found existing identical invoice: ' + existingId + ' — updating instead of creating new');
+        // Update the existing invoice's timestamp, type, and content — reuse it
+        var existing = invoiceData.temporary[existingId] || invoiceData.permanent[existingId] || invoiceData.lost[existingId];
+        if (existing) {
+            existing.createdDate = new Date().toISOString();
+            existing.estimateDate = estimateDate;
+            // Upgrade type: if auto-save created 'temporary' and now Generate fires with 'labor'/'materials'/etc, upgrade it
+            if (type !== 'temporary') existing.type = type;
+            // Refresh all content in case AI corrections changed details
+            existing.amount = grandTotal;
+            existing.laborTotal = laborTotal;
+            existing.materialsTotal = matTotal;
+            existing.laborItems = litems;
+            existing.materialItems = mitems;
+            existing.scope = getScope();
+            existing.notes = getNotes();
+            existing.disclaimer = gv('disclaimer');
+            existing.jobDetails = jobDets;
+            saveInvoiceToFirebase(existing);
+            _recentFingerprints[fp] = { id: existingId, time: now };
+            showNotification('Updated invoice ' + existingId, 'info');
+            return existingId;
+        }
+    }
+
+    const invoiceId = generateInvoiceId();
+    saveInvoiceCounter();
     
     const invoice = {
         id: invoiceId,
@@ -6050,14 +6212,7 @@ function autoSaveInvoice(type) {
         scope: getScope(),
         notes: getNotes(),
         disclaimer: gv('disclaimer'),
-        jobDetails: {
-            complexName: gv('complexName'),
-            unitNum: gv('unitNum'),
-            jobCity: gv('jobCity'),
-            sqft: sq,
-            areaDesc: gv('areaDesc'),
-            tradeType: gv('tradeType')
-        },
+        jobDetails: jobDets,
         companyInfo: {
             companyName: gv('companyName'),
             licenseNum: gv('licenseNum'),
@@ -6071,6 +6226,9 @@ function autoSaveInvoice(type) {
     
     // Save to Firebase
     saveInvoiceToFirebase(invoice);
+
+    // Track fingerprint for rapid-fire protection
+    _recentFingerprints[fp] = { id: invoiceId, time: now };
     
     // Update UI
     invRenderList();

@@ -172,14 +172,27 @@
     ];
     for (var i = 0; i < messages.length; i++) contents.push(messages[i]);
 
+    // Use web search for research/legal questions, but NOT when generating contracts
+    // — googleSearch grounding strips code blocks, breaking the contract-json output
+    var lastUserMsg = '';
+    for (var mi = messages.length - 1; mi >= 0; mi--) {
+      if (messages[mi].role === 'user' && messages[mi].parts && messages[mi].parts[0]) {
+        lastUserMsg = (messages[mi].parts[0].text || '').toLowerCase();
+        break;
+      }
+    }
+    var isDocGen = /generat|draft|creat|writ|build|contract|agreement|amend|proposal|nda|scope/.test(lastUserMsg);
+    var requestBody = {
+      contents: contents,
+      generationConfig: { temperature: 0.5, maxOutputTokens: 32768, topP: 0.92, topK: 40 }
+    };
+    if (!isDocGen) requestBody.tools = [{ googleSearch: {} }];
+
     return fetch(PROXY + '?model=' + MODEL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: controller.signal,
-      body: JSON.stringify({
-        contents: contents,
-        generationConfig: { temperature: 0.5, maxOutputTokens: 32768, topP: 0.92, topK: 40 }
-      })
+      body: JSON.stringify(requestBody)
     }).then(function(r) {
       clearTimeout(timer);
       if (!r.ok && (r.status === 503 || r.status === 500) && attempt < MAX_RETRIES) {

@@ -166,19 +166,32 @@
       contents.push(messages[i]);
     }
 
+    // Use web search for research/lookup questions, but NOT when generating
+    // structured documents — googleSearch grounding strips code blocks from output
+    var lastUserMsg = '';
+    for (var mi = messages.length - 1; mi >= 0; mi--) {
+      if (messages[mi].role === 'user' && messages[mi].parts && messages[mi].parts[0]) {
+        lastUserMsg = (messages[mi].parts[0].text || '').toLowerCase();
+        break;
+      }
+    }
+    var isDocGen = /generat|draft|creat|writ|build|quot|invoice|change order|scope of work|bidgen-json|fill.*form|load.*form/.test(lastUserMsg);
+    var requestBody = {
+      contents: contents,
+      generationConfig: {
+        temperature: 0.8,
+        maxOutputTokens: 65536,
+        topP: 0.95,
+        topK: 64
+      }
+    };
+    if (!isDocGen) requestBody.tools = [{ googleSearch: {} }];
+
     return fetch(PROXY + '?model=' + MODEL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: controller.signal,
-      body: JSON.stringify({
-        contents: contents,
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 65536,
-          topP: 0.95,
-          topK: 64
-        }
-      })
+      body: JSON.stringify(requestBody)
     }).then(function(r) {
       clearTimeout(timer);
       // Retry on 503 or 500 errors

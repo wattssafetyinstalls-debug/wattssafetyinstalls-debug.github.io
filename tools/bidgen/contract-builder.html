@@ -1544,7 +1544,8 @@ function publishContract() {
       pricingHtml: true,
       pricingRows: collectPricingRows(),
       terms: collectTermsArray(),
-      amendments: getAmendments()
+      amendments: getAmendments(),
+      contractBody: _contractBody || null
     },
     publishedAt: new Date().toISOString(),
     publishedBy: 'contractor',

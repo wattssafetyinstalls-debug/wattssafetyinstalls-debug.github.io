@@ -83,6 +83,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .cp-amend-hdr{font-size:11px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
 .cp-amend-body{font-size:13px;color:var(--text2);line-height:1.75;white-space:pre-wrap}
 
+.cp-ai-body{font-size:13.5px;color:var(--text);line-height:2;white-space:pre-wrap;padding:4px 2px}
+.cp-ai-body p{margin:0 0 14px 0}
+.cp-ai-h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:var(--text2);margin:20px 0 6px 0;padding-bottom:6px;border-bottom:1px solid var(--border);display:block}
+.cp-ai-h4{font-size:13px;font-weight:700;color:var(--text);margin:14px 0 4px 0;display:block}
+
 /* Q&A / Messages */
 .cp-msg-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;min-height:30px}
 .cp-msg{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.6}
@@ -285,32 +290,40 @@ function renderContract(data, ref) {
 
   html += '</div>'; // end info card
 
-  // ── Scope ──
-  if (c.scopeItems && c.scopeItems.length > 0) {
-    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">🔧</span> Scope of Services</div>';
-    html += '<ul class="cp-scope-list">' + c.scopeItems.map(function(s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
-    html += '</div>';
+  // ── Full AI body — renders the complete drafted contract verbatim ──
+  if (c.contractBody && c.contractBody.length > 100) {
+    html += '<div class="cp-section"><div class="cp-ai-body">' +
+      c.contractBody
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\n#{3,}\s*(.+)/g, '<span class="cp-ai-h4">$1</span>')
+        .replace(/\n#{1,2}\s*(.+)/g, '<span class="cp-ai-h3">$1</span>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/\n/g, '<br>')
+    + '</div></div>';
+  } else {
+    // ── Fallback: structured skeleton view ──
+    if (c.scopeItems && c.scopeItems.length > 0) {
+      html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">🔧</span> Scope of Services</div>';
+      html += '<ul class="cp-scope-list">' + c.scopeItems.map(function(s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
+      html += '</div>';
+    }
+    if (c.pricingHtml) {
+      html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">💰</span> Pricing & Compensation</div>';
+      html += buildPricingDisplay(c);
+      html += '</div>';
+    }
+    if (c.terms && c.terms.length > 0) {
+      html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">⚖️</span> Terms & Conditions</div>';
+      html += '<div class="cp-terms-list">';
+      c.terms.forEach(function(t) {
+        html += '<div class="cp-term"><strong>' + esc(t.label) + '</strong>' + esc(t.value) + '</div>';
+      });
+      html += '</div></div>';
+    }
   }
 
-  // ── Pricing ──
-  if (c.pricingHtml) {
-    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">💰</span> Pricing & Compensation</div>';
-    // Rebuild pricing table safely
-    html += buildPricingDisplay(c);
-    html += '</div>';
-  }
-
-  // ── Terms ──
-  if (c.terms && c.terms.length > 0) {
-    html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">⚖️</span> Terms & Conditions</div>';
-    html += '<div class="cp-terms-list">';
-    c.terms.forEach(function(t) {
-      html += '<div class="cp-term"><strong>' + esc(t.label) + '</strong>' + esc(t.value) + '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── Amendments ──
+  // ── Amendments always shown regardless of body type ──
   if (c.amendments && c.amendments.length > 0) {
     html += '<div class="cp-section"><div class="cp-section-title"><span class="cp-section-icon">📎</span> Amendments</div>';
     c.amendments.forEach(function(a, i) {

@@ -53,27 +53,54 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .app-body { display: grid; grid-template-columns: 380px 1fr; height: 100%; overflow: hidden; }
 
 /* ── LEFT: FORM COL ── */
-.form-col { overflow-y: auto; padding: 16px; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px; }
-.form-col::-webkit-scrollbar { width: 4px; }
-.form-col::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.form-col { background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── TAB NAV ── */
+.tab-nav { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 1; min-width: 0; padding: 10px 4px 9px; border: none; background: none;
+  color: var(--text3); font-size: 10px; font-weight: 700; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border-bottom: 2px solid transparent; transition: all 0.18s; white-space: nowrap;
+  text-transform: uppercase; letter-spacing: 0.3px;
+}
+.tab-btn .tab-icon { font-size: 17px; }
+.tab-btn:hover { color: var(--text2); background: rgba(255,255,255,0.02); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(59,130,246,0.06); }
+.tab-btn .tab-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); margin-top: 1px; display: none; }
+.tab-btn.has-data .tab-dot { display: block; }
+
+/* ── TAB PANES ── */
+.tab-panes { flex: 1; overflow: hidden; position: relative; }
+.tab-pane { position: absolute; inset: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+.tab-pane::-webkit-scrollbar { width: 4px; }
+.tab-pane::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.tab-pane.active { opacity: 1; pointer-events: all; }
+
+/* ── STEP PROGRESS ── */
+.step-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px 2px; flex-shrink: 0; }
+.step-num { font-size: 10px; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+.step-next { margin-left: auto; background: linear-gradient(135deg,#3b82f6,#8b5cf6); border: none; color: #fff; padding: 5px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+.step-next:hover { opacity: 0.88; }
 
 /* ── CONTRACT TYPE SELECTOR ── */
 .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .type-btn {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
-  padding: 12px 10px; cursor: pointer; text-align: center; transition: all 0.2s;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 11px 8px; cursor: pointer; text-align: center; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
 }
 .type-btn:hover { border-color: var(--accent); background: var(--card2); }
 .type-btn.active { border-color: var(--accent); background: rgba(59,130,246,0.1); }
-.type-btn .ti { font-size: 22px; }
-.type-btn .tl { font-size: 11px; font-weight: 700; color: var(--text2); }
+.type-btn .ti { font-size: 20px; }
+.type-btn .tl { font-size: 10px; font-weight: 700; color: var(--text2); }
 .type-btn.active .tl { color: var(--accent); }
 
 /* ── CARDS ── */
 .cb-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-.cb-card-title { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--card2); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
-.cb-card-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.cb-card-title { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--card2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+.cb-card-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
 
 /* ── FORM ELEMENTS ── */
 .cb-field { display: flex; flex-direction: column; gap: 4px; }
@@ -247,227 +274,271 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   </header>
 
   <div class="app-body">
-    <!-- LEFT: FORM -->
+    <!-- LEFT: TABBED FORM -->
     <div class="form-col">
 
-      <!-- CONTRACT TYPE -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>📋</span> Contract Type</div>
-        <div class="cb-card-body">
-          <div class="type-grid">
-            <div class="type-btn active" data-type="service" onclick="setType('service',this)">
-              <span class="ti">🔧</span><span class="tl">Service Agreement</span>
+      <!-- TAB NAV -->
+      <nav class="tab-nav" id="tabNav">
+        <button class="tab-btn active" data-tab="tab-type" onclick="switchTab('tab-type',this)">
+          <span class="tab-icon">📋</span>Type<div class="tab-dot"></div>
+        </button>
+        <button class="tab-btn" data-tab="tab-parties" onclick="switchTab('tab-parties',this)">
+          <span class="tab-icon">👥</span>Parties<div class="tab-dot"></div>
+        </button>
+        <button class="tab-btn" data-tab="tab-scope" onclick="switchTab('tab-scope',this)">
+          <span class="tab-icon">📝</span>Scope<div class="tab-dot"></div>
+        </button>
+        <button class="tab-btn" data-tab="tab-pricing" onclick="switchTab('tab-pricing',this)">
+          <span class="tab-icon">💰</span>Pricing<div class="tab-dot"></div>
+        </button>
+        <button class="tab-btn" data-tab="tab-terms" onclick="switchTab('tab-terms',this)">
+          <span class="tab-icon">⚖️</span>Terms<div class="tab-dot"></div>
+        </button>
+      </nav>
+
+      <!-- TAB PANES -->
+      <div class="tab-panes">
+
+        <!-- ── TAB 1: TYPE ── -->
+        <div class="tab-pane active" id="tab-type">
+          <div class="cb-card">
+            <div class="cb-card-title"><span>📋</span> Contract Type</div>
+            <div class="cb-card-body">
+              <div class="type-grid">
+                <div class="type-btn active" data-type="service" onclick="setType('service',this)">
+                  <span class="ti">🔧</span><span class="tl">Service Agreement</span>
+                </div>
+                <div class="type-btn" data-type="hourly" onclick="setType('hourly',this)">
+                  <span class="ti">⏱️</span><span class="tl">Hourly / T&M</span>
+                </div>
+                <div class="type-btn" data-type="seasonal" onclick="setType('seasonal',this)">
+                  <span class="ti">🌿</span><span class="tl">Seasonal Contract</span>
+                </div>
+                <div class="type-btn" data-type="proposal" onclick="setType('proposal',this)">
+                  <span class="ti">💼</span><span class="tl">Business Proposal</span>
+                </div>
+                <div class="type-btn" data-type="maintenance" onclick="setType('maintenance',this)">
+                  <span class="ti">🏠</span><span class="tl">Maintenance Plan</span>
+                </div>
+                <div class="type-btn" data-type="subcontractor" onclick="setType('subcontractor',this)">
+                  <span class="ti">👷</span><span class="tl">Subcontractor</span>
+                </div>
+                <div class="type-btn" data-type="nda" onclick="setType('nda',this)">
+                  <span class="ti">🔒</span><span class="tl">NDA / Confidential</span>
+                </div>
+                <div class="type-btn" data-type="custom" onclick="setType('custom',this)">
+                  <span class="ti">✏️</span><span class="tl">Custom</span>
+                </div>
+              </div>
             </div>
-            <div class="type-btn" data-type="hourly" onclick="setType('hourly',this)">
-              <span class="ti">⏱️</span><span class="tl">Hourly / T&M</span>
+          </div>
+          <!-- Contract # and dates live here so Type tab is complete -->
+          <div class="cb-card">
+            <div class="cb-card-title"><span>📍</span> Project Info</div>
+            <div class="cb-card-body">
+              <div class="cb-field">
+                <label>Project / Property Name</label>
+                <input id="projectName" type="text" placeholder="Maple Creek Apartments">
+              </div>
+              <div class="cb-row">
+                <div class="cb-field">
+                  <label>Job Location / City</label>
+                  <input id="jobCity" type="text" placeholder="Norfolk, NE">
+                </div>
+                <div class="cb-field">
+                  <label>Contract #</label>
+                  <input id="contractNum" type="text" placeholder="WSI-CTR-001">
+                </div>
+              </div>
+              <div class="cb-row">
+                <div class="cb-field">
+                  <label>Start Date</label>
+                  <input id="startDate" type="date">
+                </div>
+                <div class="cb-field">
+                  <label>End Date / Expiry</label>
+                  <input id="endDate" type="date">
+                </div>
+              </div>
+              <div class="cb-field" id="renewalField">
+                <label>Renewal Terms</label>
+                <select id="renewalTerms">
+                  <option value="">No auto-renewal</option>
+                  <option value="month-to-month">Month-to-month after term</option>
+                  <option value="auto-annual">Auto-renews annually (30-day notice to cancel)</option>
+                  <option value="auto-90">Auto-renews (90-day notice to cancel)</option>
+                  <option value="negotiated">Renewal by mutual written agreement</option>
+                </select>
+              </div>
             </div>
-            <div class="type-btn" data-type="seasonal" onclick="setType('seasonal',this)">
-              <span class="ti">🌿</span><span class="tl">Seasonal Contract</span>
+          </div>
+          <button class="step-next" onclick="switchTabByIndex(1)">Next: Parties →</button>
+        </div>
+
+        <!-- ── TAB 2: PARTIES ── -->
+        <div class="tab-pane" id="tab-parties">
+          <div class="cb-card">
+            <div class="cb-card-title"><span>👥</span> Client Info</div>
+            <div class="cb-card-body">
+              <div class="cb-field">
+                <label>Client / Company Name</label>
+                <input id="clientName" type="text" placeholder="ABC Property Management LLC">
+              </div>
+              <div class="cb-row">
+                <div class="cb-field">
+                  <label>Contact Name</label>
+                  <input id="clientContact" type="text" placeholder="John Smith">
+                </div>
+                <div class="cb-field">
+                  <label>Title</label>
+                  <input id="clientTitle" type="text" placeholder="Property Manager">
+                </div>
+              </div>
+              <div class="cb-row">
+                <div class="cb-field">
+                  <label>Email</label>
+                  <input id="clientEmail" type="email" placeholder="john@abc.com">
+                </div>
+                <div class="cb-field">
+                  <label>Phone</label>
+                  <input id="clientPhone" type="tel" placeholder="(402) 555-0100">
+                </div>
+              </div>
+              <div class="cb-field">
+                <label>Address</label>
+                <input id="clientAddress" type="text" placeholder="123 Main St, Norfolk, NE 68701">
+              </div>
             </div>
-            <div class="type-btn" data-type="proposal" onclick="setType('proposal',this)">
-              <span class="ti">💼</span><span class="tl">Business Proposal</span>
-            </div>
-            <div class="type-btn" data-type="maintenance" onclick="setType('maintenance',this)">
-              <span class="ti">🏠</span><span class="tl">Maintenance Plan</span>
-            </div>
-            <div class="type-btn" data-type="subcontractor" onclick="setType('subcontractor',this)">
-              <span class="ti">👷</span><span class="tl">Subcontractor</span>
-            </div>
-            <div class="type-btn" data-type="nda" onclick="setType('nda',this)">
-              <span class="ti">🔒</span><span class="tl">NDA / Confidential</span>
-            </div>
-            <div class="type-btn" data-type="custom" onclick="setType('custom',this)">
-              <span class="ti">✏️</span><span class="tl">Custom</span>
-            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="step-next" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)" onclick="switchTabByIndex(0)">← Back</button>
+            <button class="step-next" style="flex:1" onclick="switchTabByIndex(2)">Next: Scope →</button>
           </div>
         </div>
-      </div>
 
-      <!-- PARTIES -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>👥</span> Parties</div>
-        <div class="cb-card-body">
-          <div class="cb-field">
-            <label>Client / Company Name</label>
-            <input id="clientName" type="text" placeholder="ABC Property Management LLC">
-          </div>
-          <div class="cb-row">
-            <div class="cb-field">
-              <label>Client Contact</label>
-              <input id="clientContact" type="text" placeholder="John Smith">
-            </div>
-            <div class="cb-field">
-              <label>Client Title</label>
-              <input id="clientTitle" type="text" placeholder="Property Manager">
+        <!-- ── TAB 3: SCOPE ── -->
+        <div class="tab-pane" id="tab-scope">
+          <div class="cb-card">
+            <div class="cb-card-title"><span>📝</span> Scope of Work / Services</div>
+            <div class="cb-card-body">
+              <div class="scope-list" id="scopeList"></div>
+              <button class="add-scope-btn" onclick="addScope()">+ Add Service Item</button>
             </div>
           </div>
-          <div class="cb-row">
-            <div class="cb-field">
-              <label>Client Email</label>
-              <input id="clientEmail" type="email" placeholder="john@abc.com">
-            </div>
-            <div class="cb-field">
-              <label>Client Phone</label>
-              <input id="clientPhone" type="tel" placeholder="(402) 555-0100">
+          <div class="cb-card">
+            <div class="cb-card-title"><span>📎</span> Amendments <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Optional</span></div>
+            <div class="cb-card-body">
+              <div class="amendment-list" id="amendmentList"></div>
+              <button class="add-scope-btn" onclick="addAmendment()">+ Add Amendment / Addendum</button>
             </div>
           </div>
-          <div class="cb-field">
-            <label>Client Address</label>
-            <input id="clientAddress" type="text" placeholder="123 Main St, Norfolk, NE 68701">
+          <div style="display:flex;gap:8px">
+            <button class="step-next" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)" onclick="switchTabByIndex(1)">← Back</button>
+            <button class="step-next" style="flex:1" onclick="switchTabByIndex(3)">Next: Pricing →</button>
           </div>
         </div>
-      </div>
 
-      <!-- JOB DETAILS -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>📍</span> Job / Project Details</div>
-        <div class="cb-card-body">
-          <div class="cb-field">
-            <label>Project / Property Name</label>
-            <input id="projectName" type="text" placeholder="Maple Creek Apartments">
-          </div>
-          <div class="cb-row">
-            <div class="cb-field">
-              <label>Job Location / City</label>
-              <input id="jobCity" type="text" placeholder="Norfolk, NE">
-            </div>
-            <div class="cb-field">
-              <label>Contract #</label>
-              <input id="contractNum" type="text" placeholder="WSI-CTR-001" id="contractNum">
-            </div>
-          </div>
-          <div class="cb-row">
-            <div class="cb-field">
-              <label>Start Date</label>
-              <input id="startDate" type="date">
-            </div>
-            <div class="cb-field">
-              <label>End Date / Expiry</label>
-              <input id="endDate" type="date">
-            </div>
-          </div>
-          <div class="cb-field" id="renewalField">
-            <label>Renewal Terms</label>
-            <select id="renewalTerms">
-              <option value="">No auto-renewal</option>
-              <option value="month-to-month">Month-to-month after term</option>
-              <option value="auto-annual">Auto-renews annually (30-day notice to cancel)</option>
-              <option value="auto-90">Auto-renews (90-day notice to cancel)</option>
-              <option value="negotiated">Renewal by mutual written agreement</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCOPE OF WORK -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>📝</span> Scope of Work / Services</div>
-        <div class="cb-card-body">
-          <div class="scope-list" id="scopeList"></div>
-          <button class="add-scope-btn" onclick="addScope()">+ Add Service Item</button>
-        </div>
-      </div>
-
-      <!-- PRICING -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>💰</span> Pricing</div>
-        <div class="cb-card-body">
-          <div class="cb-field">
-            <label>Pricing Structure</label>
-            <select id="pricingType" onchange="onPricingTypeChange()">
-              <option value="fixed">Fixed Price / Lump Sum</option>
-              <option value="hourly">Hourly Rate (T&M)</option>
-              <option value="monthly">Monthly Retainer</option>
-              <option value="per_visit">Per-Visit / Per-Service</option>
-              <option value="milestone">Milestone-Based</option>
-              <option value="seasonal_flat">Seasonal Flat Rate</option>
-            </select>
-          </div>
-          <div id="pricingFields" class="cb-card-body" style="padding:0;gap:10px">
-            <!-- Dynamic fields rendered by JS -->
-          </div>
-          <div class="cb-row">
-            <div class="cb-field">
-              <label>Payment Terms</label>
-              <select id="paymentTerms">
-                <option value="net30">Net 30</option>
-                <option value="net15">Net 15</option>
-                <option value="net7">Net 7</option>
-                <option value="due_receipt">Due Upon Receipt</option>
-                <option value="50_50">50% Upfront / 50% on Completion</option>
-                <option value="monthly_invoice">Monthly Invoice</option>
-                <option value="custom">Custom (see notes)</option>
-              </select>
-            </div>
-            <div class="cb-field">
-              <label>Late Fee</label>
-              <select id="lateFee">
-                <option value="1.5pct">1.5%/month after due date</option>
-                <option value="2pct">2%/month after due date</option>
-                <option value="flat25">$25 flat fee per late invoice</option>
-                <option value="flat50">$50 flat fee per late invoice</option>
-                <option value="none">None</option>
-              </select>
+        <!-- ── TAB 4: PRICING ── -->
+        <div class="tab-pane" id="tab-pricing">
+          <div class="cb-card">
+            <div class="cb-card-title"><span>💰</span> Pricing</div>
+            <div class="cb-card-body">
+              <div class="cb-field">
+                <label>Pricing Structure</label>
+                <select id="pricingType" onchange="onPricingTypeChange()">
+                  <option value="fixed">Fixed Price / Lump Sum</option>
+                  <option value="hourly">Hourly Rate (T&M)</option>
+                  <option value="monthly">Monthly Retainer</option>
+                  <option value="per_visit">Per-Visit / Per-Service</option>
+                  <option value="milestone">Milestone-Based</option>
+                  <option value="seasonal_flat">Seasonal Flat Rate</option>
+                </select>
+              </div>
+              <div id="pricingFields" style="display:flex;flex-direction:column;gap:10px">
+                <!-- Dynamic fields rendered by JS -->
+              </div>
+              <div class="cb-row">
+                <div class="cb-field">
+                  <label>Payment Terms</label>
+                  <select id="paymentTerms">
+                    <option value="net30">Net 30</option>
+                    <option value="net15">Net 15</option>
+                    <option value="net7">Net 7</option>
+                    <option value="due_receipt">Due Upon Receipt</option>
+                    <option value="50_50">50% Upfront / 50% on Completion</option>
+                    <option value="monthly_invoice">Monthly Invoice</option>
+                    <option value="custom">Custom (see notes)</option>
+                  </select>
+                </div>
+                <div class="cb-field">
+                  <label>Late Fee</label>
+                  <select id="lateFee">
+                    <option value="1.5pct">1.5%/month</option>
+                    <option value="2pct">2%/month</option>
+                    <option value="flat25">$25 flat fee</option>
+                    <option value="flat50">$50 flat fee</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- SPECIAL TERMS -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>⚖️</span> Special Terms & Conditions</div>
-        <div class="cb-card-body">
-          <div class="cb-field">
-            <label>Cancellation Policy</label>
-            <select id="cancellationPolicy">
-              <option value="30day">30-day written notice required</option>
-              <option value="14day">14-day written notice required</option>
-              <option value="7day">7-day written notice required</option>
-              <option value="60day">60-day written notice required</option>
-              <option value="none">No cancellation provision</option>
-            </select>
-          </div>
-          <div class="cb-field">
-            <label>Materials / Supplies</label>
-            <select id="materialsPolicy">
-              <option value="contractor">Contractor supplies all materials (included in price)</option>
-              <option value="client">Client supplies all materials</option>
-              <option value="split">Contractor supplies labor; client purchases materials</option>
-              <option value="markup">Contractor purchases materials at cost + markup</option>
-              <option value="na">Not applicable</option>
-            </select>
-          </div>
-          <div class="cb-field">
-            <label>Additional Notes / Custom Terms</label>
-            <textarea id="customTerms" placeholder="Any special conditions, exclusions, access requirements, key pickup policy, etc."></textarea>
+          <div style="display:flex;gap:8px">
+            <button class="step-next" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)" onclick="switchTabByIndex(2)">← Back</button>
+            <button class="step-next" style="flex:1" onclick="switchTabByIndex(4)">Next: Terms →</button>
           </div>
         </div>
-      </div>
 
-      <!-- AMENDMENTS -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>📎</span> Amendments / Addendums <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;margin-left:4px">Optional</span></div>
-        <div class="cb-card-body">
-          <div class="amendment-list" id="amendmentList"></div>
-          <button class="add-scope-btn" onclick="addAmendment()">+ Add Amendment / Addendum</button>
-        </div>
-      </div>
-
-      <!-- ACTIONS -->
-      <div class="cb-card">
-        <div class="cb-card-title"><span>⚡</span> Generate</div>
-        <div class="cb-card-body">
-          <div id="genStatus" style="display:none"></div>
-          <div class="cb-actions">
-            <button class="btn-primary" onclick="generateContract()">⚡ Generate Contract</button>
-            <button class="btn-secondary" onclick="aiDraftContract()">🤖 AI Draft for Me</button>
-            <button class="btn-secondary" style="background:rgba(109,40,217,0.12);border-color:rgba(109,40,217,0.3);color:#a78bfa" onclick="publishContract()">🌐 Publish & Send to Client</button>
-            <button class="btn-secondary" onclick="clearForm()">🗑️ Clear All</button>
+        <!-- ── TAB 5: TERMS + GENERATE ── -->
+        <div class="tab-pane" id="tab-terms">
+          <div class="cb-card">
+            <div class="cb-card-title"><span>⚖️</span> Terms & Conditions</div>
+            <div class="cb-card-body">
+              <div class="cb-field">
+                <label>Cancellation Policy</label>
+                <select id="cancellationPolicy">
+                  <option value="30day">30-day written notice required</option>
+                  <option value="14day">14-day written notice required</option>
+                  <option value="7day">7-day written notice required</option>
+                  <option value="60day">60-day written notice required</option>
+                  <option value="none">No cancellation provision</option>
+                </select>
+              </div>
+              <div class="cb-field">
+                <label>Materials / Supplies</label>
+                <select id="materialsPolicy">
+                  <option value="contractor">Contractor supplies all materials</option>
+                  <option value="client">Client supplies all materials</option>
+                  <option value="split">Contractor labor; client buys materials</option>
+                  <option value="markup">Contractor purchases at cost + markup</option>
+                  <option value="na">Not applicable</option>
+                </select>
+              </div>
+              <div class="cb-field">
+                <label>Additional Notes / Custom Terms</label>
+                <textarea id="customTerms" placeholder="Special conditions, exclusions, access requirements, key pickup policy…"></textarea>
+              </div>
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">AI uses Gemini 2.5 Flash · Legally informed, not legal advice</div>
-        </div>
-      </div>
 
+          <!-- GENERATE -->
+          <div class="cb-card">
+            <div class="cb-card-title"><span>⚡</span> Generate</div>
+            <div class="cb-card-body">
+              <div id="genStatus" style="display:none"></div>
+              <div class="cb-actions">
+                <button class="btn-primary" onclick="generateContract()">⚡ Generate Contract</button>
+                <button class="btn-secondary" onclick="aiDraftContract()">🤖 AI Draft for Me</button>
+                <button class="btn-secondary" style="background:rgba(109,40,217,0.12);border-color:rgba(109,40,217,0.3);color:#a78bfa" onclick="publishContract()">🌐 Publish &amp; Send to Client</button>
+                <button class="btn-secondary" onclick="clearForm()">🗑️ Clear All</button>
+              </div>
+              <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">AI uses Gemini 2.5 Flash · Legally informed, not legal advice</div>
+            </div>
+          </div>
+          <button class="step-next" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:100%" onclick="switchTabByIndex(3)">← Back to Pricing</button>
+        </div>
+
+      </div><!-- end tab-panes -->
     </div><!-- end form-col -->
 
     <!-- RIGHT: DOCUMENT PREVIEW -->
@@ -597,6 +668,26 @@ function launchApp(pin) {
     if (inp) { inp.value = saved; attemptLogin(); }
   }
 })();
+
+// ================================================================
+// TAB NAVIGATION
+// ================================================================
+var _TAB_ORDER = ['tab-type','tab-parties','tab-scope','tab-pricing','tab-terms'];
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var pane = document.getElementById(id);
+  if (pane) pane.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function switchTabByIndex(i) {
+  var id = _TAB_ORDER[i];
+  if (!id) return;
+  var btn = document.querySelector('.tab-btn[data-tab="' + id + '"]');
+  switchTab(id, btn);
+}
 
 // ================================================================
 // CONTRACT TYPE

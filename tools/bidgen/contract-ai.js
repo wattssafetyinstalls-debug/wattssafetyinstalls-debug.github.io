@@ -441,6 +441,14 @@
       '#cai-send{background:linear-gradient(135deg,#6d28d9,#8b5cf6);border:none;color:#fff;width:44px;height:44px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0}' +
       '#cai-send:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(139,92,246,0.4)}' +
       '#cai-send:disabled{opacity:0.4;cursor:default;transform:none;box-shadow:none}' +
+      '#cai-attach{background:#0d1929;border:1px solid #1a2540;color:#6b7a8d;width:44px;height:44px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0}' +
+      '#cai-attach:hover{border-color:#8b5cf6;color:#a78bfa}' +
+      '#cai-attach.has-doc{border-color:#6d28d9;color:#a78bfa;background:#130d26}' +
+      '#cai-doc-preview{padding:6px 14px 0;background:#050a14;display:none;align-items:center;gap:8px;flex-shrink:0}' +
+      '#cai-doc-preview img{height:48px;width:auto;border-radius:6px;border:1px solid #2d1b69;object-fit:cover}' +
+      '#cai-doc-preview .doc-name{font-size:11px;color:#a78bfa;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+      '#cai-doc-preview .doc-clear{background:none;border:none;color:#4a5568;cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px}' +
+      '#cai-doc-preview .doc-clear:hover{color:#e74c3c}' +
 
       /* Mobile */
       '@media(max-width:600px){#cai-panel{right:6px;left:6px;width:auto;bottom:88px;height:75vh}#cai-panel.expanded{top:0;left:0;right:0;bottom:0;border-radius:0}}';
@@ -481,13 +489,28 @@
       '</div>' +
       '<div id="cai-acts">' + actBtns + '</div>' +
       '<div id="cai-msgs"></div>' +
+      '<div id="cai-doc-preview">' +
+        '<img id="cai-doc-thumb" src="" alt="doc">' +
+        '<span class="doc-name" id="cai-doc-name"></span>' +
+        '<button class="doc-clear" id="cai-doc-clear" title="Remove document">✕</button>' +
+      '</div>' +
       '<div id="cai-irow">' +
-        '<textarea id="cai-in" placeholder="Ask me anything — draft a contract, write a clause, explain a term, price a seasonal agreement..." rows="1"></textarea>' +
+        '<button id="cai-attach" title="Attach document (PDF or image)">📎</button>' +
+        '<input type="file" id="cai-file-in" accept="image/*,.pdf" style="display:none">' +
+        '<textarea id="cai-in" placeholder="Ask me anything — or attach a contract/document to review..." rows="1"></textarea>' +
         '<button id="cai-send">➤</button>' +
       '</div>';
     document.body.appendChild(panel);
 
     document.getElementById('cai-close').addEventListener('click', togglePanel);
+    document.getElementById('cai-attach').addEventListener('click', function() {
+      document.getElementById('cai-file-in').click();
+    });
+    document.getElementById('cai-file-in').addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) attachDocument(e.target.files[0]);
+      e.target.value = '';
+    });
+    document.getElementById('cai-doc-clear').addEventListener('click', clearAttachment);
     document.getElementById('cai-expand').addEventListener('click', function() {
       _expanded = !_expanded;
       document.getElementById('cai-panel').classList.toggle('expanded', _expanded);
@@ -502,7 +525,8 @@
     document.getElementById('cai-send').addEventListener('click', function() {
       var inp = document.getElementById('cai-in');
       var text = inp.value.trim();
-      if (text) { sendMessage(text); inp.value = ''; autoSize(inp); }
+      var defaultMsg = _attachedDoc ? 'Please read this document and summarize what it is, flag any risks or weak clauses, and tell me how I should handle it.' : '';
+      if (text || _attachedDoc) { sendMessage(text || defaultMsg); inp.value = ''; autoSize(inp); }
     });
     document.getElementById('cai-in').addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('cai-send').click(); }
@@ -520,7 +544,87 @@
       });
     });
 
-    addBotMsg('**Hey Justin.** I\'m your Contract AI — your pocket lawyer.\n\nI draft complete, ready-to-sign contracts for:\n• Seasonal groundskeeping & snow removal\n• Hourly / T&M service agreements\n• Monthly maintenance retainers\n• Business proposals\n• Subcontractor agreements\n• Amendments & addendums\n\nHit a quick action above, or just tell me what you need. I\'ll draft the full document — not a template, not an outline. **The real thing.**\n\n⚖️ *I give contractor-grade legal guidance. For court-level enforcement questions, consult a licensed Nebraska attorney.*');
+    // Drag-and-drop onto the panel
+    panel.addEventListener('dragover', function(e) { e.preventDefault(); panel.style.outline = '2px dashed #8b5cf6'; });
+    panel.addEventListener('dragleave', function() { panel.style.outline = ''; });
+    panel.addEventListener('drop', function(e) {
+      e.preventDefault(); panel.style.outline = '';
+      var f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f && (f.type.startsWith('image/') || f.type === 'application/pdf')) {
+        if (!_open) togglePanel();
+        attachDocument(f);
+      }
+    });
+
+    addBotMsg('**Hey Justin.** I\'m your Contract AI — your pocket lawyer.\n\nI draft complete, ready-to-sign contracts for:\n• Seasonal groundskeeping & snow removal\n• Hourly / T&M service agreements\n• Monthly maintenance retainers\n• Business proposals\n• Subcontractor agreements\n• Amendments & addendums\n\nHit a quick action above, or just tell me what you need. I\'ll draft the full document — not a template, not an outline. **The real thing.**\n\n📎 *You can also attach an existing contract, quote, or document — I\'ll read it and help you rewrite, review, or match it.*\n\n⚖️ *I give contractor-grade legal guidance. For court-level enforcement questions, consult a licensed Nebraska attorney.*');
+  }
+
+  /* ================================================================
+     DOCUMENT ATTACH
+     ================================================================ */
+  var _attachedDoc = null; // { dataUrl, mime, name }
+
+  function attachDocument(file) {
+    var preview = document.getElementById('cai-doc-preview');
+    var thumb = document.getElementById('cai-doc-thumb');
+    var nameEl = document.getElementById('cai-doc-name');
+    var attachBtn = document.getElementById('cai-attach');
+
+    if (file.type === 'application/pdf') {
+      // Render first page of PDF to canvas via pdf.js
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var buf = e.target.result;
+        var loadPdfJs = (typeof pdfjsLib !== 'undefined')
+          ? Promise.resolve()
+          : new Promise(function(res) {
+              var s = document.createElement('script');
+              s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+              s.onload = function() {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                res();
+              };
+              document.head.appendChild(s);
+            });
+        loadPdfJs.then(function() {
+          pdfjsLib.getDocument({ data: buf }).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+              var vp = page.getViewport({ scale: 2 });
+              var canvas = document.createElement('canvas');
+              canvas.width = vp.width;
+              canvas.height = vp.height;
+              page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise.then(function() {
+                var dataUrl = canvas.toDataURL('image/png');
+                _attachedDoc = { dataUrl: dataUrl, mime: 'image/png', name: file.name, pages: pdf.numPages };
+                thumb.src = dataUrl;
+                nameEl.textContent = file.name + (pdf.numPages > 1 ? ' (' + pdf.numPages + ' pages — sending p.1)' : '');
+                preview.style.display = 'flex';
+                attachBtn.classList.add('has-doc');
+              });
+            });
+          });
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      // Image file
+      var reader2 = new FileReader();
+      reader2.onload = function(e) {
+        _attachedDoc = { dataUrl: e.target.result, mime: file.type || 'image/jpeg', name: file.name };
+        thumb.src = e.target.result;
+        nameEl.textContent = file.name;
+        preview.style.display = 'flex';
+        attachBtn.classList.add('has-doc');
+      };
+      reader2.readAsDataURL(file);
+    }
+  }
+
+  function clearAttachment() {
+    _attachedDoc = null;
+    document.getElementById('cai-doc-preview').style.display = 'none';
+    document.getElementById('cai-doc-thumb').src = '';
+    document.getElementById('cai-attach').classList.remove('has-doc');
   }
 
   /* ================================================================
@@ -537,11 +641,23 @@
     if (_open) document.getElementById('cai-in').focus();
   }
 
-  function addUserMsg(text) {
+  function addUserMsg(text, doc) {
     var msgs = document.getElementById('cai-msgs');
     var div = document.createElement('div');
     div.className = 'cai-msg user';
-    div.textContent = text;
+    if (doc) {
+      var img = document.createElement('img');
+      img.src = doc.dataUrl;
+      img.style.cssText = 'display:block;max-width:180px;max-height:120px;border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.15)';
+      div.appendChild(img);
+      var label = document.createElement('div');
+      label.style.cssText = 'font-size:10px;opacity:0.7;margin-bottom:4px';
+      label.textContent = '📎 ' + doc.name;
+      div.appendChild(label);
+    }
+    var t = document.createElement('span');
+    t.textContent = text;
+    div.appendChild(t);
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
   }
@@ -651,8 +767,13 @@
     document.getElementById('cai-send').disabled = true;
     if (!_open) togglePanel();
 
-    if (isAction && actionLabel) addUserMsg(actionLabel);
-    else addUserMsg(text);
+    // Show user bubble — include doc thumbnail if attached
+    var docSnap = _attachedDoc ? _attachedDoc : null;
+    if (isAction && actionLabel) {
+      addUserMsg(actionLabel, null);
+    } else {
+      addUserMsg(text, docSnap);
+    }
     showTyping();
 
     var fullMsg = text;
@@ -670,7 +791,16 @@
       }
     }
 
-    _hist.push({ role: 'user', parts: [{ text: fullMsg }] });
+    // Build parts array — text first, then image if attached
+    var parts = [{ text: fullMsg }];
+    if (docSnap) {
+      var b64 = docSnap.dataUrl.replace(/^data:[^;]+;base64,/, '');
+      parts.push({ inline_data: { mime_type: docSnap.mime, data: b64 } });
+      // Clear attachment after sending so it doesn't re-send on next message
+      clearAttachment();
+    }
+
+    _hist.push({ role: 'user', parts: parts });
     if (_hist.length > 40) _hist = _hist.slice(0, 2).concat(_hist.slice(-38));
 
     callAI(_hist).then(function(reply) {

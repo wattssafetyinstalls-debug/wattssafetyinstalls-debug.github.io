@@ -550,7 +550,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
         <button class="tbtn purple" onclick="emailContract()">✉️ Email</button>
         <button class="tbtn" style="background:rgba(109,40,217,0.15);border-color:rgba(109,40,217,0.35);color:#a78bfa;font-weight:800" onclick="publishContract()">🌐 Publish &amp; Share Link</button>
         <button class="tbtn" onclick="saveToFirebase()">💾 Save</button>
-        <button class="tbtn" onclick="loadSaved()">📂 Load Saved</button>
+        <button class="tbtn" onclick="openLibrary()">📚 Library</button>
       </div>
       <div id="portalStatusBar" style="display:none;padding:8px 16px;background:rgba(5,150,105,0.1);border-bottom:1px solid rgba(5,150,105,0.2);font-size:12px;color:#059669;display:none;align-items:center;gap:8px;flex-shrink:0">
         <span>✅ Published:</span>
@@ -657,6 +657,8 @@ function launchApp(pin) {
   document.getElementById('appShell').style.display = 'block';
   document.getElementById('userBadge').textContent = 'Justin Watts · WSI';
   autoContractNum();
+  // Pre-load library in background so it's instant when opened
+  setTimeout(function() { if (db) attachLibraryListener(); }, 500);
 }
 
 // Auto-login if PIN saved in sessionStorage
@@ -1324,15 +1326,40 @@ function emailContract() {
 }
 
 function saveToFirebase() {
-  if (!_currentDoc || !db) { showStatus('⚠️ Nothing to save or Firebase unavailable'); return; }
-  var ref = db.ref('contracts/' + hashedPIN + '/' + (_currentDoc.num || ('CTR-' + Date.now())));
+  if (!_currentDoc || !db) { showStatus('⚠️ Generate a contract first before saving'); return; }
+  var contractId = _currentDoc.num || ('CTR-' + Date.now());
+  var formSnap = captureFormState();
+  var ref = db.ref('contracts/' + hashedPIN + '/' + contractId);
   ref.set({
-    type: _currentDoc.type, num: _currentDoc.num, client: _currentDoc.client,
-    date: _currentDoc.date, savedAt: new Date().toISOString(),
-    pricingText: _currentDoc.pricingText
+    id: contractId,
+    type: _currentDoc.type,
+    num: _currentDoc.num,
+    client: _currentDoc.client,
+    date: _currentDoc.date,
+    savedAt: new Date().toISOString(),
+    pricingText: _currentDoc.pricingText,
+    status: 'draft',
+    formState: formSnap
   }).then(function() {
-    showStatus('✅ Saved to Firebase: ' + _currentDoc.num);
+    showStatus('✅ Saved: ' + contractId);
+    if (typeof _libListener === 'undefined') attachLibraryListener();
   }).catch(function(e) { showStatus('❌ Save failed: ' + e.message); });
+}
+
+function captureFormState() {
+  var fields = ['clientName','clientContact','clientTitle','clientEmail','clientPhone','clientAddress',
+    'projectName','jobCity','contractNum','startDate','endDate','renewalTerms','pricingType',
+    'paymentTerms','lateFee','cancellationPolicy','materialsPolicy','customTerms',
+    'priceTotal','priceDeposit','priceHourly','priceMinHours','priceMonthly',
+    'priceVisits','pricePerVisit','priceSeasonTotal','priceSeasonMonths'];
+  var snap = { contractType: _contractType };
+  fields.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) snap[id] = el.value || '';
+  });
+  snap.scopeItems = typeof getScopeItems === 'function' ? getScopeItems() : _scopeItems.slice();
+  snap.amendments = typeof getAmendments === 'function' ? getAmendments() : _amendments.slice();
+  return snap;
 }
 
 function loadSaved() {
@@ -1578,7 +1605,208 @@ function showShareModal(contractId, portalUrl) {
 // ── INIT ──
 onPricingTypeChange();
 addScope();
+
+// ================================================================
+// CONTRACT LIBRARY
+// ================================================================
+var _libContracts = {};
+var _libListener = undefined;
+var _libFilter = 'all';
+var _libSearch = '';
+
+function attachLibraryListener() {
+  if (!db || !hashedPIN) return;
+  _libListener = true;
+  db.ref('contracts/' + hashedPIN).on('value', function(snap) {
+    _libContracts = snap.val() || {};
+    renderLibrary();
+  });
+}
+
+function openLibrary() {
+  var panel = document.getElementById('libPanel');
+  if (panel) { panel.classList.toggle('open'); renderLibrary(); return; }
+
+  // Build panel
+  panel = document.createElement('div');
+  panel.id = 'libPanel';
+  panel.innerHTML =
+    '<div id="libHeader">' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<span style="font-size:18px">📚</span>' +
+        '<strong style="font-size:14px;color:#e2e8f0">Contract Library</strong>' +
+        '<span id="libCount" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700">0</span>' +
+      '</div>' +
+      '<button id="libClose" style="background:none;border:1px solid #334155;color:#64748b;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:14px">✕</button>' +
+    '</div>' +
+    '<div id="libToolbar">' +
+      '<input id="libSearch" type="text" placeholder="🔍 Search client, #, type..." style="flex:1;background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:7px 10px;color:#e2e8f0;font-size:12px;outline:none">' +
+      '<select id="libFilterSel" style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:7px 8px;color:#94a3b8;font-size:11px;outline:none">' +
+        '<option value="all">All</option>' +
+        '<option value="draft">Draft</option>' +
+        '<option value="published">Published</option>' +
+        '<option value="signed">Signed</option>' +
+      '</select>' +
+    '</div>' +
+    '<div id="libList"></div>';
+  document.body.appendChild(panel);
+
+  document.getElementById('libClose').onclick = function() { panel.classList.remove('open'); };
+  document.getElementById('libSearch').addEventListener('input', function() { _libSearch = this.value.toLowerCase(); renderLibrary(); });
+  document.getElementById('libFilterSel').addEventListener('change', function() { _libFilter = this.value; renderLibrary(); });
+
+  panel.classList.add('open');
+
+  if (!_libListener && db) attachLibraryListener();
+  else renderLibrary();
+}
+
+function renderLibrary() {
+  var list = document.getElementById('libList');
+  if (!list) return;
+
+  var contracts = Object.values(_libContracts);
+
+  // filter
+  if (_libFilter !== 'all') contracts = contracts.filter(function(c) { return c.status === _libFilter; });
+  if (_libSearch) contracts = contracts.filter(function(c) {
+    return (c.client||'').toLowerCase().includes(_libSearch) ||
+           (c.num||'').toLowerCase().includes(_libSearch) ||
+           (c.type||'').toLowerCase().includes(_libSearch);
+  });
+
+  // sort newest first
+  contracts.sort(function(a,b) { return new Date(b.savedAt||0) - new Date(a.savedAt||0); });
+
+  var countEl = document.getElementById('libCount');
+  if (countEl) countEl.textContent = Object.keys(_libContracts).length;
+
+  if (contracts.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#475569;font-size:13px">' +
+      '<div style="font-size:36px;margin-bottom:10px">📄</div>' +
+      (Object.keys(_libContracts).length === 0
+        ? '<div>No saved contracts yet.</div><div style="font-size:11px;margin-top:6px;color:#334155">Generate a contract then hit 💾 Save</div>'
+        : '<div>No matches for current filter.</div>') +
+    '</div>';
+    return;
+  }
+
+  list.innerHTML = contracts.map(function(c) {
+    var statusColor = c.status === 'signed' ? '#22c55e' : c.status === 'published' ? '#a78bfa' : '#64748b';
+    var statusLabel = c.status === 'signed' ? '✍️ Signed' : c.status === 'published' ? '🌐 Published' : '📝 Draft';
+    var typeLabel = ({service:'Service Agmt',hourly:'Hourly/T&M',seasonal:'Seasonal',proposal:'Proposal',maintenance:'Maintenance',subcontractor:'Subcontractor',nda:'NDA',custom:'Custom'})[c.type] || c.type || 'Contract';
+    var savedDate = c.savedAt ? new Date(c.savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    var viewsHtml = c.viewCount ? '<span style="color:#64748b;font-size:10px">👁 ' + c.viewCount + ' views</span>' : '';
+    return '<div class="lib-card" onclick="loadContractFromLibrary(\'' + esc(c.id||c.num) + '\')">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.client||'Unknown Client') + '</div>' +
+          '<div style="font-size:10px;color:#64748b;margin-bottom:6px">' + esc(c.num||'—') + ' · ' + typeLabel + ' · ' + savedDate + '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<span style="font-size:10px;font-weight:700;color:' + statusColor + ';background:' + statusColor + '1a;padding:2px 8px;border-radius:20px;border:1px solid ' + statusColor + '33">' + statusLabel + '</span>' +
+            viewsHtml +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
+          '<button class="lib-act-btn" style="color:#a78bfa;border-color:#4c1d95" onclick="event.stopPropagation();loadContractFromLibrary(\'' + esc(c.id||c.num) + '\')">📂 Load</button>' +
+          (c.portalUrl ? '<button class="lib-act-btn" style="color:#22c55e;border-color:#14532d" onclick="event.stopPropagation();window.open(\'' + c.portalUrl + '\',\'_blank\')">🌐 Portal</button>' : '') +
+          '<button class="lib-act-btn" style="color:#ef4444;border-color:#7f1d1d" onclick="event.stopPropagation();deleteContractFromLibrary(\'' + esc(c.id||c.num) + '\')">🗑️ Del</button>' +
+        '</div>' +
+      '</div>' +
+      (c.pricingText ? '<div style="margin-top:8px;padding-top:8px;border-top:1px solid #1e293b;font-size:11px;color:#94a3b8">' + esc(c.pricingText) + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function loadContractFromLibrary(contractId) {
+  if (!db) return;
+  db.ref('contracts/' + hashedPIN + '/' + contractId).once('value').then(function(snap) {
+    var data = snap.val();
+    if (!data) { showStatus('⚠️ Contract not found in Firebase'); return; }
+    var fs = data.formState;
+    if (!fs) { showStatus('⚠️ This contract has no saved form state (saved before this feature existed)'); return; }
+
+    // Restore contract type
+    _contractType = fs.contractType || 'service';
+    var typeEl = document.getElementById('contractTypeSelect');
+    if (typeEl) { typeEl.value = _contractType; onContractTypeChange && onContractTypeChange(); }
+
+    // Restore all text fields
+    ['clientName','clientContact','clientTitle','clientEmail','clientPhone','clientAddress',
+     'projectName','jobCity','contractNum','startDate','endDate','renewalTerms','pricingType',
+     'paymentTerms','lateFee','cancellationPolicy','materialsPolicy','customTerms'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && fs[id] !== undefined) el.value = fs[id];
+    });
+
+    // Restore pricing type then pricing fields
+    var ptEl = document.getElementById('pricingType');
+    if (ptEl && fs.pricingType) { ptEl.value = fs.pricingType; onPricingTypeChange && onPricingTypeChange(); }
+    ['priceTotal','priceDeposit','priceHourly','priceMinHours','priceMonthly',
+     'priceVisits','pricePerVisit','priceSeasonTotal','priceSeasonMonths'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && fs[id] !== undefined) el.value = fs[id];
+    });
+
+    // Restore scope
+    _scopeItems = fs.scopeItems || [];
+    renderScopeList && renderScopeList();
+
+    // Restore amendments
+    _amendments = fs.amendments || [];
+    renderAmendmentList && renderAmendmentList();
+
+    // Generate the contract
+    generateContract();
+    showStatus('✅ Loaded: ' + (data.num||contractId));
+    document.getElementById('libPanel').classList.remove('open');
+  }).catch(function(e) { showStatus('❌ Load failed: ' + e.message); });
+}
+
+function deleteContractFromLibrary(contractId) {
+  if (!confirm('Delete contract ' + contractId + '? This cannot be undone.')) return;
+  db.ref('contracts/' + hashedPIN + '/' + contractId).remove().then(function() {
+    showStatus('🗑️ Deleted: ' + contractId);
+  }).catch(function(e) { showStatus('❌ Delete failed: ' + e.message); });
+}
 </script>
+
+<!-- LIBRARY PANEL STYLES -->
+<style>
+#libPanel {
+  position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+  background: #080e1a; border-left: 1px solid #1e293b;
+  display: flex; flex-direction: column;
+  z-index: 9800; transition: right 0.3s cubic-bezier(.4,0,.2,1);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.6);
+}
+#libPanel.open { right: 0; }
+#libHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px; border-bottom: 1px solid #1e293b;
+  background: linear-gradient(135deg, #0a1628, #0d1f3c); flex-shrink: 0;
+}
+#libToolbar {
+  display: flex; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #1e293b;
+  background: #050a14; flex-shrink: 0;
+}
+#libList { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+#libList::-webkit-scrollbar { width: 5px; }
+#libList::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+.lib-card {
+  background: #0c1726; border: 1px solid #1e293b; border-radius: 12px;
+  padding: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.lib-card:hover { border-color: #4c1d95; background: #0f1e35; }
+.lib-act-btn {
+  background: none; border: 1px solid; border-radius: 6px;
+  padding: 3px 8px; font-size: 10px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: opacity 0.15s;
+}
+.lib-act-btn:hover { opacity: 0.8; }
+@media (max-width: 500px) { #libPanel { width: 100vw; } }
+</style>
 
 <!-- CONTRACT AI MENTOR (loaded after page init) -->
 <script src="contract-ai.js" defer></script>

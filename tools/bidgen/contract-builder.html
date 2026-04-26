@@ -520,6 +520,12 @@ var _contractType = 'service';
 var _currentDoc = null;
 var _savedContracts = [];
 
+// Enter key on PIN input
+document.addEventListener('DOMContentLoaded', function() {
+  var pinEl = document.getElementById('loginPin');
+  if (pinEl) pinEl.addEventListener('keydown', function(e) { if (e.key === 'Enter') attemptLogin(); });
+});
+
 function hashPIN(pin) {
   var h = 0;
   for (var i = 0; i < pin.length; i++) {
@@ -531,7 +537,7 @@ function hashPIN(pin) {
 
 function attemptLogin() {
   var pin = document.getElementById('loginPin').value.trim();
-  if (!pin) { document.getElementById('loginError').textContent = 'Enter your PIN.'; return; }
+  if (pin.length < 4) { document.getElementById('loginError').textContent = 'PIN must be at least 4 digits.'; return; }
 
   // Use same Firebase project as BidGen (index.html)
   try {
@@ -550,21 +556,30 @@ function attemptLogin() {
   hashedPIN = hashPIN(pin);
   userPIN = pin;
 
-  // Verify PIN against Firebase if available, else accept
-  if (db) {
-    db.ref('users/' + hashedPIN + '/pin').once('value').then(function(snap) {
-      if (snap.val() !== null) {
-        launchApp(pin);
-      } else {
-        document.getElementById('loginError').textContent = 'PIN not recognized.';
-      }
-    }).catch(function() {
-      // Firebase not available — accept anyway (offline mode)
+  if (!db) { launchApp(pin); return; }
+
+  // Check 'users/{hash}/created' — same path BidGen uses (NOT /pin)
+  db.ref('users/' + hashedPIN + '/created').once('value').then(function(snap) {
+    if (snap.exists()) {
+      // Existing workspace found — unlock
+      sessionStorage.setItem('ctr_pin', pin);
       launchApp(pin);
-    });
-  } else {
+    } else {
+      // No BidGen workspace yet for this PIN — still let them in,
+      // create the workspace node so it works next time too
+      db.ref('users/' + hashedPIN + '/created').set(Date.now()).then(function() {
+        sessionStorage.setItem('ctr_pin', pin);
+        launchApp(pin);
+      }).catch(function() {
+        sessionStorage.setItem('ctr_pin', pin);
+        launchApp(pin);
+      });
+    }
+  }).catch(function() {
+    // Firebase error — accept anyway (offline mode)
+    sessionStorage.setItem('ctr_pin', pin);
     launchApp(pin);
-  }
+  });
 }
 
 function launchApp(pin) {
@@ -573,6 +588,15 @@ function launchApp(pin) {
   document.getElementById('userBadge').textContent = 'Justin Watts · WSI';
   autoContractNum();
 }
+
+// Auto-login if PIN saved in sessionStorage
+(function() {
+  var saved = sessionStorage.getItem('ctr_pin') || sessionStorage.getItem('bid_pin');
+  if (saved) {
+    var inp = document.getElementById('loginPin');
+    if (inp) { inp.value = saved; attemptLogin(); }
+  }
+})();
 
 // ================================================================
 // CONTRACT TYPE

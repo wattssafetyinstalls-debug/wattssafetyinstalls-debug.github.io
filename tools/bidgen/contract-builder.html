@@ -1411,10 +1411,11 @@ function saveToFirebase() {
     savedAt: new Date().toISOString(),
     pricingText: _currentDoc.pricingText,
     status: 'draft',
+    contractBody: _contractBody || null,
     formState: formSnap
   }).then(function() {
     showStatus('✅ Saved: ' + contractId);
-    if (typeof _libListener === 'undefined') attachLibraryListener();
+    if (!_libListener && db) attachLibraryListener();
   }).catch(function(e) { showStatus('❌ Save failed: ' + e.message); });
 }
 
@@ -1568,19 +1569,22 @@ function publishContract() {
     status: 'pending'
   };
 
+  // Build URL before writing so we can include it in the payload
+  var portalUrl = buildPortalUrl(contractId);
+  portalPayload.portalUrl = portalUrl;
+
   db.ref('contracts/' + hashedPIN + '/' + contractId).set(portalPayload).then(function() {
-    var url = buildPortalUrl(contractId);
-    _lastPortalUrl = url;
+    _lastPortalUrl = portalUrl;
 
     // Show persistent status bar
     var bar = document.getElementById('portalStatusBar');
     bar.style.display = 'flex';
     var lnk = document.getElementById('portalStatusLink');
-    lnk.href = url;
-    lnk.textContent = url;
+    lnk.href = portalUrl;
+    lnk.textContent = portalUrl;
 
     showStatus('✅ Published — share link ready!');
-    showShareModal(contractId, url);
+    showShareModal(contractId, portalUrl);
   }).catch(function(err) {
     showStatus('❌ Publish failed: ' + err.message);
   });
@@ -1734,11 +1738,39 @@ function openLibrary() {
   else renderLibrary();
 }
 
+function _normalizeLibContract(raw, key) {
+  // Handle both flat-saved records (saveToFirebase) and portal-published records (publishContract)
+  // Published records have: { contract:{...}, status, publishedAt, viewCount }
+  // Saved records have:    { id, type, num, client, date, savedAt, status, pricingText, formState }
+  if (raw.contract) {
+    var c = raw.contract;
+    return {
+      id:          key,
+      num:         c.num || key,
+      type:        c.type || 'service',
+      client:      c.clientName || 'Unknown Client',
+      date:        c.date || '',
+      savedAt:     raw.publishedAt || raw.savedAt || '',
+      pricingText: c.pricingText || '',
+      status:      raw.signedAt ? 'signed' : (raw.status || 'published'),
+      viewCount:   raw.viewCount || 0,
+      portalUrl:   raw.portalUrl || null,
+      contractBody: c.contractBody || null,
+      formState:   raw.formState || null
+    };
+  }
+  // Flat record — already normalized, just ensure id
+  return Object.assign({ id: key }, raw);
+}
+
 function renderLibrary() {
   var list = document.getElementById('libList');
   if (!list) return;
 
-  var contracts = Object.values(_libContracts);
+  // Normalize every record regardless of how it was saved
+  var contracts = Object.keys(_libContracts).map(function(k) {
+    return _normalizeLibContract(_libContracts[k], k);
+  });
 
   // filter
   if (_libFilter !== 'all') contracts = contracts.filter(function(c) { return c.status === _libFilter; });
@@ -1748,7 +1780,7 @@ function renderLibrary() {
            (c.type||'').toLowerCase().includes(_libSearch);
   });
 
-  // sort newest first
+  // sort newest first — use savedAt OR publishedAt whichever is present
   contracts.sort(function(a,b) { return new Date(b.savedAt||0) - new Date(a.savedAt||0); });
 
   var countEl = document.getElementById('libCount');
@@ -1796,13 +1828,43 @@ function loadContractFromLibrary(contractId) {
   db.ref('contracts/' + hashedPIN + '/' + contractId).once('value').then(function(snap) {
     var data = snap.val();
     if (!data) { showStatus('⚠️ Contract not found in Firebase'); return; }
-    var fs = data.formState;
-    if (!fs) { showStatus('⚠️ This contract has no saved form state (saved before this feature existed)'); return; }
+
+    // Normalize: published records nest fields under data.contract; saved records are flat
+    var c = data.contract || {};
+    var fs = data.formState || null;
+
+    // Restore AI-drafted contract body (present on both saved and published records)
+    _contractBody = data.contractBody || c.contractBody || null;
+
+    // If no formState (published-only records), reconstruct a minimal one from the contract fields
+    if (!fs) {
+      fs = {
+        contractType: c.type || data.type || 'service',
+        clientName: c.clientName || data.client || '',
+        clientContact: c.clientContact || '', clientTitle: c.clientTitle || '',
+        clientEmail: c.clientEmail || '', clientPhone: c.clientPhone || '',
+        clientAddress: c.clientAddress || '', projectName: c.projectName || '',
+        jobCity: c.jobCity || 'Norfolk, NE', contractNum: c.num || contractId,
+        startDate: c.startDate || '', endDate: c.endDate || '',
+        renewalTerms: c.renewalTerms || '', pricingType: c.pricingType || 'fixed',
+        paymentTerms: c.paymentTerms || 'net30', lateFee: c.lateFee || '1.5pct',
+        cancellationPolicy: c.cancellationPolicy || '30day',
+        materialsPolicy: c.materialsPolicy || 'contractor',
+        customTerms: c.customTerms || '',
+        priceTotal: c.priceTotal || '', priceDeposit: c.priceDeposit || '',
+        priceHourly: c.priceHourly || '', priceMinHours: c.priceMinHours || '',
+        priceMonthly: c.priceMonthly || '', priceVisits: c.priceVisits || '',
+        pricePerVisit: c.pricePerVisit || '', priceSeasonTotal: c.priceSeasonTotal || '',
+        priceSeasonMonths: c.priceSeasonMonths || '',
+        scopeItems: c.scopeItems || [], amendments: c.amendments || []
+      };
+    }
 
     // Restore contract type
     _contractType = fs.contractType || 'service';
-    var typeEl = document.getElementById('contractTypeSelect');
-    if (typeEl) { typeEl.value = _contractType; onContractTypeChange && onContractTypeChange(); }
+    document.querySelectorAll('.type-btn').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-type') === _contractType);
+    });
 
     // Restore all text fields
     ['clientName','clientContact','clientTitle','clientEmail','clientPhone','clientAddress',
@@ -1821,17 +1883,19 @@ function loadContractFromLibrary(contractId) {
       if (el && fs[id] !== undefined) el.value = fs[id];
     });
 
-    // Restore scope
-    _scopeItems = fs.scopeItems || [];
-    renderScopeList && renderScopeList();
+    // Restore scope items
+    document.getElementById('scopeList').innerHTML = '';
+    _scopeItems = [];
+    (fs.scopeItems || []).forEach(function(s) { addScope(s); });
 
     // Restore amendments
-    _amendments = fs.amendments || [];
-    renderAmendmentList && renderAmendmentList();
+    document.getElementById('amendmentList').innerHTML = '';
+    _amendments = [];
+    (fs.amendments || []).forEach(function(a) { addAmendment(a.title, a.body); });
 
     // Generate the contract
     generateContract();
-    showStatus('✅ Loaded: ' + (data.num||contractId));
+    showStatus('✅ Loaded: ' + (data.num || c.num || contractId));
     document.getElementById('libPanel').classList.remove('open');
   }).catch(function(e) { showStatus('❌ Load failed: ' + e.message); });
 }

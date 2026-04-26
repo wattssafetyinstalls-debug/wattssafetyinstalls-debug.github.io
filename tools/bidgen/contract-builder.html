@@ -559,7 +559,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
                 <button class="btn-secondary" style="background:rgba(109,40,217,0.12);border-color:rgba(109,40,217,0.3);color:#a78bfa" onclick="publishContract()">🌐 Publish &amp; Send to Client</button>
                 <button class="btn-secondary" onclick="clearForm()">🗑️ Clear All</button>
               </div>
-              <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">AI uses Gemini 2.5 Flash · Legally informed, not legal advice</div>
+              <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">AI uses Gemini 2.5 Pro · Legally informed, not legal advice</div>
             </div>
           </div>
           <button class="step-next" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:100%" onclick="switchTabByIndex(3)">← Back to Pricing</button>
@@ -1395,7 +1395,7 @@ function quickStart(desc) {
 }
 
 // ================================================================
-// AI DRAFT — calls Gemini Flash for speed
+// AI DRAFT — calls Gemini 2.5 Pro for full structured output
 // ================================================================
 function aiDraftContract(descOverride) {
   var PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
@@ -1421,8 +1421,9 @@ function aiDraftContract(descOverride) {
     '2. Suggest realistic Nebraska market pricing if pricing is missing.',
     '3. Fill in all fields that make sense for the contract type described.',
     '4. Keep scope items concise — one task per item.',
-    '5. Amendments should only be included if the description implies one is needed.',
-    '6. Return ONLY valid JSON — no markdown, no explanation, just the JSON object.',
+    '5. termsSections is REQUIRED — itemize EVERY clause as a numbered Section with sub-items. Minimum 6 sections: Payment Terms, Termination, Warranty, Limitation of Liability, Materials & Equipment, Governing Law. Each sub-item is one atomic clause.',
+    '6. Fill ALL pricing sub-fields that match the chosen pricingType (milestones need ms1desc/amt/date through ms3, seasonal needs priceSeasonBilling and priceMonthlyEq).',
+    '7. Return ONLY valid JSON — no markdown, no explanation, just the JSON object.',
     '',
     'Return JSON with this exact schema:',
     '{',
@@ -1449,17 +1450,29 @@ function aiDraftContract(descOverride) {
     '  "priceVisitsMonth": 0,',
     '  "priceSeasonTotal": 0,',
     '  "priceSeasonMonths": 0,',
+    '  "priceSeasonBilling": "Equal monthly installments",',
+    '  "priceMonthlyEq": 0,',
+    '  "ms1desc":"","ms1amt":0,"ms1date":"",',
+    '  "ms2desc":"","ms2amt":0,"ms2date":"",',
+    '  "ms3desc":"","ms3amt":0,"ms3date":"",',
     '  "scopeItems": ["...", "..."],',
     '  "paymentTerms": "net30|net15|net7|due_receipt|50_50|monthly_invoice|custom",',
     '  "lateFee": "1.5pct|2pct|flat25|flat50|none",',
     '  "cancellationPolicy": "30day|14day|7day|60day|none",',
     '  "materialsPolicy": "contractor|client|split|markup|na",',
     '  "customTerms": "...",',
-    '  "amendments": [{"title": "...", "body": "..."}]',
+    '  "termsSections": [',
+    '    {"title":"Payment Terms","subs":[{"text":"...one clause per sub..."},{"text":"..."}]},',
+    '    {"title":"Termination","subs":[{"text":"..."},{"text":"..."}]},',
+    '    {"title":"Warranty","subs":[{"text":"..."}]},',
+    '    {"title":"Limitation of Liability","subs":[{"text":"..."}]},',
+    '    {"title":"Materials & Equipment","subs":[{"text":"..."}]},',
+    '    {"title":"Governing Law","subs":[{"text":"..."},{"text":"..."}]}',
+    '  ]',
     '}'
   ].join('\n');
 
-  fetch(PROXY + '?model=gemini-2.5-flash', {
+  fetch(PROXY + '?model=gemini-2.5-pro', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -1468,7 +1481,7 @@ function aiDraftContract(descOverride) {
         { role: 'model', parts: [{ text: 'Understood. I will return only valid JSON to fill the contract form. No hallucinations, no invented legal requirements. Ready.' }] },
         { role: 'user', parts: [{ text: 'Draft a contract for: ' + desc }] }
       ],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 8192, topP: 0.9 }
+      generationConfig: { temperature: 0.4, maxOutputTokens: 16384, topP: 0.9 }
     })
   })
   .then(function(r) { return r.json(); })

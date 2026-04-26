@@ -1,5 +1,5 @@
 /**
- * Contract Builder AI Mentor — Gemini 2.5 Flash
+ * Contract Builder AI Mentor — Gemini 2.5 Pro
  * Pocket lawyer for Justin Watts / Watts Safety Installs.
  * Drafts contracts, agreements, proposals, amendments — fast, practical, no hallucinations.
  */
@@ -7,7 +7,7 @@
   'use strict';
 
   var PROXY  = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
-  var MODEL  = 'gemini-2.5-flash';
+  var MODEL  = 'gemini-2.5-pro';
   var TIMEOUT = 90000;
 
   /* ================================================================
@@ -564,7 +564,7 @@
 
     panel.innerHTML =
       '<div id="cai-hdr">' +
-        '<h4>⚖️ <span>Contract</span> AI <span class="cai-model">Flash</span></h4>' +
+        '<h4>⚖️ <span>Contract</span> AI <span class="cai-model">Pro</span></h4>' +
         '<div id="cai-hdr-btns">' +
           '<button class="cai-hbtn" id="cai-expand" title="Expand">⛶</button>' +
           '<button class="cai-hbtn" id="cai-clear" title="Clear chat">🗑</button>' +

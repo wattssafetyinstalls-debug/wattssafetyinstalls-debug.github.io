@@ -153,7 +153,9 @@
      ================================================================ */
   var _hist = [];
 
-  function callAI(messages) {
+  function callAI(messages, attempt) {
+    attempt = attempt || 1;
+    var MAX_RETRIES = 3;
     var controller = new AbortController();
     var timer = setTimeout(function() { controller.abort(); }, TIMEOUT);
 
@@ -170,7 +172,6 @@
       signal: controller.signal,
       body: JSON.stringify({
         contents: contents,
-        tools: [{ googleSearch: {} }],
         generationConfig: {
           temperature: 0.8,
           maxOutputTokens: 65536,
@@ -180,9 +181,20 @@
       })
     }).then(function(r) {
       clearTimeout(timer);
+      // Retry on 503 or 500 errors
+      if (!r.ok && (r.status === 503 || r.status === 500) && attempt < MAX_RETRIES) {
+        var delay = Math.min(1000 * Math.pow(2, attempt - 1), 4000);
+        console.log('[BidGen AI] Retry ' + attempt + '/' + MAX_RETRIES + ' after ' + delay + 'ms (status ' + r.status + ')');
+        return new Promise(function(resolve) {
+          setTimeout(function() {
+            resolve(callAI(messages, attempt + 1));
+          }, delay);
+        });
+      }
       if (!r.ok) throw new Error('API ' + r.status);
       return r.json();
     }).then(function(data) {
+      if (data.error) throw new Error(data.error);
       var c = data.candidates && data.candidates[0];
       if (!c || !c.content || !c.content.parts) throw new Error('No response from model.');
       var texts = [];
@@ -198,7 +210,18 @@
       return texts.join('\n\n') || 'Model returned empty. Try rephrasing.';
     }).catch(function(err) {
       clearTimeout(timer);
-      throw err;
+      // Don't retry on abort (timeout) or if we've exhausted retries
+      if (err.name === 'AbortError' || attempt >= MAX_RETRIES) {
+        throw err;
+      }
+      // Retry on network errors
+      var delay = Math.min(1000 * Math.pow(2, attempt - 1), 4000);
+      console.log('[BidGen AI] Retry ' + attempt + '/' + MAX_RETRIES + ' after error: ' + err.message);
+      return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          callAI(messages, attempt + 1).then(resolve).catch(reject);
+        }, delay);
+      });
     });
   }
 

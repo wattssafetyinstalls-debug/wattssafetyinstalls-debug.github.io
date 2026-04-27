@@ -106,6 +106,33 @@ body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color
 .ib-toggle .toggle-text strong { font-size:13px; display:block; }
 .ib-toggle .toggle-text span { font-size:11px; color:var(--text3); }
 
+/* ── ITEMIZED LINE ITEMS EDITOR (mirrors contract-builder Terms & Clauses) ── */
+.line-list { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.line-section { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:10px; transition:border-color .15s, box-shadow .15s; }
+.line-section.dragging { opacity:.45; }
+.line-section.drag-over { border-color:var(--accent); box-shadow:0 0 0 2px rgba(59,130,246,0.18); }
+.line-section-hdr { display:flex; align-items:center; gap:6px; margin-bottom:8px; cursor:grab; }
+.line-section-hdr:active { cursor:grabbing; }
+.line-section-num { font-size:13px; font-weight:800; color:var(--accent); min-width:22px; }
+.line-section-hdr input { flex:1; background:var(--bg); border:1px solid var(--border2); border-radius:8px; padding:8px 10px; color:var(--text); font-size:13px; font-weight:700; font-family:inherit; outline:none; }
+.line-section-hdr input:focus { border-color:var(--accent); }
+.line-section-total { font-size:12px; font-weight:700; color:var(--green); padding:0 8px; min-width:80px; text-align:right; }
+.ls-btn { background:var(--bg); border:1px solid var(--border2); color:var(--text2); width:26px; height:26px; border-radius:6px; cursor:pointer; font-size:14px; font-family:inherit; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
+.ls-btn:hover { border-color:var(--accent); color:var(--accent); }
+.ls-btn.del:hover { border-color:var(--red); color:var(--red); }
+.line-sub-list { display:flex; flex-direction:column; gap:6px; padding-left:18px; }
+.line-sub-item { display:grid; grid-template-columns:22px 1fr 70px 60px 90px 90px 26px; gap:6px; align-items:center; }
+.line-sub-num { font-size:11px; font-weight:700; color:var(--text3); }
+.line-sub-item input { background:var(--bg); border:1px solid var(--border2); border-radius:6px; padding:6px 8px; color:var(--text); font-size:12px; font-family:inherit; outline:none; min-width:0; }
+.line-sub-item input:focus { border-color:var(--accent); }
+.line-sub-item input[readonly] { background:var(--card); color:var(--green); font-weight:700; }
+.line-add-sub { background:transparent; border:1px dashed var(--border2); border-radius:6px; padding:5px 10px; color:var(--text3); font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; margin-top:6px; margin-left:18px; align-self:flex-start; }
+.line-add-sub:hover { border-color:var(--accent); color:var(--accent); }
+.line-section-presets { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.line-preset-btn { background:var(--card2); border:1px dashed var(--border2); border-radius:8px; padding:8px 12px; color:var(--text2); font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; }
+.line-preset-btn:hover { border-color:var(--accent); color:var(--accent); }
+@media(max-width:560px){ .line-sub-item{ grid-template-columns:22px 1fr 60px 90px 26px; } .line-sub-item .lsi-unit, .line-sub-item .lsi-total { display:none; } }
+
 /* ── PAYMENT SUMMARY ── */
 .pay-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; }
 .pay-row:last-child { border-bottom:none; }
@@ -261,17 +288,33 @@ body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color
                     </div>
                 </div>
 
-                <div class="ib-row">
-                    <div class="ib-field"><label>Original Contract Amount</label><input id="ibOriginalAmount" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
-                    <div class="ib-field"><label>Change Orders Total</label><input id="ibChangeOrdersTotal" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                <!-- Hierarchical itemized line items: Labor, Materials, Change Orders, etc.
+                     Each section auto-rolls up into the aggregate hidden fields below. -->
+                <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.5">
+                    Itemize every billable line: drag sections to reorder · auto-numbered 1, 1.1, 1.2 · totals roll up into the summary below.
                 </div>
-                <div class="ib-row">
-                    <div class="ib-field"><label>Labor Total</label><input id="ibLaborTotal" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
-                    <div class="ib-field"><label>Materials / Consumables Total</label><input id="ibMaterialsTotal" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                <div class="line-list" id="lineList"></div>
+                <div class="line-section-presets">
+                    <button type="button" class="line-preset-btn" onclick="addLineSection('Labor', 'labor')">+ Labor</button>
+                    <button type="button" class="line-preset-btn" onclick="addLineSection('Materials', 'materials')">+ Materials</button>
+                    <button type="button" class="line-preset-btn" onclick="addLineSection('Change Orders', 'change_orders')">+ Change Orders</button>
+                    <button type="button" class="line-preset-btn" onclick="addLineSection('Adjustments', 'adjustments')">+ Adjustments</button>
+                    <button type="button" class="line-preset-btn" onclick="addLineSection('', 'custom')">+ Custom Section</button>
                 </div>
-                <div class="ib-row">
+
+                <!-- Aggregate fields (hidden) — driven by the line items engine, used by recalculate() and Firebase save -->
+                <div style="display:none">
+                    <input id="ibOriginalAmount" type="number" step="0.01" value="0">
+                    <input id="ibChangeOrdersTotal" type="number" step="0.01" value="0">
+                    <input id="ibLaborTotal" type="number" step="0.01" value="0">
+                    <input id="ibMaterialsTotal" type="number" step="0.01" value="0">
+                    <input id="ibAdjustments" type="number" step="0.01" value="0">
+                </div>
+
+                <!-- Previous payments stays as a manual field — it isn't a line item, it's prior remittance -->
+                <div class="ib-row" style="margin-top:14px">
                     <div class="ib-field"><label>Previous Payments Received</label><input id="ibPreviousPayments" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
-                    <div class="ib-field"><label>Adjustments (+/-)</label><input id="ibAdjustments" type="number" step="0.01" placeholder="0.00" oninput="recalculate()"></div>
+                    <div class="ib-field"><label>Original Contract Amount (manual override)</label><input id="ibOriginalAmountManual" type="number" step="0.01" placeholder="leave blank to use line items" oninput="recalculate()"></div>
                 </div>
 
                 <div style="margin-top:16px;padding:16px;background:var(--card2);border:1px solid var(--border);border-radius:12px" id="paymentSummary">
@@ -574,25 +617,44 @@ function importInvoice(inv) {
 
     document.getElementById('ibClientName').value = name;
     document.getElementById('ibProjectLocation').value = loc;
-    document.getElementById('ibLaborTotal').value = (inv.laborTotal || 0).toFixed(2);
-    document.getElementById('ibMaterialsTotal').value = (inv.materialsTotal || 0).toFixed(2);
 
-    // For change orders: the imported amount is the CO amount, NOT the original contract.
-    // Only set Original Contract Amount if the invoice explicitly has a different originalAmount.
-    if (isCO) {
-        // CO's own amount goes into Change Orders Total
-        document.getElementById('ibChangeOrdersTotal').value = (inv.amount || 0).toFixed(2);
-        // Only set original if it was explicitly stored AND differs from the CO amount
-        var explicitOrig = inv.originalAmount || 0;
-        if (explicitOrig > 0 && explicitOrig !== inv.amount) {
-            document.getElementById('ibOriginalAmount').value = explicitOrig.toFixed(2);
-        } else {
-            document.getElementById('ibOriginalAmount').value = '';
+    // Populate the itemized line items engine from the imported estimate.
+    // Prefer detailed laborItems/matItems arrays; fall back to lump-sum totals.
+    _lineSections = [];
+    var laborItems = inv.laborItems || (inv.jobDetails && inv.jobDetails.laborItems) || [];
+    var matItems   = inv.matItems   || (inv.jobDetails && inv.jobDetails.matItems)   || [];
+    function _coerce(arr) {
+        return (arr || []).map(function(it) {
+            return {
+                desc: it.desc || it.description || it.name || '',
+                qty:  Number(it.qty || it.quantity || 1),
+                unit: it.unit || it.basis || 'ea',
+                price: Number(it.price || it.unitPrice || 0)
+            };
+        });
+    }
+    if (!isCO) {
+        var laborSubs = _coerce(laborItems);
+        var matSubs   = _coerce(matItems);
+        if (laborSubs.length) window.addLineSection('Labor', 'labor', laborSubs, true);
+        else if ((inv.laborTotal||0) > 0) window.addLineSection('Labor', 'labor', [{desc:'Labor (lump sum)', qty:1, unit:'job', price: Number(inv.laborTotal)||0}], true);
+        if (matSubs.length) window.addLineSection('Materials', 'materials', matSubs, true);
+        else if ((inv.materialsTotal||0) > 0) window.addLineSection('Materials', 'materials', [{desc:'Materials (lump sum)', qty:1, unit:'job', price: Number(inv.materialsTotal)||0}], true);
+        // If neither items nor totals exist but a top-level amount does, drop it as a single Labor row
+        if (!laborSubs.length && !matSubs.length && !(inv.laborTotal||inv.materialsTotal) && (inv.amount||0) > 0) {
+            window.addLineSection('Original Contract', 'labor', [{desc: inv.scopeTitle || 'Contract amount', qty:1, unit:'job', price: Number(inv.amount)||0}], true);
         }
     } else {
-        // Regular invoice: amount IS the original contract
-        document.getElementById('ibOriginalAmount').value = (inv.amount || 0).toFixed(2);
+        // Change order: drop the CO amount into a Change Orders section
+        window.addLineSection('Change Order — ' + (inv.id || ''), 'change_orders', [{desc: inv.scopeTitle || 'Change order work', qty:1, unit:'job', price: Number(inv.amount)||0}], true);
+        // If the CO came with explicit original amount, use it as a manual override
+        var explicitOrig = inv.originalAmount || 0;
+        if (explicitOrig > 0 && explicitOrig !== inv.amount) {
+            document.getElementById('ibOriginalAmountManual').value = explicitOrig.toFixed(2);
+        }
     }
+    _renderLineList();
+    _recalcLineTotals();
 
     // Build scope summary from scope items
     var scope = inv.scope || (inv.jobDetails ? inv.jobDetails.scopeItems : null) || [];
@@ -607,32 +669,36 @@ function importInvoice(inv) {
     // Look for related COs (only if importing a non-CO — find its COs)
     if (!isCO) {
         var clientLower = name.toLowerCase();
-        var coTotal = 0;
+        var foundCOs = false;
         getAllInvoices().forEach(function(other) {
             if (other.id === inv.id) return;
             if ((other.type === 'change_order' || other.documentType === 'change_order') &&
                 (other.clientName || '').toLowerCase() === clientLower) {
-                coTotal += other.amount || 0;
+                window.addLineSection(
+                    'Change Order — ' + (other.id || ''),
+                    'change_orders',
+                    [{ desc: other.scopeTitle || ('CO ' + (other.id||'')), qty: 1, unit: 'job', price: Number(other.amount)||0 }],
+                    true
+                );
+                foundCOs = true;
                 addToChain(other);
             }
         });
-        if (coTotal > 0) {
-            document.getElementById('ibChangeOrdersTotal').value = coTotal.toFixed(2);
-        }
+        if (foundCOs) { _renderLineList(); _recalcLineTotals(); }
     } else {
-        // If importing a CO, try to find the original contract to chain
-        var clientLower = name.toLowerCase();
+        // Importing a CO: try to find the original contract to chain
+        var clientLower2 = name.toLowerCase();
         getAllInvoices().forEach(function(other) {
             if (other.id === inv.id) return;
             if ((other.type !== 'change_order') && (other.documentType !== 'change_order') &&
-                (other.clientName || '').toLowerCase() === clientLower) {
+                (other.clientName || '').toLowerCase() === clientLower2) {
                 addToChain(other);
-                // Only set original amount if we haven't set it yet
-                if (!document.getElementById('ibOriginalAmount').value) {
-                    document.getElementById('ibOriginalAmount').value = (other.amount || 0).toFixed(2);
-                }
+                // Only set the manual original amount override if it hasn't already been set
+                var origEl = document.getElementById('ibOriginalAmountManual');
+                if (origEl && !origEl.value) origEl.value = (other.amount || 0).toFixed(2);
             }
         });
+        _recalcLineTotals();
     }
 
     recalculate();
@@ -719,10 +785,246 @@ window.toggleConsumablesPaid = function() {
 };
 
 // ================================================================
-// RECALCULATE
+// ITEMIZED LINE ITEMS ENGINE
+// _lineSections: [{ id, title, kind, subs: [{id, desc, qty, unit, price, total}] }]
+// kind ∈ labor | materials | change_orders | adjustments | custom
+// Auto-rolls into hidden aggregate fields (ibLaborTotal etc.) on every change.
+// ================================================================
+var _lineSections = [];
+var _lineDragSrc = null;
+function _lsUID() { return 'ls_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+window.addLineSection = function(titleVal, kind, subsArr, _skipRender) {
+    var secId = _lsUID();
+    var sec = { id: secId, title: titleVal || '', kind: kind || 'custom', subs: [] };
+    _lineSections.push(sec);
+    if (subsArr && subsArr.length) {
+        subsArr.forEach(function(s) {
+            sec.subs.push({
+                id: _lsUID(),
+                desc: (s && s.desc) || '',
+                qty:  (s && s.qty != null) ? Number(s.qty) : 1,
+                unit: (s && s.unit) || 'ea',
+                price:(s && s.price != null) ? Number(s.price) : 0,
+                total:(s && s.total != null) ? Number(s.total) : (Number(s && s.qty || 0) * Number(s && s.price || 0))
+            });
+        });
+    } else {
+        sec.subs.push({ id: _lsUID(), desc: '', qty: 1, unit: 'ea', price: 0, total: 0 });
+    }
+    if (!_skipRender) { _renderLineList(); _recalcLineTotals(); }
+    return secId;
+};
+
+window.addLineSub = function(secId) {
+    var sec = _lineSections.find(function(s){ return s.id===secId; });
+    if (!sec) return;
+    sec.subs.push({ id: _lsUID(), desc: '', qty: 1, unit: 'ea', price: 0, total: 0 });
+    _renderLineList(); _recalcLineTotals();
+};
+
+window.removeLineSection = function(secId) {
+    _lineSections = _lineSections.filter(function(s){ return s.id !== secId; });
+    _renderLineList(); _recalcLineTotals();
+};
+
+window.removeLineSub = function(secId, subId) {
+    var sec = _lineSections.find(function(s){ return s.id===secId; });
+    if (!sec) return;
+    if (sec.subs.length <= 1) { window.removeLineSection(secId); return; }
+    sec.subs = sec.subs.filter(function(s){ return s.id !== subId; });
+    _renderLineList(); _recalcLineTotals();
+};
+
+function _flushLinesFromDOM() {
+    _lineSections.forEach(function(sec) {
+        var hdr = document.getElementById('lstitle_' + sec.id);
+        if (hdr) sec.title = hdr.value;
+        sec.subs.forEach(function(sub) {
+            var d = document.getElementById('lsdesc_' + sub.id);
+            var q = document.getElementById('lsqty_'  + sub.id);
+            var u = document.getElementById('lsunit_' + sub.id);
+            var p = document.getElementById('lsprice_'+ sub.id);
+            if (d) sub.desc  = d.value;
+            if (q) sub.qty   = parseFloat(q.value) || 0;
+            if (u) sub.unit  = u.value;
+            if (p) sub.price = parseFloat(p.value) || 0;
+            sub.total = sub.qty * sub.price;
+        });
+    });
+}
+
+function _sectionTotal(sec) {
+    return sec.subs.reduce(function(s,sub){ return s + (Number(sub.total) || 0); }, 0);
+}
+
+function _recalcLineTotals() {
+    _flushLinesFromDOM();
+    var totals = { labor: 0, materials: 0, change_orders: 0, adjustments: 0, custom: 0 };
+    _lineSections.forEach(function(sec) {
+        var t = _sectionTotal(sec);
+        sec._total = t;
+        if (totals[sec.kind] !== undefined) totals[sec.kind] += t; else totals.custom += t;
+        // Update visible section total badge
+        var totEl = document.getElementById('lstot_' + sec.id);
+        if (totEl) totEl.textContent = '$' + t.toFixed(2);
+    });
+    // Push to hidden aggregate fields
+    document.getElementById('ibLaborTotal').value         = totals.labor.toFixed(2);
+    document.getElementById('ibMaterialsTotal').value     = totals.materials.toFixed(2);
+    document.getElementById('ibChangeOrdersTotal').value  = totals.change_orders.toFixed(2);
+    document.getElementById('ibAdjustments').value        = totals.adjustments.toFixed(2);
+    // Original contract = manual override OR (labor + materials + custom). NOT change orders.
+    var manual = parseFloat((document.getElementById('ibOriginalAmountManual')||{}).value) || 0;
+    var origAuto = totals.labor + totals.materials + totals.custom;
+    document.getElementById('ibOriginalAmount').value = (manual > 0 ? manual : origAuto).toFixed(2);
+    window.recalculate();
+}
+
+window.getLineSections = function() { _flushLinesFromDOM(); return _lineSections; };
+
+function _renderLineList() {
+    var list = document.getElementById('lineList');
+    if (!list) return;
+    _flushLinesFromDOM();
+    list.innerHTML = '';
+
+    _lineSections.forEach(function(sec, si) {
+        var div = document.createElement('div');
+        div.className = 'line-section';
+        div.id = 'lsec_' + sec.id;
+        div.draggable = true;
+
+        // Header
+        var hdr = document.createElement('div');
+        hdr.className = 'line-section-hdr';
+        var num = document.createElement('span');
+        num.className = 'line-section-num';
+        num.textContent = (si+1) + '.';
+        var titleI = document.createElement('input');
+        titleI.type = 'text';
+        titleI.id = 'lstitle_' + sec.id;
+        titleI.placeholder = 'Section title (Labor, Materials, Change Order #1, …)';
+        titleI.value = sec.title;
+        var totSpan = document.createElement('span');
+        totSpan.className = 'line-section-total';
+        totSpan.id = 'lstot_' + sec.id;
+        totSpan.textContent = '$' + (_sectionTotal(sec)).toFixed(2);
+        var addBtn = document.createElement('button');
+        addBtn.className = 'ls-btn'; addBtn.textContent = '+'; addBtn.title = 'Add line';
+        addBtn.onclick = (function(id){ return function(){ window.addLineSub(id); }; })(sec.id);
+        var delBtn = document.createElement('button');
+        delBtn.className = 'ls-btn del'; delBtn.textContent = '✕'; delBtn.title = 'Delete section';
+        delBtn.onclick = (function(id){ return function(){ window.removeLineSection(id); }; })(sec.id);
+        hdr.appendChild(num); hdr.appendChild(titleI); hdr.appendChild(totSpan); hdr.appendChild(addBtn); hdr.appendChild(delBtn);
+        div.appendChild(hdr);
+
+        // Sub-items
+        var subList = document.createElement('div');
+        subList.className = 'line-sub-list';
+        sec.subs.forEach(function(sub, subi) {
+            var row = document.createElement('div');
+            row.className = 'line-sub-item';
+            var n = document.createElement('span'); n.className = 'line-sub-num'; n.textContent = (si+1)+'.'+(subi+1);
+            var desc = document.createElement('input'); desc.type='text'; desc.id='lsdesc_'+sub.id; desc.placeholder='Description'; desc.value = sub.desc;
+            var qty  = document.createElement('input'); qty.type='number'; qty.id='lsqty_'+sub.id; qty.step='0.01'; qty.placeholder='Qty'; qty.value = sub.qty;
+            var unit = document.createElement('input'); unit.type='text'; unit.id='lsunit_'+sub.id; unit.placeholder='unit'; unit.value = sub.unit; unit.className='lsi-unit';
+            var price= document.createElement('input'); price.type='number'; price.id='lsprice_'+sub.id; price.step='0.01'; price.placeholder='Unit $'; price.value = sub.price;
+            var tot  = document.createElement('input'); tot.type='text'; tot.readOnly=true; tot.id='lstot_sub_'+sub.id; tot.value = '$'+(Number(sub.total)||0).toFixed(2); tot.className='lsi-total';
+            var rm   = document.createElement('button'); rm.className='ls-btn del'; rm.textContent='✕'; rm.title='Remove line';
+            rm.onclick = (function(sid,subid){ return function(){ window.removeLineSub(sid,subid); }; })(sec.id, sub.id);
+            // Live recalc on input
+            [desc, qty, unit, price].forEach(function(el){ el.addEventListener('input', function(){ _recalcLineTotals(); var t=document.getElementById('lstot_sub_'+sub.id); if(t){ t.value='$'+((parseFloat(qty.value)||0)*(parseFloat(price.value)||0)).toFixed(2); } }); });
+            row.appendChild(n); row.appendChild(desc); row.appendChild(qty); row.appendChild(unit); row.appendChild(price); row.appendChild(tot); row.appendChild(rm);
+            subList.appendChild(row);
+        });
+        div.appendChild(subList);
+
+        var addSub = document.createElement('button');
+        addSub.className = 'line-add-sub';
+        addSub.textContent = '+ Add line item';
+        addSub.onclick = (function(id){ return function(){ window.addLineSub(id); }; })(sec.id);
+        div.appendChild(addSub);
+
+        // Drag & drop reorder
+        div.addEventListener('dragstart', function(e){ _lineDragSrc = sec.id; div.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+        div.addEventListener('dragend',   function(){ div.classList.remove('dragging'); list.querySelectorAll('.line-section').forEach(function(d){ d.classList.remove('drag-over'); }); });
+        div.addEventListener('dragover',  function(e){ e.preventDefault(); if (_lineDragSrc !== sec.id) div.classList.add('drag-over'); });
+        div.addEventListener('dragleave', function(){ div.classList.remove('drag-over'); });
+        div.addEventListener('drop',      function(e){
+            e.preventDefault(); div.classList.remove('drag-over');
+            if (_lineDragSrc && _lineDragSrc !== sec.id) {
+                var srcIdx = _lineSections.findIndex(function(s){ return s.id===_lineDragSrc; });
+                var dstIdx = _lineSections.findIndex(function(s){ return s.id===sec.id; });
+                if (srcIdx > -1 && dstIdx > -1) {
+                    var moved = _lineSections.splice(srcIdx,1)[0];
+                    _lineSections.splice(dstIdx,0,moved);
+                    _renderLineList(); _recalcLineTotals();
+                }
+            }
+        });
+
+        list.appendChild(div);
+    });
+}
+
+// ================================================================
+// APPLY AI JSON TO INVOICE FORM
+// ================================================================
+window.applyInvoiceAIJson = function(j) {
+    if (!j || typeof j !== 'object') return false;
+    function sv(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null && val !== '') el.value = val; }
+
+    // Identity
+    sv('ibInvoiceNum',     j.invoiceNumber || j.invoiceId);
+    sv('ibInvoiceDate',    j.invoiceDate);
+    sv('ibDueDate',        j.dueDate);
+    sv('ibPaymentTerms',   j.paymentTerms);
+
+    // Client + project
+    sv('ibClientName',     j.clientName);
+    sv('ibBillingContact', j.billingContact);
+    sv('ibClientEmail',    j.clientEmail);
+    sv('ibClientPhone',    j.clientPhone);
+    sv('ibProjectLocation',j.projectLocation || j.projectAddress);
+    sv('ibPONumber',       j.poNumber);
+    sv('ibBillingAddress', j.billingAddress);
+    sv('ibScopeSummary',   j.scopeSummary || j.notes);
+
+    // Notes
+    sv('ibNotes',                j.notes);
+    sv('ibPaymentInstructions',  j.paymentInstructions);
+    sv('ibPreviousPayments',     j.previousPayments);
+    sv('ibOriginalAmountManual', j.originalAmount);
+
+    // Line sections — preferred structured format
+    _lineSections = [];
+    var sections = j.lineSections;
+    // Fallback: convert flat lineItems into a single Labor section
+    if (!sections && Array.isArray(j.lineItems) && j.lineItems.length) {
+        sections = [{ title: 'Line Items', kind: 'labor', subs: j.lineItems }];
+    }
+    if (Array.isArray(sections)) {
+        sections.forEach(function(s) {
+            window.addLineSection(s.title || '', s.kind || 'custom', s.subs || s.items || [], true);
+        });
+    }
+    _renderLineList();
+    _recalcLineTotals();
+
+    // Consumables toggle
+    if (j.consumablesPaid === true && !_consumablesPaid) { window.toggleConsumablesPaid(); }
+    if (j.consumablesPaid === false && _consumablesPaid) { window.toggleConsumablesPaid(); }
+
+    return true;
+};
+
+// ================================================================
+// RECALCULATE  (now driven by line items via _recalcLineTotals)
 // ================================================================
 window.recalculate = function() {
-    var orig = parseFloat(document.getElementById('ibOriginalAmount').value) || 0;
+    var manualOrig = parseFloat((document.getElementById('ibOriginalAmountManual')||{}).value) || 0;
+    var orig = manualOrig > 0 ? manualOrig : (parseFloat(document.getElementById('ibOriginalAmount').value) || 0);
     var cos = parseFloat(document.getElementById('ibChangeOrdersTotal').value) || 0;
     var labor = parseFloat(document.getElementById('ibLaborTotal').value) || 0;
     var mats = parseFloat(document.getElementById('ibMaterialsTotal').value) || 0;
@@ -900,13 +1202,55 @@ var AI_PROXY = 'https://watts-ai-proxy.wattssafetyinstalls.workers.dev';
 var _aiHistory = [];
 var _aiBusy = false;
 
+function _renderInvoiceMd(t) {
+    var h = String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    h = h.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, body){
+        return '<pre style="background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;padding:10px;overflow-x:auto;font-size:11px;margin:6px 0"><code>' + body + '</code></pre>';
+    });
+    h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+    h = h.replace(/\n/g, '<br>');
+    return h;
+}
+
 function addAIMsg(role, text) {
     var msgs = document.getElementById('aiMsgs');
     var div = document.createElement('div');
     div.className = 'ai-msg ' + (role === 'user' ? 'user' : 'bot');
-    // Simple markdown: bold, line breaks
-    var html = esc(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-    div.innerHTML = html;
+
+    if (role === 'user') {
+        div.textContent = text;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return;
+    }
+
+    // Bot message: render markdown + detect invoice-json block
+    div.innerHTML = _renderInvoiceMd(text);
+    var jsonData = null;
+    var m = text.match(/```(?:invoice-json|final-invoice-json|json)\s*\n([\s\S]*?)```/);
+    if (m) { try { jsonData = JSON.parse(m[1].trim()); } catch(e) { console.warn('[Invoice AI] JSON parse failed:', e); } }
+    if (jsonData && typeof window.applyInvoiceAIJson === 'function') {
+        var acts = document.createElement('div');
+        acts.style.cssText = 'margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap';
+        var loadBtn = document.createElement('button');
+        loadBtn.style.cssText = 'background:linear-gradient(135deg,var(--accent),var(--purple));border:none;color:#fff;padding:6px 14px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:700;font-family:inherit';
+        loadBtn.textContent = '📥 Load into Invoice Form';
+        loadBtn.onclick = function() {
+            try {
+                var ok = window.applyInvoiceAIJson(jsonData);
+                if (ok) { loadBtn.textContent = '✅ Loaded — review & generate'; loadBtn.disabled = true; loadBtn.style.background = 'var(--green)'; }
+                else    { loadBtn.textContent = '❌ Load failed'; loadBtn.style.background = 'var(--red)'; }
+            } catch(err) { loadBtn.textContent = '❌ ' + err.message; loadBtn.style.background = 'var(--red)'; }
+        };
+        acts.appendChild(loadBtn);
+        var copyBtn = document.createElement('button');
+        copyBtn.style.cssText = 'background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit';
+        copyBtn.textContent = '📋 Copy JSON';
+        copyBtn.onclick = function() { navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2)).then(function(){ copyBtn.textContent = '✅ Copied'; setTimeout(function(){ copyBtn.textContent = '📋 Copy JSON'; }, 2000); }); };
+        acts.appendChild(copyBtn);
+        div.appendChild(acts);
+    }
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
 }
@@ -923,11 +1267,11 @@ window.aiSend = function() {
 
 window.aiQuickAction = function(action) {
     var prompts = {
-        review: 'Review my current final invoice setup. Here\'s the data:\n' + getFormContext() + '\nCheck for any issues, missing items, or discrepancies.',
-        terms: 'I\'m invoicing a corporate client with an accounting department. Suggest the best payment terms and any tips for getting paid faster. My current setup:\n' + getFormContext(),
+        review: 'Review my current final invoice setup and return CORRECTED JSON. Here\'s the data:\n' + getFormContext() + '\n\nCheck calculations, line item itemization, missing fields, payment terms. End with the complete ```invoice-json block.',
+        terms: 'I\'m invoicing a corporate client with an accounting department. Suggest optimal payment terms and any tips for getting paid faster, then return UPDATED ```invoice-json reflecting the suggested terms. Current setup:\n' + getFormContext(),
         email: 'Draft a professional email to send with this final invoice to a corporate accounting department. Here\'s the invoice data:\n' + getFormContext(),
         followup: 'Give me a follow-up strategy for this invoice — when to check in, how to escalate, and what to say. Invoice data:\n' + getFormContext(),
-        help_create: 'Help me create a final invoice. I\'ll describe the project and you help me fill in all the fields. Ask me what you need to know — client name, project details, amounts, what\'s been paid, etc.'
+        help_create: 'Help me build a final invoice from scratch. Ask me what you need: client name, project details, scope of work, labor hours, materials, change orders, what\'s been paid. Then return a complete ```invoice-json block with itemized lineSections so I can load it directly.'
     };
     var text = prompts[action] || 'Help me with invoicing.';
     addAIMsg('user', action === 'help_create' ? '🤖 Help me build a final invoice' : text.split('\n')[0]);
@@ -935,20 +1279,47 @@ window.aiQuickAction = function(action) {
 };
 
 function getFormContext() {
-    return [
+    var lines = [
         'Client: ' + (document.getElementById('ibClientName').value || 'Not set'),
+        'Billing Contact: ' + (document.getElementById('ibBillingContact').value || ''),
+        'Email: ' + (document.getElementById('ibClientEmail').value || ''),
+        'Phone: ' + (document.getElementById('ibClientPhone').value || ''),
         'Invoice #: ' + (document.getElementById('ibInvoiceNum').value || 'Not set'),
+        'Invoice Date: ' + (document.getElementById('ibInvoiceDate').value || ''),
+        'Due Date: ' + (document.getElementById('ibDueDate').value || ''),
+        'Payment Terms: ' + (document.getElementById('ibPaymentTerms').value || 'net_30'),
+        'PO Number: ' + (document.getElementById('ibPONumber').value || ''),
         'Project: ' + (document.getElementById('ibProjectLocation').value || 'Not set'),
+        'Scope Summary: ' + (document.getElementById('ibScopeSummary').value || ''),
+        '',
         'Original Contract: $' + (document.getElementById('ibOriginalAmount').value || '0'),
         'Change Orders: $' + (document.getElementById('ibChangeOrdersTotal').value || '0'),
-        'Labor: $' + (document.getElementById('ibLaborTotal').value || '0'),
-        'Materials: $' + (document.getElementById('ibMaterialsTotal').value || '0'),
+        'Labor Total: $' + (document.getElementById('ibLaborTotal').value || '0'),
+        'Materials Total: $' + (document.getElementById('ibMaterialsTotal').value || '0'),
+        'Adjustments: $' + (document.getElementById('ibAdjustments').value || '0'),
         'Consumables Paid: ' + (_consumablesPaid ? 'Yes' : 'No'),
         'Previous Payments: $' + (document.getElementById('ibPreviousPayments').value || '0'),
-        'Payment Terms: ' + (document.getElementById('ibPaymentTerms').value || 'net_30'),
         'Amount Due: ' + (document.getElementById('sumDue').textContent || '$0'),
-        'Document Chain: ' + documentChain.map(function(d) { return d.id + ' (' + d.type + ', $' + d.amount.toFixed(2) + ')'; }).join(', ')
-    ].join('\n');
+        ''
+    ];
+    // Itemized line sections
+    if (typeof window.getLineSections === 'function') {
+        var secs = window.getLineSections();
+        if (secs && secs.length) {
+            lines.push('Itemized Line Sections (' + secs.length + '):');
+            secs.forEach(function(sec, si) {
+                lines.push('  ' + (si+1) + '. ' + (sec.title || '(untitled)') + ' [' + sec.kind + '] — $' + (sec._total||0).toFixed(2));
+                (sec.subs||[]).forEach(function(sub, subi) {
+                    lines.push('    ' + (si+1)+'.'+(subi+1) + ' ' + (sub.desc||'') + ' — ' + sub.qty + ' ' + sub.unit + ' × $' + sub.price + ' = $' + (Number(sub.total)||0).toFixed(2));
+                });
+            });
+            lines.push('');
+        }
+    }
+    if (documentChain && documentChain.length) {
+        lines.push('Document Chain: ' + documentChain.map(function(d) { return d.id + ' (' + d.type + ', $' + (d.amount||0).toFixed(2) + ')'; }).join(', '));
+    }
+    return lines.join('\n');
 }
 
 function callAI(userMsg) {
@@ -960,10 +1331,67 @@ function callAI(userMsg) {
     document.getElementById('aiMsgs').appendChild(typingDiv);
     document.getElementById('aiMsgs').scrollTop = 999999;
 
-    var sysPrompt = 'You are the BidGen AI Invoice Mentor for Justin Watts — a Nebraska licensed contractor (#54690-25). '
-        + 'You help him create professional final invoices for corporate clients with accounting departments. '
-        + 'You know construction invoicing, payment terms (Net 30/60/90), lien waivers, payment applications, AIA forms, retainage. '
-        + 'Be direct, professional, and actionable. Use bold for key numbers. Keep responses concise but thorough.';
+    var sysPrompt = [
+        'You are the BidGen AI Invoice Mentor for Justin Watts — Nebraska Licensed Contractor #54690-25, Norfolk, NE.',
+        'You help him build polished, accounting-grade final invoices for corporate clients (PMs, accounting departments, GCs).',
+        'You know construction invoicing inside and out: Net 30/60/90, lien waivers, payment applications, AIA G702/G703, retainage, change orders, partial billings, mechanic\'s liens, NE construction lien deadlines.',
+        '',
+        '## OUTPUT RULES — NON-NEGOTIABLE',
+        'When the user asks you to draft, build, fill, generate, review, or correct an invoice, you MUST end your response with a single ```invoice-json fenced code block. The block populates the user\'s form via a Load button. No explanation inside the block — only valid JSON.',
+        '',
+        '## MANDATORY SCHEMA',
+        '```',
+        '{',
+        '  "invoiceNumber": "WSI-INV-2026-0001",',
+        '  "invoiceDate": "YYYY-MM-DD",',
+        '  "dueDate": "YYYY-MM-DD",',
+        '  "paymentTerms": "net_30",  // due_on_receipt|net_15|net_30|net_45|net_60|custom',
+        '  "clientName": "...", "billingContact": "...", "clientEmail": "...", "clientPhone": "...",',
+        '  "projectLocation": "...", "poNumber": "...", "billingAddress": "...",',
+        '  "scopeSummary": "Brief one-paragraph summary of work performed.",',
+        '  "originalAmount": 0,         // OPTIONAL manual override; leave 0 to auto-derive from line items',
+        '  "previousPayments": 0,',
+        '  "consumablesPaid": false,    // true if client paid materials up front',
+        '  "lineSections": [            // REQUIRED — itemize EVERYTHING here',
+        '    {',
+        '      "title": "Labor",',
+        '      "kind": "labor",       // labor|materials|change_orders|adjustments|custom',
+        '      "subs": [',
+        '        {"desc":"Demolition of old flooring","qty":1,"unit":"job","price":850.00},',
+        '        {"desc":"Installation labor","qty":18,"unit":"hr","price":65.00}',
+        '      ]',
+        '    },',
+        '    {',
+        '      "title": "Materials",',
+        '      "kind": "materials",',
+        '      "subs": [',
+        '        {"desc":"LVP flooring","qty":420,"unit":"sqft","price":3.85},',
+        '        {"desc":"Underlayment","qty":420,"unit":"sqft","price":0.45}',
+        '      ]',
+        '    },',
+        '    {',
+        '      "title": "Change Order #1 — Bathroom add-on",',
+        '      "kind": "change_orders",',
+        '      "subs": [ {"desc":"Additional tile install","qty":1,"unit":"job","price":1200.00} ]',
+        '    }',
+        '  ],',
+        '  "notes": "Project completed and passed final inspection on...",',
+        '  "paymentInstructions": "Mail check to: Watts Safety Installs, Norfolk NE 68701 — OR — Zelle: Justin.Watts@WattsATPContractor.com"',
+        '}',
+        '```',
+        '',
+        '## CRITICAL RULES',
+        '1. lineSections is REQUIRED and ITEMIZED. One service per sub-item. Break compound work into separate subs so totals roll up cleanly.',
+        '2. Use the EXACT enum values for `kind` (labor|materials|change_orders|adjustments|custom). The form uses these to roll up totals into the payment summary.',
+        '3. NEVER invent client names, PO numbers, or amounts — use real data from the context provided. If data is missing, ask for it OR use clearly-labeled placeholders.',
+        '4. Each sub-item: desc + qty + unit + price. The form auto-computes `total = qty × price` so you don\'t need to send it.',
+        '5. paymentTerms uses snake_case enum values (net_30 not "Net 30").',
+        '6. NE construction lien deadlines: 120 days from last work to file, 2 years to enforce. Mention if relevant, do not invent statute numbers.',
+        '7. Use bold for key numbers in your prose. Keep prose tight and actionable.',
+        '',
+        'When the user just chats (no draft request), you can reply in markdown without the JSON block.',
+        'When in doubt, INCLUDE the JSON block — the Load button is harmless if unused.'
+    ].join('\n');
 
     _aiHistory.push({ role: 'user', parts: [{ text: userMsg }] });
     if (_aiHistory.length > 20) _aiHistory = _aiHistory.slice(-20);
@@ -978,7 +1406,7 @@ function callAI(userMsg) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             contents: contents,
-            generationConfig: { temperature: 0.7, maxOutputTokens: 8192, topP: 0.95 }
+            generationConfig: { temperature: 0.55, maxOutputTokens: 16384, topP: 0.95 }
         })
     }).then(function(r) {
         if (!r.ok) throw new Error('API error ' + r.status);

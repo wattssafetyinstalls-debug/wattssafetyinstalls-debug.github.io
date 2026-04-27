@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Library — All Records · Watts</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<style>
+:root{
+  --bg:#06080f; --card:#0c1424; --card2:#0f1a2e;
+  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.1);
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b; --text4:#475569;
+  --teal:#00C4B4; --blue:#60a5fa; --purple:#a78bfa; --green:#34d399;
+  --amber:#fbbf24; --red:#fb7185;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.login-card h1{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
+.login-card h1 span{background:linear-gradient(135deg,var(--teal),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-card p{font-size:13px;color:var(--text3);margin-bottom:24px}
+.login-card input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;color:var(--text);font-size:16px;font-family:inherit;text-align:center;letter-spacing:4px;outline:none;margin-bottom:12px}
+.login-card input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,196,180,0.15)}
+.login-card button{width:100%;background:linear-gradient(135deg,var(--teal),var(--blue));color:white;border:none;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.login-card .err{color:var(--red);font-size:12px;margin-top:8px;min-height:18px}
+
+/* ── APP ── */
+#app{display:none}
+.hdr{background:var(--card);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.hdr h1{font-size:16px;font-weight:800;letter-spacing:-0.3px;flex:1}
+.hdr h1 span{background:linear-gradient(135deg,var(--teal),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr .back{color:var(--teal);text-decoration:none;font-size:13px;font-weight:600}
+.hdr .back:hover{text-decoration:underline}
+.hdr .pin-badge{font-size:11px;color:var(--text3);background:var(--card2);padding:5px 10px;border-radius:8px;border:1px solid var(--border)}
+
+/* ── STATS BAR ── */
+.stats{max-width:1300px;margin:20px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat .lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
+.stat .val{font-size:20px;font-weight:800;color:var(--text)}
+.stat .sub{font-size:11px;color:var(--text3);margin-top:2px}
+.stat.hl-green .val{color:var(--green)}
+.stat.hl-amber .val{color:var(--amber)}
+.stat.hl-blue .val{color:var(--blue)}
+.stat.hl-purple .val{color:var(--purple)}
+
+/* ── TABS ── */
+.tabs{max-width:1300px;margin:20px auto 0;padding:0 20px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.tab{background:none;border:none;color:var(--text3);padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;display:inline-flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab .count-badge{font-size:10px;background:var(--card2);color:var(--text3);padding:1px 7px;border-radius:10px;font-weight:700;border:1px solid var(--border)}
+.tab.active .count-badge{background:rgba(0,196,180,0.12);color:var(--teal);border-color:rgba(0,196,180,0.25)}
+
+/* ── TOOLBAR (search + sub-filter) ── */
+.toolbar{max-width:1300px;margin:14px auto 0;padding:0 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.toolbar input{flex:1;min-width:240px;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none}
+.toolbar input:focus{border-color:var(--teal)}
+.toolbar select{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;cursor:pointer}
+.toolbar button{background:var(--card);border:1px solid var(--border2);color:var(--text2);padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.toolbar button:hover{border-color:var(--teal);color:var(--teal)}
+
+.subfilter{max-width:1300px;margin:10px auto 0;padding:0 20px;display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--card2);border:1px solid var(--border);color:var(--text3);padding:5px 12px;border-radius:18px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.4px}
+.chip:hover{border-color:var(--text2);color:var(--text2)}
+.chip.active{background:rgba(0,196,180,0.12);border-color:var(--teal);color:var(--teal)}
+
+/* ── LIST ── */
+.list{max-width:1300px;margin:14px auto 60px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.row{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .15s,background .15s,transform .15s;position:relative;overflow:hidden}
+.row:hover{border-color:var(--teal);background:var(--card2);transform:translateY(-2px)}
+.row .row-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.row .row-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.row .row-meta{flex:1;min-width:0}
+.row .row-client{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.row .row-id{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:0.3px}
+.row .row-amt{font-size:18px;font-weight:800;color:var(--green);text-align:right;flex-shrink:0}
+.row .row-amt.zero{color:var(--text3)}
+.row .row-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.row .badges{display:flex;gap:5px;flex-wrap:wrap}
+.b{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.4px;border:1px solid}
+.b.t-contracts{background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.25)}
+.b.t-estimates{background:rgba(96,165,250,0.1);color:var(--blue);border-color:rgba(96,165,250,0.25)}
+.b.t-final{background:rgba(0,196,180,0.1);color:var(--teal);border-color:rgba(0,196,180,0.25)}
+.b.t-portal{background:rgba(251,191,36,0.1);color:var(--amber);border-color:rgba(251,191,36,0.25)}
+.b.s-draft{background:rgba(100,116,139,0.1);color:var(--text3);border-color:rgba(100,116,139,0.3)}
+.b.s-published,.b.s-permanent{background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.25)}
+.b.s-signed,.b.s-paid{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.25)}
+.b.s-temporary,.b.s-lost{background:rgba(251,191,36,0.1);color:var(--amber);border-color:rgba(251,191,36,0.25)}
+.row .row-date{font-size:10px;color:var(--text4)}
+.row .actions{display:flex;gap:5px}
+.row .act-btn{background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:7px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.row .act-btn:hover{border-color:var(--teal);color:var(--teal)}
+.row .act-btn.danger:hover{border-color:var(--red);color:var(--red)}
+
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text4);font-size:14px}
+.empty .icon{font-size:48px;margin-bottom:12px;opacity:0.5}
+
+/* ── TOAST ── */
+#toast{position:fixed;top:80px;right:20px;background:var(--card);border:1px solid var(--teal);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--teal);z-index:9700;display:none;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
+
+/* Mobile */
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat .val{font-size:16px}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar input,.toolbar select,.toolbar button{width:100%}
+  .list{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>📚 Command <span>Library</span></h1>
+    <p>Master view of every record across BidGen, Contract Builder, and Final Invoice Builder. Enter your unified PIN to access.</p>
+    <input id="pinInput" type="password" placeholder="PIN" maxlength="10" inputmode="numeric">
+    <button onclick="attemptLogin()">Unlock Library</button>
+    <div class="err" id="loginError"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="hdr">
+    <a href="/tools/" class="back">← Tools Hub</a>
+    <h1>📚 Command <span>Library</span></h1>
+    <span class="pin-badge" id="pinBadge"></span>
+  </header>
+
+  <!-- Stats summary -->
+  <div class="stats" id="statsBar"></div>
+
+  <!-- Top-level category tabs -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-cat="all">📚 All <span class="count-badge" id="cnt-all">0</span></button>
+    <button class="tab" data-cat="contracts">📜 Contracts <span class="count-badge" id="cnt-contracts">0</span></button>
+    <button class="tab" data-cat="estimates">📋 BidGen Estimates <span class="count-badge" id="cnt-estimates">0</span></button>
+    <button class="tab" data-cat="final">🧾 Final Invoices <span class="count-badge" id="cnt-final">0</span></button>
+    <button class="tab" data-cat="portal">🌐 Portal Pages <span class="count-badge" id="cnt-portal">0</span></button>
+  </div>
+
+  <!-- Search + sort -->
+  <div class="toolbar">
+    <input id="search" type="text" placeholder="🔍 Search by client, ID, project...">
+    <select id="sortBy">
+      <option value="date_desc">Newest first</option>
+      <option value="date_asc">Oldest first</option>
+      <option value="amount_desc">Amount: high → low</option>
+      <option value="amount_asc">Amount: low → high</option>
+      <option value="client">Client A → Z</option>
+    </select>
+    <button onclick="exportCSV()">⬇️ Export CSV</button>
+  </div>
+
+  <!-- Sub-filter chips (per-tab) -->
+  <div class="subfilter" id="subfilter"></div>
+
+  <!-- List -->
+  <div class="list" id="list"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// FIREBASE — same project as every other tool (shared workspace)
+// ═══════════════════════════════════════════════════════════════
+var firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+  authDomain: "wsi---bid-generator.firebaseapp.com",
+  databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+  projectId: "wsi---bid-generator",
+  storageBucket: "wsi---bid-generator.firebasestorage.app",
+  messagingSenderId: "613129301141",
+  appId: "1:613129301141:web:92405028eca5aae354bf9c"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var hashedPIN = '';
+
+// ═══════════════════════════════════════════════════════════════
+// PIN (same hash function used by invoice-builder + contract-builder)
+// ═══════════════════════════════════════════════════════════════
+function hashPIN(pin){
+  var h=0;
+  for(var i=0;i<pin.length;i++){h=((h<<5)-h)+pin.charCodeAt(i);h|=0;}
+  return 'u'+Math.abs(h).toString(36);
+}
+
+document.getElementById('pinInput').addEventListener('keydown', function(e){
+  if (e.key==='Enter') attemptLogin();
+});
+
+window.attemptLogin = function(){
+  var pin = document.getElementById('pinInput').value.trim();
+  if (pin.length<4){ document.getElementById('loginError').textContent='PIN must be at least 4 digits.'; return; }
+  hashedPIN = hashPIN(pin);
+  // Auto-create the workspace if not present (matches contract-builder behavior)
+  db.ref('users/'+hashedPIN+'/created').once('value').then(function(snap){
+    if (!snap.exists()) return db.ref('users/'+hashedPIN+'/created').set(Date.now());
+  }).then(function(){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('pinBadge').textContent='PIN: '+hashedPIN;
+    sessionStorage.setItem('cmd_lib_pin', pin);
+    bootstrapListeners();
+  }).catch(function(err){
+    document.getElementById('loginError').textContent='Connection error: '+err.message;
+  });
+};
+
+// Auto-login if recently used
+(function(){
+  var saved = sessionStorage.getItem('cmd_lib_pin');
+  if (saved) {
+    document.getElementById('pinInput').value = saved;
+    setTimeout(attemptLogin, 50);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// DATA STORES — one per Firebase path, kept in sync via .on('value')
+// ═══════════════════════════════════════════════════════════════
+var stores = {
+  contracts:        {},  // contracts/{hash}/{id}
+  final_invoices:   {},  // final_invoices/{hash}/{id}
+  invoices_perm:    {},  // invoices/{hash}/permanent/{id}
+  invoices_temp:    {},  // invoices/{hash}/temporary/{id}
+  invoices_lost:    {},  // invoices/{hash}/lost/{id}
+  portal:           {}   // portal/{hash}/{id}
+};
+
+function bootstrapListeners(){
+  db.ref('contracts/'+hashedPIN).on('value', function(s){ stores.contracts = s.val()||{}; render(); });
+  db.ref('final_invoices/'+hashedPIN).on('value', function(s){ stores.final_invoices = s.val()||{}; render(); });
+  db.ref('invoices/'+hashedPIN+'/permanent').on('value', function(s){ stores.invoices_perm = s.val()||{}; render(); });
+  db.ref('invoices/'+hashedPIN+'/temporary').on('value', function(s){ stores.invoices_temp = s.val()||{}; render(); });
+  db.ref('invoices/'+hashedPIN+'/lost').on('value', function(s){ stores.invoices_lost = s.val()||{}; render(); });
+  db.ref('portal/'+hashedPIN).on('value', function(s){ stores.portal = s.val()||{}; render(); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NORMALIZER — flatten everything into a uniform Record shape
+// {category, subtype, id, num, client, project, amount, status, date, raw, source, openUrl}
+// ═══════════════════════════════════════════════════════════════
+function _date(d){ if(!d) return ''; if(typeof d==='number') return new Date(d).toISOString(); return String(d); }
+
+function normalizeContract(raw, key){
+  var c = raw.contract || raw;
+  var status = raw.signedAt ? 'signed' : (raw.status || (raw.contract ? 'published' : 'draft'));
+  return {
+    category:'contracts',
+    subtype: c.type || raw.type || 'service',
+    id: key,
+    num: c.num || raw.num || key,
+    client: (c.clientName || raw.client || 'Unknown'),
+    project: c.projectName || '',
+    amount: Number(c.priceTotal || c.priceMonthly || c.priceSeasonTotal || c.priceHourly || raw.amount || 0),
+    status: status,
+    date: _date(raw.publishedAt || raw.savedAt || c.date),
+    pricingText: c.pricingText || raw.pricingText || '',
+    portalUrl: raw.portalUrl || null,
+    openUrl: '/tools/bidgen/contract-builder.html?loadId='+encodeURIComponent(key),
+    source: 'contracts/'+hashedPIN+'/'+key
+  };
+}
+
+function normalizeFinalInvoice(raw, key){
+  var inv = raw.invoice || {};
+  return {
+    category:'final',
+    subtype: 'final_invoice',
+    id: key,
+    num: raw.num || raw.id || key,
+    client: raw.client || inv.clientName || 'Unknown',
+    project: inv.projectLocation || '',
+    amount: Number(raw.amount || inv.amountDue || 0),
+    status: raw.status || (raw.publishedAt ? 'published' : 'draft'),
+    date: _date(raw.publishedAt || raw.savedAt || raw.date),
+    portalUrl: raw.portalUrl || null,
+    openUrl: '/tools/bidgen/invoice-builder.html?loadId='+encodeURIComponent(key),
+    source: 'final_invoices/'+hashedPIN+'/'+key
+  };
+}
+
+function normalizeBidGenEstimate(raw, key, status){
+  // Skip estimates that are actually final invoices (those are handled by final_invoices store)
+  // The invoice-builder mirrors published final invoices into invoices/{hash}/permanent — we skip those here
+  // because they will already appear in the Final Invoices tab via final_invoices/.
+  if (raw.type === 'final_invoice' || raw.documentType === 'final_invoice') return null;
+  var subtype = raw.type || raw.documentType || 'quote';
+  return {
+    category:'estimates',
+    subtype: subtype,
+    id: key,
+    num: raw.id || key,
+    client: raw.clientName || 'Unknown',
+    project: (raw.jobDetails && [raw.jobDetails.complexName, raw.jobDetails.unitNum, raw.jobDetails.jobCity].filter(Boolean).join(', ')) || '',
+    amount: Number(raw.amount || 0),
+    status: status,  // permanent | temporary | lost
+    date: _date(raw.estimateDate || raw.createdDate),
+    openUrl: '/tools/bidgen/?loadId='+encodeURIComponent(key),  // BidGen index reads loadId if supported
+    source: 'invoices/'+hashedPIN+'/'+status+'/'+key
+  };
+}
+
+function normalizePortal(raw, key){
+  // Only show portal pages that don't already have a final_invoices entry (avoid duplicates)
+  if (stores.final_invoices[key]) return null;
+  var inv = raw.invoice || raw.contract || {};
+  return {
+    category:'portal',
+    subtype: inv.documentType || raw.documentType || 'portal',
+    id: key,
+    num: inv.id || raw.num || key,
+    client: inv.clientName || raw.clientName || 'Unknown',
+    project: inv.projectLocation || inv.projectName || '',
+    amount: Number(inv.amountDue || raw.amount || 0),
+    status: raw.signedAt ? 'signed' : 'published',
+    date: _date(raw.publishedAt || inv.invoiceDate),
+    portalUrl: '/tools/bidgen/final-invoice.html?id='+encodeURIComponent(key)+'&pin='+encodeURIComponent(hashedPIN),
+    openUrl: '/tools/bidgen/final-invoice.html?id='+encodeURIComponent(key)+'&pin='+encodeURIComponent(hashedPIN),
+    source: 'portal/'+hashedPIN+'/'+key
+  };
+}
+
+function buildRecords(){
+  var out = [];
+  Object.keys(stores.contracts).forEach(function(k){ out.push(normalizeContract(stores.contracts[k], k)); });
+  Object.keys(stores.final_invoices).forEach(function(k){ out.push(normalizeFinalInvoice(stores.final_invoices[k], k)); });
+  ['invoices_perm','invoices_temp','invoices_lost'].forEach(function(bucket){
+    var status = bucket.replace('invoices_','').replace('perm','permanent');
+    Object.keys(stores[bucket]).forEach(function(k){
+      var rec = normalizeBidGenEstimate(stores[bucket][k], k, status);
+      if (rec) out.push(rec);
+    });
+  });
+  Object.keys(stores.portal).forEach(function(k){
+    var rec = normalizePortal(stores.portal[k], k);
+    if (rec) out.push(rec);
+  });
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UI STATE
+// ═══════════════════════════════════════════════════════════════
+var state = { tab: 'all', sub: 'all', search: '', sort: 'date_desc' };
+
+document.querySelectorAll('.tab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.tab = btn.getAttribute('data-cat');
+    state.sub = 'all';
+    render();
+  });
+});
+document.getElementById('search').addEventListener('input', function(){ state.search = this.value.toLowerCase(); render(); });
+document.getElementById('sortBy').addEventListener('change', function(){ state.sort = this.value; render(); });
+
+// Sub-filter definitions (per category)
+var SUBFILTERS = {
+  all:        [],  // no sub-filter
+  contracts:  [['all','All'],['service','Service'],['hourly','Hourly / T&M'],['seasonal','Seasonal'],['proposal','Proposal'],['maintenance','Maintenance'],['subcontractor','Subcontractor'],['nda','NDA'],['custom','Custom']],
+  estimates:  [['all','All'],['quote','Quotes'],['change_order','Change Orders'],['labor','Labor'],['materials','Materials']],
+  final:      [['all','All'],['draft','Draft'],['published','Published'],['paid','Paid']],
+  portal:     [['all','All'],['signed','Signed'],['published','Published']]
+};
+
+function renderSubfilter(){
+  var holder = document.getElementById('subfilter');
+  var defs = SUBFILTERS[state.tab] || [];
+  if (!defs.length) { holder.innerHTML=''; return; }
+  holder.innerHTML = defs.map(function(d){
+    var key = d[0], label = d[1];
+    return '<button class="chip'+(state.sub===key?' active':'')+'" data-sub="'+esc(key)+'">'+esc(label)+'</button>';
+  }).join('');
+  holder.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.sub = btn.getAttribute('data-sub');
+      render();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════
+function render(){
+  var records = buildRecords();
+
+  // Stats first (use full unfiltered set so totals are honest)
+  renderStats(records);
+  renderCounts(records);
+  renderSubfilter();
+
+  // Apply category tab
+  var rows = state.tab === 'all' ? records : records.filter(function(r){ return r.category === state.tab; });
+
+  // Apply sub-filter
+  if (state.sub && state.sub !== 'all') {
+    rows = rows.filter(function(r){
+      // For final invoices and portal we filter by status, for contracts/estimates by subtype
+      if (state.tab === 'final' || state.tab === 'portal') return r.status === state.sub;
+      return r.subtype === state.sub;
+    });
+  }
+
+  // Search
+  if (state.search) {
+    rows = rows.filter(function(r){
+      return (r.client||'').toLowerCase().indexOf(state.search) >= 0
+          || (r.num||'').toLowerCase().indexOf(state.search) >= 0
+          || (r.id||'').toLowerCase().indexOf(state.search) >= 0
+          || (r.project||'').toLowerCase().indexOf(state.search) >= 0;
+    });
+  }
+
+  // Sort
+  rows.sort(function(a,b){
+    if (state.sort === 'date_desc') return new Date(b.date||0) - new Date(a.date||0);
+    if (state.sort === 'date_asc')  return new Date(a.date||0) - new Date(b.date||0);
+    if (state.sort === 'amount_desc') return (b.amount||0) - (a.amount||0);
+    if (state.sort === 'amount_asc')  return (a.amount||0) - (b.amount||0);
+    if (state.sort === 'client') return (a.client||'').localeCompare(b.client||'');
+    return 0;
+  });
+
+  // List
+  var list = document.getElementById('list');
+  if (rows.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="icon">📭</div><div>No records match the current filter.</div></div>';
+    return;
+  }
+
+  list.innerHTML = rows.map(rowHtml).join('');
+}
+
+function renderCounts(records){
+  var by = { all:records.length, contracts:0, estimates:0, final:0, portal:0 };
+  records.forEach(function(r){ by[r.category] = (by[r.category]||0)+1; });
+  Object.keys(by).forEach(function(k){
+    var el = document.getElementById('cnt-'+k);
+    if (el) el.textContent = by[k];
+  });
+}
+
+function renderStats(records){
+  // Outstanding = published or draft final invoices that are not paid
+  var outstanding = 0, paid = 0, lastActivity = '';
+  records.forEach(function(r){
+    if (r.category === 'final') {
+      if (r.status === 'paid') paid += r.amount||0;
+      else if (r.amount > 0) outstanding += r.amount||0;
+    }
+    if (r.date && (!lastActivity || new Date(r.date) > new Date(lastActivity))) lastActivity = r.date;
+  });
+  var lastStr = lastActivity ? new Date(lastActivity).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—';
+  document.getElementById('statsBar').innerHTML =
+    statHTML('Total Records', records.length, 'across 4 buckets', 'blue') +
+    statHTML('Outstanding $', '$'+outstanding.toFixed(2), 'unpaid final invoices', 'amber') +
+    statHTML('Collected $', '$'+paid.toFixed(2), 'marked paid', 'green') +
+    statHTML('Last activity', lastStr, '', 'purple');
+}
+function statHTML(lbl, val, sub, hl){
+  return '<div class="stat hl-'+hl+'"><div class="lbl">'+esc(lbl)+'</div><div class="val">'+esc(String(val))+'</div>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+'</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ROW RENDERER
+// ═══════════════════════════════════════════════════════════════
+var CAT_ICONS = { contracts:'📜', estimates:'📋', final:'🧾', portal:'🌐' };
+var CAT_COLORS = { contracts:'rgba(167,139,250,0.12)', estimates:'rgba(96,165,250,0.12)', final:'rgba(0,196,180,0.12)', portal:'rgba(251,191,36,0.12)' };
+var CAT_TEXTCOLORS = { contracts:'#a78bfa', estimates:'#60a5fa', final:'#00C4B4', portal:'#fbbf24' };
+var CAT_LABELS = {
+  contracts:{service:'Service',hourly:'Hourly',seasonal:'Seasonal',proposal:'Proposal',maintenance:'Maintenance',subcontractor:'Sub',nda:'NDA',custom:'Custom'},
+  estimates:{quote:'Quote',change_order:'Change Order',labor:'Labor',materials:'Materials'},
+  final:{final_invoice:'Final Invoice'},
+  portal:{portal:'Portal',final_invoice:'Final Invoice',contract:'Contract'}
+};
+
+function rowHtml(r){
+  var dateStr = r.date ? new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+  var subLabel = (CAT_LABELS[r.category] && CAT_LABELS[r.category][r.subtype]) || r.subtype;
+  var amt = r.amount > 0 ? '$'+r.amount.toFixed(2) : '—';
+  var portalBtn = r.portalUrl ? '<a class="act-btn" target="_blank" href="'+esc(r.portalUrl)+'" onclick="event.stopPropagation()">🌐</a>' : '';
+  return '<div class="row" onclick="window.open(\''+esc(r.openUrl)+'\',\'_blank\')">' +
+    '<div class="row-top">' +
+      '<div class="row-icon" style="background:'+CAT_COLORS[r.category]+';color:'+CAT_TEXTCOLORS[r.category]+'">'+CAT_ICONS[r.category]+'</div>' +
+      '<div class="row-meta">' +
+        '<div class="row-client">'+esc(r.client)+'</div>' +
+        '<div class="row-id">'+esc(r.num)+(r.project?' · '+esc(r.project):'')+'</div>' +
+      '</div>' +
+      '<div class="row-amt'+(r.amount>0?'':' zero')+'">'+amt+'</div>' +
+    '</div>' +
+    '<div class="row-bottom">' +
+      '<div class="badges">' +
+        '<span class="b t-'+r.category+'">'+esc(subLabel)+'</span>' +
+        '<span class="b s-'+esc(r.status)+'">'+esc(r.status)+'</span>' +
+        '<span class="row-date">'+dateStr+'</span>' +
+      '</div>' +
+      '<div class="actions">' +
+        portalBtn +
+        '<a class="act-btn" href="'+esc(r.openUrl)+'" target="_blank" onclick="event.stopPropagation()">📂 Open</a>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════════════════════
+window.exportCSV = function(){
+  var records = buildRecords();
+  var headers = ['category','subtype','id','num','client','project','amount','status','date','source'];
+  var rows = [headers.join(',')];
+  records.forEach(function(r){
+    rows.push(headers.map(function(h){
+      var v = String(r[h]==null?'':r[h]).replace(/"/g,'""');
+      return '"'+v+'"';
+    }).join(','));
+  });
+  var blob = new Blob([rows.join('\n')], {type:'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'watts-command-library-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  toast('⬇️ Exported '+records.length+' records');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.style.display='none'; }, 2500);
+}
+
+})();
+</script>
+</body>
+</html>

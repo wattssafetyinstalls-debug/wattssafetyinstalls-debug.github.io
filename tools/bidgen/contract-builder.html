@@ -687,6 +687,14 @@ function launchApp(pin) {
   autoContractNum();
   // Pre-load library in background so it's instant when opened
   setTimeout(function() { if (db) attachLibraryListener(); }, 500);
+  // Master library deep-link: ?loadId=CTR-... auto-loads that contract
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var loadId = params.get('loadId');
+    if (loadId) {
+      setTimeout(function(){ window.loadContractFromLibrary && window.loadContractFromLibrary(loadId); }, 1200);
+    }
+  } catch(e) {}
 }
 
 // Auto-login if PIN saved in sessionStorage

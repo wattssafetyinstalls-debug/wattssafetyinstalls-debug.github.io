@@ -518,6 +518,14 @@ window.attemptLogin = function() {
             loadInvoiceLibrary();
             initForm();
             attachMyInvoicesListener();
+            // Master library deep-link: ?loadId=WSI-INV-... auto-opens that invoice
+            try {
+                var params = new URLSearchParams(window.location.search);
+                var loadId = params.get('loadId');
+                if (loadId) {
+                    setTimeout(function(){ window.loadMyInvoice && window.loadMyInvoice(loadId); }, 500);
+                }
+            } catch(e) {}
         } else {
             document.getElementById('loginError').textContent = 'PIN not found. Use your BidGen PIN.';
         }

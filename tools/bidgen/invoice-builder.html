@@ -166,6 +166,26 @@ body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color
 .ai-input-row textarea:focus { border-color:var(--accent); }
 .ai-input-row button { background:linear-gradient(135deg,var(--purple),var(--accent)); color:white; border:none; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; }
 
+/* ── MY FINAL INVOICES LIBRARY PANEL (mirrors contract-builder #libPanel) ── */
+#myInvPanel { position:fixed; top:0; right:-440px; width:420px; height:100vh; background:#080e1a; border-left:1px solid #1e293b; display:flex; flex-direction:column; z-index:9800; transition:right .3s cubic-bezier(.4,0,.2,1); box-shadow:-8px 0 40px rgba(0,0,0,0.6); }
+#myInvPanel.open { right:0; }
+#myInvHeader { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid #1e293b; background:linear-gradient(135deg,#0a1628,#0d1f3c); flex-shrink:0; }
+#myInvToolbar { display:flex; gap:8px; padding:10px 14px; border-bottom:1px solid #1e293b; background:#050a14; flex-shrink:0; }
+#myInvToolbar input, #myInvToolbar select { background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:7px 10px; color:#e2e8f0; font-size:12px; outline:none; font-family:inherit; }
+#myInvList { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px; }
+#myInvList::-webkit-scrollbar { width:5px; }
+#myInvList::-webkit-scrollbar-thumb { background:#1e293b; border-radius:3px; }
+.myInv-card { background:#0c1726; border:1px solid #1e293b; border-radius:12px; padding:14px; cursor:pointer; transition:border-color .15s, background .15s; }
+.myInv-card:hover { border-color:#4c1d95; background:#0f1e35; }
+.myInv-act-btn { background:none; border:1px solid; border-radius:6px; padding:3px 8px; font-size:10px; font-weight:600; cursor:pointer; white-space:nowrap; transition:opacity .15s; font-family:inherit; }
+.myInv-act-btn:hover { opacity:0.8; }
+@media (max-width:500px){ #myInvPanel { width:100vw; right:-100vw; } }
+
+/* Header action buttons (Save Draft + My Invoices) */
+.hdr-act-btn { background:var(--card2); border:1px solid var(--border2); color:var(--text2); padding:7px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:border-color .15s, color .15s; }
+.hdr-act-btn:hover { border-color:var(--accent); color:var(--accent); }
+.hdr-act-btn.primary { background:linear-gradient(135deg, var(--accent), var(--purple)); color:#fff; border-color:transparent; }
+
 /* ── RESULT MODAL ── */
 .result-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; display:none; align-items:center; justify-content:center; padding:20px; }
 .result-overlay.open { display:flex; }
@@ -199,9 +219,36 @@ body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color
     <header class="app-header">
         <a href="index.html" class="back-link">← BidGen</a>
         <h1>🧾 Final Invoice Builder</h1>
+        <button class="hdr-act-btn" onclick="saveInvoiceDraft()" title="Save current invoice as a draft">💾 Save Draft</button>
+        <button class="hdr-act-btn primary" onclick="openMyInvoices()" title="Browse all your saved & published final invoices">📚 My Final Invoices <span id="myInvBadge" style="background:rgba(255,255,255,0.2);padding:1px 7px;border-radius:10px;font-size:10px;margin-left:4px">0</span></button>
         <a href="portal-dashboard.html" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:600">🌐 Portal Dashboard</a>
         <span id="userBadge" style="font-size:11px;color:var(--text3)"></span>
     </header>
+
+    <!-- Status toast (save/load feedback) -->
+    <div id="invStatusToast" style="position:fixed;top:70px;right:20px;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--text);z-index:9700;display:none;box-shadow:0 8px 30px rgba(0,0,0,0.5)"></div>
+
+    <!-- MY FINAL INVOICES library panel (slides in from right) -->
+    <div id="myInvPanel">
+        <div id="myInvHeader">
+            <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:18px">📚</span>
+                <strong style="font-size:14px;color:#e2e8f0">My Final Invoices</strong>
+                <span id="myInvCount" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700">0</span>
+            </div>
+            <button onclick="closeMyInvoices()" style="background:none;border:1px solid #334155;color:#64748b;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:14px">✕</button>
+        </div>
+        <div id="myInvToolbar">
+            <input id="myInvSearch" type="text" placeholder="🔍 Search client, #, project..." style="flex:1" oninput="renderMyInvoices()">
+            <select id="myInvFilter" onchange="renderMyInvoices()">
+                <option value="all">All</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="paid">Paid</option>
+            </select>
+        </div>
+        <div id="myInvList"></div>
+    </div>
 
     <div class="app-body">
         <!-- LEFT: FORM -->
@@ -470,6 +517,7 @@ window.attemptLogin = function() {
             document.getElementById('userBadge').textContent = 'PIN: ' + hashedPIN;
             loadInvoiceLibrary();
             initForm();
+            attachMyInvoicesListener();
         } else {
             document.getElementById('loginError').textContent = 'PIN not found. Use your BidGen PIN.';
         }
@@ -1048,6 +1096,241 @@ window.recalculate = function() {
 };
 
 // ================================================================
+// MY FINAL INVOICES LIBRARY (mirrors contract-builder library verbatim)
+// Path: final_invoices/{hashedPIN}/{invoiceId}
+// ================================================================
+var _myInvoices = {};
+var _myInvListener = false;
+
+function showInvStatus(msg, kind) {
+    var el = document.getElementById('invStatusToast');
+    if (!el) return;
+    var color = kind === 'error' ? 'var(--red)' : kind === 'warn' ? 'var(--amber)' : 'var(--green)';
+    el.style.borderColor = color;
+    el.style.color = color;
+    el.textContent = msg;
+    el.style.display = 'block';
+    clearTimeout(showInvStatus._t);
+    showInvStatus._t = setTimeout(function(){ el.style.display = 'none'; }, 3500);
+}
+
+function captureInvoiceFormState() {
+    var fields = ['ibInvoiceNum','ibInvoiceDate','ibDueDate','ibPaymentTerms',
+        'ibClientName','ibBillingContact','ibClientEmail','ibClientPhone',
+        'ibProjectLocation','ibPONumber','ibBillingAddress','ibScopeSummary',
+        'ibPreviousPayments','ibOriginalAmountManual',
+        'ibNotes','ibPaymentInstructions'];
+    var snap = {};
+    fields.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) snap[id] = el.value;
+    });
+    snap.lineSections = (typeof window.getLineSections === 'function') ? window.getLineSections() : _lineSections;
+    snap.documentChain = documentChain.slice();
+    snap.consumablesPaid = !!_consumablesPaid;
+    return snap;
+}
+
+window.saveInvoiceDraft = function() {
+    if (!db) { showInvStatus('Firebase unavailable', 'error'); return; }
+    var invoiceId = document.getElementById('ibInvoiceNum').value.trim();
+    if (!invoiceId) { showInvStatus('Invoice # is required to save', 'warn'); return; }
+    var client = document.getElementById('ibClientName').value.trim();
+
+    // Don't downgrade an already-published invoice to draft on save —
+    // if it exists with status=published, keep that status (just refresh the formState).
+    var existing = _myInvoices[invoiceId];
+    var status = (existing && existing.status === 'published') ? 'published' : 'draft';
+    if (existing && existing.status === 'paid') status = 'paid';
+
+    var amountDue = parseFloat((document.getElementById('sumDue').textContent || '0').replace(/[^0-9.\-]/g, '')) || 0;
+
+    var record = {
+        id: invoiceId,
+        num: invoiceId,
+        type: 'final_invoice',
+        client: client || 'Unknown Client',
+        date: document.getElementById('ibInvoiceDate').value || '',
+        amount: amountDue,
+        status: status,
+        savedAt: new Date().toISOString(),
+        formState: captureInvoiceFormState()
+    };
+    if (existing) {
+        if (existing.publishedAt) record.publishedAt = existing.publishedAt;
+        if (existing.portalUrl)   record.portalUrl   = existing.portalUrl;
+        if (existing.invoice)     record.invoice     = existing.invoice;
+    }
+
+    db.ref('final_invoices/' + hashedPIN + '/' + invoiceId).update(record).then(function() {
+        showInvStatus('💾 Saved: ' + invoiceId, 'ok');
+        if (!_myInvListener) attachMyInvoicesListener();
+    }).catch(function(err) {
+        showInvStatus('Save failed: ' + err.message, 'error');
+    });
+};
+
+function attachMyInvoicesListener() {
+    if (!db || !hashedPIN || _myInvListener) return;
+    _myInvListener = true;
+    db.ref('final_invoices/' + hashedPIN).on('value', function(snap) {
+        _myInvoices = snap.val() || {};
+        renderMyInvoices();
+        var n = Object.keys(_myInvoices).length;
+        var badge = document.getElementById('myInvBadge');
+        if (badge) badge.textContent = n;
+    });
+}
+
+window.openMyInvoices = function() {
+    document.getElementById('myInvPanel').classList.add('open');
+    if (!_myInvListener) attachMyInvoicesListener(); else renderMyInvoices();
+};
+window.closeMyInvoices = function() {
+    document.getElementById('myInvPanel').classList.remove('open');
+};
+
+function _normalizeMyInvoice(raw, key) {
+    return {
+        id:          raw.id || key,
+        num:         raw.num || raw.id || key,
+        type:        raw.type || 'final_invoice',
+        client:      raw.client || (raw.invoice && raw.invoice.clientName) || 'Unknown Client',
+        date:        raw.date || (raw.invoice && raw.invoice.invoiceDate) || '',
+        amount:      Number(raw.amount || (raw.invoice && raw.invoice.amountDue) || 0),
+        status:      raw.status || (raw.publishedAt ? 'published' : 'draft'),
+        savedAt:     raw.savedAt || raw.publishedAt || '',
+        publishedAt: raw.publishedAt || '',
+        portalUrl:   raw.portalUrl || ''
+    };
+}
+
+window.renderMyInvoices = function() {
+    var list = document.getElementById('myInvList');
+    if (!list) return;
+    var search = (document.getElementById('myInvSearch') && document.getElementById('myInvSearch').value || '').toLowerCase();
+    var filter = (document.getElementById('myInvFilter') && document.getElementById('myInvFilter').value) || 'all';
+
+    var rows = Object.keys(_myInvoices).map(function(k){ return _normalizeMyInvoice(_myInvoices[k], k); });
+    if (filter !== 'all') rows = rows.filter(function(r){ return r.status === filter; });
+    if (search) rows = rows.filter(function(r) {
+        return (r.client||'').toLowerCase().indexOf(search) >= 0
+            || (r.num||'').toLowerCase().indexOf(search) >= 0
+            || (r.id||'').toLowerCase().indexOf(search) >= 0;
+    });
+    rows.sort(function(a,b){ return new Date(b.savedAt||0) - new Date(a.savedAt||0); });
+
+    var countEl = document.getElementById('myInvCount');
+    if (countEl) countEl.textContent = Object.keys(_myInvoices).length;
+
+    if (rows.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#475569;font-size:13px">' +
+            '<div style="font-size:36px;margin-bottom:10px">🧾</div>' +
+            (Object.keys(_myInvoices).length === 0
+                ? '<div>No saved final invoices yet.</div><div style="font-size:11px;margin-top:6px;color:#334155">Hit 💾 Save Draft or Publish to add one</div>'
+                : '<div>No matches for current filter.</div>') +
+        '</div>';
+        return;
+    }
+
+    list.innerHTML = rows.map(function(r) {
+        var statusColor = r.status === 'paid' ? '#22c55e' : r.status === 'published' ? '#a78bfa' : '#64748b';
+        var statusLabel = r.status === 'paid' ? '💵 Paid' : r.status === 'published' ? '🌐 Published' : '📝 Draft';
+        var savedDate = r.savedAt ? new Date(r.savedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+        var amtStr = r.amount > 0 ? '$' + r.amount.toFixed(2) : '—';
+        var portalBtn = r.portalUrl ? '<button class="myInv-act-btn" style="color:#22c55e;border-color:#14532d" onclick="event.stopPropagation();window.open(\'' + r.portalUrl + '\',\'_blank\')">🌐 Portal</button>' : '';
+        return '<div class="myInv-card" onclick="loadMyInvoice(\'' + esc(r.id) + '\')">' +
+            '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">' +
+                '<div style="flex:1;min-width:0">' +
+                    '<div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.client) + '</div>' +
+                    '<div style="font-size:10px;color:#64748b;margin-bottom:6px">' + esc(r.num) + ' · ' + amtStr + ' · ' + savedDate + '</div>' +
+                    '<div style="display:flex;align-items:center;gap:8px">' +
+                        '<span style="font-size:10px;font-weight:700;color:' + statusColor + ';background:' + statusColor + '1a;padding:2px 8px;border-radius:20px;border:1px solid ' + statusColor + '33">' + statusLabel + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
+                    '<button class="myInv-act-btn" style="color:#a78bfa;border-color:#4c1d95" onclick="event.stopPropagation();loadMyInvoice(\'' + esc(r.id) + '\')">📂 Load</button>' +
+                    portalBtn +
+                    '<button class="myInv-act-btn" style="color:#ef4444;border-color:#7f1d1d" onclick="event.stopPropagation();deleteMyInvoice(\'' + esc(r.id) + '\')">🗑️ Del</button>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+};
+
+window.loadMyInvoice = function(invoiceId) {
+    if (!db) return;
+    db.ref('final_invoices/' + hashedPIN + '/' + invoiceId).once('value').then(function(snap) {
+        var data = snap.val();
+        if (!data) { showInvStatus('Invoice not found', 'error'); return; }
+        var fs = data.formState;
+        if (!fs && data.invoice) {
+            // Reconstruct minimal formState from the published portal record
+            var inv = data.invoice;
+            fs = {
+                ibInvoiceNum: inv.id, ibInvoiceDate: inv.invoiceDate, ibDueDate: inv.dueDate,
+                ibPaymentTerms: inv.paymentTerms, ibClientName: inv.clientName,
+                ibBillingContact: inv.billingContact, ibClientEmail: inv.clientEmail,
+                ibClientPhone: inv.clientPhone, ibProjectLocation: inv.projectLocation,
+                ibPONumber: inv.poNumber, ibBillingAddress: inv.billingAddress,
+                ibScopeSummary: inv.scopeSummary, ibPreviousPayments: inv.previousPayments,
+                ibNotes: inv.notes, ibPaymentInstructions: inv.paymentInstructions,
+                consumablesPaid: !!inv.consumablesPaid,
+                lineSections: [],
+                documentChain: inv.documentChain || []
+            };
+        }
+        if (!fs) { showInvStatus('No saved form state to restore', 'error'); return; }
+
+        // Restore plain text fields
+        ['ibInvoiceNum','ibInvoiceDate','ibDueDate','ibPaymentTerms',
+         'ibClientName','ibBillingContact','ibClientEmail','ibClientPhone',
+         'ibProjectLocation','ibPONumber','ibBillingAddress','ibScopeSummary',
+         'ibPreviousPayments','ibOriginalAmountManual',
+         'ibNotes','ibPaymentInstructions'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el && fs[id] !== undefined && fs[id] !== null) el.value = fs[id];
+        });
+
+        // Restore consumables toggle
+        if ((fs.consumablesPaid === true) !== _consumablesPaid) {
+            window.toggleConsumablesPaid();
+        }
+
+        // Restore document chain
+        documentChain = Array.isArray(fs.documentChain) ? fs.documentChain.slice() : [];
+        renderChain();
+
+        // Restore line items engine
+        _lineSections = [];
+        var sections = fs.lineSections || [];
+        sections.forEach(function(s) {
+            window.addLineSection(s.title || '', s.kind || 'custom', s.subs || [], true);
+        });
+        _renderLineList();
+        _recalcLineTotals();
+
+        showInvStatus('📂 Loaded: ' + invoiceId, 'ok');
+        closeMyInvoices();
+    }).catch(function(err) {
+        showInvStatus('Load failed: ' + err.message, 'error');
+    });
+};
+
+window.deleteMyInvoice = function(invoiceId) {
+    if (!confirm('Delete final invoice ' + invoiceId + '?\n\nThis will also remove the published portal page and the legacy invoices entry. This cannot be undone.')) return;
+    Promise.all([
+        db.ref('final_invoices/' + hashedPIN + '/' + invoiceId).remove(),
+        db.ref('portal/' + hashedPIN + '/' + invoiceId).remove(),
+        db.ref('invoices/' + hashedPIN + '/permanent/' + invoiceId).remove()
+    ]).then(function() {
+        showInvStatus('🗑️ Deleted: ' + invoiceId, 'ok');
+    }).catch(function(err) {
+        showInvStatus('Delete failed: ' + err.message, 'error');
+    });
+};
+
+// ================================================================
 // GENERATE FINAL INVOICE
 // ================================================================
 window.generateFinalInvoice = function() {
@@ -1120,13 +1403,33 @@ window.generateFinalInvoice = function() {
         createdDate: new Date().toISOString()
     });
 
-    // Write to both paths
+    // Write to all three paths:
+    //   portal/        -> client-facing portal record (final-invoice.html reads from here)
+    //   invoices/      -> legacy flat record (used by Import Contract Data flow)
+    //   final_invoices/-> full editable record with formState (used by My Final Invoices library)
     var portalPath = 'portal/' + hashedPIN + '/' + invoiceId;
     var invoicePath = 'invoices/' + hashedPIN + '/permanent/' + invoiceId;
+    var libraryPath = 'final_invoices/' + hashedPIN + '/' + invoiceId;
+
+    var libraryRecord = {
+        id: invoiceId,
+        num: invoiceId,
+        type: 'final_invoice',
+        client: client,
+        date: document.getElementById('ibInvoiceDate').value,
+        amount: amountDue,
+        status: 'published',
+        savedAt: new Date().toISOString(),
+        publishedAt: new Date().toISOString(),
+        portalUrl: '',  // filled in below after URL is built
+        formState: captureInvoiceFormState(),
+        invoice: portalData.invoice
+    };
 
     Promise.all([
         db.ref(portalPath).set(portalData),
-        db.ref(invoicePath).set(invoiceSave)
+        db.ref(invoicePath).set(invoiceSave),
+        db.ref(libraryPath).set(libraryRecord)
     ]).then(function() {
         btn.disabled = false;
         btn.textContent = '🧾 Generate & Publish Final Invoice';
@@ -1139,6 +1442,9 @@ window.generateFinalInvoice = function() {
 
         document.getElementById('resultUrl').value = portalUrl;
         document.getElementById('resultOverlay').classList.add('open');
+
+        // Patch the portalUrl into the library record so the My Final Invoices panel can deep-link
+        db.ref(libraryPath + '/portalUrl').set(portalUrl);
 
         // Store share data globally for copy/email
         window._lastShareData = {

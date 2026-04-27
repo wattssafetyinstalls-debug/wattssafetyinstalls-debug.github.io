@@ -1,0 +1,161 @@
+{
+  "rules": {
+    "users": {
+      "$hashedPIN": {
+        ".read": "auth != null || true",
+        ".write": "auth != null || true"
+      }
+    },
+    
+    "invoices": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$status": {
+          "$invoiceId": {
+            ".read": "true",
+            ".write": "true"
+          }
+        }
+      }
+    },
+
+    "final_invoices": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$invoiceId": {
+          ".read": "true",
+          ".write": "true"
+        }
+      }
+    },
+
+    "contracts": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$contractId": {
+          ".read": "true",
+          ".write": "true"
+        }
+      }
+    },
+    
+    "portal": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$invoiceId": {
+          ".read": "true",
+          ".write": "true"
+        }
+      }
+    },
+    
+    "revisions": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$invoiceId": {
+          ".read": "true",
+          ".write": "true",
+          "$revisionId": {
+            ".read": "true",
+            ".write": "true"
+          }
+        }
+      }
+    },
+    
+    "invoiceCounter": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "templates": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$templateId": {
+          ".read": "true",
+          ".write": "true"
+        }
+      }
+    },
+    
+    "clients": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true",
+        "$clientId": {
+          ".read": "true",
+          ".write": "true"
+        }
+      }
+    },
+    
+    "jobs": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "catalog": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "materials": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "notifications": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "scanHistory": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "vendorTemplates": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "aiChat": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "pdfTemplates": {
+      "$hashedPIN": {
+        ".read": "true",
+        ".write": "true"
+      }
+    },
+    
+    "$other": {
+      ".read": "true",
+      ".write": "true"
+    }
+  }
+}

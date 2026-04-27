@@ -261,7 +261,19 @@ function _date(d){ if(!d) return ''; if(typeof d==='number') return new Date(d).
 
 function normalizeContract(raw, key){
   var c = raw.contract || raw;
-  var status = raw.signedAt ? 'signed' : (raw.status || (raw.contract ? 'published' : 'draft'));
+  var isPublished = !!(raw.contract || raw.publishedAt || raw.portalUrl);
+  var status = raw.signedAt ? 'signed' : (raw.status === 'pending' ? 'published' : (raw.status || (isPublished ? 'published' : 'draft')));
+
+  // Build viewer URL (portal page where the signed contract + signature actually render)
+  // Fall back to constructing it from the ID if portalUrl isn't stored.
+  var viewUrl = raw.portalUrl
+    || (isPublished ? '/tools/bidgen/contract-portal.html?id='+encodeURIComponent(key)+'&pin='+encodeURIComponent(hashedPIN) : null);
+  var editUrl = '/tools/bidgen/contract-builder.html?loadId='+encodeURIComponent(key);
+
+  // For signed/published contracts, the primary click should open the portal viewer
+  // (that's where the signature renders). Drafts open directly in the builder for editing.
+  var openUrl = (status === 'signed' || status === 'published') && viewUrl ? viewUrl : editUrl;
+
   return {
     category:'contracts',
     subtype: c.type || raw.type || 'service',
@@ -273,8 +285,10 @@ function normalizeContract(raw, key){
     status: status,
     date: _date(raw.publishedAt || raw.savedAt || c.date),
     pricingText: c.pricingText || raw.pricingText || '',
-    portalUrl: raw.portalUrl || null,
-    openUrl: '/tools/bidgen/contract-builder.html?loadId='+encodeURIComponent(key),
+    portalUrl: viewUrl,
+    editUrl: editUrl,
+    openUrl: openUrl,
+    hasSignature: !!raw.signedAt,
     source: 'contracts/'+hashedPIN+'/'+key
   };
 }
@@ -376,7 +390,7 @@ document.getElementById('sortBy').addEventListener('change', function(){ state.s
 // Sub-filter definitions (per category)
 var SUBFILTERS = {
   all:        [],  // no sub-filter
-  contracts:  [['all','All'],['service','Service'],['hourly','Hourly / T&M'],['seasonal','Seasonal'],['proposal','Proposal'],['maintenance','Maintenance'],['subcontractor','Subcontractor'],['nda','NDA'],['custom','Custom']],
+  contracts:  [['all','All'],['status:signed','✍️ Signed'],['status:published','🌐 Published'],['status:draft','📝 Drafts'],['service','Service'],['hourly','Hourly / T&M'],['seasonal','Seasonal'],['proposal','Proposal'],['maintenance','Maintenance'],['subcontractor','Subcontractor'],['nda','NDA'],['custom','Custom']],
   estimates:  [['all','All'],['quote','Quotes'],['change_order','Change Orders'],['labor','Labor'],['materials','Materials']],
   final:      [['all','All'],['draft','Draft'],['published','Published'],['paid','Paid']],
   portal:     [['all','All'],['signed','Signed'],['published','Published']]
@@ -413,9 +427,12 @@ function render(){
   var rows = state.tab === 'all' ? records : records.filter(function(r){ return r.category === state.tab; });
 
   // Apply sub-filter
+  // - "status:xxx" → match r.status (used by Contracts tab signed/published/draft chips)
+  // - plain "xxx"  → match r.subtype  (contract type, estimate type)
+  // - tabs final/portal default to status matching for backward compat
   if (state.sub && state.sub !== 'all') {
     rows = rows.filter(function(r){
-      // For final invoices and portal we filter by status, for contracts/estimates by subtype
+      if (state.sub.indexOf('status:') === 0) return r.status === state.sub.slice(7);
       if (state.tab === 'final' || state.tab === 'portal') return r.status === state.sub;
       return r.subtype === state.sub;
     });
@@ -498,8 +515,27 @@ function rowHtml(r){
   var dateStr = r.date ? new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
   var subLabel = (CAT_LABELS[r.category] && CAT_LABELS[r.category][r.subtype]) || r.subtype;
   var amt = r.amount > 0 ? '$'+r.amount.toFixed(2) : '—';
-  var portalBtn = r.portalUrl ? '<a class="act-btn" target="_blank" href="'+esc(r.portalUrl)+'" onclick="event.stopPropagation()">🌐</a>' : '';
-  return '<div class="row" onclick="window.open(\''+esc(r.openUrl)+'\',\'_blank\')">' +
+
+  // Action buttons — different per category
+  var actions = '';
+  if (r.category === 'contracts') {
+    // Signed/published contracts: View (portal, where signature renders) + Edit (builder)
+    // Drafts: Edit only
+    if (r.portalUrl) {
+      actions += '<a class="act-btn" href="'+esc(r.portalUrl)+'" target="_blank" onclick="event.stopPropagation()" title="View signed contract in portal viewer">👁️ View</a>';
+    }
+    actions += '<a class="act-btn" href="'+esc(r.editUrl||r.openUrl)+'" target="_blank" onclick="event.stopPropagation()" title="Open in Contract Builder to edit">✏️ Edit</a>';
+  } else {
+    if (r.portalUrl && r.portalUrl !== r.openUrl) {
+      actions += '<a class="act-btn" href="'+esc(r.portalUrl)+'" target="_blank" onclick="event.stopPropagation()">🌐 Portal</a>';
+    }
+    actions += '<a class="act-btn" href="'+esc(r.openUrl)+'" target="_blank" onclick="event.stopPropagation()">📂 Open</a>';
+  }
+
+  var signedBadge = r.hasSignature ? '<span class="b s-signed" title="Client has signed">✍️ Signed</span>' : '';
+  var rowStyle = r.hasSignature ? 'style="border-left:3px solid #34d399"' : '';
+
+  return '<div class="row" '+rowStyle+' onclick="window.open(\''+esc(r.openUrl)+'\',\'_blank\')">' +
     '<div class="row-top">' +
       '<div class="row-icon" style="background:'+CAT_COLORS[r.category]+';color:'+CAT_TEXTCOLORS[r.category]+'">'+CAT_ICONS[r.category]+'</div>' +
       '<div class="row-meta">' +
@@ -511,13 +547,11 @@ function rowHtml(r){
     '<div class="row-bottom">' +
       '<div class="badges">' +
         '<span class="b t-'+r.category+'">'+esc(subLabel)+'</span>' +
-        '<span class="b s-'+esc(r.status)+'">'+esc(r.status)+'</span>' +
+        signedBadge +
+        (r.status && !r.hasSignature ? '<span class="b s-'+esc(r.status)+'">'+esc(r.status)+'</span>' : '') +
         '<span class="row-date">'+dateStr+'</span>' +
       '</div>' +
-      '<div class="actions">' +
-        portalBtn +
-        '<a class="act-btn" href="'+esc(r.openUrl)+'" target="_blank" onclick="event.stopPropagation()">📂 Open</a>' +
-      '</div>' +
+      '<div class="actions">' + actions + '</div>' +
     '</div>' +
   '</div>';
 }

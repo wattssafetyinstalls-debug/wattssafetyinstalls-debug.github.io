@@ -1792,14 +1792,20 @@ function publishContract() {
     publishedAt: new Date().toISOString(),
     publishedBy: 'contractor',
     viewCount: 0,
-    status: 'pending'
+    status: 'pending',
+    // Preserve the full builder form state so the contract can be reloaded + edited later
+    // (without this, re-opening a published contract in the builder gives an empty form)
+    formState: captureFormState(),
+    contractBody: _contractBody || null
   };
 
   // Build URL before writing so we can include it in the payload
   var portalUrl = buildPortalUrl(contractId);
   portalPayload.portalUrl = portalUrl;
 
-  db.ref('contracts/' + hashedPIN + '/' + contractId).set(portalPayload).then(function() {
+  // Use update() rather than set() so we don't wipe out signedAt/signatureImg/messages
+  // if this contract was previously published and signed.
+  db.ref('contracts/' + hashedPIN + '/' + contractId).update(portalPayload).then(function() {
     _lastPortalUrl = portalUrl;
 
     // Show persistent status bar

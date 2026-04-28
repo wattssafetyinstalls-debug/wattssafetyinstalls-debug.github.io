@@ -2647,13 +2647,17 @@ function toolbar(title, invoiceId, shareData) {
     return tb;
 }
 function sigHTML() { return '<div class="sig-section"><h3>Signatures</h3><div class="sig-grid"><div class="sig-pad"><label>Contractor Signature</label><canvas id="sigContractor" class="sig-canvas"></canvas><div class="sig-date" id="sigDateContractor"></div><button class="sig-clear no-print" onclick="clear_sigContractor()">Clear</button></div><div class="sig-pad"><label>Client / Property Manager Signature</label><canvas id="sigClient" class="sig-canvas"></canvas><div class="sig-date" id="sigDateClient"></div><button class="sig-clear no-print" onclick="clear_sigClient()">Clear</button></div></div></div>'; }
-function openDoc(html, invoiceId) {
+function openDoc(html, invoiceId, docKind) {
     var w = window.open('','_blank');
     w.document.write(html);
     w.document.close();
-    // Save HTML for reopening from library
+    // Save HTML for reopening from library — cache BOTH a per-kind key and the legacy default
+    // so that re-generating a Materials doc does not wipe out the Labor doc cache for the same bid.
     if (invoiceId) {
-        try { localStorage.setItem('doc_html_' + invoiceId, html); } catch(e) { console.warn('Could not cache doc HTML:', e); }
+        try {
+            localStorage.setItem('doc_html_' + invoiceId, html);
+            if (docKind) localStorage.setItem('doc_html_' + invoiceId + '_' + docKind, html);
+        } catch(e) { console.warn('Could not cache doc HTML:', e); }
     }
     // Show post-generation action bar on the main BidGen page
     if (invoiceId) showSendBar(invoiceId);
@@ -2694,8 +2698,10 @@ function showSendBar(invoiceId) {
     document.getElementById('sendBarClose').onclick = function() { bar.remove(); };
     setTimeout(function() { if (bar.parentNode) bar.remove(); }, 300000);
 }
-function reopenDoc(invoiceId) {
-    var html = localStorage.getItem('doc_html_' + invoiceId);
+function reopenDoc(invoiceId, docKind) {
+    // Prefer the per-kind cached doc when caller specifies which document they want
+    var html = (docKind && localStorage.getItem('doc_html_' + invoiceId + '_' + docKind))
+        || localStorage.getItem('doc_html_' + invoiceId);
     if (html) {
         var w = window.open('','_blank');
         w.document.write(html);
@@ -2730,6 +2736,21 @@ function generateLabor() {
     h += '<tr class="subtotal-row"><td></td><td colspan="4">LABOR SUBTOTAL</td><td><span data-subtotal>$'+f(tot)+'</span></td></tr>';
     h += '<tr class="total-row"><td></td><td colspan="4">TOTAL LABOR &mdash; ESTIMATE A</td><td><span data-total>$'+f(tot)+'</span></td></tr>';
     h += '</tbody></table>';
+    // ── Combined Project Total (Labor + Materials + Distributor) so both A and B documents
+    //    show the same grand total at the bottom and the client always sees the full picture.
+    var _matItems = getMatItems(), _matSub = 0; _matItems.forEach(function(mi){ _matSub += mi.qtyNum * mi.price; });
+    var _matMk = gn('materialsMarkup')/100; var _matAmt = _matSub * _matMk; var _matTot = _matSub + _matAmt;
+    var _distItems = getDistMatItems(); var _distSub = 0; _distItems.forEach(function(di){ _distSub += di.qtyNum * di.price; });
+    var _grand = tot + _matTot + _distSub;
+    if (_matItems.length > 0 || _distItems.length > 0) {
+        h += '<div class="combined"><h3>Combined Project Total</h3><table>';
+        h += '<tr><td>Estimate A &mdash; Labor</td><td><span data-combined-labor>$'+f(tot)+'</span></td></tr>';
+        h += '<tr><td>Estimate B &mdash; Materials</td><td><span data-combined-mat>$'+f(_matTot)+'</span></td></tr>';
+        if (_distItems.length > 0) h += '<tr><td>Distributor Materials</td><td>$'+f(_distSub)+'</td></tr>';
+        h += '<tr class="grand"><td>TOTAL PROJECT PRICE</td><td><span data-grand-total>$'+f(_grand)+'</span></td></tr>';
+        if (sq > 0) h += '<tr class="psf"><td>Per Square Foot (<span data-sqft>'+sq+'</span> sq ft)</td><td><span data-per-sqft>$'+f(_grand/sq)+' /sq ft</span></td></tr>';
+        h += '</table></div>';
+    }
     h += '<div class="notes-section"><h3>Labor Estimate Notes</h3>';
     notes.forEach(function(n){ h += '<div class="note">'+E(n)+'</div>'; });
     h += '</div>';
@@ -2737,7 +2758,7 @@ function generateLabor() {
     h += sigHTML();
     h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>'+brand.name+' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
-    openDoc(h, _lastInvoiceId);
+    openDoc(h, _lastInvoiceId, 'labor');
     saveClientToDB(gv('clientName'), { complexName: gv('complexName'), jobCity: gv('jobCity'), unitNum: gv('unitNum') });
 }
 
@@ -2797,7 +2818,7 @@ function generateMaterials() {
     h += sigHTML();
     h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>'+brand.name+' &nbsp;|&nbsp; Valid for 30 days. &nbsp;|&nbsp; Licensed General Contractor &mdash; State of Nebraska</p></div>';
     h += docJS() + '</body></html>';
-    openDoc(h, _lastInvoiceId);
+    openDoc(h, _lastInvoiceId, 'materials');
     saveClientToDB(gv('clientName'), { complexName: gv('complexName'), jobCity: gv('jobCity'), unitNum: gv('unitNum') });
 }
 
@@ -2906,9 +2927,9 @@ function generateChangeOrder() {
     h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>APPROVED WITH MODIFICATIONS</strong><small>Proceed with modifications: '+E('______________________________')+'</small></div></div>';
     h += '<div class="auth-opt"><div class="auth-cb"></div><div class="auth-txt"><strong>DECLINED</strong><small>I decline. Contractor will restore area to safe condition.</small></div></div></div>';
     h += sigHTML();
-    h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>Change Order &mdash; '+brand.name+' &nbsp;|&nbsp; Licensed GC &mdash; Nebraska &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
+    h += '<div class="footer" style="display:flex;align-items:center;justify-content:center;gap:12px"><img id="docQR" style="width:60px;height:60px;opacity:0.6" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><p>Change Order &mdash; '+brand.name+' &nbsp;|&nbsp; Licensed GC &nbsp;|&nbsp; Retain copies for all parties.</p></div>';
     h += docJS() + '</body></html>';
-    openDoc(h, _lastInvoiceId);
+    openDoc(h, _lastInvoiceId, 'change_order');
     saveClientToDB(gv('clientName'), { complexName: gv('complexName'), jobCity: gv('jobCity'), unitNum: gv('unitNum') });
 }
 
@@ -6173,8 +6194,15 @@ function autoSaveInvoice(type) {
         if (existing) {
             existing.createdDate = new Date().toISOString();
             existing.estimateDate = estimateDate;
-            // Upgrade type: if auto-save created 'temporary' and now Generate fires with 'labor'/'materials'/etc, upgrade it
-            if (type !== 'temporary') existing.type = type;
+            // Upgrade type with bid-awareness:
+            //   - If both labor + material items exist → 'bid' (full bid containing both estimates)
+            //   - Otherwise use the explicit type from the caller (labor / materials / change_order)
+            //   - Never downgrade an existing 'bid' record to a single-component label
+            if (type !== 'temporary') {
+                var bothPresent = (litems && litems.length > 0) && (mitems && mitems.length > 0);
+                if (bothPresent && type !== 'change_order') existing.type = 'bid';
+                else if (existing.type !== 'bid') existing.type = type;
+            }
             // Refresh all content in case AI corrections changed details
             existing.amount = grandTotal;
             existing.laborTotal = laborTotal;
@@ -6195,9 +6223,18 @@ function autoSaveInvoice(type) {
     const invoiceId = generateInvoiceId();
     saveInvoiceCounter();
     
+    // ── Type classification ──
+    // If the bid contains BOTH labor items AND material items, classify it as a full 'bid'.
+    // This way both 'Open Labor Estimate' and 'Open Materials Estimate' clicks dedup into
+    // the SAME record (same fingerprint) without flipping the label between labor/materials.
+    // Single-component bids keep their explicit type ('labor' / 'materials' / 'change_order').
+    var resolvedType = type;
+    if ((litems && litems.length > 0) && (mitems && mitems.length > 0) && type !== 'change_order') {
+        resolvedType = 'bid';
+    }
     const invoice = {
         id: invoiceId,
-        type: type,
+        type: resolvedType,
         status: 'temporary',
         clientName: clientName,
         estimateDate: estimateDate,
@@ -6445,7 +6482,12 @@ function renderInvoiceItem(invoice) {
                     <button class="invoice-btn award" onclick="invMarkAsAwarded('${invoice.id}')">✅ Award</button>
                     <button class="invoice-btn lost" onclick="invMarkAsLost('${invoice.id}')">❌ Lost</button>
                 ` : ''}
-                <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}')" style="background:#3498db;color:white">📄 Open</button>
+                ${invoice.type === 'bid' ? `
+                    <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}','labor')" style="background:#3498db;color:white" title="Open Estimate A — Labor">📄 Labor</button>
+                    <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}','materials')" style="background:#16a085;color:white" title="Open Estimate B — Materials">📦 Materials</button>
+                ` : `
+                    <button class="invoice-btn view" onclick="reopenDoc('${invoice.id}')" style="background:#3498db;color:white">📄 Open</button>
+                `}
                 <button class="invoice-btn delete" onclick="invDeleteInvoice('${invoice.id}', '${invoice.status}')">🗑️</button>
             </div>
         </div>

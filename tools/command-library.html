@@ -391,7 +391,7 @@ document.getElementById('sortBy').addEventListener('change', function(){ state.s
 var SUBFILTERS = {
   all:        [],  // no sub-filter
   contracts:  [['all','All'],['status:signed','✍️ Signed'],['status:published','🌐 Published'],['status:draft','📝 Drafts'],['service','Service'],['hourly','Hourly / T&M'],['seasonal','Seasonal'],['proposal','Proposal'],['maintenance','Maintenance'],['subcontractor','Subcontractor'],['nda','NDA'],['custom','Custom']],
-  estimates:  [['all','All'],['quote','Quotes'],['change_order','Change Orders'],['labor','Labor'],['materials','Materials']],
+  estimates:  [['all','All'],['bid','Full Bid'],['quote','Quotes'],['change_order','Change Orders'],['labor','Labor Only'],['materials','Materials Only']],
   final:      [['all','All'],['draft','Draft'],['published','Published'],['paid','Paid']],
   portal:     [['all','All'],['signed','Signed'],['published','Published']]
 };
@@ -506,7 +506,7 @@ var CAT_COLORS = { contracts:'rgba(167,139,250,0.12)', estimates:'rgba(96,165,25
 var CAT_TEXTCOLORS = { contracts:'#a78bfa', estimates:'#60a5fa', final:'#00C4B4', portal:'#fbbf24' };
 var CAT_LABELS = {
   contracts:{service:'Service',hourly:'Hourly',seasonal:'Seasonal',proposal:'Proposal',maintenance:'Maintenance',subcontractor:'Sub',nda:'NDA',custom:'Custom'},
-  estimates:{quote:'Quote',change_order:'Change Order',labor:'Labor',materials:'Materials'},
+  estimates:{bid:'Full Bid',quote:'Quote',change_order:'Change Order',labor:'Labor Only',materials:'Materials Only'},
   final:{final_invoice:'Final Invoice'},
   portal:{portal:'Portal',final_invoice:'Final Invoice',contract:'Contract'}
 };

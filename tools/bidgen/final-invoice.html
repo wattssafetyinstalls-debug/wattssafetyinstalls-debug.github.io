@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="final-invoice-ai.js?v=1"></script>
 <style>
 :root {
     --bg: #f0f2f5;
@@ -100,6 +101,25 @@ body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color
 .fi-due-hero .due-amount { font-size:42px; font-weight:900; letter-spacing:-1px; }
 .fi-due-hero .due-terms { font-size:13px; margin-top:8px; opacity:0.7; }
 .fi-due-hero .due-date { font-size:14px; margin-top:4px; font-weight:600; }
+
+/* ── ITEMIZED CHARGES ── */
+.fi-section { margin-bottom:18px; }
+.fi-section:last-child { margin-bottom:0; }
+.fi-section-head { display:flex; justify-content:space-between; align-items:baseline; padding:10px 12px; background:var(--card2,#f8fafc); border:1px solid var(--border); border-radius:8px 8px 0 0; font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; }
+.fi-section-head .sec-sub { font-size:13px; font-weight:800; color:var(--text); text-transform:none; letter-spacing:0; }
+.fi-items-table { width:100%; border-collapse:collapse; border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden; font-size:13px; }
+.fi-items-table thead { background:#fafbfc; }
+.fi-items-table th { text-align:left; padding:8px 12px; font-size:10px; font-weight:700; color:var(--text3,#64748b); text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid var(--border); }
+.fi-items-table th.num, .fi-items-table td.num { text-align:right; white-space:nowrap; }
+.fi-items-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+.fi-items-table tbody tr:last-child td { border-bottom:none; }
+.fi-items-table .desc { color:var(--text); font-weight:500; }
+.fi-items-table .qty, .fi-items-table .unit, .fi-items-table .price { color:var(--text2); font-variant-numeric:tabular-nums; }
+.fi-items-table .total { font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
+@media (max-width:600px) {
+    .fi-items-table th.unit, .fi-items-table td.unit { display:none; }
+    .fi-items-table th, .fi-items-table td { padding:8px; font-size:12px; }
+}
 
 /* ── PAYMENT BREAKDOWN ── */
 .fi-pay-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); font-size:14px; }
@@ -412,6 +432,55 @@ function render(inv, portalData) {
     if (inv.billingAddress) html += gridItem('Billing Address', inv.billingAddress);
     html += '</div></div>';
 
+    // ── ITEMIZED CHARGES ──
+    // Render each line section (Labor, Materials, Change Orders, Adjustments, Custom)
+    // as a table with per-row breakdown and a section subtotal.
+    var sections = Array.isArray(inv.lineSections) ? inv.lineSections : [];
+    var hasAnyItems = sections.some(function(s) { return Array.isArray(s.subs) && s.subs.length > 0; });
+    if (hasAnyItems) {
+        html += '<div class="fi-card">';
+        html += '<div class="fi-card-title"><span>📑</span> Itemized Charges</div>';
+        sections.forEach(function(sec) {
+            var subs = Array.isArray(sec.subs) ? sec.subs : [];
+            if (!subs.length) return;
+            var sectionTotal = 0;
+            subs.forEach(function(it) { sectionTotal += (parseFloat(it.qty)||0) * (parseFloat(it.price)||0); });
+            var kindLabel = ({
+                labor: 'Labor',
+                materials: 'Materials',
+                change_orders: 'Change Orders',
+                adjustments: 'Adjustments',
+                custom: 'Other'
+            })[sec.kind] || (sec.kind || 'Items');
+            var titleText = sec.title || kindLabel;
+
+            html += '<div class="fi-section">';
+            html += '<div class="fi-section-head"><span>' + esc(kindLabel) + '</span><span class="sec-sub">' + esc(titleText) + ' &middot; $' + n(sectionTotal) + '</span></div>';
+            html += '<table class="fi-items-table"><thead><tr>';
+            html += '<th>Description</th>';
+            html += '<th class="num">Qty</th>';
+            html += '<th class="unit">Unit</th>';
+            html += '<th class="num">Unit Price</th>';
+            html += '<th class="num">Line Total</th>';
+            html += '</tr></thead><tbody>';
+            subs.forEach(function(it) {
+                var qty = parseFloat(it.qty) || 0;
+                var price = parseFloat(it.price) || 0;
+                var lineTotal = qty * price;
+                html += '<tr>';
+                html += '<td class="desc">' + esc(it.desc || '—') + '</td>';
+                html += '<td class="num qty">' + esc(qty.toString()) + '</td>';
+                html += '<td class="unit">' + esc(it.unit || '') + '</td>';
+                html += '<td class="num price">$' + n(price) + '</td>';
+                html += '<td class="num total">$' + n(lineTotal) + '</td>';
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
     // ── PAYMENT BREAKDOWN ──
     html += '<div class="fi-card">';
     html += '<div class="fi-card-title"><span>💰</span> Payment Breakdown</div>';
@@ -520,6 +589,328 @@ function render(inv, portalData) {
 
 function gridItem(label, value) {
     return '<div class="fi-grid-item"><div class="fi-label">' + esc(label) + '</div><div class="fi-value">' + esc(value || '—') + '</div></div>';
+}
+
+// ================================================================
+// FINAL INVOICE AI INTEGRATION FUNCTIONS
+// ================================================================
+
+// Get current invoice data for AI context
+function getCurrentInvoice() {
+    if (!currentInvoice) return null;
+    return {
+        id: currentInvoice.id,
+        invoiceNumber: currentInvoice.invoiceNumber,
+        invoiceDate: currentInvoice.invoiceDate,
+        dueDate: currentInvoice.dueDate,
+        status: currentInvoice.status,
+        clientName: currentInvoice.clientName,
+        clientAddress: currentInvoice.clientAddress,
+        clientPhone: currentInvoice.clientPhone,
+        clientEmail: currentInvoice.clientEmail,
+        projectName: currentInvoice.projectName,
+        projectAddress: currentInvoice.projectAddress,
+        lineItems: currentInvoice.lineItems || [],
+        subtotal: currentInvoice.subtotal,
+        tax: currentInvoice.tax,
+        total: currentInvoice.total,
+        paymentTerms: currentInvoice.paymentTerms,
+        notes: currentInvoice.notes,
+        warranty: currentInvoice.warranty,
+        changeOrders: currentInvoice.changeOrders || []
+    };
+}
+
+// Get project context from URL parameters or localStorage
+function getProjectContext() {
+    var ctx = '';
+    var urlParams = new URLSearchParams(window.location.search);
+    
+    // Get project info from URL if available
+    if (urlParams.get('projectName')) {
+        ctx += 'Project: ' + urlParams.get('projectName') + '\n';
+    }
+    if (urlParams.get('clientName')) {
+        ctx += 'Client: ' + urlParams.get('clientName') + '\n';
+    }
+    if (urlParams.get('bidId')) {
+        ctx += 'Original Bid ID: ' + urlParams.get('bidId') + '\n';
+    }
+    
+    // Get from localStorage if available
+    var projectData = localStorage.getItem('bidgen_project_context');
+    if (projectData) {
+        try {
+            var proj = JSON.parse(projectData);
+            ctx += '\nProject Details:\n';
+            ctx += '- Scope: ' + (proj.scopeTitle || 'Not specified') + '\n';
+            ctx += '- Trade: ' + (proj.tradeType || 'Not specified') + '\n';
+            ctx += '- Square Feet: ' + (proj.sqft || 'Not specified') + '\n';
+            if (proj.laborItems && proj.laborItems.length > 0) {
+                ctx += '- Labor Items: ' + proj.laborItems.length + ' items\n';
+            }
+            if (proj.matItems && proj.matItems.length > 0) {
+                ctx += '- Material Items: ' + proj.matItems.length + ' items\n';
+            }
+        } catch(e) {
+            console.error('Failed to parse project context:', e);
+        }
+    }
+    
+    return ctx;
+}
+
+// Get client information
+function getClientInfo() {
+    var client = null;
+    
+    // Try to get from current invoice
+    if (currentInvoice && currentInvoice.clientName) {
+        client = {
+            name: currentInvoice.clientName,
+            address: currentInvoice.clientAddress,
+            phone: currentInvoice.clientPhone,
+            email: currentInvoice.clientEmail
+        };
+    }
+    
+    // Try to get from URL parameters
+    if (!client) {
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('clientName')) {
+            client = client || {};
+            client.name = urlParams.get('clientName');
+        }
+        if (urlParams.get('clientAddress')) {
+            client = client || {};
+            client.address = urlParams.get('clientAddress');
+        }
+        if (urlParams.get('clientPhone')) {
+            client = client || {};
+            client.phone = urlParams.get('clientPhone');
+        }
+        if (urlParams.get('clientEmail')) {
+            client = client || {};
+            client.email = urlParams.get('clientEmail');
+        }
+    }
+    
+    return client;
+}
+
+// Get change orders
+function getChangeOrders() {
+    if (currentInvoice && currentInvoice.changeOrders) {
+        return currentInvoice.changeOrders;
+    }
+    
+    // Try to get from localStorage
+    var cos = localStorage.getItem('bidgen_change_orders');
+    if (cos) {
+        try {
+            return JSON.parse(cos);
+        } catch(e) {
+            console.error('Failed to parse change orders:', e);
+        }
+    }
+    
+    return [];
+}
+
+// Load AI-generated invoice data into the form
+function loadFinalInvoice(data) {
+    try {
+        console.log('[Final Invoice AI] Loading invoice data:', data);
+        
+        // Update current invoice object
+        currentInvoice = currentInvoice || {};
+        Object.assign(currentInvoice, data);
+        
+        // Update form fields
+        if (data.invoiceNumber) document.getElementById('invoiceNumber').value = data.invoiceNumber;
+        if (data.invoiceDate) document.getElementById('invoiceDate').value = data.invoiceDate;
+        if (data.dueDate) document.getElementById('dueDate').value = data.dueDate;
+        if (data.status) document.getElementById('status').value = data.status;
+        
+        // Client info
+        if (data.clientName) document.getElementById('clientName').value = data.clientName;
+        if (data.clientAddress) document.getElementById('clientAddress').value = data.clientAddress;
+        if (data.clientPhone) document.getElementById('clientPhone').value = data.clientPhone;
+        if (data.clientEmail) document.getElementById('clientEmail').value = data.clientEmail;
+        
+        // Project info
+        if (data.projectName) document.getElementById('projectName').value = data.projectName;
+        if (data.projectAddress) document.getElementById('projectAddress').value = data.projectAddress;
+        
+        // Line items
+        if (data.lineItems && Array.isArray(data.lineItems)) {
+            updateLineItemsTable(data.lineItems);
+        }
+        
+        // Totals
+        if (data.subtotal) document.getElementById('subtotal').value = data.subtotal;
+        if (data.tax) document.getElementById('tax').value = data.tax;
+        if (data.total) document.getElementById('total').value = data.total;
+        
+        // Payment terms
+        if (data.paymentTerms) document.getElementById('paymentTerms').value = data.paymentTerms;
+        
+        // Notes
+        if (data.notes) document.getElementById('notes').value = data.notes;
+        if (data.warranty) document.getElementById('warranty').value = data.warranty;
+        
+        // Show success message
+        showNotification('Invoice loaded successfully from AI!', 'success');
+        
+        // Update preview
+        updateInvoicePreview();
+        
+        return true;
+    } catch(err) {
+        console.error('[Final Invoice AI] Failed to load invoice:', err);
+        showNotification('Failed to load invoice: ' + err.message, 'error');
+        return false;
+    }
+}
+
+// Update line items table
+function updateLineItemsTable(items) {
+    var tbody = document.getElementById('lineItemsTable');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    items.forEach(function(item, index) {
+        var row = tbody.insertRow();
+        row.innerHTML = `
+            <td><input type="text" value="${esc(item.description || '')}" onchange="updateLineItem(${index}, 'description', this.value)"></td>
+            <td><input type="number" value="${item.quantity || 0}" step="0.01" onchange="updateLineItem(${index}, 'quantity', this.value)"></td>
+            <td><input type="text" value="${esc(item.unit || '')}" onchange="updateLineItem(${index}, 'unit', this.value)"></td>
+            <td><input type="number" value="${item.price || 0}" step="0.01" onchange="updateLineItem(${index}, 'price', this.value)"></td>
+            <td><input type="number" value="${item.total || 0}" step="0.01" readonly style="background:#f8f9fa"></td>
+            <td><button onclick="removeLineItem(${index})" style="background:#dc2626;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer">Remove</button></td>
+        `;
+    });
+    
+    // Update current invoice line items
+    if (currentInvoice) {
+        currentInvoice.lineItems = items;
+    }
+}
+
+// Update individual line item
+function updateLineItem(index, field, value) {
+    if (!currentInvoice || !currentInvoice.lineItems) return;
+    
+    if (field === 'quantity' || field === 'price') {
+        value = parseFloat(value) || 0;
+    }
+    
+    currentInvoice.lineItems[index][field] = value;
+    
+    // Recalculate total
+    var item = currentInvoice.lineItems[index];
+    item.total = (item.quantity || 0) * (item.price || 0);
+    
+    // Update table
+    updateLineItemsTable(currentInvoice.lineItems);
+    
+    // Recalculate totals
+    calculateTotals();
+}
+
+// Remove line item
+function removeLineItem(index) {
+    if (!currentInvoice || !currentInvoice.lineItems) return;
+    
+    currentInvoice.lineItems.splice(index, 1);
+    updateLineItemsTable(currentInvoice.lineItems);
+    calculateTotals();
+}
+
+// Calculate totals
+function calculateTotals() {
+    if (!currentInvoice || !currentInvoice.lineItems) return;
+    
+    var subtotal = 0;
+    currentInvoice.lineItems.forEach(function(item) {
+        subtotal += item.total || 0;
+    });
+    
+    var tax = subtotal * 0.07; // 7% tax
+    var total = subtotal + tax;
+    
+    currentInvoice.subtotal = subtotal.toFixed(2);
+    currentInvoice.tax = tax.toFixed(2);
+    currentInvoice.total = total.toFixed(2);
+    
+    // Update form
+    document.getElementById('subtotal').value = currentInvoice.subtotal;
+    document.getElementById('tax').value = currentInvoice.tax;
+    document.getElementById('total').value = currentInvoice.total;
+    
+    // Update preview
+    updateInvoicePreview();
+}
+
+// Save invoice draft
+function saveInvoiceDraft(text, jsonData) {
+    try {
+        var draftId = 'draft_' + Date.now();
+        var draft = {
+            id: draftId,
+            text: text,
+            data: jsonData,
+            createdAt: new Date().toISOString()
+        };
+        
+        // Save to localStorage
+        var drafts = JSON.parse(localStorage.getItem('final_invoice_drafts') || '[]');
+        drafts.push(draft);
+        localStorage.setItem('final_invoice_drafts', JSON.stringify(drafts));
+        
+        console.log('[Final Invoice AI] Draft saved:', draftId);
+        return draftId;
+    } catch(err) {
+        console.error('[Final Invoice AI] Failed to save draft:', err);
+        return null;
+    }
+}
+
+// Show notification
+function showNotification(message, type) {
+    // Create notification element
+    var notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#22c55e' : '#dc2626'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        font-size: 14px;
+        font-weight: 600;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(function() {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+// Update invoice preview (placeholder - implement based on your preview logic)
+function updateInvoicePreview() {
+    // This should update the invoice preview display
+    // Implementation depends on your existing preview logic
+    console.log('[Final Invoice AI] Updating preview...');
 }
 
 // ================================================================

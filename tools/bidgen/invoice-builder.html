@@ -1378,6 +1378,23 @@ window.generateFinalInvoice = function() {
             dueDate: document.getElementById('ibDueDate').value,
             paymentTerms: document.getElementById('ibPaymentTerms').value,
             scopeSummary: document.getElementById('ibScopeSummary').value.trim(),
+            // Itemized line sections (Labor / Materials / Change Orders / Adjustments / Custom)
+            // — persisted so the client-facing portal can render a full breakdown.
+            // Sanitized to drop transient UI ids and keep only the displayable fields.
+            lineSections: (_lineSections || []).map(function(s){
+                return {
+                    title: s.title || '',
+                    kind: s.kind || 'custom',
+                    subs: (s.subs || []).map(function(it){
+                        return {
+                            desc: it.desc || '',
+                            qty: Number(it.qty) || 0,
+                            unit: it.unit || '',
+                            price: Number(it.price) || 0
+                        };
+                    })
+                };
+            }),
             originalAmount: orig,
             changeOrdersTotal: cos,
             revisedTotal: revised,

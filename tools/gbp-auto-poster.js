@@ -21,7 +21,7 @@ const REFRESH_TOKEN = (process.env.GBP_REFRESH_TOKEN || '').trim();
 const GEMINI_KEY    = (process.env.GEMINI_API_KEY || '').trim();
 const PEXELS_KEY    = (process.env.PEXELS_API_KEY || '').trim();
 const ACCOUNT_ID   = (process.env.GBP_ACCOUNT_ID || '').trim();
-const LOCATION_ID   = '09996134269287007529';
+const LOCATION_ID   = '7346850266637659740';
 
 if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN || !GEMINI_KEY) {
   console.error('ERROR: Missing required environment variables');

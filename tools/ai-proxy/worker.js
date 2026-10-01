@@ -1034,6 +1034,7 @@ const GBP_SERVICE_LINKS = {
     { url: 'https://wattsatpcontractor.com/bathroom-accessibility', label: 'Bathroom Accessibility' },
     { url: 'https://wattsatpcontractor.com/non-slip-flooring-solutions', label: 'Non-Slip Flooring' },
     { url: 'https://wattsatpcontractor.com/accessibility-safety-solutions', label: 'Safety Solutions' },
+    { url: 'https://wattsatpcontractor.com/stair-lift-installation', label: 'Stair Lifts & Mobility' },
   ],
   si: [
     { url: 'https://wattsatpcontractor.com/safety-installs/services/electronics', label: 'TV Mounting & Electronics' },
@@ -1051,7 +1052,7 @@ const GBP_TOPICS = [
   { text: 'Planning home accessibility before winter hits Northeast Nebraska', cat: 'atp', img: 'home accessibility winter', cta: 'CALL', link: -1 },
   { text: 'Walk-in shower conversions: the most requested aging-in-place upgrade', cat: 'atp', img: 'walk in shower modern', cta: 'LEARN_MORE', link: 2 },
   { text: 'How to make your Nebraska home wheelchair accessible on a budget', cat: 'atp', img: 'wheelchair accessible home', cta: 'CALL', link: -1 },
-  { text: 'Stair safety solutions for multi-level Norfolk NE homes', cat: 'atp', img: 'stair handrail safety', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Stair safety solutions for multi-level Norfolk NE homes', cat: 'atp', img: 'stair handrail safety', cta: 'LEARN_MORE', link: 5 },
   { text: 'Medicare and home accessibility: what Nebraska residents should know', cat: 'atp', img: 'senior home safety', cta: 'CALL', link: -1 },
   { text: 'Room-by-room fall prevention checklist for Nebraska seniors', cat: 'atp', img: 'senior safety home', cta: 'LEARN_MORE', link: 4 },
   { text: 'Why professional grab bar installation beats DIY every time', cat: 'atp', img: 'professional contractor installing', cta: 'LEARN_MORE', link: 1 },
@@ -1059,12 +1060,12 @@ const GBP_TOPICS = [
   { text: 'Preparing your Norfolk home for a family member with mobility needs', cat: 'atp', img: 'family home accessibility', cta: 'LEARN_MORE', link: 4 },
   { text: 'How accessibility modifications increase your Nebraska home value', cat: 'atp', img: 'home value increase', cta: 'CALL', link: -1 },
   { text: 'The complete guide to threshold ramps for Nebraska doorways', cat: 'atp', img: 'threshold ramp doorway', cta: 'LEARN_MORE', link: 0 },
-  { text: 'Straight vs curved stair lifts: which AmeriGlide lift fits your Norfolk home', cat: 'atp', img: 'stair lift staircase home', cta: 'LEARN_MORE', link: 4 },
-  { text: 'Now a certified AmeriGlide installer — what that means for faster stair lift installs', cat: 'atp', img: 'stair lift installation', cta: 'LEARN_MORE', link: 4 },
-  { text: 'Vertical platform lifts (VPLs): the porch solution when a ramp won\'t fit', cat: 'atp', img: 'wheelchair porch lift', cta: 'LEARN_MORE', link: 4 },
-  { text: 'Stair lifts vs ramps vs VPLs: choosing the right accessibility upgrade', cat: 'atp', img: 'staircase elderly home', cta: 'LEARN_MORE', link: 0 },
-  { text: 'How a stair lift can let you keep the whole house, not just the ground floor', cat: 'atp', img: 'senior stairs home', cta: 'CALL', link: -1 },
-  { text: 'AmeriGlide stair lifts: dealer-direct pricing without the middleman', cat: 'atp', img: 'modern stair lift', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Straight vs curved stair lifts: which AmeriGlide lift fits your Norfolk home', cat: 'atp', img: 'stair lift staircase home', cta: 'LEARN_MORE', link: 5 },
+  { text: 'Now a certified AmeriGlide installer — what that means for faster stair lift installs', cat: 'atp', img: 'stair lift installation', cta: 'LEARN_MORE', link: 5 },
+  { text: 'Vertical platform lifts (VPLs): the porch solution when a ramp won\'t fit', cat: 'atp', img: 'wheelchair porch lift', cta: 'LEARN_MORE', link: 5 },
+  { text: 'Stair lifts vs ramps vs VPLs: choosing the right accessibility upgrade', cat: 'atp', img: 'staircase elderly home', cta: 'LEARN_MORE', link: 5 },
+  { text: 'How a stair lift can let you keep the whole house, not just the ground floor', cat: 'atp', img: 'senior stairs home', cta: 'CALL', link: 5 },
+  { text: 'AmeriGlide stair lifts: dealer-direct pricing without the middleman', cat: 'atp', img: 'modern stair lift', cta: 'LEARN_MORE', link: 5 },
   // SI — Home Services
   { text: 'Kitchen remodeling trends Nebraska homeowners love right now', cat: 'si', img: 'modern kitchen remodel', cta: 'LEARN_MORE', link: 1 },
   { text: 'Interior paint colors that sell homes faster in Norfolk NE', cat: 'si', img: 'interior painting home', cta: 'LEARN_MORE', link: 1 },
@@ -1181,7 +1182,7 @@ function gbpGeneratePrompt(topic) {
   const month = ['January','February','March','April','May','June','July','August','September','October','November','December'][new Date().getMonth()];
   let brandContext;
   if (topic.cat === 'atp') {
-    brandContext = 'Watts ATP Contractor — Nebraska\'s premier ATP Approved Contractor for wheelchair ramps, grab bars, ADA bathroom modifications, non-slip flooring, and aging-in-place solutions.';
+    brandContext = 'Watts ATP Contractor — Nebraska\'s premier ATP Approved Contractor for wheelchair ramps, grab bars, ADA bathroom modifications, non-slip flooring, aging-in-place solutions, and a certified AmeriGlide dealer/installer for stair lifts, vertical platform lifts, and mobility scooters.';
   } else if (topic.cat === 'si') {
     brandContext = 'Watts Safety Installs — Professional home services including kitchen & bath remodeling, painting, gutters, TV mounting, electronics, handyman, property maintenance, and seasonal services.';
   } else {
@@ -1197,7 +1198,9 @@ function gbpGeneratePrompt(topic) {
     '- Include ONE practical tip or insight the reader can use immediately.\n' +
     '- Mention Norfolk, NE or Northeast Nebraska naturally (not forced).\n' +
     '- Reference your license (#54690-25) or experience ONLY if it fits naturally.\n' +
-    '- End with a clear call-to-action: call (405) 410-6402 for a free estimate.\n' +
+    (topic.link === 5
+      ? '- End with a clear call-to-action: call (405) 410-6402 to schedule an on-site assessment. NEVER say "free estimate" for lifts — assessments require measurements and photos for CAD/engineering.\n'
+      : '- End with a clear call-to-action: call (405) 410-6402 for a free estimate.\n') +
     '- Use 1-2 emojis max. No hashtags. No bullet points.\n' +
     '- Do NOT start with "Hey" or "Hi there" — start with the hook.\n' +
     '- Sound like a real person, not a template. Vary your openings.\n' +

@@ -17,7 +17,7 @@
         c:'#dc2626', cd:'#b91c1c', cl:'#fef2f2',
         hdr:'linear-gradient(135deg,#1a1a1a,#2d2d2d)', ht:'#f5f5dc', mb:'#faf9f6' }
     : { name:'Watts ATP Contractor', short:'ATP Contractor',
-        svc:'wheelchair ramp installation, grab bar installation, non-slip flooring, bathroom accessibility, ADA-compliant safety solutions',
+        svc:'wheelchair ramp installation, grab bar installation, non-slip flooring, bathroom accessibility, ADA-compliant safety solutions, certified AmeriGlide stair lift & platform lift installation, mobility scooters',
         c:'#00C4B4', cd:'#009e91', cl:'#E0F7FA',
         hdr:'linear-gradient(135deg,#0A1D37,#16213e)', ht:'#FFD700', mb:'#f8f9fa' };
 
@@ -32,6 +32,9 @@
     '- ADA ramp requirements: 1:12 slope ratio, 36" min width, 60" landing at top/bottom, handrails on both sides\n' +
     '- Grab bar specs: Must anchor into studs or use toggle bolts rated 250+ lbs. Stainless or chrome. 1.25" diameter is standard ADA.\n' +
     '- Material brands you use: Moen grab bars, EZ-ACCESS ramps, Sherwin-Williams paint, Schluter tile systems, LVP from Shaw/COREtec\n' +
+    '- AMERIGLIDE DEALER STATUS: Watts ATP is a certified AmeriGlide dealer and installer. You sell AND install AmeriGlide straight & curved stair lifts (Rave 2, Cardinal, Infinity, Rave Curved HD), vertical platform lifts/VPLs (Nano, Hercules Mini, Hercules 750 residential/portable/commercial, Stratos residential/commercial), and Pride/Golden mobility scooters via AmeriGlide at dealer pricing. Full catalog: https://wattsatpcontractor.com/stair-lift-installation\n' +
+    '- LIFT SALES RULES: stair lifts and VPLs require a PAID on-site assessment — NEVER offer a free estimate/free visit for lifts. The assessment captures measurements and photos that feed CAD drawings and engineering before a firm quote. Pricing varies by equipment model, stairway shape, and site conditions — do not quote hard numbers, say "it depends on the equipment and your home, that\'s exactly what the site assessment nails down." Lifts are installed within 150 miles of Norfolk.\n' +
+    '- SCOOTER SALES: mobility scooters need no site visit — we order at dealer pricing, deliver, and set them up. Point people to the scooter pages or offer to have Justin call them about pricing.\n' +
     '- Bathroom conversions: Typical tub-to-shower takes 3-5 days. Roll-in showers need a curbless entry, linear drain, and non-slip tile.\n' +
     '- Pricing (ranges, never exact — ALWAYS say "or more" or "and up" after the top number, NEVER hard-cap): Grab bars $200-400+ each/$600-1,500+ bathroom set, Wheelchair ramps $2,500-12,000 or more, Bathroom mods $6,000-30,000 and up, Non-slip flooring $1,200-8,000+, Painting single room $400-1,200+/whole house $4K-12K or more/exterior $5K-15K+, Kitchen remodel $15K-50K or more, Gutters $1,800-5,000+, Stair lifts $3,000-8,000+, Handyman $75-95/hr\n' +
     '- You\'ve done hundreds of jobs. You know the common problems: rotted subfloors under old tubs, lack of blocking in walls for grab bars, non-ADA-compliant ramps from other contractors.\n\n' +
@@ -250,7 +253,9 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
       typing(false);
       var pg = window.location.pathname.toLowerCase();
       var g;
-      if (pg.indexOf('grab-bar') !== -1) {
+      if (pg.indexOf('stair') !== -1 || pg.indexOf('vpl') !== -1 || pg.indexOf('scooter') !== -1) {
+        g = 'Hey! I\'m Justin\'s assistant — Watts ATP is a certified AmeriGlide dealer, so you\'re looking at the good stuff. Justin installs the lifts himself and orders scooters at dealer pricing. Want me to set up an on-site assessment for a lift, or a call back on scooter pricing?';
+      } else if (pg.indexOf('grab-bar') !== -1) {
         g = 'Hey there! I\'m Justin\'s assistant — Justin\'s installed hundreds of grab bars across NE Nebraska. Bathroom, shower, hallway — you name it. What are you looking to get done? He can give you a **free estimate** this week.';
       } else if (pg.indexOf('wheelchair-ramp') !== -1) {
         g = 'Hey! I\'m Justin\'s assistant — wheelchair ramps are one of his specialties. ADA-compliant, built to last, and he handles all the permits. What\'s the situation? He\'d love to come take a look for **free**.';

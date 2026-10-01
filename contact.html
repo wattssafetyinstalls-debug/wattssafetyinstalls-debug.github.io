@@ -309,6 +309,8 @@
 <option value="bathroom-accessibility">Bathroom Accessibility</option>
 <option value="non-slip-flooring">Non-Slip Flooring Solutions</option>
 <option value="accessibility-safety">Accessibility &amp; Safety Solutions</option>
+<option value="stair-lift">Stair Lift / Platform Lift (AmeriGlide)</option>
+<option value="mobility-scooter">Mobility Scooter (AmeriGlide)</option>
 <option value="other">Other/Not Sure</option>
 </select>
 </div>
@@ -402,6 +404,20 @@
 <!-- Cal.com Embed -->
 <script>(function(C,A,L){let p=A.createElement("script");p.src="https://app.cal.com/embed/embed.js";p.async=true;A.head.appendChild(p);p.onload=function(){C.Cal("init",{origin:"https://app.cal.com"});C.Cal("inline",{elementOrSelector:"#cal-embed",calLink:"justin-watts-pmakc1",config:{layout:"month_view",theme:"light"}});C.Cal("ui",{hideEventTypeDetails:false,layout:"month_view"})}})(window,document)</script>
 <script src="/js/watts-ai-chat.js" defer></script>
+<script>
+// Prefill service + product from URL params (AmeriGlide catalog "Get Dealer Pricing" CTAs)
+(function() {
+  var p = new URLSearchParams(window.location.search);
+  var svc = p.get('service');
+  var prod = p.get('product');
+  if (svc) { var s = document.getElementById('service'); if (s) { s.value = svc; } }
+  if (prod) {
+    var m = document.getElementById('message');
+    if (m) { m.value = 'I\'m interested in dealer pricing on the ' + prod + '. '; }
+    if (s && !svc) { s.value = 'stair-lift'; }
+  }
+})();
+</script>
 <script src="js/watts-lead-engine.js" defer></script>
 </body>
 </html>

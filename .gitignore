@@ -89,3 +89,7 @@ service-account*.json
 
 # Redundant backup folder
 _REDUNDANT_BACKUP/
+
+# Wrangler local cache
+.wrangler/
+**/.wrangler/

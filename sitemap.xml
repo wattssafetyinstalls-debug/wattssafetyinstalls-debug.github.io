@@ -132,7 +132,18 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Product landing pages (stair-lift-*, vpl-*) are added with their builds -->
+  <!-- AmeriGlide product landing pages -->
+  <url><loc>https://wattsatpcontractor.com/stair-lift-rave-2</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/stair-lift-cardinal-indoor</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/curved-stair-lift-infinity</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/curved-stair-lift-rave-curved-hd</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-nano-quick-ship</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-hercules-mini</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-hercules-750-residential</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-hercules-750-portable</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-hercules-750-commercial</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-stratos-residential</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wattsatpcontractor.com/vpl-stratos-commercial</loc><lastmod>2026-10-01</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- ======================== -->
   <!-- WATTS SAFETY INSTALLS    -->

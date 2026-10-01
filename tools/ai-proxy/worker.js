@@ -1094,7 +1094,9 @@ const GBP_TOPICS = [
 ];
 
 const GBP_LOCATION_ID = '7346850266637659740'; // Watts Safety Installs listing
-const GBP_CRON = '0 16 * * 1,3,5';
+const GBP_CRON = '0 16 * * 1,3,5';    // Mon/Wed/Fri — mixed ATP/SI rotation
+const GBP_GC_CRON = '0 16 * * 2,4,6'; // Tue/Thu/Sat — GC (Safety Installs) only
+const GBP_GC_TOPICS = GBP_TOPICS.filter(t => t.cat === 'si');
 
 async function gbpCallGemini(env, prompt) {
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + env.GEMINI_API_KEY;
@@ -1160,11 +1162,12 @@ async function gbpAccessToken(env) {
   return json.access_token;
 }
 
-function gbpPickTopic() {
+function gbpPickTopic(pool) {
+  const topics = pool || GBP_TOPICS;
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
   const dayOfYear = Math.floor((now - start) / 86400000);
-  return GBP_TOPICS[dayOfYear % GBP_TOPICS.length];
+  return topics[dayOfYear % topics.length];
 }
 
 function gbpGeneratePrompt(topic) {
@@ -1241,12 +1244,13 @@ async function gbpPost(accessToken, accountName, postBody) {
   throw new Error('All GBP API endpoints failed: ' + errs.join(' | '));
 }
 
-// Core poster — used by cron AND the manual /gbp/post-now route
-async function runGbpPost(env) {
+// Core poster — used by crons AND the manual /gbp/post-now route.
+// brand 'si' restricts topics to the GC side (Safety Installs).
+async function runGbpPost(env, brand) {
   if (!env.GBP_CLIENT_ID || !env.GBP_CLIENT_SECRET || !env.GBP_REFRESH_TOKEN) {
     throw new Error('Missing GBP secrets (GBP_CLIENT_ID / GBP_CLIENT_SECRET / GBP_REFRESH_TOKEN)');
   }
-  const topic = gbpPickTopic();
+  const topic = gbpPickTopic(brand === 'si' ? GBP_GC_TOPICS : null);
   const content = await gbpCallGemini(env, gbpGeneratePrompt(topic));
   const photoUrl = await gbpFetchPhoto(env, topic.img);
   const accessToken = await gbpAccessToken(env);
@@ -1255,10 +1259,10 @@ async function runGbpPost(env) {
   return { topic: topic.text, category: topic.cat, photo: !!photoUrl, content, apiResponse: result.substring(0, 300) };
 }
 
-async function handleGbpScheduled(env) {
-  const record = { ranAt: new Date().toISOString() };
+async function handleGbpScheduled(env, brand) {
+  const record = { ranAt: new Date().toISOString(), brand: brand || 'mixed' };
   try {
-    const out = await runGbpPost(env);
+    const out = await runGbpPost(env, brand);
     record.status = 'success';
     record.topic = out.topic;
     record.photo = out.photo;
@@ -1272,15 +1276,16 @@ async function handleGbpScheduled(env) {
   await env.CONTRACTS.put('gbp_last_run', JSON.stringify(record), { expirationTtl: LEAD_TTL });
 }
 
-// ROUTE: POST|GET /gbp/post-now?pin=XXXX — manual trigger for testing
+// ROUTE: POST|GET /gbp/post-now?pin=XXXX[&brand=si] — manual trigger for testing
 async function handleGbpPostNow(request, env, corsHeaders) {
   const url = new URL(request.url);
   const pin = url.searchParams.get('pin');
   if (!pin || pin.trim() !== (env.OWNER_PIN || '').trim()) {
     return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
   }
+  const brand = url.searchParams.get('brand');
   try {
-    const out = await runGbpPost(env);
+    const out = await runGbpPost(env, brand);
     await env.CONTRACTS.put('gbp_last_run', JSON.stringify({
       ranAt: new Date().toISOString(), status: 'success', topic: out.topic,
       photo: out.photo, preview: out.content.substring(0, 200), manual: true
@@ -1374,6 +1379,8 @@ export default {
   async scheduled(event, env, ctx) {
     if (event.cron === GBP_CRON) {
       ctx.waitUntil(handleGbpScheduled(env));
+    } else if (event.cron === GBP_GC_CRON) {
+      ctx.waitUntil(handleGbpScheduled(env, 'si'));
     } else {
       ctx.waitUntil(handleScheduled(env));
     }

@@ -71,6 +71,12 @@ const TOPICS = [
   { text: 'Preparing your Norfolk home for a family member with mobility needs', cat: 'atp', img: 'family home accessibility', cta: 'LEARN_MORE', link: 4 },
   { text: 'How accessibility modifications increase your Nebraska home value', cat: 'atp', img: 'home value increase', cta: 'CALL', link: -1 },
   { text: 'The complete guide to threshold ramps for Nebraska doorways', cat: 'atp', img: 'threshold ramp doorway', cta: 'LEARN_MORE', link: 0 },
+  { text: 'Straight vs curved stair lifts: which AmeriGlide lift fits your Norfolk home', cat: 'atp', img: 'stair lift staircase home', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Now a certified AmeriGlide installer — what that means for faster stair lift installs', cat: 'atp', img: 'stair lift installation', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Vertical platform lifts (VPLs): the porch solution when a ramp won\'t fit', cat: 'atp', img: 'wheelchair porch lift', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Stair lifts vs ramps vs VPLs: choosing the right accessibility upgrade', cat: 'atp', img: 'staircase elderly home', cta: 'LEARN_MORE', link: 0 },
+  { text: 'How a stair lift can let you keep the whole house, not just the ground floor', cat: 'atp', img: 'senior stairs home', cta: 'CALL', link: -1 },
+  { text: 'AmeriGlide stair lifts: dealer-direct pricing without the middleman', cat: 'atp', img: 'modern stair lift', cta: 'LEARN_MORE', link: 4 },
 
   // SI — Home Services
   { text: 'Kitchen remodeling trends Nebraska homeowners love right now', cat: 'si', img: 'modern kitchen remodel', cta: 'LEARN_MORE', link: 1 },

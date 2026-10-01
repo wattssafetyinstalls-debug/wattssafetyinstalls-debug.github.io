@@ -1,12 +1,11 @@
 name: Auto-Post to Google Business Profile
 
+# GBP posting moved to the Cloudflare worker (watts-ai-proxy, cron 0 16 * * 1,3,5).
+# This workflow remains as a MANUAL fallback only — run it via workflow_dispatch
+# if the worker is ever down. Do not re-enable the schedule while the worker posts.
+
 on:
-  schedule:
-    # Monday, Wednesday, Friday at 10 AM Central (16:00 UTC)
-    - cron: '0 16 * * 1'
-    - cron: '0 16 * * 3'
-    - cron: '0 16 * * 5'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch: # Manual trigger only
 
 permissions:
   contents: write

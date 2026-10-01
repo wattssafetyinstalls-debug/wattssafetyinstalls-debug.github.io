@@ -1022,6 +1022,286 @@ async function handleContractSendEmail(request, env, corsHeaders) {
 }
 
 // =====================================================================
+// GBP AUTO-POSTER — Google Business Profile posts (Mon/Wed/Fri cron)
+// Ported from tools/gbp-auto-poster.js so the whole pipeline runs here.
+// Secrets needed: GBP_CLIENT_ID, GBP_CLIENT_SECRET, GBP_REFRESH_TOKEN,
+//                 GBP_ACCOUNT_ID, PEXELS_API_KEY (optional)
+// =====================================================================
+const GBP_SERVICE_LINKS = {
+  atp: [
+    { url: 'https://wattsatpcontractor.com/wheelchair-ramp-installation', label: 'Wheelchair Ramps' },
+    { url: 'https://wattsatpcontractor.com/grab-bar-installation', label: 'Grab Bars' },
+    { url: 'https://wattsatpcontractor.com/bathroom-accessibility', label: 'Bathroom Accessibility' },
+    { url: 'https://wattsatpcontractor.com/non-slip-flooring-solutions', label: 'Non-Slip Flooring' },
+    { url: 'https://wattsatpcontractor.com/accessibility-safety-solutions', label: 'Safety Solutions' },
+  ],
+  si: [
+    { url: 'https://wattsatpcontractor.com/safety-installs/services/electronics', label: 'TV Mounting & Electronics' },
+    { url: 'https://wattsatpcontractor.com/safety-installs/services', label: 'Home Services' },
+    { url: 'https://wattsatpcontractor.com/safety-installs/contact', label: 'Get a Quote' },
+  ]
+};
+
+const GBP_TOPICS = [
+  // ATP — Accessibility & Safety
+  { text: 'Why grab bars are the #1 fall prevention upgrade for Nebraska seniors', cat: 'atp', img: 'grab bar bathroom safety', cta: 'LEARN_MORE', link: 0 },
+  { text: 'Wheelchair ramp materials: wood vs aluminum in Nebraska winters', cat: 'atp', img: 'wheelchair ramp home', cta: 'LEARN_MORE', link: 0 },
+  { text: 'ADA bathroom modifications every Norfolk NE homeowner should know', cat: 'atp', img: 'accessible bathroom remodel', cta: 'LEARN_MORE', link: 2 },
+  { text: 'How non-slip flooring prevents 80% of senior falls at home', cat: 'atp', img: 'non slip flooring home', cta: 'LEARN_MORE', link: 3 },
+  { text: 'Planning home accessibility before winter hits Northeast Nebraska', cat: 'atp', img: 'home accessibility winter', cta: 'CALL', link: -1 },
+  { text: 'Walk-in shower conversions: the most requested aging-in-place upgrade', cat: 'atp', img: 'walk in shower modern', cta: 'LEARN_MORE', link: 2 },
+  { text: 'How to make your Nebraska home wheelchair accessible on a budget', cat: 'atp', img: 'wheelchair accessible home', cta: 'CALL', link: -1 },
+  { text: 'Stair safety solutions for multi-level Norfolk NE homes', cat: 'atp', img: 'stair handrail safety', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Medicare and home accessibility: what Nebraska residents should know', cat: 'atp', img: 'senior home safety', cta: 'CALL', link: -1 },
+  { text: 'Room-by-room fall prevention checklist for Nebraska seniors', cat: 'atp', img: 'senior safety home', cta: 'LEARN_MORE', link: 4 },
+  { text: 'Why professional grab bar installation beats DIY every time', cat: 'atp', img: 'professional contractor installing', cta: 'LEARN_MORE', link: 1 },
+  { text: 'Home accessibility assessment: what to expect from your contractor', cat: 'atp', img: 'home inspection contractor', cta: 'CALL', link: -1 },
+  { text: 'Preparing your Norfolk home for a family member with mobility needs', cat: 'atp', img: 'family home accessibility', cta: 'LEARN_MORE', link: 4 },
+  { text: 'How accessibility modifications increase your Nebraska home value', cat: 'atp', img: 'home value increase', cta: 'CALL', link: -1 },
+  { text: 'The complete guide to threshold ramps for Nebraska doorways', cat: 'atp', img: 'threshold ramp doorway', cta: 'LEARN_MORE', link: 0 },
+  // SI — Home Services
+  { text: 'Kitchen remodeling trends Nebraska homeowners love right now', cat: 'si', img: 'modern kitchen remodel', cta: 'LEARN_MORE', link: 1 },
+  { text: 'Interior paint colors that sell homes faster in Norfolk NE', cat: 'si', img: 'interior painting home', cta: 'LEARN_MORE', link: 1 },
+  { text: 'Gutter maintenance before Nebraska storm season: a quick guide', cat: 'si', img: 'gutter cleaning maintenance', cta: 'CALL', link: -1 },
+  { text: 'TV mounting tips: choosing the right wall height and bracket', cat: 'si', img: 'tv mounting living room', cta: 'LEARN_MORE', link: 0 },
+  { text: 'Top 5 handyman projects that boost home value in Nebraska', cat: 'si', img: 'handyman home improvement', cta: 'LEARN_MORE', link: 1 },
+  { text: 'Bathroom remodeling ideas for small Northeast Nebraska homes', cat: 'si', img: 'small bathroom remodel', cta: 'LEARN_MORE', link: 1 },
+  { text: 'When to replace vs repair your gutters in Norfolk NE', cat: 'si', img: 'gutter repair replacement', cta: 'CALL', link: -1 },
+  { text: 'Smart home upgrades every Norfolk homeowner should consider', cat: 'si', img: 'smart home technology', cta: 'LEARN_MORE', link: 0 },
+  { text: 'Deck staining and maintenance for Northeast Nebraska weather', cat: 'si', img: 'deck staining outdoor', cta: 'CALL', link: -1 },
+  { text: 'Cabinet refinishing vs replacement: cost comparison for Nebraska', cat: 'si', img: 'kitchen cabinet refinishing', cta: 'LEARN_MORE', link: 1 },
+  { text: 'How to prevent ice dams on your Norfolk NE roof this winter', cat: 'si', img: 'ice dam roof winter', cta: 'CALL', link: -1 },
+  { text: 'Outdoor TV mounting: weatherproofing tips for Nebraska patios', cat: 'si', img: 'outdoor tv patio', cta: 'LEARN_MORE', link: 0 },
+  { text: 'Energy efficient home improvements for brutal Nebraska winters', cat: 'si', img: 'energy efficient home', cta: 'CALL', link: -1 },
+  { text: 'Property maintenance checklist for Nebraska rental owners', cat: 'si', img: 'property maintenance checklist', cta: 'LEARN_MORE', link: 1 },
+  { text: 'Snow removal tips to protect your Norfolk NE driveway and walkways', cat: 'si', img: 'snow removal driveway', cta: 'CALL', link: -1 },
+  // Seasonal / Community (both brands)
+  { text: 'Spring home maintenance checklist for Northeast Nebraska', cat: 'both', img: 'spring home maintenance', cta: 'CALL', link: -1 },
+  { text: 'Summer home improvement projects worth tackling in Norfolk NE', cat: 'both', img: 'summer home improvement', cta: 'CALL', link: -1 },
+  { text: 'Fall home preparation: get your Nebraska home ready before winter', cat: 'both', img: 'fall home preparation', cta: 'CALL', link: -1 },
+  { text: 'Winter home safety tips every Norfolk NE family needs', cat: 'both', img: 'winter home safety', cta: 'CALL', link: -1 },
+  { text: 'How to choose the right contractor in Norfolk Nebraska', cat: 'both', img: 'contractor handshake professional', cta: 'CALL', link: -1 },
+  { text: 'Supporting aging parents in Nebraska: home modification guide', cat: 'both', img: 'senior parent home', cta: 'CALL', link: -1 },
+  { text: 'Emergency home repairs: what to do first and who to call', cat: 'both', img: 'emergency home repair', cta: 'CALL', link: -1 },
+  { text: 'Norfolk NE home improvement: projects that pay for themselves', cat: 'both', img: 'home improvement value', cta: 'CALL', link: -1 },
+  { text: 'Hiring a licensed contractor in Nebraska: what to look for', cat: 'both', img: 'licensed contractor nebraska', cta: 'CALL', link: -1 },
+  { text: 'Home safety for families with young children in Norfolk NE', cat: 'both', img: 'child safety home', cta: 'CALL', link: -1 },
+  { text: 'Why local contractors beat national chains for Nebraska homeowners', cat: 'both', img: 'local business community', cta: 'CALL', link: -1 },
+  { text: 'New year home goals: top upgrades for Norfolk NE homes', cat: 'both', img: 'new year home goals', cta: 'CALL', link: -1 },
+  { text: 'Holiday home prep: getting your Nebraska house guest-ready', cat: 'both', img: 'holiday home decoration', cta: 'CALL', link: -1 },
+  { text: 'Watts community spotlight: serving Northeast Nebraska families', cat: 'both', img: 'community norfolk nebraska', cta: 'CALL', link: -1 },
+  { text: 'Customer story: how a simple grab bar changed everything', cat: 'atp', img: 'senior happy home safe', cta: 'LEARN_MORE', link: 1 },
+];
+
+const GBP_LOCATION_ID = '7346850266637659740'; // Watts Safety Installs listing
+const GBP_CRON = '0 16 * * 1,3,5';
+
+async function gbpCallGemini(env, prompt) {
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + env.GEMINI_API_KEY;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.85, maxOutputTokens: 2048, topP: 0.92, thinkingConfig: { thinkingBudget: 0 } }
+    })
+  });
+  const json = await res.json();
+  const candidate = json.candidates && json.candidates[0];
+  if (!candidate || !candidate.content || !candidate.content.parts) {
+    throw new Error('Gemini returned no candidates: ' + JSON.stringify(json).substring(0, 300));
+  }
+  let text = '';
+  for (const part of candidate.content.parts) {
+    if (part.thought) continue;
+    if (part.text) { text = part.text; break; }
+  }
+  if (!text) {
+    for (const part of candidate.content.parts) {
+      if (part.text) { text = part.text; break; }
+    }
+  }
+  if (!text) throw new Error('Gemini returned no text');
+  return text.trim();
+}
+
+async function gbpFetchPhoto(env, query) {
+  const key = (env.PEXELS_API_KEY || '').trim();
+  if (!key) return null;
+  try {
+    const res = await fetch('https://api.pexels.com/v1/search?query=' + encodeURIComponent(query) + '&per_page=5&orientation=landscape', {
+      headers: { 'Authorization': key }
+    });
+    const json = await res.json();
+    if (json.photos && json.photos.length > 0) {
+      return json.photos[Math.floor(Math.random() * json.photos.length)].src.large2x;
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function gbpAccessToken(env) {
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      client_id: (env.GBP_CLIENT_ID || '').trim(),
+      client_secret: (env.GBP_CLIENT_SECRET || '').trim(),
+      refresh_token: (env.GBP_REFRESH_TOKEN || '').trim(),
+      grant_type: 'refresh_token'
+    })
+  });
+  const json = await res.json();
+  if (!json.access_token) {
+    throw new Error('OAuth failed: ' + (json.error_description || json.error || 'unknown') + ' — GBP_REFRESH_TOKEN may need regenerating');
+  }
+  return json.access_token;
+}
+
+function gbpPickTopic() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400000);
+  return GBP_TOPICS[dayOfYear % GBP_TOPICS.length];
+}
+
+function gbpGeneratePrompt(topic) {
+  const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const month = ['January','February','March','April','May','June','July','August','September','October','November','December'][new Date().getMonth()];
+  let brandContext;
+  if (topic.cat === 'atp') {
+    brandContext = 'Watts ATP Contractor — Nebraska\'s premier ATP Approved Contractor for wheelchair ramps, grab bars, ADA bathroom modifications, non-slip flooring, and aging-in-place solutions.';
+  } else if (topic.cat === 'si') {
+    brandContext = 'Watts Safety Installs — Professional home services including kitchen & bath remodeling, painting, gutters, TV mounting, electronics, handyman, property maintenance, and seasonal services.';
+  } else {
+    brandContext = 'Watts ATP Contractor & Watts Safety Installs — Licensed Nebraska contractor (#54690-25) offering accessibility modifications, home remodeling, and professional home services.';
+  }
+  return 'You are Justin Watts, owner of ' + brandContext + ' Based in Norfolk, NE. Serving a 100-mile radius across Northeast Nebraska and Northwest Iowa.\n\n' +
+    'Write a Google Business Profile post about: "' + topic.text + '"\n\n' +
+    'CONTEXT: It is ' + dayName + ' in ' + month + '. You are writing as Justin — the actual owner, not a marketing team.\n\n' +
+    'REQUIREMENTS:\n' +
+    '- 100-150 words MAXIMUM. GBP posts must be concise.\n' +
+    '- Write in first person as Justin. Warm, knowledgeable, hands-on tone.\n' +
+    '- Open with a hook that stops the scroll — a question, surprising fact, or relatable scenario.\n' +
+    '- Include ONE practical tip or insight the reader can use immediately.\n' +
+    '- Mention Norfolk, NE or Northeast Nebraska naturally (not forced).\n' +
+    '- Reference your license (#54690-25) or experience ONLY if it fits naturally.\n' +
+    '- End with a clear call-to-action: call (405) 410-6402 for a free estimate.\n' +
+    '- Use 1-2 emojis max. No hashtags. No bullet points.\n' +
+    '- Do NOT start with "Hey" or "Hi there" — start with the hook.\n' +
+    '- Sound like a real person, not a template. Vary your openings.\n' +
+    '- If seasonal, reference current ' + month + ' conditions in Nebraska.\n\n' +
+    'Return ONLY the post text. No title, no quotes, no formatting marks.';
+}
+
+function gbpBuildPostBody(content, topic, photoUrl) {
+  const post = { languageCode: 'en-US', summary: content, topicType: 'STANDARD' };
+  if (photoUrl) {
+    post.media = [{ mediaFormat: 'PHOTO', sourceUrl: photoUrl }];
+  }
+  if (topic.cta === 'LEARN_MORE' && topic.link >= 0) {
+    const links = GBP_SERVICE_LINKS[topic.cat] || GBP_SERVICE_LINKS.si;
+    const linkObj = links[Math.min(topic.link, links.length - 1)];
+    post.callToAction = { actionType: 'LEARN_MORE', url: linkObj.url };
+  } else {
+    post.callToAction = { actionType: 'CALL', url: 'tel:+14054106402' };
+  }
+  return post;
+}
+
+async function gbpPost(accessToken, accountName, postBody) {
+  // v4 works (verified live); v1 404s — try v4 first, others as fallback
+  const attempts = [
+    '/v4/' + accountName + '/locations/' + GBP_LOCATION_ID + '/localPosts',
+    '/v4/accounts/-/locations/' + GBP_LOCATION_ID + '/localPosts',
+    '/v1/' + accountName + '/locations/' + GBP_LOCATION_ID + '/localPosts',
+  ];
+  let lastErr = '';
+  for (const p of attempts) {
+    const res = await fetch('https://mybusiness.googleapis.com' + p, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(postBody)
+    });
+    if (res.status >= 200 && res.status < 300) {
+      return await res.text();
+    }
+    const txt = await res.text();
+    lastErr = 'GBP API ' + res.status + ' (' + p + '): ' + txt.substring(0, 300);
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('Auth error — check GBP OAuth credentials. ' + lastErr);
+    }
+  }
+  throw new Error('All GBP API endpoints failed. Last error: ' + lastErr);
+}
+
+// Core poster — used by cron AND the manual /gbp/post-now route
+async function runGbpPost(env) {
+  if (!env.GBP_CLIENT_ID || !env.GBP_CLIENT_SECRET || !env.GBP_REFRESH_TOKEN) {
+    throw new Error('Missing GBP secrets (GBP_CLIENT_ID / GBP_CLIENT_SECRET / GBP_REFRESH_TOKEN)');
+  }
+  const topic = gbpPickTopic();
+  const content = await gbpCallGemini(env, gbpGeneratePrompt(topic));
+  const photoUrl = await gbpFetchPhoto(env, topic.img);
+  const accessToken = await gbpAccessToken(env);
+  const accountName = 'accounts/' + ((env.GBP_ACCOUNT_ID || '115333669752828920608').trim());
+  const result = await gbpPost(accessToken, accountName, gbpBuildPostBody(content, topic, photoUrl));
+  return { topic: topic.text, category: topic.cat, photo: !!photoUrl, content, apiResponse: result.substring(0, 300) };
+}
+
+async function handleGbpScheduled(env) {
+  const record = { ranAt: new Date().toISOString() };
+  try {
+    const out = await runGbpPost(env);
+    record.status = 'success';
+    record.topic = out.topic;
+    record.photo = out.photo;
+    record.preview = out.content.substring(0, 200);
+    await sendNotification(env, '✅ GBP post published: "' + out.topic + '"' + (out.photo ? ' (with photo)' : ''), 'normal');
+  } catch (err) {
+    record.status = 'failed';
+    record.error = err.message;
+    await sendNotification(env, '❌ GBP auto-post FAILED: ' + err.message, 'urgent');
+  }
+  await env.CONTRACTS.put('gbp_last_run', JSON.stringify(record), { expirationTtl: LEAD_TTL });
+}
+
+// ROUTE: POST|GET /gbp/post-now?pin=XXXX — manual trigger for testing
+async function handleGbpPostNow(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const pin = url.searchParams.get('pin');
+  if (!pin || pin.trim() !== (env.OWNER_PIN || '').trim()) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+  try {
+    const out = await runGbpPost(env);
+    await env.CONTRACTS.put('gbp_last_run', JSON.stringify({
+      ranAt: new Date().toISOString(), status: 'success', topic: out.topic,
+      photo: out.photo, preview: out.content.substring(0, 200), manual: true
+    }), { expirationTtl: LEAD_TTL });
+    return jsonResponse({ success: true, ...out }, 200, corsHeaders);
+  } catch (err) {
+    await env.CONTRACTS.put('gbp_last_run', JSON.stringify({
+      ranAt: new Date().toISOString(), status: 'failed', error: err.message, manual: true
+    }), { expirationTtl: LEAD_TTL });
+    return jsonResponse({ success: false, error: err.message }, 500, corsHeaders);
+  }
+}
+
+// ROUTE: GET /gbp/status?pin=XXXX — last run result
+async function handleGbpStatus(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const pin = url.searchParams.get('pin');
+  if (!pin || pin.trim() !== (env.OWNER_PIN || '').trim()) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+  const raw = await env.CONTRACTS.get('gbp_last_run');
+  return jsonResponse(raw ? JSON.parse(raw) : { status: 'never run' }, 200, corsHeaders);
+}
+
+// =====================================================================
 // MAIN ROUTER
 // =====================================================================
 export default {
@@ -1075,13 +1355,23 @@ export default {
     if (path === '/notifications') {
       return handleNotifications(request, env, corsHeaders);
     }
+    if (path === '/gbp/post-now') {
+      return handleGbpPostNow(request, env, corsHeaders);
+    }
+    if (path === '/gbp/status') {
+      return handleGbpStatus(request, env, corsHeaders);
+    }
 
     // Default: AI proxy (existing behavior)
     return handleAIProxy(request, env, corsHeaders);
   },
 
-  // Cron trigger handler — daily follow-up checks
+  // Cron trigger handler — daily follow-up checks + Mon/Wed/Fri GBP posts
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(handleScheduled(env));
+    if (event.cron === GBP_CRON) {
+      ctx.waitUntil(handleGbpScheduled(env));
+    } else {
+      ctx.waitUntil(handleScheduled(env));
+    }
   },
 };

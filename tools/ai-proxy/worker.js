@@ -1206,7 +1206,11 @@ function gbpBuildPostBody(content, topic, photoUrl) {
     const linkObj = links[Math.min(topic.link, links.length - 1)];
     post.callToAction = { actionType: 'LEARN_MORE', url: linkObj.url };
   } else {
-    post.callToAction = { actionType: 'CALL', url: 'tel:+14054106402' };
+    // Google removed the CALL CTA type — LEARN_MORE to contact page instead
+    const fallback = topic.cat === 'atp'
+      ? 'https://wattsatpcontractor.com/contact'
+      : 'https://wattsatpcontractor.com/safety-installs/contact';
+    post.callToAction = { actionType: 'LEARN_MORE', url: fallback };
   }
   return post;
 }
@@ -1218,7 +1222,7 @@ async function gbpPost(accessToken, accountName, postBody) {
     '/v4/accounts/-/locations/' + GBP_LOCATION_ID + '/localPosts',
     '/v1/' + accountName + '/locations/' + GBP_LOCATION_ID + '/localPosts',
   ];
-  let lastErr = '';
+  const errs = [];
   for (const p of attempts) {
     const res = await fetch('https://mybusiness.googleapis.com' + p, {
       method: 'POST',
@@ -1229,12 +1233,12 @@ async function gbpPost(accessToken, accountName, postBody) {
       return await res.text();
     }
     const txt = await res.text();
-    lastErr = 'GBP API ' + res.status + ' (' + p + '): ' + txt.substring(0, 300);
+    errs.push(res.status + ' ' + p + ' => ' + txt.substring(0, 250));
     if (res.status === 401 || res.status === 403) {
-      throw new Error('Auth error — check GBP OAuth credentials. ' + lastErr);
+      throw new Error('Auth error — check GBP OAuth credentials. ' + errs.join(' | '));
     }
   }
-  throw new Error('All GBP API endpoints failed. Last error: ' + lastErr);
+  throw new Error('All GBP API endpoints failed: ' + errs.join(' | '));
 }
 
 // Core poster — used by cron AND the manual /gbp/post-now route

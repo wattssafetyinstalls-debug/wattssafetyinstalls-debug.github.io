@@ -295,7 +295,11 @@ function buildPostBody(content, topic, photoUrl) {
     var linkObj = links[Math.min(topic.link, links.length - 1)];
     post.callToAction = { actionType: 'LEARN_MORE', url: linkObj.url };
   } else {
-    post.callToAction = { actionType: 'CALL', url: 'tel:+14054106402' };
+    // Google removed the CALL CTA type — LEARN_MORE to contact page instead
+    var fallback = topic.cat === 'atp'
+      ? 'https://wattsatpcontractor.com/contact'
+      : 'https://wattsatpcontractor.com/safety-installs/contact';
+    post.callToAction = { actionType: 'LEARN_MORE', url: fallback };
   }
 
   return post;

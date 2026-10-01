@@ -1,0 +1,62 @@
+GBP Post FAILED - 2026-03-07T01:17:14.805Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found after 5 attempts
+
+GBP Post FAILED - 2026-03-07T01:13:29.058Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found after 5 attempts
+
+GBP Post FAILED - 2026-03-07T00:22:11.488Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: GBP API 404: <!DOCTYPE html>
+<html lang=en>
+  <meta charset=utf-8>
+  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+  <title>Error 404 (Not Found)!!1</title>
+  <style>
+    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 
+
+GBP Post FAILED - 2026-03-07T00:16:54.881Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found after 5 attempts
+
+GBP Post FAILED - 2026-03-07T00:09:28.531Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Requests' and limit 'Requests per minute' of service 'mybusinessaccountmanagement.googleapis.com' for consumer 'project_number:1059217531358'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@typ
+
+GBP Post FAILED - 2026-03-07T00:07:07.374Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Requests' and limit 'Requests per minute' of service 'mybusinessaccountmanagement.googleapis.com' for consumer 'project_number:1059217531358'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@typ
+
+GBP Post FAILED - 2026-03-07T00:05:43.871Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found: {
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Requests' and limit 'Requests per minute' of service 'mybusinessaccountmanagement.googleapis.com' for consumer 'project_number:1059217531358'.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@typ
+
+GBP Post FAILED - 2026-03-06T23:59:14.417Z
+Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
+Error: No GBP accounts found: {
+  "error": {
+    "code": 403,
+    "message": "My Business Account Management API has not been used in project 1059217531358 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/mybusinessaccountmanagement.googleapis.com/overview?project=1059217531358 then 
+

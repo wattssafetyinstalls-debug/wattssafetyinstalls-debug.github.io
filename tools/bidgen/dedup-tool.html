@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Library Dedup Tool</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #09090b; color: #e4e4e7; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+        h1 { font-size: 22px; font-weight: 800; color: #fafafa; margin-bottom: 4px; }
+        .subtitle { font-size: 13px; color: #71717a; margin-bottom: 24px; }
+        a { color: #3b82f6; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Login */
+        .login-box { background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; max-width: 380px; margin: 80px auto; text-align: center; }
+        .login-box h2 { font-size: 18px; margin-bottom: 16px; }
+        .login-box input { width: 100%; padding: 12px 16px; background: #09090b; border: 1px solid #3f3f46; border-radius: 10px; color: #fafafa; font-size: 15px; text-align: center; letter-spacing: 4px; margin-bottom: 12px; }
+        .login-box input:focus { outline: none; border-color: #3b82f6; }
+        .login-box button { width: 100%; padding: 12px; background: #3b82f6; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .login-box button:hover { background: #2563eb; }
+
+        /* Stats bar */
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px; text-align: center; }
+        .stat-card .num { font-size: 28px; font-weight: 800; color: #fafafa; }
+        .stat-card .lbl { font-size: 11px; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .stat-card.danger .num { color: #ef4444; }
+        .stat-card.warning .num { color: #f59e0b; }
+        .stat-card.good .num { color: #22c55e; }
+
+        /* Action bar */
+        .action-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 10px 18px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+        .btn-primary { background: #3b82f6; color: #fff; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-danger { background: #dc2626; color: #fff; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-outline { background: transparent; border: 1px solid #3f3f46; color: #a1a1aa; }
+        .btn-outline:hover { border-color: #52525b; color: #e4e4e7; }
+        .btn-success { background: #16a34a; color: #fff; }
+        .btn-success:hover { background: #15803d; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Scan progress */
+        .scan-progress { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: none; }
+        .scan-progress .bar-track { height: 6px; background: #27272a; border-radius: 3px; overflow: hidden; margin-top: 10px; }
+        .scan-progress .bar-fill { height: 100%; background: #3b82f6; border-radius: 3px; transition: width 0.3s; width: 0%; }
+        .scan-progress .scan-text { font-size: 13px; color: #a1a1aa; }
+
+        /* Group cards */
+        .group-list { display: flex; flex-direction: column; gap: 14px; }
+        .dup-group { background: #18181b; border: 1px solid #27272a; border-radius: 14px; overflow: hidden; }
+        .dup-group.selected { border-color: #dc2626; }
+        .group-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #1c1c20; cursor: pointer; }
+        .group-header:hover { background: #222228; }
+        .group-badge { background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+        .group-info { flex: 1; margin-left: 12px; }
+        .group-info .client { font-size: 14px; font-weight: 600; color: #fafafa; }
+        .group-info .meta { font-size: 12px; color: #71717a; margin-top: 2px; }
+        .group-items { display: none; padding: 0 18px 14px; }
+        .group-items.open { display: block; }
+        .dup-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #09090b; border: 1px solid #27272a; border-radius: 10px; margin-top: 8px; font-size: 13px; }
+        .dup-item.keeper { border-color: #22c55e; background: rgba(34,197,94,0.05); }
+        .dup-item.marked { border-color: #ef4444; background: rgba(239,68,68,0.05); opacity: 0.6; }
+        .dup-item .item-id { font-weight: 600; color: #a1a1aa; min-width: 90px; }
+        .dup-item .item-date { color: #71717a; min-width: 100px; }
+        .dup-item .item-amount { font-weight: 700; color: #22c55e; min-width: 80px; text-align: right; }
+        .dup-item .item-type { font-size: 11px; background: #27272a; color: #a1a1aa; padding: 2px 8px; border-radius: 6px; }
+        .dup-item .item-actions { margin-left: auto; display: flex; gap: 6px; }
+        .dup-item .item-actions button { padding: 4px 10px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .keep-btn { background: #16a34a; color: #fff; }
+        .del-btn { background: #dc2626; color: #fff; }
+        .dup-item .keeper-tag { font-size: 10px; font-weight: 700; color: #22c55e; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dup-item .delete-tag { font-size: 10px; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 60px 20px; color: #52525b; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state h3 { color: #a1a1aa; margin-bottom: 8px; }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; z-index: 9999; animation: slideUp 0.3s; }
+        .toast.success { background: #16a34a; color: #fff; }
+        .toast.error { background: #dc2626; color: #fff; }
+        .toast.info { background: #3b82f6; color: #fff; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Confirm modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 28px; max-width: 440px; width: 100%; }
+        .modal-box h3 { font-size: 16px; margin-bottom: 8px; }
+        .modal-box p { font-size: 13px; color: #a1a1aa; margin-bottom: 20px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+        /* Log */
+        .log-box { background: #09090b; border: 1px solid #27272a; border-radius: 10px; padding: 14px; margin-top: 16px; max-height: 200px; overflow-y: auto; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: #71717a; display: none; }
+        .log-box .log-entry { padding: 2px 0; }
+        .log-box .log-entry.del { color: #ef4444; }
+        .log-box .log-entry.keep { color: #22c55e; }
+        .log-box .log-entry.info { color: #3b82f6; }
+
+        /* Back link */
+        .back-link { font-size: 13px; margin-bottom: 16px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- Login -->
+    <div id="loginView">
+        <div class="login-box">
+            <h2>🔐 Library Dedup Tool</h2>
+            <p style="font-size:12px;color:#71717a;margin-bottom:16px">Enter your BidGen PIN to scan your Firebase library for duplicates.</p>
+            <input type="password" id="pinInput" placeholder="PIN" maxlength="10" autofocus>
+            <button onclick="doLogin()">Unlock</button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div id="mainView" style="display:none">
+        <a href="index.html" class="back-link">&larr; Back to BidGen</a>
+        <h1>🧹 Firebase Library Dedup Tool</h1>
+        <p class="subtitle">Scan, group, and remove duplicate invoices, quotes, and change orders from your Firebase library.</p>
+
+        <!-- Stats -->
+        <div class="stats-bar" id="statsBar" style="display:none">
+            <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total Entries</div></div>
+            <div class="stat-card danger"><div class="num" id="statDupes">0</div><div class="lbl">Duplicates Found</div></div>
+            <div class="stat-card warning"><div class="num" id="statGroups">0</div><div class="lbl">Duplicate Groups</div></div>
+            <div class="stat-card good"><div class="num" id="statUnique">0</div><div class="lbl">Unique Entries</div></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-bar">
+            <button class="btn btn-primary" id="btnScan" onclick="startScan()">🔍 Scan Library</button>
+            <button class="btn btn-danger" id="btnDeleteAll" onclick="confirmDeleteAll()" disabled>🗑️ Delete All Duplicates</button>
+            <button class="btn btn-outline" id="btnToggleLog" onclick="toggleLog()">📋 Show Log</button>
+            <button class="btn btn-outline" id="btnScanPortal" onclick="scanPortal()">🌐 Scan Portal Path</button>
+            <button class="btn btn-outline" id="btnScanRevisions" onclick="scanRevisions()">📜 Scan Revisions</button>
+        </div>
+
+        <!-- Scan Progress -->
+        <div class="scan-progress" id="scanProgress">
+            <div class="scan-text" id="scanText">Scanning...</div>
+            <div class="bar-track"><div class="bar-fill" id="scanBar"></div></div>
+        </div>
+
+        <!-- Groups -->
+        <div id="groupList" class="group-list"></div>
+
+        <!-- Log -->
+        <div class="log-box" id="logBox"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+'use strict';
+
+// ================================================================
+// FIREBASE CONFIG
+// ================================================================
+var firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY_HERE",
+    authDomain: "wsi---bid-generator.firebaseapp.com",
+    databaseURL: "https://wsi---bid-generator-default-rtdb.firebaseio.com",
+    projectId: "wsi---bid-generator",
+    storageBucket: "wsi---bid-generator.firebasestorage.app",
+    messagingSenderId: "613129301141",
+    appId: "1:613129301141:web:92405028eca5aae354bf9c"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var userPIN = null;
+var hashedPIN = '';
+var allInvoices = [];
+var dupGroups = [];
+var deleteQueue = [];
+
+// ================================================================
+// HASH PIN (same as index.html)
+// ================================================================
+function hashPIN(pin) {
+    var h = 0;
+    for (var i = 0; i < pin.length; i++) {
+        h = ((h << 5) - h) + pin.charCodeAt(i);
+        h |= 0;
+    }
+    return 'u' + Math.abs(h).toString(36);
+}
+
+// ================================================================
+// FINGERPRINT — content hash for dedup comparison
+// ================================================================
+function fingerprint(inv) {
+    var parts = [
+        (inv.clientName || '').toLowerCase().trim(),
+        (inv.type || inv.documentType || 'quote').toLowerCase(),
+        Math.round((inv.amount || 0) * 100),
+        Math.round((inv.laborTotal || 0) * 100),
+        Math.round((inv.materialsTotal || 0) * 100),
+        (inv.jobDetails || {}).complexName || '',
+        (inv.jobDetails || {}).unitNum || '',
+        (inv.jobDetails || {}).jobCity || ''
+    ];
+
+    // Include labor items fingerprint
+    var litems = inv.laborItems || [];
+    litems.forEach(function(li) {
+        parts.push((li.desc || li.description || '').substring(0, 30) + ':' + (li.qty || 0) + 'x' + (li.price || 0));
+    });
+
+    // Include material items fingerprint
+    var mitems = inv.materialItems || inv.matItems || [];
+    mitems.forEach(function(mi) {
+        parts.push((mi.name || mi.desc || '').substring(0, 30) + ':' + (mi.qtyNum || mi.qty || 0) + 'x' + (mi.price || 0));
+    });
+
+    return parts.join('|');
+}
+
+// ================================================================
+// LOGIN
+// ================================================================
+window.doLogin = function() {
+    var pin = document.getElementById('pinInput').value.trim();
+    if (!pin) return;
+    userPIN = pin;
+    hashedPIN = hashPIN(pin);
+
+    // Verify PIN by checking if data exists
+    db.ref('invoices/' + hashedPIN).once('value').then(function(snap) {
+        if (snap.exists()) {
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'block';
+            toast('Logged in — ready to scan', 'success');
+        } else {
+            toast('No data found for this PIN', 'error');
+        }
+    }).catch(function(e) {
+        toast('Firebase error: ' + e.message, 'error');
+    });
+};
+
+document.getElementById('pinInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+});
+
+// ================================================================
+// SCAN LIBRARY
+// ================================================================
+window.startScan = function() {
+    allInvoices = [];
+    dupGroups = [];
+    deleteQueue = [];
+    document.getElementById('groupList').innerHTML = '';
+    document.getElementById('btnDeleteAll').disabled = true;
+
+    var prog = document.getElementById('scanProgress');
+    prog.style.display = 'block';
+    updateProgress('Scanning invoices...', 10);
+    log('Starting scan for PIN hash: ' + hashedPIN, 'info');
+
+    var buckets = ['temporary', 'permanent', 'lost'];
+    var loaded = 0;
+
+    buckets.forEach(function(bucket) {
+        db.ref('invoices/' + hashedPIN + '/' + bucket).once('value').then(function(snap) {
+            var data = snap.val() || {};
+            var ids = Object.keys(data);
+            log('Found ' + ids.length + ' entries in ' + bucket, 'info');
+            ids.forEach(function(id) {
+                var inv = data[id];
+                inv._bucket = bucket;
+                inv._path = 'invoices/' + hashedPIN + '/' + bucket + '/' + id;
+                if (!inv.id) inv.id = id;
+                allInvoices.push(inv);
+            });
+            loaded++;
+            updateProgress('Scanned ' + loaded + '/3 buckets...', 30 + (loaded * 20));
+            if (loaded === buckets.length) {
+                finishScan();
+            }
+        }).catch(function(e) {
+            log('Error scanning ' + bucket + ': ' + e.message, 'del');
+            loaded++;
+            if (loaded === buckets.length) finishScan();
+        });
+    });
+};
+
+function finishScan() {
+    updateProgress('Analyzing fingerprints...', 80);
+    log('Total entries loaded: ' + allInvoices.length, 'info');
+
+    // Group by fingerprint
+    var fpMap = {};
+    allInvoices.forEach(function(inv) {
+        var fp = fingerprint(inv);
+        if (!fpMap[fp]) fpMap[fp] = [];
+        fpMap[fp].push(inv);
+    });
+
+    // Find groups with more than 1 entry
+    dupGroups = [];
+    var totalDupes = 0;
+    Object.keys(fpMap).forEach(function(fp) {
+        var group = fpMap[fp];
+        if (group.length > 1) {
+            // Sort by date — newest first (keep newest by default)
+            group.sort(function(a, b) {
+                var da = a.createdDate || a.estimateDate || '';
+                var db2 = b.createdDate || b.estimateDate || '';
+                return db2 > da ? 1 : db2 < da ? -1 : 0;
+            });
+            dupGroups.push({
+                fp: fp,
+                items: group,
+                keepIndex: 0
+            });
+            totalDupes += group.length - 1;
+        }
+    });
+
+    var unique = allInvoices.length - totalDupes;
+    log('Found ' + dupGroups.length + ' duplicate groups (' + totalDupes + ' duplicates)', dupGroups.length > 0 ? 'del' : 'keep');
+
+    // Update stats
+    document.getElementById('statsBar').style.display = 'grid';
+    document.getElementById('statTotal').textContent = allInvoices.length;
+    document.getElementById('statDupes').textContent = totalDupes;
+    document.getElementById('statGroups').textContent = dupGroups.length;
+    document.getElementById('statUnique').textContent = unique;
+
+    updateProgress('Scan complete!', 100);
+    setTimeout(function() { document.getElementById('scanProgress').style.display = 'none'; }, 1500);
+
+    if (dupGroups.length > 0) {
+        document.getElementById('btnDeleteAll').disabled = false;
+        renderGroups();
+    } else {
+        document.getElementById('groupList').innerHTML = '<div class="empty-state"><div class="icon">✅</div><h3>No Duplicates Found</h3><p>Your library is clean! All ' + allInvoices.length + ' entries are unique.</p></div>';
+    }
+}
+
+// ================================================================
+// RENDER GROUPS
+// ================================================================
+function renderGroups() {
+    var html = '';
+    dupGroups.forEach(function(group, gi) {
+        var keeper = group.items[group.keepIndex];
+        var client = keeper.clientName || 'Unknown';
+        var type = keeper.type || keeper.documentType || 'quote';
+        var typeLabel = type === 'change_order' ? 'Change Order' : type === 'labor' ? 'Labor' : type === 'materials' ? 'Materials' : 'Quote';
+        var amount = (keeper.amount || 0).toFixed(2);
+
+        html += '<div class="dup-group" id="group_' + gi + '">';
+        html += '<div class="group-header" onclick="toggleGroup(' + gi + ')">';
+        html += '<input type="checkbox" checked onclick="event.stopPropagation();toggleGroupSelect(' + gi + ', this.checked)" style="width:18px;height:18px;accent-color:#ef4444">';
+        html += '<div class="group-info"><div class="client">' + esc(client) + ' — $' + amount + '</div>';
+        html += '<div class="meta">' + typeLabel + ' &bull; ' + group.items.length + ' copies &bull; Keeping newest</div></div>';
+        html += '<span class="group-badge">' + (group.items.length - 1) + ' dupes</span>';
+        html += '</div>';
+
+        html += '<div class="group-items" id="gitems_' + gi + '">';
+        group.items.forEach(function(inv, ii) {
+            var isKeep = ii === group.keepIndex;
+            var cls = isKeep ? 'keeper' : 'marked';
+            var date = inv.createdDate || inv.estimateDate || '';
+            if (date.indexOf('T') > 0) date = date.split('T')[0];
+            var invType = inv.type || inv.documentType || 'quote';
+
+            html += '<div class="dup-item ' + cls + '" id="item_' + gi + '_' + ii + '">';
+            html += '<span class="item-id">' + esc(inv.id || '?') + '</span>';
+            html += '<span class="item-date">' + esc(date) + '</span>';
+            html += '<span class="item-type">' + esc(invType) + '</span>';
+            html += '<span class="item-type">' + esc(inv._bucket) + '</span>';
+            html += '<span class="item-amount">$' + (inv.amount || 0).toFixed(2) + '</span>';
+            if (isKeep) {
+                html += '<span class="keeper-tag">✓ Keep</span>';
+            } else {
+                html += '<span class="delete-tag">✕ Delete</span>';
+            }
+            html += '<div class="item-actions">';
+            if (!isKeep) {
+                html += '<button class="keep-btn" onclick="setKeeper(' + gi + ',' + ii + ')">Keep This</button>';
+            }
+            html += '</div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+    });
+    document.getElementById('groupList').innerHTML = html;
+}
+
+window.toggleGroup = function(gi) {
+    var el = document.getElementById('gitems_' + gi);
+    el.classList.toggle('open');
+};
+
+window.toggleGroupSelect = function(gi, checked) {
+    var el = document.getElementById('group_' + gi);
+    if (checked) el.classList.add('selected'); else el.classList.remove('selected');
+};
+
+window.setKeeper = function(gi, ii) {
+    dupGroups[gi].keepIndex = ii;
+    renderGroups();
+    // Re-open this group
+    document.getElementById('gitems_' + gi).classList.add('open');
+};
+
+// ================================================================
+// DELETE ALL DUPLICATES
+// ================================================================
+window.confirmDeleteAll = function() {
+    // Count what will be deleted
+    var total = 0;
+    dupGroups.forEach(function(g) {
+        var cb = document.querySelector('#group_' + dupGroups.indexOf(g) + ' input[type=checkbox]');
+        if (!cb || cb.checked) total += g.items.length - 1;
+    });
+
+    if (total === 0) { toast('Nothing to delete', 'info'); return; }
+
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'confirmModal';
+    overlay.innerHTML = '<div class="modal-box">'
+        + '<h3>⚠️ Confirm Bulk Delete</h3>'
+        + '<p>This will permanently delete <strong>' + total + ' duplicate entries</strong> from your Firebase library. The newest (or manually selected) copy in each group will be kept.</p>'
+        + '<p style="color:#ef4444;font-weight:600">This cannot be undone.</p>'
+        + '<div class="modal-actions">'
+        + '<button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+        + '<button class="btn btn-danger" onclick="executeDelete()">Delete ' + total + ' Duplicates</button>'
+        + '</div></div>';
+    document.body.appendChild(overlay);
+};
+
+window.closeModal = function() {
+    var m = document.getElementById('confirmModal');
+    if (m) m.remove();
+};
+
+window.executeDelete = function() {
+    closeModal();
+    var deleted = 0;
+    var errors = 0;
+    var promises = [];
+
+    dupGroups.forEach(function(g, gi) {
+        var cb = document.querySelector('#group_' + gi + ' input[type=checkbox]');
+        if (cb && !cb.checked) return;
+
+        g.items.forEach(function(inv, ii) {
+            if (ii === g.keepIndex) {
+                log('KEEP: ' + inv.id + ' (' + inv._bucket + ')', 'keep');
+                return;
+            }
+            var path = inv._path;
+            log('DELETE: ' + inv.id + ' from ' + path, 'del');
+            var p = db.ref(path).remove().then(function() {
+                deleted++;
+            }).catch(function(e) {
+                errors++;
+                log('ERROR deleting ' + inv.id + ': ' + e.message, 'del');
+            });
+            promises.push(p);
+
+            // Also clean up portal path if it exists
+            var portalPath = 'portal/' + hashedPIN + '/' + inv.id;
+            var pp = db.ref(portalPath).remove().catch(function() {});
+            promises.push(pp);
+        });
+    });
+
+    Promise.all(promises).then(function() {
+        toast('Deleted ' + deleted + ' duplicates' + (errors > 0 ? ' (' + errors + ' errors)' : ''), errors > 0 ? 'error' : 'success');
+        log('Cleanup complete: ' + deleted + ' deleted, ' + errors + ' errors', 'info');
+        // Re-scan
+        setTimeout(startScan, 1000);
+    });
+};
+
+// ================================================================
+// SCAN PORTAL PATH (bonus)
+// ================================================================
+window.scanPortal = function() {
+    log('Scanning portal/ path...', 'info');
+    toast('Scanning portal entries...', 'info');
+
+    db.ref('portal/' + hashedPIN).once('value').then(function(snap) {
+        var data = snap.val() || {};
+        var ids = Object.keys(data);
+        log('Found ' + ids.length + ' portal entries', 'info');
+
+        // Check for portal entries that don't have a matching invoice
+        var invoiceIds = {};
+        allInvoices.forEach(function(inv) { invoiceIds[inv.id] = true; });
+
+        var orphans = [];
+        ids.forEach(function(id) {
+            if (!invoiceIds[id]) {
+                orphans.push(id);
+            }
+        });
+
+        if (orphans.length > 0) {
+            log('Found ' + orphans.length + ' orphaned portal entries (no matching invoice)', 'del');
+            toast(orphans.length + ' orphaned portal entries found — check log', 'warning');
+        } else {
+            log('All portal entries have matching invoices', 'keep');
+            toast('Portal path is clean!', 'success');
+        }
+    });
+};
+
+// ================================================================
+// SCAN REVISIONS PATH (bonus)
+// ================================================================
+window.scanRevisions = function() {
+    log('Scanning revisions/ path...', 'info');
+    toast('Scanning revision entries...', 'info');
+
+    db.ref('revisions/' + hashedPIN).once('value').then(function(snap) {
+        var data = snap.val() || {};
+        var ids = Object.keys(data);
+        var totalRevs = 0;
+        ids.forEach(function(id) {
+            var revs = Object.keys(data[id] || {});
+            totalRevs += revs.length;
+        });
+        log('Found ' + totalRevs + ' revisions across ' + ids.length + ' invoices', 'info');
+        toast(totalRevs + ' revisions across ' + ids.length + ' invoices', 'info');
+    });
+};
+
+// ================================================================
+// HELPERS
+// ================================================================
+function updateProgress(text, pct) {
+    document.getElementById('scanText').textContent = text;
+    document.getElementById('scanBar').style.width = pct + '%';
+}
+
+function log(msg, cls) {
+    var box = document.getElementById('logBox');
+    var entry = document.createElement('div');
+    entry.className = 'log-entry ' + (cls || '');
+    entry.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+    box.appendChild(entry);
+    box.scrollTop = box.scrollHeight;
+}
+
+window.toggleLog = function() {
+    var box = document.getElementById('logBox');
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+};
+
+function toast(msg, type) {
+    var existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || 'info');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function() { t.remove(); }, 4000);
+}
+
+function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+})();
+</script>
+</body>
+</html>

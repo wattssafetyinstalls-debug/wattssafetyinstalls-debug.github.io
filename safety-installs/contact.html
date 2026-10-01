@@ -15,9 +15,9 @@
 <link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" type="image/png"/>
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="msapplication-TileColor" content="#0A1D37"/>
+<meta name="msapplication-TileColor" content="#1a1a1a"/>
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
-<meta name="theme-color" content="#0A1D37"/>
+<meta name="theme-color" content="#1a1a1a"/>
 <!-- Search Engine & Social Media Meta Tags -->
 <meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification">
 <!-- Open Graph for Facebook/LinkedIn -->
@@ -47,7 +47,7 @@
 <link rel="dns-prefetch" href="https://www.google-analytics.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
 <!-- Font Awesome for icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/></noscript>
 <!-- Structured Data / Schema Markup -->
 <script type="application/ld+json">
 {
@@ -258,11 +258,11 @@
             transition: all 0.3s; 
             white-space: nowrap;
             font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(0,196,180,0.3);
+            box-shadow: 0 4px 15px rgba(220,38,38,0.3);
         }
         .phone-link:hover { 
             transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(0,196,180,0.4);
+            box-shadow: 0 6px 20px rgba(220,38,38,0.4);
             background: #00b3a4;
         }
 
@@ -298,7 +298,7 @@
         /* Page Header */
         .page-header {
             background: 
-                linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
+                linear-gradient(135deg, rgba(26,26,26,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
                 url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
             color: var(--white);
             padding: 100px 20px;
@@ -483,7 +483,7 @@
         .form-group textarea:focus {
             outline: none;
             border-color: var(--teal);
-            box-shadow: 0 0 0 3px rgba(0,196,180,0.1);
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
         }
         
         .submit-btn {
@@ -503,7 +503,7 @@
         .submit-btn:hover {
             background: #00b3a4;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,196,180,0.3);
+            box-shadow: 0 8px 25px rgba(220,38,38,0.3);
         }
         
         /* Service Areas */
@@ -755,7 +755,7 @@
             }
         }
     </style>
-</meta><script type="application/ld+json">
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -811,7 +811,7 @@
 <div class="logo-container">
 <a class="logo" href="/safety-installs/">WATTS</a>
 </div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false">
 <i class="fas fa-bars"></i>
 </button>
 <nav class="nav-links" id="navLinks">
@@ -958,12 +958,6 @@
 <p style="color: var(--gray); margin-bottom: 24px; font-size: 1.1rem;">Pick a time that works for you — no phone tag, no waiting. Justin will confirm within the hour.</p>
 <div id="cal-embed" style="width:100%;min-height:500px;overflow:hidden;border-radius:12px;border:1px solid #e2e8f0;"></div>
 </div>
-<!-- Photo Upload Section -->
-<div style="background: var(--white); padding: 50px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 40px; text-align: center;">
-<h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--navy); margin-bottom: 10px;">Upload Photos of Your Project</h2>
-<p style="color: var(--gray); margin-bottom: 24px; font-size: 1.1rem;">Snap a photo of the area you want modified — helps us give you a faster, more accurate estimate.</p>
-<div id="watts-photo-upload"></div>
-</div>
 <!-- Service Areas -->
 <div class="service-areas">
 <h2>Service Areas</h2>
@@ -1098,10 +1092,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- Cal.com Embed -->
 <script>(function(C,A,L){let p=A.createElement("script");p.src="https://app.cal.com/embed/embed.js";p.async=true;A.head.appendChild(p);p.onload=function(){C.Cal("init",{origin:"https://app.cal.com"});C.Cal("inline",{elementOrSelector:"#cal-embed",calLink:"justin-watts-pmakc1",config:{layout:"month_view",theme:"light"}});C.Cal("ui",{hideEventTypeDetails:false,layout:"month_view"})}})(window,document)</script>
-<script src="/js/watts-weather.js" data-weather-key="YOUR_OPENWEATHERMAP_KEY_HERE" defer></script>
-<script src="/js/watts-photo-upload.js" data-cloud-name="YOUR_CLOUDINARY_CLOUD_NAME" data-upload-preset="YOUR_UPLOAD_PRESET" defer></script>
+
 <script src="/js/watts-ai-chat.js" defer></script>
 <script src="../js/watts-lead-engine.js" defer></script>
-<script src="../js/watts-push.js" defer></script>
 </body>
 </html>

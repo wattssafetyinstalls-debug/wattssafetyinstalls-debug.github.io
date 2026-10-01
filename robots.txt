@@ -3,6 +3,8 @@ Allow: /
 
 # Block private tools
 Disallow: /tools/
+Disallow: /contract/
+Disallow: /_REDUNDANT_BACKUP/
 
 # Block unnecessary files and directories
 Disallow: /_includes/

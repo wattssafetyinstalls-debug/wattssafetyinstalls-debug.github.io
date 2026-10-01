@@ -15,9 +15,9 @@
 <link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" type="image/png"/>
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="msapplication-TileColor" content="#0A1D37"/>
+<meta name="msapplication-TileColor" content="#1a1a1a"/>
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
-<meta name="theme-color" content="#0A1D37"/>
+<meta name="theme-color" content="#1a1a1a"/>
 <!-- Search Engine & Social Media Meta Tags -->
 <meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification">
 <!-- Open Graph for Facebook/LinkedIn -->
@@ -47,7 +47,7 @@
 <link rel="dns-prefetch" href="https://www.google-analytics.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
 <!-- Font Awesome for icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/></noscript>
 <!-- Structured Data / Schema Markup -->
 <script type="application/ld+json">
 {
@@ -259,7 +259,7 @@
        
         /* Page Header */
         .page-header {
-            background: linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
+            background: linear-gradient(135deg, rgba(26,26,26,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
                 url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
             color: var(--white);
             padding: 100px 20px;
@@ -478,7 +478,7 @@
             }
         }
     </style>
-</meta><script type="application/ld+json">
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -534,7 +534,7 @@
 <div class="logo-container">
 <a class="logo" href="/safety-installs/">WATTS</a>
 </div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false">
 <i class="fas fa-bars"></i>
 </button>
 <div class="nav-links" id="navLinks">
@@ -759,6 +759,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script src="/js/watts-ai-chat.js" defer></script>
 <script src="../js/watts-lead-engine.js" defer></script>
-<script src="../js/watts-push.js" defer></script>
 </body>
 </html>

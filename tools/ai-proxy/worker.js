@@ -123,33 +123,87 @@ async function handleAIProxy(request, env, corsHeaders) {
     return jsonResponse({ error: 'Rate limit exceeded. Please wait a moment.' }, 429, corsHeaders);
   }
 
+  // Check if API key is configured
+  if (!env.GEMINI_API_KEY) {
+    console.error('[AI Proxy] GEMINI_API_KEY secret is not set');
+    return jsonResponse({ error: 'AI proxy not configured - missing API key' }, 503, corsHeaders);
+  }
+
   try {
-    const body = await request.json();
+    // Safely read and parse request body
+    const rawBody = await request.text();
+    if (!rawBody || rawBody.trim() === '') {
+      return jsonResponse({ error: 'Empty request body' }, 400, corsHeaders);
+    }
+    
+    let body;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (parseErr) {
+      console.error('[AI Proxy] JSON parse error:', parseErr.message, 'Raw:', rawBody.substring(0, 100));
+      return jsonResponse({ error: 'Invalid JSON: ' + parseErr.message }, 400, corsHeaders);
+    }
+    
     const url = new URL(request.url);
-    const model = url.searchParams.get('model') || 'gemini-2.5-pro';
+    const requestedModel = url.searchParams.get('model') || 'gemini-2.5-pro';
 
     if (!body.contents || !Array.isArray(body.contents)) {
       return jsonResponse({ error: 'Invalid request format' }, 400, corsHeaders);
     }
 
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+    // Model fallback chain: try requested model, then progressively older models
+    const modelsToTry = [requestedModel, 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro'];
+    let lastError = null;
+
+    for (const model of modelsToTry) {
+      try {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
+        
+        const geminiResponse = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        const data = await geminiResponse.json();
+
+        if (geminiResponse.ok) {
+          // Success - return the response
+          return jsonResponse(data, 200, corsHeaders);
+        }
+
+        // Log the error but try next model
+        console.error(`[AI Proxy] ${model} failed:`, geminiResponse.status, data.error?.message);
+        lastError = { status: geminiResponse.status, message: data.error?.message };
+
+        // If it's an auth error or rate limit, don't try other models
+        if (geminiResponse.status === 401 || geminiResponse.status === 429) {
+          break;
+        }
+        
+        // Small delay before trying next model (exponential backoff)
+        const delay = Math.min(1000 * Math.pow(2, modelsToTry.indexOf(model)), 4000);
+        await new Promise(r => setTimeout(r, delay));
+        // Continue to next model for 503, 400, 500 errors
+      } catch (err) {
+        console.error(`[AI Proxy] ${model} error:`, err.message);
+        lastError = { status: 500, message: err.message };
       }
-    );
-
-    const data = await geminiResponse.json();
-
-    if (!geminiResponse.ok) {
-      return jsonResponse({ error: data.error?.message || 'Gemini API error' }, geminiResponse.status, corsHeaders);
     }
 
-    return jsonResponse(data, 200, corsHeaders);
+    // All models failed
+    const isGoogleDown = lastError?.message?.includes('high demand') || lastError?.status === 503;
+    return jsonResponse({ 
+      error: isGoogleDown 
+        ? 'Google AI is experiencing high demand. Please wait a moment and try again.' 
+        : (lastError?.message || 'All AI models unavailable'), 
+      status: lastError?.status || 503,
+      modelsTried: modelsToTry.length
+    }, 503, corsHeaders);
+
   } catch (error) {
-    return jsonResponse({ error: 'Internal proxy error' }, 500, corsHeaders);
+    console.error('[AI Proxy] Internal error:', error.message);
+    return jsonResponse({ error: 'Internal proxy error: ' + error.message }, 500, corsHeaders);
   }
 }
 
@@ -579,6 +633,7 @@ async function handleLeadIncoming(request, env, corsHeaders) {
       source: data.source || 'unknown',
       page: data.page || '',
       referrer: data.referrer || '',
+      conversation: Array.isArray(data.conversation) ? data.conversation.slice(0, 100) : [],
       score,
       priority,
       status: 'new',          // new → contacted → quoted → won → lost

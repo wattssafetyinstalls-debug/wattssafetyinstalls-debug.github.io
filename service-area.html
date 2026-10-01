@@ -47,7 +47,7 @@
 <link rel="dns-prefetch" href="https://www.google-analytics.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
 <!-- Font Awesome for icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/></noscript>
 <!-- Structured Data / Schema Markup -->
 <script type="application/ld+json">
 {
@@ -710,7 +710,7 @@
             }
         }
     </style>
-</meta><script type="application/ld+json">
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -760,7 +760,7 @@
 <div class="logo-container">
 <a class="logo" href="/">WATTS</a>
 </div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false">
 <i class="fas fa-bars"></i>
 </button>
 <nav class="nav-links" id="navLinks">
@@ -792,7 +792,7 @@
 <!-- Distance Widget -->
 <section style="padding: 20px 0; background: var(--warm-light);">
 <div class="breadcrumb-container" style="text-align: center;">
-<div id="watts-distance" style="display: inline-block;"></div>
+
 </div>
 </section>
 <!-- Service Area Content -->
@@ -801,7 +801,7 @@
 <div class="service-area-info">
 <h2>Serving a 100-Mile Radius Around Norfolk, NE</h2>
 <p>Watts ATP Contractor proudly serves Norfolk, Nebraska and communities within a <strong>100-mile radius</strong>. As an ATP Approved Contractor with Nebraska license #54690-25, we bring professional accessibility solutions, safety installations, and comprehensive home services to over <strong>24 Nebraska counties and 3 Iowa counties</strong>.</p>
-<p><strong>No job is too far.</strong> Whether you need ADA-compliant ramps, grab bars for bathroom safety, snow removal services, or lawn care — if you're within our service area, we'll come to you. Travel expenses or service-call fees may apply depending on distance.</p>
+<p><strong>No job is too far.</strong> Whether you need ADA-compliant ramps, grab bars for bathroom safety, non-slip flooring, or a full accessibility remodel — if you're within our service area, we'll come to you. Travel expenses or service-call fees may apply depending on distance.</p>
 <h3 style="margin-top: 30px; color: var(--navy);">Key Cities We Serve:</h3>
 <div class="service-area-list">
 <div class="service-area-item"><i class="fas fa-check-circle"></i> Norfolk, NE</div>
@@ -988,9 +988,8 @@ document.addEventListener('DOMContentLoaded', function() {
       {"@type": "City", "name": "Norfolk, NE"}, {"@type": "City", "name": "Columbus, NE"}, {"@type": "City", "name": "Fremont, NE"}, {"@type": "City", "name": "South Sioux City, NE"}, {"@type": "City", "name": "Wayne, NE"}, {"@type": "City", "name": "O'Neill, NE"}, {"@type": "City", "name": "West Point, NE"}, {"@type": "City", "name": "Schuyler, NE"}, {"@type": "City", "name": "Sioux City, IA"}, {"@type": "City", "name": "Le Mars, IA"}, {"@type": "City", "name": "Onawa, IA"}
     ]
   }
-}</script><script src="/js/watts-distance.js" data-maps-key="YOUR_GOOGLE_MAPS_KEY_HERE" defer></script>
+}</script>
 <script src="/js/watts-ai-chat.js" defer></script>
 <script src="js/watts-lead-engine.js" defer></script>
-<script src="js/watts-push.js" defer></script>
 </body>
 </html>

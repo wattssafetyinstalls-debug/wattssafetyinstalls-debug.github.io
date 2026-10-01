@@ -21,7 +21,7 @@
         c:'#00C4B4', cd:'#009e91', cl:'#E0F7FA',
         hdr:'linear-gradient(135deg,#0A1D37,#16213e)', ht:'#FFD700', mb:'#f8f9fa' };
 
-  var SYS = 'You are Justin Watts, the owner of ' + B.name + ' in Norfolk, Nebraska. You are a real person — a hands-on contractor who personally shows up to every job. You are NOT an AI assistant, you are NOT a chatbot, you are NOT a virtual helper. You are Justin, a licensed contractor having a real conversation.\n\n' +
+  var SYS = 'You are the chat assistant on the website of ' + B.name + ' in Norfolk, Nebraska, run by owner Justin Watts — a hands-on, licensed contractor who personally shows up to every job. You speak on Justin\'s behalf: friendly, expert, and focused on capturing the visitor\'s details so Justin can call them back personally. If anyone asks whether you are a real person or Justin himself, answer honestly — you are Justin\'s assistant, and Justin will personally follow up.\n\n' +
     'BUSINESS INFO:\n' +
     '- Phone: (405) 410-6402 | Email: Justin.Watts@WattsATPContractor.com\n' +
     '- Address: 507 West Omaha Ave Suite B, Norfolk NE 68701\n' +
@@ -36,7 +36,7 @@
     '- Pricing (ranges, never exact — ALWAYS say "or more" or "and up" after the top number, NEVER hard-cap): Grab bars $200-400+ each/$600-1,500+ bathroom set, Wheelchair ramps $2,500-12,000 or more, Bathroom mods $6,000-30,000 and up, Non-slip flooring $1,200-8,000+, Painting single room $400-1,200+/whole house $4K-12K or more/exterior $5K-15K+, Kitchen remodel $15K-50K or more, Gutters $1,800-5,000+, Stair lifts $3,000-8,000+, Handyman $75-95/hr\n' +
     '- You\'ve done hundreds of jobs. You know the common problems: rotted subfloors under old tubs, lack of blocking in walls for grab bars, non-ADA-compliant ramps from other contractors.\n\n' +
     'HOW YOU TALK:\n' +
-    '- You sound like a real Nebraska guy. Casual, direct, no corporate fluff.\n' +
+    '- You sound like a friendly Nebraska contractor\'s office. Casual, direct, no corporate fluff.\n' +
     '- You share real examples: "I just finished a tub-to-shower conversion in Columbus last week — the family had been waiting months for someone to do it right."\n' +
     '- You explain things in plain English. If someone asks about ADA requirements, you don\'t cite codes — you say "Basically, the ramp can\'t be too steep. For every inch of height, you need 12 inches of ramp. So a 30-inch porch needs about 30 feet of ramp with a couple turns."\n' +
     '- You\'re confident but never arrogant. You admit what you don\'t know: "Honestly, I\'d need to see it in person to give you a solid number."\n' +
@@ -46,8 +46,8 @@
     '1. FIRST: Answer their question with real detail and expertise. Don\'t give a one-liner — show you know your stuff.\n' +
     '2. SECOND: Ask a smart follow-up about their specific situation. "Is this for yourself or a family member? That helps me figure out exactly what you need."\n' +
     '3. THIRD: Offer the free estimate and naturally ask for their name. "I\'d love to come take a look — what\'s your name so I can set something up?"\n' +
-    '4. AFTER NAME: Get their number. "What\'s the best number to reach you? I\'ll call you directly to set up a time."\n' +
-    '5. AFTER PHONE: Confirm warmly. "Perfect, [name]! I\'ll give you a call [today/tomorrow]. Really looking forward to helping you out."\n\n' +
+    '4. AFTER NAME: Get their number. "What\'s the best number for Justin to reach you? He\'ll call you directly to set up a time."\n' +
+    '5. AFTER PHONE: Confirm warmly. "Perfect, [name]! Justin will give you a call [today/tomorrow]. Really looking forward to helping you out."\n\n' +
     'SISTER COMPANY CROSS-REFERRAL (VERY IMPORTANT):\n' +
     '- You run TWO sister companies under the Watts brand. NEVER say "I don\'t provide that service" or "that\'s not something I do."\n' +
     '- **Watts ATP Contractor** handles: wheelchair ramps, grab bars, bathroom accessibility, ADA modifications, stairlifts, non-slip flooring, aging-in-place solutions. Website: https://wattsatpcontractor.com\n' +
@@ -58,7 +58,7 @@
     'RULES:\n' +
     '- Write 2-5 sentences per reply. Be thorough but conversational — not robotic.\n' +
     '- ALWAYS include specific details — material names, timeframes, process steps. Never be vague.\n' +
-    '- NEVER say "I\'m an AI", "as an AI", "I\'m a chatbot", or anything that breaks character. You ARE Justin.\n' +
+    '- Never claim to be Justin or a human. If asked, say you\'re the assistant on Justin\'s website and he personally calls everyone back.\n' +
     '- NEVER use bullet points or numbered lists in chat. Write in natural sentences.\n' +
     '- If they ask something you can\'t answer, pivot: "That\'s a great question — I\'d really need to see the space to answer that well. What\'s the best number to reach you?"\n' +
     '- Respond in the visitor\'s language if they write in Spanish, etc.\n' +
@@ -168,15 +168,15 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   var w = document.createElement('div');
   w.id = 'wc';
   w.innerHTML = '\
-<button id="wc-trig" aria-label="Chat with Justin">\
+<button id="wc-trig" aria-label="Chat with us">\
 <span id="wc-dot"></span>\
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>\
-<span class="lb">Chat with Justin</span>\
+<span class="lb">Chat with us</span>\
 </button>\
 <div id="wc-win">\
 <div id="wc-hdr">\
-<div class="av">J</div>\
-<div><div class="nm">Justin</div><div class="st">Online now</div></div>\
+<div class="av">JW</div>\
+<div><div class="nm">Justin&#39;s Assistant</div><div class="st">Replies instantly</div></div>\
 <button id="wc-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>\
 </div>\
 <div id="wc-msgs"></div>\
@@ -251,21 +251,21 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
       var pg = window.location.pathname.toLowerCase();
       var g;
       if (pg.indexOf('grab-bar') !== -1) {
-        g = 'Hey there! I\'m Justin — I\'ve installed hundreds of grab bars across NE Nebraska. Bathroom, shower, hallway — you name it. What are you looking to get done? I can give you a **free estimate** this week.';
+        g = 'Hey there! I\'m Justin\'s assistant — Justin\'s installed hundreds of grab bars across NE Nebraska. Bathroom, shower, hallway — you name it. What are you looking to get done? He can give you a **free estimate** this week.';
       } else if (pg.indexOf('wheelchair-ramp') !== -1) {
-        g = 'Hey! I\'m Justin — wheelchair ramps are one of my specialties. ADA-compliant, built to last, and I handle all the permits. What\'s the situation? I\'d love to come take a look for **free**.';
+        g = 'Hey! I\'m Justin\'s assistant — wheelchair ramps are one of his specialties. ADA-compliant, built to last, and he handles all the permits. What\'s the situation? He\'d love to come take a look for **free**.';
       } else if (pg.indexOf('bathroom') !== -1) {
-        g = 'Hey! I\'m Justin — I do a lot of bathroom accessibility work. Walk-in showers, grab bars, raised toilets, the whole nine yards. What are you thinking about? **Free estimates** always.';
+        g = 'Hey! I\'m Justin\'s assistant — Justin does a lot of bathroom accessibility work. Walk-in showers, grab bars, raised toilets, the whole nine yards. What are you thinking about? **Free estimates** always.';
       } else if (pg.indexOf('non-slip') !== -1) {
-        g = 'Hey! Justin here — non-slip flooring is a game-changer for safety. I\'ve done kitchens, bathrooms, entryways, you name it. What area are you looking at? I can come measure for **free**.';
+        g = 'Hey! Justin\'s assistant here — non-slip flooring is a game-changer for safety. He\'s done kitchens, bathrooms, entryways, you name it. What area are you looking at? He can come measure for **free**.';
       } else if (pg.indexOf('service-area') !== -1) {
-        g = 'Hey! I\'m Justin — I cover a 100-mile radius from Norfolk. Columbus, Fremont, Wayne, South Sioux City, and everywhere in between. Where are you located? I\'ll let you know if I can get out there.';
+        g = 'Hey! I\'m Justin\'s assistant — he covers a 100-mile radius from Norfolk. Columbus, Fremont, Wayne, South Sioux City, and everywhere in between. Where are you located? I can let you know if he can get out there.';
       } else if (pg.indexOf('contact') !== -1) {
-        g = 'Hey! I\'m Justin — glad you\'re reaching out. You can fill out the form or just tell me what you need right here and I\'ll get you taken care of. What\'s going on?';
+        g = 'Hey! I\'m Justin\'s assistant — glad you\'re reaching out. You can fill out the form or just tell me what you need right here and I\'ll make sure Justin gets it. What\'s going on?';
       } else if (isSI) {
-        g = 'Hey, I\'m Justin! I handle remodeling, painting, gutters, handyman work, and more across Northeast Nebraska. What can I help you with? **Free estimates** — always.';
+        g = 'Hey, I\'m Justin\'s assistant! He handles remodeling, painting, gutters, handyman work, and more across Northeast Nebraska. What can I help you with? **Free estimates** — always.';
       } else {
-        g = 'Hey, I\'m Justin! I specialize in wheelchair ramps, grab bars, and accessibility modifications across NE Nebraska. What brings you here today? **Free estimates** — no pressure.';
+        g = 'Hey, I\'m Justin\'s assistant! He specializes in wheelchair ramps, grab bars, and accessibility modifications across NE Nebraska. What brings you here today? **Free estimates** — no pressure.';
       }
       addMsg(g,'b');
       hist.push({role:'model',parts:[{text:g}]});
@@ -314,8 +314,8 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   function getRecoveryResponse() {
     var userMsgs = hist.filter(function(m){return m.role==='user';}).length;
     if (userMsgs <= 1) return "Hey, sorry about that — my connection hiccupped. What were you asking about? I'm here to help with any accessibility or home modification questions.";
-    if (lead.name) return "Sorry " + lead.name + ", I lost my train of thought there for a second. What were we talking about? Or if you'd rather just call me directly, hit me at **(405) 410-6402** — I pick up.";
-    return "Whoops — lost the signal for a sec. I'm back though. What can I help you figure out? Or feel free to call me at **(405) 410-6402** if that's easier.";
+    if (lead.name) return "Sorry " + lead.name + ", I lost my train of thought there for a second. What were we talking about? Or if you'd rather talk to Justin directly, call him at **(405) 410-6402** — he picks up.";
+    return "Whoops — lost the signal for a sec. I'm back though. What can I help you figure out? Or feel free to call Justin at **(405) 410-6402** if that's easier.";
   }
 
   function callAI(h, attempt) {
@@ -401,9 +401,41 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
       if (!dup) {
         ls.push(e);
         localStorage.setItem(LEAD_KEY,JSON.stringify(ls));
-        sendLeadNotification(e);
+        postLeadToWorker(e);
       }
     } catch(x) {}
+  }
+
+  // Send captured lead + full transcript to the Cloudflare worker
+  // (shows up in the owner's dashboard at /tools/ai-dashboard/)
+  // Falls back to Formspree email if the worker is unreachable.
+  function transcriptPayload(source) {
+    return {
+      name: lead.name || 'Chat Visitor',
+      phone: lead.phone || '',
+      email: lead.email || '',
+      service: '',
+      source: source || 'ai-chat',
+      page: location.pathname,
+      brand: isSI ? 'wsi' : 'atp',
+      referrer: document.referrer || '',
+      conversation: hist.map(function(m){
+        return { role: m.role === 'user' ? 'user' : 'assistant', text: m.parts[0].text };
+      }),
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  function postLeadToWorker(e) {
+    var payload = transcriptPayload('ai-chat');
+    fetch(PROXY + '/lead/incoming', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function() {
+      // Worker unreachable — fall back to direct email notification
+      sendLeadNotification(e);
+    });
   }
   function sendLeadNotification(e) {
     // Fire-and-forget to Formspree for email notification
@@ -454,7 +486,9 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
   // Nudge after 6s
   setTimeout(function(){ if(!open&&!hist.length&&!hadSession) trig.classList.add('has-dot'); }, 6000);
 
-  // Save session on unload
+  // Save session on unload + send transcript to worker so the owner
+  // can read what visitors asked (even if they never shared contact info)
+  var transcriptSent = false;
   window.addEventListener('beforeunload', function(){
     saveSession();
     if(hist.length>1) {
@@ -463,6 +497,17 @@ display:flex;align-items:center;justify-content:center;transition:all .15s;flex-
         ss.push({brand:B.name,page:location.pathname,ts:new Date().toISOString(),msgs:hist.length,lead:lead});
         localStorage.setItem('watts-ai-sessions',JSON.stringify(ss));
       } catch(x) {}
+      if (!transcriptSent) {
+        transcriptSent = true;
+        var payload = JSON.stringify(transcriptPayload('ai-chat-transcript'));
+        try {
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(PROXY + '/lead/incoming', new Blob([payload], { type: 'application/json' }));
+          } else {
+            fetch(PROXY + '/lead/incoming', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function(){});
+          }
+        } catch(x) {}
+      }
     }
   });
 })();

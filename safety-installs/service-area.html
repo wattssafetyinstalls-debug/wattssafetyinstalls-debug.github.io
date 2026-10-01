@@ -15,9 +15,9 @@
 <link rel="icon" href="/android-chrome-192x192.png" sizes="192x192" type="image/png"/>
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="msapplication-TileColor" content="#0A1D37"/>
+<meta name="msapplication-TileColor" content="#1a1a1a"/>
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
-<meta name="theme-color" content="#0A1D37"/>
+<meta name="theme-color" content="#1a1a1a"/>
 <!-- Search Engine & Social Media Meta Tags -->
 <meta content="9uPoUkPF9bV3aKmaJyxbcnlzzXjxYLkUPb-YXyvOabU" name="google-site-verification"/>
 <!-- Open Graph for Facebook/LinkedIn -->
@@ -47,7 +47,7 @@
 <link rel="dns-prefetch" href="https://www.google-analytics.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
 <!-- Font Awesome for icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/></noscript>
 <!-- Structured Data / Schema Markup -->
 <script type="application/ld+json">
 {
@@ -327,7 +327,7 @@
             height: 50vh;
             min-height: 400px;
             background: 
-                linear-gradient(135deg, rgba(10,29,55,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
+                linear-gradient(135deg, rgba(26,26,26,0.85) 0%, rgba(245, 158, 11, 0.2) 100%),
                 url('https://images.unsplash.com/photo-1571624436279-b272aff752b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
             color: var(--white);
             display: flex;
@@ -542,7 +542,7 @@
             font-size: 1.3rem; 
             font-weight: 700; 
             text-decoration: none; 
-            box-shadow: 0 12px 30px rgba(10,29,55,0.4); 
+            box-shadow: 0 12px 30px rgba(26,26,26,0.4); 
             display: inline-block; 
             margin-top: 20px; 
             transition: all 0.3s; 
@@ -552,7 +552,7 @@
         }
         .cta-button:hover { 
             transform: translateY(-5px); 
-            box-shadow: 0 15px 35px rgba(10,29,55,0.6); 
+            box-shadow: 0 15px 35px rgba(26,26,26,0.6); 
             background: #09182e;
         }
         
@@ -710,7 +710,7 @@
             }
         }
     </style>
-</meta><script type="application/ld+json">
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -766,7 +766,7 @@
 <div class="logo-container">
 <a class="logo" href="/safety-installs/">WATTS</a>
 </div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false">
 <i class="fas fa-bars"></i>
 </button>
 <nav class="nav-links" id="navLinks">
@@ -798,7 +798,7 @@
 <!-- Distance Widget -->
 <section style="padding: 20px 0; background: var(--cream);">
 <div class="breadcrumb-container" style="text-align: center;">
-<div id="watts-distance" style="display: inline-block;"></div>
+
 </div>
 </section>
 <!-- Service Area Content -->
@@ -996,9 +996,8 @@ document.addEventListener('DOMContentLoaded', function() {
       {"@type": "City", "name": "Norfolk, NE"}, {"@type": "City", "name": "Columbus, NE"}, {"@type": "City", "name": "Fremont, NE"}, {"@type": "City", "name": "South Sioux City, NE"}, {"@type": "City", "name": "Wayne, NE"}, {"@type": "City", "name": "O'Neill, NE"}, {"@type": "City", "name": "West Point, NE"}, {"@type": "City", "name": "Schuyler, NE"}, {"@type": "City", "name": "Sioux City, IA"}, {"@type": "City", "name": "Le Mars, IA"}, {"@type": "City", "name": "Onawa, IA"}
     ]
   }
-}</script><script src="/js/watts-distance.js" data-maps-key="YOUR_GOOGLE_MAPS_KEY_HERE" defer></script>
+}</script>
 <script src="/js/watts-ai-chat.js" defer></script>
 <script src="../js/watts-lead-engine.js" defer></script>
-<script src="../js/watts-push.js" defer></script>
 </body>
 </html>

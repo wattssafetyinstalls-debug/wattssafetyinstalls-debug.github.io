@@ -47,7 +47,7 @@
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 <link rel="dns-prefetch" href="https://www.google-analytics.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/></noscript>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -227,7 +227,7 @@
 <header>
 <div class="nav-container">
 <a class="logo" href="/">WATTS</a>
-<button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
 <nav class="nav-links" id="navLinks">
 <a href="/">Home</a>
 <a href="/services.html">Services</a>
@@ -338,13 +338,6 @@
 <div id="cal-embed" style="width:100%;min-height:500px;overflow:hidden;border-radius:12px;border:1px solid #e2e8f0;"></div>
 </div>
 
-<!-- Photo Upload Section -->
-<div style="background: var(--white); padding: 50px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 40px; text-align: center;">
-<h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--navy); margin-bottom: 10px;">Upload Photos of Your Project</h2>
-<p style="color: var(--gray); margin-bottom: 24px; font-size: 1.1rem;">Snap a photo of the area you want modified — helps us give you a faster, more accurate estimate.</p>
-<div id="watts-photo-upload"></div>
-</div>
-
 <div class="service-areas">
 <h2>Service Areas</h2>
 <p>We proudly serve Norfolk and surrounding communities throughout Nebraska</p>
@@ -408,10 +401,7 @@
 </script>
 <!-- Cal.com Embed -->
 <script>(function(C,A,L){let p=A.createElement("script");p.src="https://app.cal.com/embed/embed.js";p.async=true;A.head.appendChild(p);p.onload=function(){C.Cal("init",{origin:"https://app.cal.com"});C.Cal("inline",{elementOrSelector:"#cal-embed",calLink:"justin-watts-pmakc1",config:{layout:"month_view",theme:"light"}});C.Cal("ui",{hideEventTypeDetails:false,layout:"month_view"})}})(window,document)</script>
-<script src="/js/watts-weather.js" data-weather-key="YOUR_OPENWEATHERMAP_KEY_HERE" defer></script>
-<script src="/js/watts-photo-upload.js" data-cloud-name="YOUR_CLOUDINARY_CLOUD_NAME" data-upload-preset="YOUR_UPLOAD_PRESET" defer></script>
 <script src="/js/watts-ai-chat.js" defer></script>
 <script src="js/watts-lead-engine.js" defer></script>
-<script src="js/watts-push.js" defer></script>
 </body>
 </html>

@@ -450,12 +450,12 @@
 <!-- ═══════════════ LEADS PANEL ═══════════════ -->
 <div class="panel" id="panel-leads">
     <div class="section-title">Captured Leads</div>
-    <div class="section-desc">Leads captured by the AI chatbot widget on your website. Stored locally in your browser.</div>
+    <div class="section-desc">Live leads from the website — contact forms, AI chat conversations, and callback requests. Synced from the cloud, visible on any device. PIN required.</div>
 
     <div class="stats-grid" id="leadStats"></div>
     <div id="leadsList"></div>
     <button class="btn btn-secondary" onclick="exportLeads()" style="margin-top:12px;">Export as CSV</button>
-    <button class="btn btn-danger" onclick="clearLeads()" style="margin-top:12px; margin-left:8px;">Clear All Leads</button>
+    <button class="btn btn-secondary" onclick="loadLeads()" style="margin-top:12px; margin-left:8px;">Refresh</button>
 </div>
 
 <!-- ═══════════════ ANALYTICS PANEL ═══════════════ -->
@@ -982,56 +982,129 @@ Make each page distinct — Google penalizes duplicate content across location p
 }
 
 // ═══════════════════════════════════════════
-// LEADS MANAGEMENT
+// LEADS MANAGEMENT — synced from Cloudflare worker
 // ═══════════════════════════════════════════
-function loadLeads() {
-    const leads = JSON.parse(localStorage.getItem('watts-ai-leads') || '[]');
-    const sessions = JSON.parse(localStorage.getItem('watts-ai-sessions') || '[]');
-    
-    document.getElementById('leadsBadge').textContent = leads.length;
+let _leadsCache = [];
 
-    const statsEl = document.getElementById('leadStats');
-    statsEl.innerHTML = `
-        <div class="stat-card"><div class="stat-num">${leads.length}</div><div class="stat-label">Total Leads</div></div>
-        <div class="stat-card"><div class="stat-num">${sessions.length}</div><div class="stat-label">Chat Sessions</div></div>
-        <div class="stat-card"><div class="stat-num">${leads.filter(l=>l.phone).length}</div><div class="stat-label">With Phone #</div></div>
-        <div class="stat-card"><div class="stat-num">${leads.filter(l=>l.brand==='Watts ATP Contractor').length}</div><div class="stat-label">ATP Leads</div></div>
-    `;
+function getOwnerPin() {
+    let pin = sessionStorage.getItem('watts_owner_pin');
+    if (!pin) {
+        pin = prompt('Enter owner PIN to view leads:');
+        if (pin) sessionStorage.setItem('watts_owner_pin', pin);
+    }
+    return pin;
+}
 
+async function loadLeads() {
     const listEl = document.getElementById('leadsList');
-    if (leads.length === 0) {
-        listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">No leads captured yet. The chatbot will capture leads here as visitors interact with it.</div>';
+    const pin = getOwnerPin();
+    if (!pin) {
+        listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">PIN required to view leads.</div>';
         return;
     }
 
-    listEl.innerHTML = leads.reverse().map(l => `
-        <div class="lead-card">
-            <div class="lead-name">${l.name || 'Unknown'}</div>
-            <div class="lead-phone">${l.phone || 'No phone captured'}</div>
-            <div class="lead-meta">${l.brand} &bull; ${l.page} &bull; ${new Date(l.timestamp).toLocaleString()}</div>
-            ${l.conversation ? `<div class="lead-convo">${l.conversation.map(m => `<strong>${m.role}:</strong> ${m.text}`).join('<br>')}</div>` : ''}
-        </div>
-    `).join('');
+    listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">Loading leads...</div>';
+
+    try {
+        const res = await fetch(`${PROXY_URL}/lead/list?pin=${encodeURIComponent(pin)}&limit=200`);
+        const data = await res.json();
+        if (!res.ok) {
+            if (res.status === 401) {
+                sessionStorage.removeItem('watts_owner_pin');
+                listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">Wrong PIN. Click Refresh to try again.</div>';
+            } else {
+                listEl.innerHTML = `<div style="color:#555;text-align:center;padding:40px;">Error: ${data.error || res.status}</div>`;
+            }
+            return;
+        }
+
+        _leadsCache = data.leads || [];
+        document.getElementById('leadsBadge').textContent = _leadsCache.length;
+
+        document.getElementById('leadStats').innerHTML = `
+            <div class="stat-card"><div class="stat-num">${data.total || _leadsCache.length}</div><div class="stat-label">Total Leads</div></div>
+            <div class="stat-card"><div class="stat-num">${_leadsCache.filter(l=>l.status==='new').length}</div><div class="stat-label">New</div></div>
+            <div class="stat-card"><div class="stat-num">${_leadsCache.filter(l=>l.priority==='hot'||l.priority==='high').length}</div><div class="stat-label">Hot/High Priority</div></div>
+            <div class="stat-card"><div class="stat-num">${_leadsCache.filter(l=>l.status==='won').length}</div><div class="stat-label">Won</div></div>
+        `;
+
+        if (_leadsCache.length === 0) {
+            listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">No leads yet. New website form submissions and chat conversations will appear here.</div>';
+            return;
+        }
+
+        listEl.innerHTML = _leadsCache.map((l, i) => `
+            <div class="lead-card">
+                <div class="lead-name">${esc(l.name || 'Unknown')} <span style="font-size:10px;color:${l.status==='new'?'#22c55e':'#888'};text-transform:uppercase;letter-spacing:1px;">${l.status||''}</span></div>
+                <div class="lead-phone">${esc(l.service || '')} ${l.score!=null?'&bull; Score '+l.score:''} ${l.priority?'&bull; '+l.priority:''}</div>
+                <div class="lead-meta">${l.createdAt ? new Date(l.createdAt).toLocaleString() : ''}</div>
+                <div style="margin-top:8px;display:flex;gap:8px;">
+                    <button class="btn btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="viewLead(${i})">View Details</button>
+                    ${l.status==='new'?`<button class="btn btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="markContacted(${i})">Mark Contacted</button>`:''}
+                </div>
+                <div class="lead-convo" id="lead-detail-${i}" style="display:none;"></div>
+            </div>
+        `).join('');
+    } catch (err) {
+        listEl.innerHTML = '<div style="color:#555;text-align:center;padding:40px;">Could not reach the lead server. Check your connection.</div>';
+    }
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function viewLead(i) {
+    const el = document.getElementById('lead-detail-' + i);
+    if (el.style.display === 'block') { el.style.display = 'none'; return; }
+    const pin = getOwnerPin();
+    if (!pin) return;
+    el.style.display = 'block';
+    el.innerHTML = 'Loading...';
+    try {
+        const res = await fetch(`${PROXY_URL}/lead/detail?pin=${encodeURIComponent(pin)}&id=${encodeURIComponent(_leadsCache[i].id)}`);
+        const l = await res.json();
+        if (!res.ok) { el.innerHTML = esc(l.error || 'Error'); return; }
+        let html = `<div><strong>Phone:</strong> ${esc(l.phone||'—')} &nbsp; <strong>Email:</strong> ${esc(l.email||'—')}</div>`;
+        html += `<div><strong>Brand:</strong> ${esc(l.brand||'')} &bull; <strong>Page:</strong> ${esc(l.page||'')} &bull; <strong>Source:</strong> ${esc(l.source||'')}</div>`;
+        if (l.message) html += `<div style="margin-top:6px;"><strong>Message:</strong> ${esc(l.message)}</div>`;
+        if (l.timeline) html += `<div><strong>Timeline:</strong> ${esc(l.timeline)}</div>`;
+        if (l.conversation && l.conversation.length) {
+            html += '<div style="margin-top:8px;border-top:1px solid #1a2a3c;padding-top:8px;">' +
+                l.conversation.map(m => `<div style="margin-bottom:4px;"><strong style="color:${m.role==='user'?'#00C4B4':'#888'}">${m.role==='user'?'Visitor':'Assistant'}:</strong> ${esc(m.text)}</div>`).join('') + '</div>';
+        }
+        if (l.notes) html += `<div><strong>Notes:</strong> ${esc(l.notes)}</div>`;
+        el.innerHTML = html;
+    } catch (e) {
+        el.innerHTML = 'Could not load details.';
+    }
+}
+
+async function markContacted(i) {
+    const pin = getOwnerPin();
+    if (!pin) return;
+    try {
+        await fetch(`${PROXY_URL}/lead/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin, id: _leadsCache[i].id, status: 'contacted', contactedAt: new Date().toISOString() })
+        });
+        _leadsCache[i].status = 'contacted';
+        loadLeads();
+    } catch (e) { alert('Could not update lead.'); }
 }
 
 function exportLeads() {
-    const leads = JSON.parse(localStorage.getItem('watts-ai-leads') || '[]');
-    if (!leads.length) return alert('No leads to export');
-    const csv = 'Name,Phone,Brand,Page,Timestamp\n' + leads.map(l =>
-        `"${l.name||''}","${l.phone||''}","${l.brand||''}","${l.page||''}","${l.timestamp||''}"`
+    const leads = _leadsCache;
+    if (!leads.length) return alert('No leads to export — click Refresh first.');
+    const csv = 'Name,Service,Status,Score,Priority,Created\n' + leads.map(l =>
+        `"${l.name||''}","${l.service||''}","${l.status||''}","${l.score||''}","${l.priority||''}","${l.createdAt||''}"`
     ).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `watts-leads-${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
-}
-
-function clearLeads() {
-    if (!confirm('Delete all captured leads? This cannot be undone.')) return;
-    localStorage.removeItem('watts-ai-leads');
-    localStorage.removeItem('watts-ai-sessions');
-    loadLeads();
 }
 
 // ═══════════════════════════════════════════

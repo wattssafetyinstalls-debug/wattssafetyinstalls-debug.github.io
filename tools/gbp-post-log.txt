@@ -1,3 +1,7 @@
+GBP Post FAILED - 2026-10-01T05:35:30.835Z
+Topic: Planning home accessibility before winter hits Northeast Nebraska
+Error: OAuth failed: Unauthorized
+
 GBP Post FAILED - 2026-03-07T01:17:14.805Z
 Topic: Bathroom remodeling ideas for small Northeast Nebraska homes
 Error: No GBP accounts found after 5 attempts
